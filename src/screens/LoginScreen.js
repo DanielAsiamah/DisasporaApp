@@ -19,7 +19,7 @@ import { useAuth } from '../context/AuthContext';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, radius, spacing } from '../theme';
 
-export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
+export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassword }) {
   const { signIn, signInWithGoogle, signInWithApple } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,8 +38,8 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
     setLoading(true);
 
     try {
-      await signIn({ email, password });
-      onSuccess();
+      const result = await signIn({ email, password });
+      onSuccess(result.profile);
     } catch (error) {
       setFormError(getAuthErrorMessage(error));
     } finally {
@@ -93,6 +93,8 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
                 onChangeText={setEmail}
                 placeholder="you@example.com"
                 keyboardType="email-address"
+                autoComplete="email"
+                textContentType="emailAddress"
               />
               <AuthTextField
                 label="Password"
@@ -100,14 +102,19 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
                 onChangeText={setPassword}
                 placeholder="Your password"
                 secureTextEntry
+                autoComplete="current-password"
+                textContentType="password"
               />
+              <Pressable onPress={() => onForgotPassword(email.trim())} style={styles.forgotButton}>
+                <Text style={styles.forgotText}>Forgot password?</Text>
+              </Pressable>
               {formError ? <Text style={styles.formError}>{formError}</Text> : null}
             </View>
 
             {loading ? (
               <ActivityIndicator color={colors.primary} style={styles.loader} />
             ) : (
-              <PrimaryButton label="Sign in" onPress={handleSignIn} />
+              <PrimaryButton disabled={Boolean(loadingProvider)} label="Sign in" onPress={handleSignIn} style={styles.controlWidth} />
             )}
 
             <View style={styles.dividerRow}>
@@ -116,13 +123,13 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
               <View style={styles.divider} />
             </View>
 
-            <Pressable onPress={() => handleProviderSignIn('google')} style={styles.providerButton}>
+            <Pressable disabled={loading || Boolean(loadingProvider)} onPress={() => handleProviderSignIn('google')} style={[styles.providerButton, (loading || Boolean(loadingProvider)) && styles.providerDisabled]}>
               {loadingProvider === 'google' ? <ActivityIndicator color={colors.text} /> : <Text style={styles.providerIcon}>G</Text>}
               <Text style={styles.providerText}>Continue with Google</Text>
             </Pressable>
 
-            {process.env.EXPO_OS === 'ios' ? (
-              <Pressable onPress={() => handleProviderSignIn('apple')} style={[styles.providerButton, styles.appleButton]}>
+            {Platform.OS === 'ios' ? (
+              <Pressable disabled={loading || Boolean(loadingProvider)} onPress={() => handleProviderSignIn('apple')} style={[styles.providerButton, styles.appleButton, (loading || Boolean(loadingProvider)) && styles.providerDisabled]}>
                 {loadingProvider === 'apple' ? <ActivityIndicator color="#FFFFFF" /> : <Text style={[styles.providerIcon, styles.appleText]}>●</Text>}
                 <Text style={[styles.providerText, styles.appleText]}>Continue with Apple</Text>
               </Pressable>
@@ -149,13 +156,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
+    alignItems: 'center',
     flexGrow: 1,
     paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.lg,
   },
   header: {
+    alignSelf: 'center',
     marginBottom: spacing.lg,
     marginTop: spacing.sm,
+    width: '88%',
   },
   backButton: {
     alignItems: 'center',
@@ -169,12 +178,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   title: {
+    width: '88%',
     color: colors.textDark,
     fontFamily: fonts.black,
     fontSize: 30,
     lineHeight: 36,
   },
   subtitle: {
+    width: '88%',
     color: colors.textMuted,
     fontFamily: fonts.semiBold,
     fontSize: 15,
@@ -185,7 +196,9 @@ const styles = StyleSheet.create({
   form: {
     gap: spacing.md,
     marginBottom: spacing.lg,
+    width: '88%',
   },
+  controlWidth: { width: '88%' },
   formError: {
     color: colors.error,
     fontFamily: fonts.semiBold,
@@ -195,11 +208,14 @@ const styles = StyleSheet.create({
   loader: {
     marginVertical: spacing.md,
   },
-  dividerRow: { alignItems: 'center', flexDirection: 'row', gap: 12, marginVertical: spacing.md },
+  forgotButton: { alignSelf: 'flex-end', paddingVertical: spacing.xs },
+  forgotText: { color: colors.blue, fontFamily: fonts.extraBold, fontSize: 13 },
+  dividerRow: { alignItems: 'center', flexDirection: 'row', gap: 12, marginVertical: spacing.md, width: '88%' },
   divider: { backgroundColor: colors.border, flex: 1, height: 1 },
   dividerText: { color: colors.textLight, fontFamily: fonts.bold, fontSize: 11 },
-  providerButton: { alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radius.md, borderWidth: 2, flexDirection: 'row', gap: 12, justifyContent: 'center', marginBottom: spacing.sm, minHeight: 54 },
+  providerButton: { alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radius.md, borderWidth: 2, flexDirection: 'row', gap: 12, justifyContent: 'center', marginBottom: spacing.sm, minHeight: 54, width: '88%' },
   appleButton: { backgroundColor: '#000000', borderColor: '#2F2F2F' },
+  providerDisabled: { opacity: 0.65 },
   providerIcon: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 18 },
   providerText: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 14 },
   appleText: { color: '#FFFFFF' },

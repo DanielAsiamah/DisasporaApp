@@ -10,6 +10,10 @@ export default function AuthTextField({
   secureTextEntry = false,
   autoCapitalize = 'none',
   keyboardType = 'default',
+  autoComplete,
+  textContentType,
+  returnKeyType,
+  onSubmitEditing,
   error,
 }) {
   return (
@@ -17,14 +21,18 @@ export default function AuthTextField({
       <Text style={styles.label}>{label}</Text>
       <TextInput
         autoCapitalize={autoCapitalize}
+        autoComplete={autoComplete}
         autoCorrect={false}
         keyboardType={keyboardType}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.textLight}
+        returnKeyType={returnKeyType}
         secureTextEntry={secureTextEntry}
         style={[styles.input, error && styles.inputError]}
         value={value}
+        textContentType={textContentType}
+        onSubmitEditing={onSubmitEditing}
       />
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>

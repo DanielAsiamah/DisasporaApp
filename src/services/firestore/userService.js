@@ -27,7 +27,7 @@ function userDocRef(uid) {
 }
 
 export async function createUserDocument(uid, { username, email, ...profileFields }) {
-  const payload = {
+  const payload = removeUndefined({
     username,
     email,
     preferredName: profileFields.preferredName || username,
@@ -38,7 +38,7 @@ export async function createUserDocument(uid, { username, email, ...profileField
     currentLesson: DEFAULT_USER_PROFILE.currentLesson,
     ...profileFields,
     joinedAt: serverTimestamp(),
-  };
+  });
 
   await setDoc(userDocRef(uid), payload);
   return payload;
@@ -46,7 +46,14 @@ export async function createUserDocument(uid, { username, email, ...profileField
 
 export async function ensureUserDocument(uid, { username, email, ...profileFields }) {
   const existing = await getUserDocument(uid);
-  if (!existing) return createUserDocument(uid, { username, email, ...profileFields });
+  if (!existing) {
+    return createUserDocument(uid, {
+      username,
+      email,
+      ...profileFields,
+      onboardingCompleted: profileFields.onboardingCompleted ?? false,
+    });
+  }
   const payload = removeUndefined({
     ...profileFields,
     preferredName: profileFields.preferredName || existing.preferredName || username,
@@ -92,6 +99,7 @@ export async function updateUserProgress(uid, fields) {
     'proficiencyLevel',
     'reminderEnabled',
     'reminderTime',
+    'emailVerified',
   ];
   const payload = Object.fromEntries(
     Object.entries(fields).filter(([key]) => allowed.includes(key))

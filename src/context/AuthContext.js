@@ -4,6 +4,9 @@ import {
   signInWithEmail,
   signInWithAppleProvider,
   signInWithGoogleProvider,
+  refreshEmailVerification,
+  sendPasswordReset,
+  sendVerificationEmail,
   signOutUser,
   signUpWithEmail,
   subscribeToAuthState,
@@ -76,16 +79,21 @@ export function AuthProvider({ children }) {
     const trimmedEmail = email.trim().toLowerCase();
 
     const firebaseUser = await signUpWithEmail(trimmedEmail, password);
+    const verificationSent = await sendVerificationEmail(firebaseUser)
+      .then(() => true)
+      .catch(() => false);
     await createUserDocument(firebaseUser.uid, {
       username: trimmedUsername,
       email: trimmedEmail,
+      emailVerified: firebaseUser.emailVerified,
       ...profileData,
+      onboardingCompleted: profileData.onboardingCompleted ?? false,
     });
 
     const document = await getUserDocument(firebaseUser.uid);
     setUser(firebaseUser);
     setProfile(document);
-    return firebaseUser;
+    return { user: firebaseUser, profile: document, verificationSent };
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
@@ -94,7 +102,7 @@ export function AuthProvider({ children }) {
     const document = await getUserDocument(firebaseUser.uid);
     setUser(firebaseUser);
     setProfile(document);
-    return firebaseUser;
+    return { user: firebaseUser, profile: document };
   }, []);
 
   const signInWithGoogle = useCallback(async (profileData = {}) => {
@@ -102,7 +110,10 @@ export function AuthProvider({ children }) {
     const document = await ensureUserDocument(firebaseUser.uid, {
       username: profileData.preferredName || firebaseUser.displayName || 'Learner',
       email: firebaseUser.email || '',
-      onboardingCompleted: profileData.onboardingCompleted ?? false,
+      emailVerified: firebaseUser.emailVerified,
+      ...(profileData.onboardingCompleted === undefined
+        ? {}
+        : { onboardingCompleted: profileData.onboardingCompleted }),
       ...profileData,
     });
     setUser(firebaseUser);
@@ -116,7 +127,10 @@ export function AuthProvider({ children }) {
     const document = await ensureUserDocument(firebaseUser.uid, {
       username: profileData.preferredName || result.preferredName || firebaseUser.displayName || 'Learner',
       email: firebaseUser.email || '',
-      onboardingCompleted: profileData.onboardingCompleted ?? false,
+      emailVerified: firebaseUser.emailVerified,
+      ...(profileData.onboardingCompleted === undefined
+        ? {}
+        : { onboardingCompleted: profileData.onboardingCompleted }),
       ...profileData,
     });
     setUser(firebaseUser);
@@ -129,6 +143,23 @@ export function AuthProvider({ children }) {
     setUser(null);
     setProfile(null);
   }, []);
+
+  const requestPasswordReset = useCallback(async (email) => {
+    await sendPasswordReset(email);
+  }, []);
+
+  const resendVerification = useCallback(async () => {
+    await sendVerificationEmail(user);
+  }, [user]);
+
+  const checkEmailVerification = useCallback(async () => {
+    const verified = await refreshEmailVerification(user);
+    if (verified && user) {
+      await updateUserProgress(user.uid, { emailVerified: true });
+      setProfile((current) => (current ? { ...current, emailVerified: true } : current));
+    }
+    return verified;
+  }, [user]);
 
   const syncProgress = useCallback(
     async (fields) => {
@@ -208,6 +239,9 @@ export function AuthProvider({ children }) {
       signInWithGoogle,
       signInWithApple,
       signOut,
+      requestPasswordReset,
+      resendVerification,
+      checkEmailVerification,
       refreshProfile,
       syncProgress,
       loadLanguageProgress,
@@ -225,6 +259,9 @@ export function AuthProvider({ children }) {
       signInWithGoogle,
       signInWithApple,
       signOut,
+      requestPasswordReset,
+      resendVerification,
+      checkEmailVerification,
       refreshProfile,
       syncProgress,
       loadLanguageProgress,

@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PrimaryButton from '../components/PrimaryButton';
@@ -15,6 +15,7 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
   const [loadingProvider, setLoadingProvider] = useState(null);
   const [error, setError] = useState('');
   const isExpoGo = Constants.appOwnership === 'expo';
+  const googleConfigured = Boolean(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID);
 
   async function continueWith(provider) {
     setError('');
@@ -52,14 +53,14 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
           <RegionalGuide region={onboardingData?.guideRegion} size="large" showLabel />
           <View style={styles.copy}>
             <Text style={styles.eyebrow}>YOUR PATH IS READY</Text>
-            <Text style={styles.title}>Save your progress, {onboardingData?.preferredName}</Text>
+            <Text style={styles.title}>Save your progress{onboardingData?.preferredName ? `, ${onboardingData.preferredName}` : ''}</Text>
             <Text style={styles.subtitle}>Keep your daily goal, language path, XP, and streak available on every device.</Text>
           </View>
 
           <View style={styles.providers}>
-            <ProviderButton icon="G" label="Continue with Google" loading={loadingProvider === 'google'} onPress={() => continueWith('google')} />
-            {process.env.EXPO_OS === 'ios' ? (
-              <ProviderButton dark icon="●" label="Continue with Apple" loading={loadingProvider === 'apple'} onPress={() => continueWith('apple')} />
+            <ProviderButton disabled={Boolean(loadingProvider)} icon="G" label="Continue with Google" loading={loadingProvider === 'google'} onPress={() => continueWith('google')} />
+            {Platform.OS === 'ios' ? (
+              <ProviderButton dark disabled={Boolean(loadingProvider)} icon="●" label="Continue with Apple" loading={loadingProvider === 'apple'} onPress={() => continueWith('apple')} />
             ) : null}
             <View style={styles.dividerRow}>
               <View style={styles.divider} />
@@ -71,6 +72,7 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
 
           {error ? <Text selectable style={styles.error}>{error}</Text> : null}
           {isExpoGo ? <Text style={styles.devNote}>Google is enabled in the native development build; email remains available in Expo Go.</Text> : null}
+          {!googleConfigured ? <Text style={styles.devNote}>This build still needs its Google OAuth client ID before Google sign-in can open.</Text> : null}
         </View>
 
         <Pressable onPress={onExistingAccount} style={styles.signInLink}>
@@ -81,9 +83,9 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
   );
 }
 
-function ProviderButton({ icon, label, onPress, loading, dark = false }) {
+function ProviderButton({ icon, label, onPress, loading, disabled = false, dark = false }) {
   return (
-    <Pressable accessibilityRole="button" disabled={loading} onPress={onPress} style={({ pressed }) => [styles.providerButton, dark && styles.providerButtonDark, pressed && styles.providerPressed]}>
+    <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress} style={({ pressed }) => [styles.providerButton, dark && styles.providerButtonDark, disabled && styles.providerDisabled, pressed && styles.providerPressed]}>
       {loading ? <ActivityIndicator color={dark ? '#FFFFFF' : colors.text} /> : <Text style={[styles.providerIcon, dark && styles.providerLabelDark]}>{icon}</Text>}
       <Text style={[styles.providerLabel, dark && styles.providerLabelDark]}>{label}</Text>
     </Pressable>
@@ -97,15 +99,16 @@ const styles = StyleSheet.create({
   backButton: { alignItems: 'center', height: 42, justifyContent: 'center', width: 34 },
   backText: { color: colors.text, fontFamily: fonts.bold, fontSize: 34, lineHeight: 36 },
   headerLabel: { color: colors.accent, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1.4 },
-  content: { alignItems: 'center', flex: 1, gap: spacing.lg, justifyContent: 'center', paddingHorizontal: spacing.lg },
-  copy: { alignItems: 'center', gap: 8 },
+  content: { alignItems: 'center', flex: 1, gap: spacing.lg, justifyContent: 'center' },
+  copy: { alignItems: 'center', gap: 8, width: '88%' },
   eyebrow: { color: colors.primary, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1.3 },
   title: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 35, textAlign: 'center' },
   subtitle: { color: colors.textMuted, fontFamily: fonts.medium, fontSize: 14, lineHeight: 21, maxWidth: 350, textAlign: 'center' },
-  providers: { gap: 12, maxWidth: 420, width: '100%' },
+  providers: { gap: 12, maxWidth: 420, width: '88%' },
   providerButton: { alignItems: 'center', backgroundColor: colors.surface, borderBottomColor: '#0B0908', borderBottomWidth: 4, borderColor: colors.border, borderRadius: radius.md, borderWidth: 2, flexDirection: 'row', gap: 12, justifyContent: 'center', minHeight: 56, paddingHorizontal: spacing.md },
   providerButtonDark: { backgroundColor: '#000000', borderColor: '#2F2F2F' },
   providerPressed: { borderBottomWidth: 2, transform: [{ translateY: 2 }] },
+  providerDisabled: { opacity: 0.65 },
   providerIcon: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 19, width: 24 },
   providerLabel: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 15 },
   providerLabelDark: { color: '#FFFFFF' },

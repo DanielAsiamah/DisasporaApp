@@ -3,6 +3,9 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   OAuthProvider,
+  reload,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithCredential,
   signInWithEmailAndPassword,
   signOut,
@@ -41,6 +44,8 @@ export async function signInWithGoogleProvider() {
 
 export async function signInWithAppleProvider() {
   const AppleAuthentication = await import('expo-apple-authentication');
+  const isAvailable = await AppleAuthentication.isAvailableAsync();
+  if (!isAvailable) throw new Error('Sign in with Apple is not available on this device.');
   const Crypto = await import('expo-crypto');
   const rawNonce = Crypto.randomUUID();
   const nonce = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, rawNonce);
@@ -55,6 +60,21 @@ export async function signInWithAppleProvider() {
     user: firebaseCredential.user,
     preferredName: [appleCredential.fullName?.givenName, appleCredential.fullName?.familyName].filter(Boolean).join(' '),
   };
+}
+
+export async function sendVerificationEmail(user = firebaseAuth.currentUser) {
+  if (!user) throw new Error('Sign in before requesting a verification email.');
+  await sendEmailVerification(user);
+}
+
+export async function refreshEmailVerification(user = firebaseAuth.currentUser) {
+  if (!user) return false;
+  await reload(user);
+  return Boolean(user.emailVerified);
+}
+
+export async function sendPasswordReset(email) {
+  await sendPasswordResetEmail(firebaseAuth, email.trim().toLowerCase());
 }
 
 export async function signOutUser() {

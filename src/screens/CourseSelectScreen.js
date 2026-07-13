@@ -40,7 +40,7 @@ const COURSES_BY_LANG = {
       isNew: true,
     },
     {
-      id: 'belize',
+      id: 'belizean',
       label: 'Belizean Creole',
       subtitle: 'Discover Central American Kriol from Belize.',
       flag: '🇧🇿',

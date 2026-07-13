@@ -22,7 +22,11 @@ import SplashScreen from './src/screens/SplashScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import GuidedOnboardingScreen from './src/screens/GuidedOnboardingScreen';
 import AccountChoiceScreen from './src/screens/AccountChoiceScreen';
+import EmailVerificationScreen from './src/screens/EmailVerificationScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import { colors } from './src/theme';
+
+const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId || 'patois');
 
 function AppContent() {
   const { initializing, profile, syncProgress, isAuthenticated } = useAuth();
@@ -30,13 +34,15 @@ function AppContent() {
   const [userLanguage, setUserLanguage] = useState('english');
   const [selectedCourse, setSelectedCourse] = useState('patois');
   const [onboardingDraft, setOnboardingDraft] = useState(null);
+  const [pendingSignup, setPendingSignup] = useState(null);
+  const [resetEmail, setResetEmail] = useState('');
   const [routeReady, setRouteReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     async function chooseInitialRoute() {
-      if (initializing) {
+      if (initializing || routeReady) {
         return;
       }
 
@@ -48,7 +54,7 @@ function AppContent() {
           }
           return;
         }
-        const course = profile?.currentCourse || 'patois';
+        const course = normaliseCourseId(profile?.currentCourse);
         if (!cancelled) {
           setSelectedCourse(course);
           setScreen('home');
@@ -69,7 +75,7 @@ function AppContent() {
     return () => {
       cancelled = true;
     };
-  }, [initializing, isAuthenticated, profile?.currentCourse]);
+  }, [initializing, isAuthenticated, profile?.currentCourse, profile?.onboardingCompleted, routeReady]);
 
   async function finishSplash() {
     await AsyncStorage.setItem('hasSeenSplash', 'true');
@@ -82,10 +88,19 @@ function AppContent() {
     }
 
     if (isAuthenticated) {
-      setSelectedCourse(profile?.currentCourse || 'patois');
+      setSelectedCourse(normaliseCourseId(profile?.currentCourse));
       setScreen('home');
     }
   }, [initializing, isAuthenticated, profile?.currentCourse, routeReady, screen]);
+
+  useEffect(() => {
+    const authenticatedScreens = ['home', 'course-select', 'language-select', 'verify-email'];
+    if (routeReady && !initializing && !isAuthenticated && authenticatedScreens.includes(screen)) {
+      setOnboardingDraft(null);
+      setPendingSignup(null);
+      setScreen('welcome');
+    }
+  }, [initializing, isAuthenticated, routeReady, screen]);
 
   const handleHeartsSync = useCallback(
     (hearts) => {
@@ -113,7 +128,7 @@ function AppContent() {
     }
 
     if (activeProfile?.currentCourse) {
-      setSelectedCourse(activeProfile.currentCourse);
+      setSelectedCourse(normaliseCourseId(activeProfile.currentCourse));
       setScreen('home');
       return;
     }
@@ -143,20 +158,47 @@ function AppContent() {
       {screen === 'login' ? (
         <LoginScreen
           onBack={() => setScreen('welcome')}
+          onForgotPassword={(email) => {
+            setResetEmail(email);
+            setScreen('forgot-password');
+          }}
           onSuccess={goToPostAuthFlow}
-          onSignUp={() => setScreen('signup')}
+          onSignUp={() => {
+            setOnboardingDraft(null);
+            setScreen('guided-onboarding');
+          }}
         />
+      ) : null}
+
+      {screen === 'forgot-password' ? (
+        <ForgotPasswordScreen initialEmail={resetEmail} onBack={() => setScreen('login')} />
       ) : null}
 
       {screen === 'signup' ? (
         <SignUpScreen
           onBack={() => setScreen(onboardingDraft ? 'account-choice' : 'login')}
-          onSuccess={goToPostAuthFlow}
+          onSuccess={(result) => {
+            setPendingSignup(result);
+            setScreen('verify-email');
+          }}
           onSignIn={() => {
             setOnboardingDraft(null);
             setScreen('login');
           }}
           onboardingData={onboardingDraft}
+        />
+      ) : null}
+
+      {screen === 'verify-email' && pendingSignup ? (
+        <EmailVerificationScreen
+          email={pendingSignup.user?.email || ''}
+          guideRegion={onboardingDraft?.guideRegion || 'caribbean'}
+          verificationSent={pendingSignup.verificationSent}
+          onContinue={() => {
+            const signupProfile = pendingSignup.profile;
+            setPendingSignup(null);
+            goToPostAuthFlow(signupProfile);
+          }}
         />
       ) : null}
 
@@ -221,6 +263,7 @@ function AppContent() {
           userLanguage={userLanguage}
           courseId={selectedCourse}
           onBack={() => setScreen('course-select')}
+          onSignedOut={() => setScreen('welcome')}
         />
       ) : null}
     </GameProvider>

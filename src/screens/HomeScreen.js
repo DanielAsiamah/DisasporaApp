@@ -737,7 +737,7 @@ function LessonPlayer({
   );
 }
 
-export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }) {
+export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, onSignedOut }) {
   const {
     profile,
     syncProgress,
@@ -747,6 +747,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
     recordLessonAnswer,
     finishLessonSession,
     syncLanguageProgress,
+    signOut,
   } = useAuth();
   const {
     hearts,
@@ -1003,6 +1004,15 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
     }
   }
 
+  async function handleSignOut() {
+    try {
+      await signOut();
+      onSignedOut?.();
+    } catch {
+      showNotice('Could not sign out', 'Check your connection and try again.', 'warning');
+    }
+  }
+
   function buyItem(itemId, cost) {
     if (gems < cost) {
       showNotice('Not enough gems', 'Complete lessons and open chests to earn more.', 'warning');
@@ -1196,8 +1206,8 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
               <View style={styles.avatarCircle}>
                 <Text style={styles.avatarEmoji}>D</Text>
               </View>
-              <Text style={styles.profileName}>Diaspora Scholar</Text>
-              <Text style={styles.profileNative}>Native language: {userLanguage?.toUpperCase() || 'ENGLISH'}</Text>
+              <Text style={styles.profileName}>{profile?.preferredName || profile?.username || 'Diaspora Scholar'}</Text>
+              <Text style={styles.profileNative}>{profile?.email || `Native language: ${userLanguage?.toUpperCase() || 'ENGLISH'}`}</Text>
             </View>
             <View style={styles.statsGrid}>
               <StatCard label="Total XP" value={xp} />
@@ -1215,6 +1225,11 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
             <SettingRow label="Sound effects" active />
             <SettingRow label="Daily reminders" active />
             <SettingRow label="Dark theme" active />
+            {isAuthenticated ? (
+              <Pressable accessibilityRole="button" onPress={handleSignOut} style={styles.signOutButton}>
+                <Text style={styles.signOutText}>SIGN OUT</Text>
+              </Pressable>
+            ) : null}
           </ScrollView>
         ) : null}
       </View>
@@ -1739,6 +1754,20 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: fonts.black,
     fontSize: type.body,
+  },
+  signOutButton: {
+    alignItems: 'center',
+    borderColor: colors.error,
+    borderRadius: radius.md,
+    borderWidth: 2,
+    marginTop: spacing.lg,
+    padding: spacing.md,
+  },
+  signOutText: {
+    color: colors.error,
+    fontFamily: fonts.extraBold,
+    fontSize: 14,
+    letterSpacing: 0.8,
   },
   switchTrack: {
     backgroundColor: colors.locked,

@@ -22,7 +22,7 @@ const COURSES = {
     { id: 'patois', label: 'Jamaican Patois', flag: '🇯🇲', region: 'caribbean' },
     { id: 'swahili', label: 'Swahili', flag: '🇰🇪', region: 'africa' },
     { id: 'igbo', label: 'Igbo', flag: '🇳🇬', region: 'africa' },
-    { id: 'belize', label: 'Belizean Kriol', flag: '🇧🇿', region: 'americas' },
+    { id: 'belizean', label: 'Belizean Kriol', flag: '🇧🇿', region: 'americas' },
     { id: 'aave', label: 'Black American English', flag: '🇺🇸', region: 'americas' },
   ],
   french: [

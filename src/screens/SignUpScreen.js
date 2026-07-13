@@ -18,6 +18,8 @@ import { useAuth } from '../context/AuthContext';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, spacing } from '../theme';
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingData }) {
   const { signUp } = useAuth();
   const [username, setUsername] = useState(onboardingData?.preferredName || '');
@@ -25,49 +27,41 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [formError, setFormError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   function validateForm() {
     const trimmedUsername = username.trim();
     const trimmedEmail = email.trim();
 
-    if (!trimmedUsername || trimmedUsername.length < 2) {
-      return 'Username must be at least 2 characters.';
-    }
-
-    if (!trimmedEmail) {
-      return 'Enter your email address.';
-    }
-
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters.';
-    }
-
-    if (password !== confirmPassword) {
-      return 'Passwords do not match.';
-    }
-
-    return '';
+    const errors = {};
+    if (!trimmedUsername || trimmedUsername.length < 2) errors.username = 'Enter at least 2 characters.';
+    if (!trimmedEmail || !EMAIL_PATTERN.test(trimmedEmail)) errors.email = 'Enter a valid email address.';
+    if (password.length < 8) errors.password = 'Use at least 8 characters.';
+    if (password !== confirmPassword) errors.confirmPassword = 'Passwords do not match.';
+    return errors;
   }
 
   async function handleSignUp() {
-    const validationError = validateForm();
-    if (validationError) {
-      setFormError(validationError);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length) {
+      setFieldErrors(validationErrors);
+      setFormError('Check the highlighted fields and try again.');
       return;
     }
 
+    setFieldErrors({});
     setFormError('');
     setLoading(true);
 
     try {
-      await signUp({
+      const result = await signUp({
         username: username.trim(),
         email,
         password,
         profileData: onboardingData || {},
       });
-      onSuccess();
+      onSuccess(result);
     } catch (error) {
       setFormError(getAuthErrorMessage(error));
     } finally {
@@ -102,32 +96,56 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
 
             <View style={styles.form}>
               <AuthTextField
-                label="Username"
+                label="Your name"
                 value={username}
-                onChangeText={setUsername}
-                placeholder="Your display name"
+                onChangeText={(value) => {
+                  setUsername(value);
+                  setFieldErrors((current) => ({ ...current, username: '' }));
+                }}
+                placeholder="First name or nickname"
                 autoCapitalize="words"
+                autoComplete="name"
+                textContentType="name"
+                error={fieldErrors.username}
               />
               <AuthTextField
                 label="Email"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(value) => {
+                  setEmail(value);
+                  setFieldErrors((current) => ({ ...current, email: '' }));
+                }}
                 placeholder="you@example.com"
                 keyboardType="email-address"
+                autoComplete="email"
+                textContentType="emailAddress"
+                error={fieldErrors.email}
               />
               <AuthTextField
                 label="Password"
                 value={password}
-                onChangeText={setPassword}
-                placeholder="At least 6 characters"
+                onChangeText={(value) => {
+                  setPassword(value);
+                  setFieldErrors((current) => ({ ...current, password: '' }));
+                }}
+                placeholder="At least 8 characters"
                 secureTextEntry
+                autoComplete="new-password"
+                textContentType="newPassword"
+                error={fieldErrors.password}
               />
               <AuthTextField
                 label="Confirm password"
                 value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                onChangeText={(value) => {
+                  setConfirmPassword(value);
+                  setFieldErrors((current) => ({ ...current, confirmPassword: '' }));
+                }}
                 placeholder="Repeat your password"
                 secureTextEntry
+                autoComplete="new-password"
+                textContentType="newPassword"
+                error={fieldErrors.confirmPassword}
               />
               {formError ? <Text style={styles.formError}>{formError}</Text> : null}
             </View>
@@ -135,7 +153,7 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
             {loading ? (
               <ActivityIndicator color={colors.primary} style={styles.loader} />
             ) : (
-              <PrimaryButton label="Create account" onPress={handleSignUp} />
+              <PrimaryButton label="Create account" onPress={handleSignUp} style={styles.controlWidth} />
             )}
 
             <Pressable onPress={onSignIn} style={styles.linkButton}>
@@ -159,13 +177,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
+    alignItems: 'center',
     flexGrow: 1,
     paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.lg,
   },
   header: {
+    alignSelf: 'center',
     marginBottom: spacing.lg,
     marginTop: spacing.sm,
+    width: '88%',
   },
   backButton: {
     alignItems: 'center',
@@ -179,12 +199,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   title: {
+    width: '88%',
     color: colors.textDark,
     fontFamily: fonts.black,
     fontSize: 30,
     lineHeight: 36,
   },
   subtitle: {
+    width: '88%',
     color: colors.textMuted,
     fontFamily: fonts.semiBold,
     fontSize: 15,
@@ -195,7 +217,9 @@ const styles = StyleSheet.create({
   form: {
     gap: spacing.md,
     marginBottom: spacing.lg,
+    width: '88%',
   },
+  controlWidth: { width: '88%' },
   formError: {
     color: colors.error,
     fontFamily: fonts.semiBold,

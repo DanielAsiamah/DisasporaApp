@@ -8,6 +8,7 @@ export default function PrimaryButton({
   onPress,
   variant = 'primary',
   disabled = false,
+  style,
 }) {
   const translateY = useRef(new Animated.Value(0)).current;
   const isPrimary = variant === 'primary';
@@ -39,6 +40,7 @@ export default function PrimaryButton({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={disabled}
+      style={style}
     >
       <Animated.View
         style={[

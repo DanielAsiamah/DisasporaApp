@@ -5,6 +5,8 @@ const AUTH_ERROR_MESSAGES = {
   'auth/user-not-found': 'No account found with that email.',
   'auth/wrong-password': 'Incorrect password. Try again.',
   'auth/invalid-credential': 'Email or password is incorrect.',
+  'auth/user-disabled': 'This account has been disabled. Contact support for help.',
+  'auth/operation-not-allowed': 'This sign-in method is not enabled yet.',
   'auth/too-many-requests': 'Too many attempts. Wait a moment and try again.',
   'auth/network-request-failed': 'Network error. Check your connection and try again.',
 };
