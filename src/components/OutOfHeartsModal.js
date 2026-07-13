@@ -3,7 +3,19 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import PrimaryButton from './PrimaryButton';
 import { colors, fonts, radius, spacing } from '../theme';
 
-export default function OutOfHeartsModal({ visible, onClose, onRefill }) {
+function formatCountdown(milliseconds) {
+  const totalSeconds = Math.max(0, Math.ceil((milliseconds || 0) / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+export default function OutOfHeartsModal({
+  visible,
+  onClose,
+  onRefill,
+  timeUntilNextHeartMs,
+}) {
   return (
     <Modal animationType="fade" transparent visible={visible}>
       <View style={styles.overlay}>
@@ -11,7 +23,9 @@ export default function OutOfHeartsModal({ visible, onClose, onRefill }) {
           <Text style={styles.emoji}>💔</Text>
           <Text style={styles.title}>Out of hearts</Text>
           <Text style={styles.body}>
-            You used all 5 hearts. Refill to keep learning, or wait for them to come back.
+            Your next heart returns in{' '}
+            <Text style={styles.countdown}>{formatCountdown(timeUntilNextHeartMs)}</Text>.
+            {' '}Refill now or take a quick break.
           </Text>
 
           <PrimaryButton label="Refill hearts" onPress={onRefill} />
@@ -60,6 +74,10 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     marginTop: spacing.sm,
     textAlign: 'center',
+  },
+  countdown: {
+    color: colors.primary,
+    fontFamily: fonts.extraBold,
   },
   secondaryButton: {
     alignItems: 'center',

@@ -34,7 +34,7 @@ import { colors } from './src/theme';
 const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId || 'patois');
 
 function AppContent() {
-  const { initializing, profile, syncProgress, isAuthenticated } = useAuth();
+  const { initializing, profile, syncProgress, isAuthenticated, user } = useAuth();
   const [screen, setScreen] = useState(null);
   const [userLanguage, setUserLanguage] = useState('english');
   const [selectedCourse, setSelectedCourse] = useState('patois');
@@ -112,9 +112,9 @@ function AppContent() {
   }, [initializing, isAuthenticated, routeReady, screen]);
 
   const handleHeartsSync = useCallback(
-    (hearts) => {
+    (heartProgress) => {
       if (isAuthenticated) {
-        syncProgress({ hearts });
+        syncProgress(heartProgress).catch(() => {});
       }
     },
     [isAuthenticated, syncProgress]
@@ -165,7 +165,13 @@ function AppContent() {
   }
 
   return (
-    <GameProvider profileHearts={profile?.hearts} onHeartsSync={handleHeartsSync}>
+    <GameProvider
+      userId={user?.uid}
+      profileHearts={profile?.hearts}
+      profileNextHeartAt={profile?.nextHeartAt}
+      profileHeartsUpdatedAt={profile?.heartsUpdatedAt}
+      onHeartsSync={handleHeartsSync}
+    >
       {screen === 'splash' ? <SplashScreen onFinish={finishSplash} /> : null}
 
       {screen === 'welcome' ? (

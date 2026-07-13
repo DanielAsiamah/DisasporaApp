@@ -82,6 +82,8 @@ export async function updateUserProgress(uid, fields) {
     'xp',
     'streak',
     'hearts',
+    'nextHeartAt',
+    'heartsUpdatedAt',
     'gems',
     'currentCourse',
     'currentLesson',
