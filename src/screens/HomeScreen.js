@@ -43,6 +43,7 @@ import {
   normaliseStepAnswer,
   shouldShowCutsceneAfterStep,
 } from '../lessonEngine/buildLessonSteps';
+const { withPlayableListeningSteps } = require('../lessonEngine/lessonAudioAvailability');
 import {
   buildAdaptiveReviewLesson,
   calculateReviewResult,
@@ -385,11 +386,13 @@ function LessonPlayer({
   onAnswer,
 }) {
   const lessonSteps = useMemo(() => {
-    if (Array.isArray(lesson?.steps) && lesson.steps.length > 0) {
-      return lesson.steps;
-    }
-
-    return createLessonSteps(lesson, phrasePool, courseId);
+    const generatedSteps = Array.isArray(lesson?.steps) && lesson.steps.length > 0
+      ? lesson.steps
+      : createLessonSteps(lesson, phrasePool, courseId);
+    return withPlayableListeningSteps(
+      generatedSteps,
+      (audioKey) => Boolean(getLessonAudioSource(courseId, audioKey))
+    );
   }, [lesson, phrasePool, courseId]);
   const practiceSteps = useMemo(() => getPracticeSteps(lessonSteps), [lessonSteps]);
   const introStep = lessonSteps.find((item) => item.id === 'lesson-intro');
