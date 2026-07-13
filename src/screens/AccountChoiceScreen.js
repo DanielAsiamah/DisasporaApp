@@ -2,13 +2,30 @@ import Constants from 'expo-constants';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PrimaryButton from '../components/PrimaryButton';
 import RegionalGuide from '../components/RegionalGuide';
 import { useAuth } from '../context/AuthContext';
+import { coursesData } from '../data/generatedCourses';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, radius, spacing } from '../theme';
+
+const LEVEL_LABELS = {
+  beginner: 'Beginner start',
+  some: 'Basics refresher',
+  comfortable: 'Comfortable start',
+};
+
+function formatReminderTime(value = '19:00') {
+  const [rawHour, minute = '00'] = value.split(':');
+  const hour = Number(rawHour);
+  if (!Number.isFinite(hour)) return 'Daily reminder';
+  const suffix = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${minute} ${suffix}`;
+}
 
 export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, onSuccess, onExistingAccount }) {
   const { signInWithGoogle, signInWithApple } = useAuth();
@@ -16,6 +33,18 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
   const [error, setError] = useState('');
   const isExpoGo = Constants.appOwnership === 'expo';
   const googleConfigured = Boolean(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID);
+  const courseTitle = coursesData[onboardingData?.currentCourse]?.title || 'Your language';
+  const planItems = [
+    { id: 'course', emoji: '🗺️', label: 'LEARNING', value: courseTitle },
+    { id: 'goal', emoji: '⏱️', label: 'DAILY GOAL', value: `${onboardingData?.dailyGoalMinutes || 10} minutes` },
+    { id: 'level', emoji: '🌱', label: 'STARTING AT', value: LEVEL_LABELS[onboardingData?.proficiencyLevel] || 'Beginner start' },
+    {
+      id: 'reminder',
+      emoji: onboardingData?.reminderEnabled ? '🔔' : '🌙',
+      label: 'REMINDER',
+      value: onboardingData?.reminderEnabled ? formatReminderTime(onboardingData.reminderTime) : 'Not right now',
+    },
+  ];
 
   async function continueWith(provider) {
     setError('');
@@ -54,12 +83,37 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <RegionalGuide region={onboardingData?.guideRegion} size="large" showLabel />
+          <RegionalGuide active animated region={onboardingData?.guideRegion} size="large" showLabel />
           <View style={styles.copy}>
             <Text style={styles.eyebrow}>YOUR PATH IS READY</Text>
             <Text style={styles.title}>Save your progress{onboardingData?.preferredName ? `, ${onboardingData.preferredName}` : ''}</Text>
             <Text style={styles.subtitle}>Keep your daily goal, language path, XP, and streak available on every device.</Text>
           </View>
+
+          <Animated.View entering={FadeInDown.delay(100).duration(320)} style={styles.planCard}>
+            <View style={styles.planHeader}>
+              <View>
+                <Text style={styles.planEyebrow}>YOUR LEARNING PLAN</Text>
+                <Text style={styles.planTitle}>Ready to begin</Text>
+              </View>
+              <View style={styles.readyBadge}><Text style={styles.readyBadgeText}>✓</Text></View>
+            </View>
+            <View style={styles.planGrid}>
+              {planItems.map((item) => (
+                <View
+                  accessibilityLabel={`${item.label}: ${item.value}`}
+                  key={item.id}
+                  style={styles.planItem}
+                >
+                  <Text style={styles.planEmoji}>{item.emoji}</Text>
+                  <View style={styles.planItemCopy}>
+                    <Text style={styles.planItemLabel}>{item.label}</Text>
+                    <Text numberOfLines={2} style={styles.planItemValue}>{item.value}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </Animated.View>
 
           <View style={styles.providers}>
             <ProviderButton
@@ -114,6 +168,18 @@ const styles = StyleSheet.create({
   eyebrow: { color: colors.primary, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1.3 },
   title: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 35, textAlign: 'center' },
   subtitle: { color: colors.textMuted, fontFamily: fonts.medium, fontSize: 14, lineHeight: 21, maxWidth: 350, textAlign: 'center' },
+  planCard: { backgroundColor: colors.surface, borderBottomColor: '#0B0908', borderBottomWidth: 4, borderColor: colors.border, borderRadius: radius.lg, borderWidth: 2, gap: spacing.md, maxWidth: 420, padding: spacing.md, width: '88%' },
+  planHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  planEyebrow: { color: colors.accent, fontFamily: fonts.extraBold, fontSize: 9, letterSpacing: 0.8 },
+  planTitle: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 18, marginTop: 2 },
+  readyBadge: { alignItems: 'center', backgroundColor: colors.primary, borderRadius: radius.pill, height: 30, justifyContent: 'center', width: 30 },
+  readyBadgeText: { color: colors.surface, fontFamily: fonts.extraBold, fontSize: 16 },
+  planGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  planItem: { alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: radius.md, flexDirection: 'row', gap: 8, minHeight: 58, padding: spacing.sm, width: '48%' },
+  planEmoji: { fontSize: 19 },
+  planItemCopy: { flex: 1 },
+  planItemLabel: { color: colors.textLight, fontFamily: fonts.extraBold, fontSize: 8, letterSpacing: 0.5 },
+  planItemValue: { color: colors.text, fontFamily: fonts.bold, fontSize: 11, lineHeight: 15, marginTop: 2 },
   providers: { gap: 12, maxWidth: 420, width: '88%' },
   providerButton: { alignItems: 'center', backgroundColor: colors.surface, borderBottomColor: '#0B0908', borderBottomWidth: 4, borderColor: colors.border, borderRadius: radius.md, borderWidth: 2, flexDirection: 'row', gap: 12, justifyContent: 'center', minHeight: 56, paddingHorizontal: spacing.md },
   providerButtonDark: { backgroundColor: '#000000', borderColor: '#2F2F2F' },
