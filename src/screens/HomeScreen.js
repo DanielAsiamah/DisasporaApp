@@ -29,6 +29,11 @@ import { getCourseById, loadCourseById } from '../data/curriculumRepository';
 import { getLessonAudioSource, getLessonAudioSourceByText } from '../data/generatedAudioRegistry';
 import { getVocabImageSource } from '../data/generatedImageRegistry';
 import {
+  cancelDailyReminder,
+  formatReminderTime,
+  scheduleDailyReminder,
+} from '../services/reminderService';
+import {
   createLessonSteps,
   createMistakeStep,
   getCorrectCutsceneStep,
@@ -858,6 +863,8 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   const [isProgressReady, setIsProgressReady] = useState(false);
   const [course, setCourse] = useState(() => getCourseById(courseId));
   const [notice, setNotice] = useState(null);
+  const [reminderEnabled, setReminderEnabled] = useState(Boolean(profile?.reminderEnabled));
+  const [reminderBusy, setReminderBusy] = useState(false);
   const activeGuideRegion = profile?.guideRegion || guideRegionForCourse(courseId);
 
   function showNotice(title, body, tone = 'info') {
@@ -870,8 +877,30 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       setStreak(profile.streak ?? 0);
       setGems(profile.gems ?? 100);
       setPurchasedItems(profile.purchasedItems || []);
+      setReminderEnabled(Boolean(profile.reminderEnabled));
     }
-  }, [profile?.xp, profile?.streak, profile?.gems, profile?.purchasedItems]);
+  }, [profile?.xp, profile?.streak, profile?.gems, profile?.purchasedItems, profile?.reminderEnabled]);
+
+  useEffect(() => {
+    if (!isAuthenticated || profile?.reminderEnabled == null) return;
+    let cancelled = false;
+
+    async function restoreReminderPreference() {
+      const result = profile.reminderEnabled
+        ? await scheduleDailyReminder({
+          time: profile.reminderTime || '19:00',
+          preferredName: profile.preferredName || profile.username || '',
+          requestPermission: false,
+        })
+        : await cancelDailyReminder();
+      if (!cancelled) setReminderEnabled(Boolean(result.enabled));
+    }
+
+    restoreReminderPreference().catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, profile?.preferredName, profile?.reminderEnabled, profile?.reminderTime, profile?.username]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1212,6 +1241,48 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     }
   }
 
+  async function toggleDailyReminder() {
+    if (reminderBusy) return;
+    setReminderBusy(true);
+
+    try {
+      if (reminderEnabled) {
+        await cancelDailyReminder();
+        setReminderEnabled(false);
+        if (isAuthenticated) await syncProgress({ reminderEnabled: false });
+        showNotice('Reminders paused', 'You can turn your daily practice reminder back on anytime.', 'success');
+        return;
+      }
+
+      const reminderTime = profile?.reminderTime || '19:00';
+      const result = await scheduleDailyReminder({
+        time: reminderTime,
+        preferredName: profile?.preferredName || profile?.username || '',
+        requestPermission: true,
+      });
+      if (!result.supported) {
+        showNotice('Use the mobile app', 'Daily notifications are available on iPhone and Android.', 'info');
+        return;
+      }
+      if (!result.enabled) {
+        setReminderEnabled(false);
+        if (isAuthenticated) await syncProgress({ reminderEnabled: false });
+        showNotice('Notifications are blocked', 'Allow notifications for Diaspora in your device settings, then try again.', 'warning');
+        return;
+      }
+
+      setReminderEnabled(true);
+      if (isAuthenticated) {
+        await syncProgress({ reminderEnabled: true, reminderTime: result.time || reminderTime });
+      }
+      showNotice('Reminder scheduled', `We’ll nudge you every day at ${formatReminderTime(result.time || reminderTime)}.`, 'success');
+    } catch {
+      showNotice('Could not update reminders', 'Check your device notification settings and try again.', 'warning');
+    } finally {
+      setReminderBusy(false);
+    }
+  }
+
   function buyItem(itemId, cost) {
     if (gems < cost) {
       showNotice('Not enough gems', 'Complete lessons and open chests to earn more.', 'warning');
@@ -1459,9 +1530,19 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
           <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.tabTitle}>Settings</Text>
             <Text style={styles.tabSubtitle}>Lesson-focused settings for the learning path.</Text>
-            <SettingRow label="Sound effects" active />
-            <SettingRow label="Daily reminders" active />
-            <SettingRow label="Dark theme" active />
+            <SettingRow label="Sound effects" detail="Correct-answer and lesson feedback" active />
+            <SettingRow
+              label="Daily reminders"
+              detail={reminderBusy
+                ? 'Updating notification settings…'
+                : reminderEnabled
+                  ? `Every day at ${formatReminderTime(profile?.reminderTime || '19:00')}`
+                  : 'Off — tap to schedule'}
+              active={reminderEnabled}
+              disabled={reminderBusy}
+              onPress={toggleDailyReminder}
+            />
+            <SettingRow label="Dark theme" detail="Diaspora night mode" active />
             {isAuthenticated ? (
               <Pressable accessibilityRole="button" onPress={handleSignOut} style={styles.signOutButton}>
                 <Text style={styles.signOutText}>SIGN OUT</Text>
@@ -1609,14 +1690,23 @@ function StatCard({ label, value }) {
   );
 }
 
-function SettingRow({ label, active }) {
+function SettingRow({ label, detail, active, disabled = false, onPress }) {
   return (
-    <View style={styles.settingRow}>
-      <Text style={styles.settingName}>{label}</Text>
+    <Pressable
+      accessibilityRole={onPress ? 'switch' : undefined}
+      accessibilityState={onPress ? { checked: active, disabled } : undefined}
+      disabled={!onPress || disabled}
+      onPress={onPress}
+      style={[styles.settingRow, disabled && styles.settingRowDisabled]}
+    >
+      <View style={styles.settingCopy}>
+        <Text style={styles.settingName}>{label}</Text>
+        {detail ? <Text style={styles.settingDetail}>{detail}</Text> : null}
+      </View>
       <View style={[styles.switchTrack, active && styles.switchTrackActive]}>
         <View style={[styles.switchKnob, active && styles.switchKnobActive]} />
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -2081,10 +2171,24 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     padding: ui.compactCardPadding,
   },
+  settingRowDisabled: {
+    opacity: 0.58,
+  },
+  settingCopy: {
+    flex: 1,
+    paddingRight: spacing.md,
+  },
   settingName: {
     color: colors.text,
     fontFamily: fonts.black,
     fontSize: type.body,
+  },
+  settingDetail: {
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
+    fontSize: type.caption,
+    lineHeight: 17,
+    marginTop: 3,
   },
   signOutButton: {
     alignItems: 'center',

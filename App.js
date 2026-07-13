@@ -24,6 +24,11 @@ import GuidedOnboardingScreen from './src/screens/GuidedOnboardingScreen';
 import AccountChoiceScreen from './src/screens/AccountChoiceScreen';
 import EmailVerificationScreen from './src/screens/EmailVerificationScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
+import {
+  cancelDailyReminder,
+  configureNotificationHandler,
+  scheduleDailyReminder,
+} from './src/services/reminderService';
 import { colors } from './src/theme';
 
 const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId || 'patois');
@@ -37,6 +42,10 @@ function AppContent() {
   const [pendingSignup, setPendingSignup] = useState(null);
   const [resetEmail, setResetEmail] = useState('');
   const [routeReady, setRouteReady] = useState(false);
+
+  useEffect(() => {
+    configureNotificationHandler().catch(() => {});
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,6 +122,17 @@ function AppContent() {
 
   function goToPostAuthFlow(profileOverride) {
     const activeProfile = profileOverride || profile;
+    const reminderSource = onboardingDraft || activeProfile;
+    if (reminderSource?.reminderEnabled) {
+      scheduleDailyReminder({
+        time: reminderSource.reminderTime || '19:00',
+        preferredName: reminderSource.preferredName || reminderSource.username || '',
+        requestPermission: Boolean(onboardingDraft),
+      }).catch(() => {});
+    } else if (onboardingDraft?.reminderEnabled === false) {
+      cancelDailyReminder().catch(() => {});
+    }
+
     if (onboardingDraft?.currentCourse) {
       setUserLanguage(onboardingDraft.baseLanguage || 'english');
       setSelectedCourse(onboardingDraft.currentCourse);

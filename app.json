@@ -28,7 +28,15 @@
       "expo-audio",
       "expo-dev-client",
       "expo-apple-authentication",
-      "@react-native-google-signin/google-signin"
+      [
+        "expo-notifications",
+        {
+          "color": "#1FBE56",
+          "defaultChannel": "daily-practice"
+        }
+      ],
+      "@react-native-google-signin/google-signin",
+      "expo-asset"
     ]
   }
 }

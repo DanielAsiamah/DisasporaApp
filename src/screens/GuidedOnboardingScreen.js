@@ -57,6 +57,13 @@ const LEVELS = [
   { id: 'comfortable', label: 'Comfortable', detail: 'I can handle simple conversations.', unit: 2 },
 ];
 
+const REMINDER_TIMES = [
+  { value: '07:00', label: '7:00 AM' },
+  { value: '12:00', label: '12:00 PM' },
+  { value: '19:00', label: '7:00 PM' },
+  { value: '21:00', label: '9:00 PM' },
+];
+
 const STEPS = ['name', 'baseLanguage', 'course', 'motivation', 'goal', 'level', 'reminder'];
 
 const INITIAL_DRAFT = {
@@ -257,12 +264,33 @@ function renderStep(step, draft, select, courses) {
       <GuideIntro region={draft.guideRegion} eyebrow="KEEP YOUR STREAK" title="Would you like a daily reminder?" body="We’ll ask for notification permission only after your account is saved." />
       <OptionList
         items={[
-          { id: 'yes', emoji: '🔔', label: 'Yes, remind me', note: 'A gentle reminder around 7:00 PM' },
+          { id: 'yes', emoji: '🔔', label: 'Yes, remind me', note: `A gentle reminder at ${REMINDER_TIMES.find((item) => item.value === draft.reminderTime)?.label || '7:00 PM'}` },
           { id: 'no', emoji: '🌙', label: 'Not now', note: 'You can turn reminders on later' },
         ]}
         selected={draft.reminderEnabled === null ? null : draft.reminderEnabled ? 'yes' : 'no'}
         onSelect={(item) => select({ reminderEnabled: item.id === 'yes' })}
       />
+      {draft.reminderEnabled ? (
+        <View style={styles.timePickerSection}>
+          <Text style={styles.timePickerLabel}>CHOOSE A TIME</Text>
+          <View style={styles.timePickerGrid}>
+            {REMINDER_TIMES.map((item) => {
+              const active = draft.reminderTime === item.value;
+              return (
+                <Pressable
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: active }}
+                  key={item.value}
+                  onPress={() => select({ reminderTime: item.value })}
+                  style={[styles.timeChip, active && styles.timeChipActive]}
+                >
+                  <Text style={[styles.timeChipText, active && styles.timeChipTextActive]}>{item.label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      ) : null}
     </>
   );
 }
@@ -336,6 +364,13 @@ const styles = StyleSheet.create({
   radio: { alignItems: 'center', borderColor: colors.border, borderRadius: radius.pill, borderWidth: 2, height: 23, justifyContent: 'center', width: 23 },
   radioActive: { borderColor: colors.primary },
   radioDot: { backgroundColor: colors.primary, borderRadius: radius.pill, height: 11, width: 11 },
+  timePickerSection: { gap: spacing.sm },
+  timePickerLabel: { color: colors.accent, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1.2, textAlign: 'center' },
+  timePickerGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },
+  timeChip: { alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radius.pill, borderWidth: 2, minWidth: '46%', paddingHorizontal: spacing.md, paddingVertical: 11 },
+  timeChipActive: { backgroundColor: colors.primaryLight, borderColor: colors.primary },
+  timeChipText: { color: colors.textMuted, fontFamily: fonts.extraBold, fontSize: 13 },
+  timeChipTextActive: { color: colors.primary },
   footer: { backgroundColor: colors.skyBottom, borderTopColor: colors.border, borderTopWidth: 1, gap: 7, paddingBottom: spacing.md, paddingHorizontal: spacing.lg, paddingTop: 12 },
   saveNote: { color: colors.textLight, fontFamily: fonts.medium, fontSize: 10, textAlign: 'center' },
 });
