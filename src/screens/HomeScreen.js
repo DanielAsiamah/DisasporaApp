@@ -12,6 +12,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   Vibration,
   View,
 } from 'react-native';
@@ -69,6 +70,13 @@ const guideRegionForCourse = (courseId) => {
   if (['belizean', 'aave'].includes(courseId)) return 'americas';
   return 'africa';
 };
+
+const REMINDER_TIME_CHOICES = [
+  { value: '07:00', label: '7 AM' },
+  { value: '12:00', label: 'Noon' },
+  { value: '19:00', label: '7 PM' },
+  { value: '21:00', label: '9 PM' },
+];
 
 const isNodeCompleted = (node, completedIds = []) => (
   completedIds.includes(node?.id)
@@ -846,6 +854,8 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     finishLessonSession,
     syncLanguageProgress,
     signOut,
+    resendVerification,
+    checkEmailVerification,
   } = useAuth();
   const {
     hearts,
@@ -871,12 +881,19 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   const [course, setCourse] = useState(() => getCourseById(courseId));
   const [notice, setNotice] = useState(null);
   const [reminderEnabled, setReminderEnabled] = useState(Boolean(profile?.reminderEnabled));
+  const [reminderTime, setReminderTime] = useState(profile?.reminderTime || '19:00');
   const [reminderBusy, setReminderBusy] = useState(false);
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(
     profile?.soundEffectsEnabled !== false
   );
   const [goalClock, setGoalClock] = useState(Date.now());
+  const [profileEditorOpen, setProfileEditorOpen] = useState(false);
+  const [profileNameDraft, setProfileNameDraft] = useState('');
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [verificationBusy, setVerificationBusy] = useState(null);
   const activeGuideRegion = profile?.guideRegion || guideRegionForCourse(courseId);
+  const profileName = profile?.preferredName || profile?.username || 'Diaspora Scholar';
+  const profileInitial = profileName.trim().charAt(0).toUpperCase() || 'D';
 
   function showNotice(title, body, tone = 'info') {
     setNotice({ title, body, tone });
@@ -889,6 +906,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       setGems(profile.gems ?? 100);
       setPurchasedItems(profile.purchasedItems || []);
       setReminderEnabled(Boolean(profile.reminderEnabled));
+      setReminderTime(profile.reminderTime || '19:00');
       setSoundEffectsEnabled(profile.soundEffectsEnabled !== false);
     }
   }, [
@@ -897,6 +915,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     profile?.gems,
     profile?.purchasedItems,
     profile?.reminderEnabled,
+    profile?.reminderTime,
     profile?.soundEffectsEnabled,
   ]);
 
@@ -1330,6 +1349,92 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     }
   }
 
+  function openProfileEditor() {
+    setProfileNameDraft(profileName);
+    setProfileEditorOpen(true);
+  }
+
+  async function saveProfileName() {
+    const preferredName = profileNameDraft.trim();
+    if (preferredName.length < 2 || profileSaving) return;
+
+    setProfileSaving(true);
+    try {
+      await syncProgress({ preferredName });
+      setProfileEditorOpen(false);
+      showNotice('Profile updated', `Your guides will call you ${preferredName}.`, 'success');
+    } catch {
+      showNotice('Could not update profile', 'Check your connection and try again.', 'warning');
+    } finally {
+      setProfileSaving(false);
+    }
+  }
+
+  async function sendAccountVerification() {
+    if (verificationBusy) return;
+    setVerificationBusy('send');
+    try {
+      await resendVerification();
+      showNotice('Verification sent', `Check ${profile?.email || 'your inbox'} for the secure link.`, 'success');
+    } catch {
+      showNotice('Could not send verification', 'Wait a moment, then try again.', 'warning');
+    } finally {
+      setVerificationBusy(null);
+    }
+  }
+
+  async function refreshAccountVerification() {
+    if (verificationBusy) return;
+    setVerificationBusy('check');
+    try {
+      const verified = await checkEmailVerification();
+      showNotice(
+        verified ? 'Email verified' : 'Not verified yet',
+        verified
+          ? 'Your account recovery and progress are protected.'
+          : 'Open the link in your inbox, then check again.',
+        verified ? 'success' : 'info'
+      );
+    } catch {
+      showNotice('Could not check verification', 'Check your connection and try again.', 'warning');
+    } finally {
+      setVerificationBusy(null);
+    }
+  }
+
+  async function changeReminderTime(nextTime) {
+    if (reminderBusy || nextTime === reminderTime) return;
+    setReminderBusy(true);
+
+    try {
+      const result = await scheduleDailyReminder({
+        time: nextTime,
+        preferredName: profileName,
+        requestPermission: false,
+      });
+      if (!result.supported) {
+        showNotice('Use the mobile app', 'Reminder times are available on iPhone and Android.', 'info');
+        return;
+      }
+      if (!result.enabled) {
+        showNotice('Could not move reminder', 'Allow notifications in your device settings, then try again.', 'warning');
+        return;
+      }
+      setReminderTime(result.time || nextTime);
+      if (isAuthenticated) {
+        await syncProgress({
+          reminderEnabled: true,
+          reminderTime: result.time || nextTime,
+        });
+      }
+      showNotice('Reminder updated', `Daily practice is set for ${formatReminderTime(result.time || nextTime)}.`, 'success');
+    } catch {
+      showNotice('Could not move reminder', 'Check your notification settings and try again.', 'warning');
+    } finally {
+      setReminderBusy(false);
+    }
+  }
+
   async function toggleDailyReminder() {
     if (reminderBusy) return;
     setReminderBusy(true);
@@ -1343,7 +1448,6 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         return;
       }
 
-      const reminderTime = profile?.reminderTime || '19:00';
       const result = await scheduleDailyReminder({
         time: reminderTime,
         preferredName: profile?.preferredName || profile?.username || '',
@@ -1361,6 +1465,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       }
 
       setReminderEnabled(true);
+      setReminderTime(result.time || reminderTime);
       if (isAuthenticated) {
         await syncProgress({ reminderEnabled: true, reminderTime: result.time || reminderTime });
       }
@@ -1629,11 +1734,52 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
           <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
             <View style={styles.profileHeader}>
               <View style={styles.avatarCircle}>
-                <Text style={styles.avatarEmoji}>D</Text>
+                <Text style={styles.avatarEmoji}>{profileInitial}</Text>
               </View>
-              <Text style={styles.profileName}>{profile?.preferredName || profile?.username || 'Diaspora Scholar'}</Text>
+              <Text style={styles.profileName}>{profileName}</Text>
               <Text style={styles.profileNative}>{profile?.email || `Native language: ${userLanguage?.toUpperCase() || 'ENGLISH'}`}</Text>
+              <Pressable accessibilityRole="button" onPress={openProfileEditor} style={styles.profileEditButton}>
+                <Text style={styles.profileEditText}>EDIT NAME</Text>
+              </Pressable>
             </View>
+            {profile?.email ? (
+              <View style={styles.verificationCard}>
+                <View style={styles.verificationCopy}>
+                  <Text style={styles.verificationTitle}>Email protection</Text>
+                  <Text style={styles.verificationDetail}>
+                    {profile.emailVerified
+                      ? 'Verified · recovery is ready'
+                      : 'Verify your email to protect account recovery'}
+                  </Text>
+                </View>
+                {profile.emailVerified ? (
+                  <View style={styles.verifiedBadge}>
+                    <Text style={styles.verifiedBadgeText}>✓ VERIFIED</Text>
+                  </View>
+                ) : (
+                  <View style={styles.verificationActions}>
+                    <Pressable
+                      disabled={Boolean(verificationBusy)}
+                      onPress={sendAccountVerification}
+                      style={styles.accountActionButton}
+                    >
+                      <Text style={styles.accountActionText}>
+                        {verificationBusy === 'send' ? 'SENDING…' : 'SEND LINK'}
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      disabled={Boolean(verificationBusy)}
+                      onPress={refreshAccountVerification}
+                      style={styles.accountActionButtonSecondary}
+                    >
+                      <Text style={styles.accountActionTextSecondary}>
+                        {verificationBusy === 'check' ? 'CHECKING…' : 'CHECK'}
+                      </Text>
+                    </Pressable>
+                  </View>
+                )}
+              </View>
+            ) : null}
             <View style={styles.statsGrid}>
               <StatCard label="Total XP" value={xp} />
               <StatCard label="Streak" value={`${streak} days`} />
@@ -1669,13 +1815,37 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
               detail={reminderBusy
                 ? 'Updating notification settings…'
                 : reminderEnabled
-                  ? `Every day at ${formatReminderTime(profile?.reminderTime || '19:00')}`
+                  ? `Every day at ${formatReminderTime(reminderTime)}`
                   : 'Off — tap to schedule'}
               active={reminderEnabled}
               disabled={reminderBusy}
               onPress={toggleDailyReminder}
             />
-            <SettingRow label="Dark theme" detail="Diaspora night mode" active />
+            {reminderEnabled ? (
+              <View style={styles.reminderTimeCard}>
+                <Text style={styles.reminderTimeLabel}>REMINDER TIME</Text>
+                <View style={styles.reminderTimeChoices}>
+                  {REMINDER_TIME_CHOICES.map((choice) => {
+                    const active = reminderTime === choice.value;
+                    return (
+                      <Pressable
+                        accessibilityRole="radio"
+                        accessibilityState={{ checked: active, disabled: reminderBusy }}
+                        disabled={reminderBusy}
+                        key={choice.value}
+                        onPress={() => changeReminderTime(choice.value)}
+                        style={[styles.reminderTimeButton, active && styles.reminderTimeButtonActive]}
+                      >
+                        <Text style={[styles.reminderTimeText, active && styles.reminderTimeTextActive]}>
+                          {choice.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
+            <InfoRow label="Appearance" detail="Diaspora night theme" value="ON" />
             {isAuthenticated ? (
               <Pressable accessibilityRole="button" onPress={handleSignOut} style={styles.signOutButton}>
                 <Text style={styles.signOutText}>SIGN OUT</Text>
@@ -1694,6 +1864,15 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         onClose={closeOutOfHearts}
         onRefill={refillHearts}
         timeUntilNextHeartMs={timeUntilNextHeartMs}
+      />
+
+      <ProfileEditModal
+        busy={profileSaving}
+        name={profileNameDraft}
+        onChangeName={setProfileNameDraft}
+        onClose={() => !profileSaving && setProfileEditorOpen(false)}
+        onSave={saveProfileName}
+        visible={profileEditorOpen}
       />
 
       <View style={styles.bottomTabBar}>
@@ -1813,6 +1992,59 @@ function StatCard({ label, value }) {
       <Text style={styles.statCardValue}>{value}</Text>
       <Text style={styles.statCardLabel}>{label}</Text>
     </View>
+  );
+}
+
+function InfoRow({ label, detail, value }) {
+  return (
+    <View style={styles.infoRow}>
+      <View style={styles.settingCopy}>
+        <Text style={styles.settingName}>{label}</Text>
+        <Text style={styles.settingDetail}>{detail}</Text>
+      </View>
+      <Text style={styles.infoRowValue}>{value}</Text>
+    </View>
+  );
+}
+
+function ProfileEditModal({ busy, name, onChangeName, onClose, onSave, visible }) {
+  const canSave = name.trim().length >= 2 && !busy;
+
+  return (
+    <Modal
+      animationType="fade"
+      onRequestClose={onClose}
+      transparent
+      visible={visible}
+    >
+      <View style={styles.profileModalOverlay}>
+        <View style={styles.profileModalCard}>
+          <Text style={styles.profileModalEyebrow}>YOUR PROFILE</Text>
+          <Text style={styles.profileModalTitle}>What should your guides call you?</Text>
+          <TextInput
+            accessibilityLabel="Preferred name"
+            autoCapitalize="words"
+            autoCorrect={false}
+            maxLength={32}
+            onChangeText={onChangeName}
+            onSubmitEditing={canSave ? onSave : undefined}
+            placeholder="First name or nickname"
+            placeholderTextColor={colors.textLight}
+            returnKeyType="done"
+            style={styles.profileNameInput}
+            value={name}
+          />
+          <PrimaryButton
+            disabled={!canSave}
+            label={busy ? 'SAVING…' : 'SAVE NAME'}
+            onPress={onSave}
+          />
+          <Pressable disabled={busy} onPress={onClose} style={styles.profileModalCancel}>
+            <Text style={styles.profileModalCancelText}>Cancel</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
@@ -2338,6 +2570,82 @@ const styles = StyleSheet.create({
     fontSize: type.caption,
     marginTop: spacing.xs,
   },
+  profileEditButton: {
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  profileEditText: {
+    color: colors.blue,
+    fontFamily: fonts.extraBold,
+    fontSize: type.micro,
+    letterSpacing: 0.8,
+  },
+  verificationCard: {
+    alignItems: 'center',
+    ...ui.card,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+    padding: ui.compactCardPadding,
+  },
+  verificationCopy: {
+    flex: 1,
+  },
+  verificationTitle: {
+    color: colors.text,
+    fontFamily: fonts.black,
+    fontSize: type.body,
+  },
+  verificationDetail: {
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
+    fontSize: type.caption,
+    lineHeight: 17,
+    marginTop: 3,
+  },
+  verifiedBadge: {
+    backgroundColor: 'rgba(31, 190, 86, 0.15)',
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  verifiedBadgeText: {
+    color: colors.primary,
+    fontFamily: fonts.extraBold,
+    fontSize: type.micro,
+  },
+  verificationActions: {
+    gap: spacing.xs,
+  },
+  accountActionButton: {
+    backgroundColor: colors.blue,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  accountActionButtonSecondary: {
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  accountActionText: {
+    color: colors.splash,
+    fontFamily: fonts.extraBold,
+    fontSize: type.micro,
+    textAlign: 'center',
+  },
+  accountActionTextSecondary: {
+    color: colors.blue,
+    fontFamily: fonts.extraBold,
+    fontSize: type.micro,
+    textAlign: 'center',
+  },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -2369,6 +2677,107 @@ const styles = StyleSheet.create({
   },
   settingRowDisabled: {
     opacity: 0.58,
+  },
+  infoRow: {
+    alignItems: 'center',
+    ...ui.card,
+    flexDirection: 'row',
+    marginBottom: spacing.sm,
+    padding: ui.compactCardPadding,
+  },
+  infoRowValue: {
+    color: colors.primary,
+    fontFamily: fonts.extraBold,
+    fontSize: type.caption,
+  },
+  reminderTimeCard: {
+    ...ui.card,
+    marginBottom: spacing.sm,
+    padding: ui.compactCardPadding,
+  },
+  reminderTimeLabel: {
+    color: colors.textLight,
+    fontFamily: fonts.extraBold,
+    fontSize: type.micro,
+    letterSpacing: 0.9,
+    marginBottom: spacing.sm,
+  },
+  reminderTimeChoices: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+  },
+  reminderTimeButton: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    flex: 1,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.sm,
+  },
+  reminderTimeButtonActive: {
+    backgroundColor: 'rgba(31, 190, 86, 0.14)',
+    borderColor: colors.primary,
+  },
+  reminderTimeText: {
+    color: colors.textMuted,
+    fontFamily: fonts.bold,
+    fontSize: type.micro,
+  },
+  reminderTimeTextActive: {
+    color: colors.primary,
+  },
+  profileModalOverlay: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(5, 4, 4, 0.78)',
+    flex: 1,
+    justifyContent: 'center',
+    padding: spacing.lg,
+  },
+  profileModalCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    maxWidth: 420,
+    padding: spacing.lg,
+    width: '100%',
+  },
+  profileModalEyebrow: {
+    color: colors.accent,
+    fontFamily: fonts.extraBold,
+    fontSize: type.micro,
+    letterSpacing: 1,
+  },
+  profileModalTitle: {
+    color: colors.text,
+    fontFamily: fonts.black,
+    fontSize: type.heading,
+    lineHeight: 29,
+    marginTop: spacing.xs,
+  },
+  profileNameInput: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    borderWidth: 1.5,
+    color: colors.text,
+    fontFamily: fonts.bold,
+    fontSize: type.body,
+    marginBottom: spacing.md,
+    marginTop: spacing.lg,
+    minHeight: 54,
+    paddingHorizontal: spacing.md,
+  },
+  profileModalCancel: {
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    padding: spacing.sm,
+  },
+  profileModalCancelText: {
+    color: colors.textMuted,
+    fontFamily: fonts.bold,
+    fontSize: type.caption,
   },
   settingCopy: {
     flex: 1,
