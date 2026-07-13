@@ -39,8 +39,9 @@ const REGIONS = [
   {
     id: 'americas',
     title: 'South America',
-    caption: 'Creoles · heritage · regional speech',
+    caption: 'Heritage languages · regional speech · coming soon',
     color: colors.coral,
+    comingSoon: true,
   },
 ];
 
@@ -132,7 +133,7 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
             </View>
 
             <View style={styles.regionsSection}>
-              <Text style={styles.sectionHeader}>START YOUR PATH</Text>
+              <Text style={styles.sectionHeader}>MEET THE DIASPORA</Text>
               <View style={styles.regionsGrid}>
                 {REGIONS.map((region) => (
                   <Pressable
@@ -149,7 +150,9 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
                   >
                     <Text style={[styles.regionTitle, { color: region.color }]}>{region.title}</Text>
                     <Text style={styles.regionCaption}>{region.caption}</Text>
-                    <Text style={[styles.meetGuide, { color: region.color }]}>MEET YOUR GUIDE</Text>
+                    <Text style={[styles.meetGuide, { color: region.color }]}>
+                      {region.comingSoon ? 'COMING SOON · MEET SOL' : 'MEET YOUR GUIDE'}
+                    </Text>
                   </Pressable>
                 ))}
               </View>
