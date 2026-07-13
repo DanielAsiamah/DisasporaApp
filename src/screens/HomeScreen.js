@@ -35,6 +35,12 @@ import {
   normaliseStepAnswer,
   shouldShowCutsceneAfterStep,
 } from '../lessonEngine/buildLessonSteps';
+import {
+  buildAdaptiveReviewLesson,
+  calculateReviewResult,
+  getMistakeKey,
+  resolveReviewedMistakes,
+} from '../lessonEngine/adaptiveReview';
 import { colors, fonts, radius, shadows, spacing, type, ui } from '../theme';
 
 const getMarginLeft = (index) => {
@@ -367,6 +373,12 @@ function LessonPlayer({
   const lessonAudioSource = getLessonAudioSource(courseId, exercise?.audioKey);
   const lessonProgressUnits = practiceSteps.length + 1;
   const reviewItems = introStep?.items || [];
+  const correctAttemptCount = attempts.filter((attempt) => attempt.correct).length;
+  const mistakeAttemptCount = attempts.filter((attempt) => !attempt.correct).length;
+  const adaptiveResult = lesson.type === 'review'
+    ? calculateReviewResult({ totalQuestions: practiceSteps.length, correctCount: correctAttemptCount })
+    : null;
+  const displayedRewardXp = adaptiveResult?.xpEarned ?? lesson.xp ?? 10;
   const progress = sessionComplete ? 1 : lessonStage === 'review'
     ? 0.95
     : lessonStage === 'teaching'
@@ -639,22 +651,32 @@ function LessonPlayer({
         <View style={styles.lessonCompleteScreen}>
           <Text style={styles.lessonCompleteBadge}>✓</Text>
           <Text style={styles.lessonCompleteEyebrow}>LESSON COMPLETE</Text>
-          <Text style={styles.lessonCompleteTitle}>You earned this one.</Text>
+          <Text style={styles.lessonCompleteTitle}>
+            {lesson.type === 'review' ? 'Your weak spots are stronger.' : 'You earned this one.'}
+          </Text>
           <Text style={styles.lessonCompleteBody}>
-            {attempts.some((attempt) => !attempt.correct)
+            {lesson.type === 'review'
+              ? adaptiveResult?.mastered
+                ? 'Review mastered. These phrases are leaving your practice queue.'
+                : 'Good practice. These phrases will return so they can become automatic.'
+              : attempts.some((attempt) => !attempt.correct)
               ? 'You finished the lesson and turned mistakes into progress. That is real learning.'
               : 'Clean run. Keep the rhythm going while the phrases are fresh.'}
           </Text>
           <View style={styles.lessonCompleteReward}>
-            <Text style={styles.lessonCompleteRewardValue}>+{lesson.xp || 10} XP</Text>
-            <Text style={styles.lessonCompleteRewardLabel}>Lesson reward</Text>
+            <Text style={styles.lessonCompleteRewardValue}>+{displayedRewardXp} XP</Text>
+            <Text style={styles.lessonCompleteRewardLabel}>
+              {lesson.type === 'review' ? 'Mastery reward' : 'Lesson reward'}
+            </Text>
           </View>
           <View style={styles.lessonCompleteStats}>
             <Text style={styles.lessonCompleteStat}>
-              {attempts.filter((attempt) => attempt.correct).length}/{practiceSteps.length} correct
+              {correctAttemptCount}/{practiceSteps.length} correct
             </Text>
             <Text style={styles.lessonCompleteStat}>
-              {Math.max(attempts.filter((attempt) => !attempt.correct).length, 0)} mistakes saved
+              {lesson.type === 'review'
+                ? `${Math.round((adaptiveResult?.accuracy || 0) * 100)}% mastery`
+                : `${Math.max(mistakeAttemptCount, 0)} mistakes saved`}
             </Text>
           </View>
           <PrimaryButton
@@ -852,16 +874,23 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   );
   const activeLessonPool = useMemo(() => {
     if (!activeLesson) return [];
+    if (activeLesson.type === 'review') {
+      return course.units.flatMap((unit) => unit.vocabulary || []);
+    }
     const unit = course.units.find((item) => item.lessons.some((lesson) => lesson.id === activeLesson.id));
     return unit?.vocabulary?.length
       ? unit.vocabulary
       : unit?.lessons.filter((lesson) => lesson.type !== 'chest') || [];
   }, [activeLesson, course.units]);
   const nextLesson = useMemo(() => {
-    if (!activeLesson) return null;
+    if (!activeLesson || activeLesson.type === 'review') return null;
     const currentIndex = playableLessons.findIndex((lesson) => lesson.id === activeLesson.id);
     return currentIndex >= 0 ? playableLessons[currentIndex + 1] || null : null;
   }, [activeLesson, playableLessons]);
+  const adaptiveReviewLesson = useMemo(
+    () => buildAdaptiveReviewLesson(course, languageProgress?.mistakes || []),
+    [course, languageProgress?.mistakes]
+  );
 
   const activeNodeId = useMemo(() => {
     const next = lessons.find((lesson, index) => {
@@ -925,8 +954,81 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     setSelectedNode(null);
   }
 
+  function startAdaptiveReview() {
+    if (!adaptiveReviewLesson) return;
+    if (!hasHearts) {
+      showNotice('No hearts left', 'Refill hearts before starting your personalised review.', 'warning');
+      return;
+    }
+
+    setActiveLesson({
+      ...adaptiveReviewLesson,
+      reviewStartedAt: Date.now(),
+    });
+  }
+
   async function completeLesson(sessionSummary) {
     if (!activeLesson) {
+      return;
+    }
+
+    if (activeLesson.type === 'review') {
+      const result = calculateReviewResult(sessionSummary);
+      const nextXp = xp + result.xpEarned;
+      const nextGems = gems + result.gemsEarned;
+      const nextMistakes = resolveReviewedMistakes(
+        languageProgress?.mistakes || [],
+        activeLesson.reviewMistakeIds,
+        result.mastered
+      );
+      const previousReviewStats = languageProgress?.reviewStats || {};
+      const reviewStats = {
+        sessionsCompleted: (previousReviewStats.sessionsCompleted || 0) + 1,
+        phrasesMastered: (previousReviewStats.phrasesMastered || 0)
+          + (result.mastered ? activeLesson.items?.length || 0 : 0),
+        lastAccuracy: Math.round(result.accuracy * 100),
+        lastReviewedAt: Date.now(),
+      };
+
+      if (isAuthenticated && sessionSummary?.sessionId) {
+        finishLessonSession(sessionSummary.sessionId, {
+          ...sessionSummary,
+          xpEarned: result.xpEarned,
+          gemsEarned: result.gemsEarned,
+          wasFirstCompletion: false,
+          isAdaptiveReview: true,
+          reviewMistakeKeys: activeLesson.reviewMistakeKeys,
+          mastered: result.mastered,
+        }).catch(() => {});
+      }
+
+      setXp(nextXp);
+      setGems(nextGems);
+      setLanguageProgress((current) => current ? {
+        ...current,
+        mistakes: nextMistakes,
+        reviewStats,
+        lastPlayedAt: Date.now(),
+      } : current);
+
+      if (isAuthenticated) {
+        syncProgress({ xp: nextXp, gems: nextGems });
+        syncLanguageProgress(courseId, {
+          mistakes: nextMistakes,
+          reviewStats,
+          currentLesson: activeNodeId || null,
+          lastPlayedAt: Date.now(),
+        });
+      }
+
+      setActiveLesson(null);
+      showNotice(
+        result.mastered ? 'Review mastered' : 'Good practice',
+        result.mastered
+          ? `${activeLesson.items?.length || 0} weak phrases strengthened. +${result.xpEarned} XP.`
+          : `You earned ${result.xpEarned} XP. The phrases will stay in review for another pass.`,
+        result.mastered ? 'success' : 'info'
+      );
       return;
     }
 
@@ -984,9 +1086,15 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   function handleMistake(mistake) {
     loseHeart();
 
+    const recordedMistake = {
+      ...mistake,
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      mistakeKey: getMistakeKey(mistake),
+    };
+
     const nextMistakes = [
       ...(languageProgress?.mistakes || []),
-      mistake,
+      recordedMistake,
     ].slice(-50);
 
     setLanguageProgress((current) => current ? {
@@ -1082,6 +1190,35 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       <View style={styles.mainContainer}>
         {activeTab === 'path' ? (
           <ScrollView contentContainerStyle={styles.pathContent} showsVerticalScrollIndicator={false}>
+            {adaptiveReviewLesson ? (
+              <Pressable
+                accessibilityLabel={`Practice ${adaptiveReviewLesson.items.length} weak phrases`}
+                accessibilityRole="button"
+                onPress={startAdaptiveReview}
+                style={({ pressed }) => [styles.reviewCardPressable, pressed && styles.reviewCardPressed]}
+              >
+                <LinearGradient
+                  colors={['#2D1D46', '#172B35']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.reviewCard}
+                >
+                  <View style={styles.reviewIconWrap}>
+                    <Text style={styles.reviewIcon}>🧠</Text>
+                  </View>
+                  <View style={styles.reviewCopy}>
+                    <Text style={styles.reviewEyebrow}>PERSONALISED REVIEW</Text>
+                    <Text style={styles.reviewTitle}>Practice your weak phrases</Text>
+                    <Text style={styles.reviewBody}>
+                      {adaptiveReviewLesson.reviewCount} recent {adaptiveReviewLesson.reviewCount === 1 ? 'mistake' : 'mistakes'} · up to 20 XP
+                    </Text>
+                  </View>
+                  <View style={styles.reviewAction}>
+                    <Text style={styles.reviewActionText}>PRACTICE</Text>
+                  </View>
+                </LinearGradient>
+              </Pressable>
+            ) : null}
             {course.units.map((unit) => {
               const unitColor = unit.themeColor || course.themeColor;
               const firstGlobalIndex = lessons.findIndex((lesson) => lesson.id === unit.lessons[0]?.id);
@@ -1214,6 +1351,13 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
               <StatCard label="Streak" value={`${streak} days`} />
               <StatCard label="Gems" value={gems} />
               <StatCard label="Lessons" value={completed.filter((id) => playableLessons.some((lesson) => lesson.id === id)).length} />
+              <StatCard label="Phrases mastered" value={languageProgress?.reviewStats?.phrasesMastered || 0} />
+              <StatCard
+                label="Last review"
+                value={languageProgress?.reviewStats?.lastAccuracy == null
+                  ? '—'
+                  : `${languageProgress.reviewStats.lastAccuracy}%`}
+              />
             </View>
           </ScrollView>
         ) : null}
@@ -1450,6 +1594,72 @@ const styles = StyleSheet.create({
   pathContent: {
     padding: ui.screenPadding,
     paddingBottom: 140,
+  },
+  reviewCardPressable: {
+    marginBottom: spacing.lg,
+  },
+  reviewCardPressed: {
+    opacity: 0.88,
+    transform: [{ scale: 0.985 }],
+  },
+  reviewCard: {
+    alignItems: 'center',
+    borderColor: '#7156A8',
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    minHeight: 104,
+    padding: spacing.md,
+    ...shadows.card,
+  },
+  reviewIconWrap: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    borderRadius: radius.lg,
+    height: 54,
+    justifyContent: 'center',
+    width: 54,
+  },
+  reviewIcon: {
+    fontSize: 28,
+  },
+  reviewCopy: {
+    flex: 1,
+  },
+  reviewEyebrow: {
+    color: colors.accent,
+    fontFamily: fonts.extraBold,
+    fontSize: 10,
+    letterSpacing: 1.1,
+  },
+  reviewTitle: {
+    color: colors.text,
+    fontFamily: fonts.black,
+    fontSize: 17,
+    lineHeight: 22,
+    marginTop: 3,
+  },
+  reviewBody: {
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 3,
+  },
+  reviewAction: {
+    backgroundColor: colors.primary,
+    borderBottomColor: colors.primaryDark,
+    borderBottomWidth: 3,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 10,
+  },
+  reviewActionText: {
+    color: colors.surface,
+    fontFamily: fonts.extraBold,
+    fontSize: 10,
+    letterSpacing: 0.5,
   },
   unitSection: {
     marginBottom: spacing.xl,
