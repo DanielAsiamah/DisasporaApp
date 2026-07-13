@@ -32,6 +32,7 @@
   "scripts": {
     "test:verification": "node --test tests/emailVerificationFlow.test.cjs",
     "test:lesson-audio": "node --test tests/lessonAudioAvailability.test.cjs",
+    "test:guides": "node --test tests/regionalGuideModel.test.cjs",
     "audio:dry-run": "node scripts/generate-audio.js --dry-run",
     "audio:dry-run:interactive": "node scripts/generate-audio.js --dry-run --include-interactions",
     "audio:generate": "node scripts/generate-audio.js",

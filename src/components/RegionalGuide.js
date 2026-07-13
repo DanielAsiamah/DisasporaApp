@@ -1,37 +1,22 @@
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 
 import { colors, fonts, radius } from '../theme';
+const { REGIONAL_GUIDES: GUIDE_DATA, getRegionalGuide } = require('./regionalGuideModel');
 
-export const REGIONAL_GUIDES = {
-  africa: {
-    id: 'africa',
-    name: 'Amara',
-    region: 'Africa',
-    emoji: '👩🏿‍🦱',
-    accessory: '🌍',
-    color: colors.africaGold,
-    greeting: 'Welcome — your roots have a voice.',
-  },
-  caribbean: {
-    id: 'caribbean',
-    name: 'Kai',
-    region: 'Caribbean',
-    emoji: '🧑🏾‍🦱',
-    accessory: '🌺',
-    color: colors.caribbeanBright,
-    greeting: 'Every phrase carries a little sunshine.',
-  },
-  americas: {
-    id: 'americas',
-    name: 'Sol',
-    region: 'The Americas',
-    emoji: '👩🏽‍🦱',
-    accessory: '☀️',
-    color: colors.coral,
-    greeting: 'Let’s connect language, family, and home.',
-  },
+const GUIDE_IMAGES = {
+  amara: require('../../assets/guides/amara.png'),
+  kai: require('../../assets/guides/kai.png'),
+  sol: require('../../assets/guides/sol.png'),
 };
+
+export const REGIONAL_GUIDES = Object.fromEntries(
+  Object.entries(GUIDE_DATA).map(([key, guide]) => [key, {
+    ...guide,
+    color: colors[guide.colorToken],
+    image: GUIDE_IMAGES[guide.imageKey],
+  }])
+);
 
 export default function RegionalGuide({
   region = 'caribbean',
@@ -41,7 +26,8 @@ export default function RegionalGuide({
   animated = false,
   active = false,
 }) {
-  const guide = REGIONAL_GUIDES[region] || REGIONAL_GUIDES.caribbean;
+  const guideData = getRegionalGuide(region);
+  const guide = REGIONAL_GUIDES[guideData.id];
   const dimension = size === 'large' ? 116 : size === 'small' ? 58 : 82;
   const emojiSize = size === 'large' ? 62 : size === 'small' ? 31 : 44;
   const float = useRef(new Animated.Value(0)).current;
@@ -98,7 +84,14 @@ export default function RegionalGuide({
         ]}
       >
         {wearHat ? <Text style={[styles.hat, { fontSize: emojiSize * 0.72 }]}>🎩</Text> : null}
-        <Text style={{ fontSize: emojiSize }}>{guide.emoji}</Text>
+        <View style={styles.artFrame}>
+          <Image
+            accessible={false}
+            resizeMode="cover"
+            source={guide.image}
+            style={styles.art}
+          />
+        </View>
         <View style={[styles.accessory, { backgroundColor: guide.color }]}>
           <Text style={styles.accessoryText}>{guide.accessory}</Text>
         </View>
@@ -130,6 +123,20 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 6, width: 0 },
     shadowOpacity: 0.24,
     shadowRadius: 10,
+  },
+  artFrame: {
+    borderRadius: radius.xl - 4,
+    bottom: 3,
+    left: 3,
+    overflow: 'hidden',
+    position: 'absolute',
+    right: 3,
+    top: 3,
+  },
+  art: {
+    height: '100%',
+    transform: [{ scale: 1.08 }],
+    width: '100%',
   },
   accessory: {
     alignItems: 'center',
