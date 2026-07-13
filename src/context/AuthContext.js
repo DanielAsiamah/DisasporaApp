@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 import {
   signInWithEmail,
+  signInWithAppleProvider,
+  signInWithGoogleProvider,
   signOutUser,
   signUpWithEmail,
   subscribeToAuthState,
@@ -11,6 +13,7 @@ import {
   completeLessonSession,
   createLessonSession,
   createUserDocument,
+  ensureUserDocument,
   getLanguageProgress,
   getUserDocument,
   setLanguageProgress,
@@ -26,21 +29,35 @@ export function AuthProvider({ children }) {
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
+    let active = true;
+    const startupFallback = setTimeout(() => {
+      if (active) setInitializing(false);
+    }, 3500);
+
     const unsubscribe = subscribeToAuthState(async (firebaseUser) => {
       setUser(firebaseUser);
 
-      if (firebaseUser) {
-        const document = await getUserDocument(firebaseUser.uid);
-        await touchUserLastActive(firebaseUser.uid).catch(() => {});
-        setProfile(document);
-      } else {
+      try {
+        if (firebaseUser) {
+          const document = await getUserDocument(firebaseUser.uid);
+          await touchUserLastActive(firebaseUser.uid).catch(() => {});
+          setProfile(document);
+        } else {
+          setProfile(null);
+        }
+      } catch {
         setProfile(null);
+      } finally {
+        clearTimeout(startupFallback);
+        if (active) setInitializing(false);
       }
-
-      setInitializing(false);
     });
 
-    return unsubscribe;
+    return () => {
+      active = false;
+      clearTimeout(startupFallback);
+      unsubscribe();
+    };
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -54,7 +71,7 @@ export function AuthProvider({ children }) {
     return document;
   }, [user]);
 
-  const signUp = useCallback(async ({ username, email, password }) => {
+  const signUp = useCallback(async ({ username, email, password, profileData = {} }) => {
     const trimmedUsername = username.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
@@ -62,6 +79,7 @@ export function AuthProvider({ children }) {
     await createUserDocument(firebaseUser.uid, {
       username: trimmedUsername,
       email: trimmedEmail,
+      ...profileData,
     });
 
     const document = await getUserDocument(firebaseUser.uid);
@@ -77,6 +95,33 @@ export function AuthProvider({ children }) {
     setUser(firebaseUser);
     setProfile(document);
     return firebaseUser;
+  }, []);
+
+  const signInWithGoogle = useCallback(async (profileData = {}) => {
+    const firebaseUser = await signInWithGoogleProvider();
+    const document = await ensureUserDocument(firebaseUser.uid, {
+      username: profileData.preferredName || firebaseUser.displayName || 'Learner',
+      email: firebaseUser.email || '',
+      onboardingCompleted: profileData.onboardingCompleted ?? false,
+      ...profileData,
+    });
+    setUser(firebaseUser);
+    setProfile(document);
+    return { user: firebaseUser, profile: document };
+  }, []);
+
+  const signInWithApple = useCallback(async (profileData = {}) => {
+    const result = await signInWithAppleProvider();
+    const firebaseUser = result.user;
+    const document = await ensureUserDocument(firebaseUser.uid, {
+      username: profileData.preferredName || result.preferredName || firebaseUser.displayName || 'Learner',
+      email: firebaseUser.email || '',
+      onboardingCompleted: profileData.onboardingCompleted ?? false,
+      ...profileData,
+    });
+    setUser(firebaseUser);
+    setProfile(document);
+    return { user: firebaseUser, profile: document };
   }, []);
 
   const signOut = useCallback(async () => {
@@ -160,6 +205,8 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user),
       signUp,
       signIn,
+      signInWithGoogle,
+      signInWithApple,
       signOut,
       refreshProfile,
       syncProgress,
@@ -175,6 +222,8 @@ export function AuthProvider({ children }) {
       initializing,
       signUp,
       signIn,
+      signInWithGoogle,
+      signInWithApple,
       signOut,
       refreshProfile,
       syncProgress,

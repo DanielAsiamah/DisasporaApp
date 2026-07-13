@@ -18,9 +18,9 @@ import { useAuth } from '../context/AuthContext';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, spacing } from '../theme';
 
-export default function SignUpScreen({ onSuccess, onSignIn, onBack }) {
+export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingData }) {
   const { signUp } = useAuth();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(onboardingData?.preferredName || '');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -65,6 +65,7 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack }) {
         username: username.trim(),
         email,
         password,
+        profileData: onboardingData || {},
       });
       onSuccess();
     } catch (error) {
@@ -94,9 +95,9 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack }) {
               </Pressable>
             </View>
 
-            <Text style={styles.title}>Create account</Text>
+            <Text style={styles.title}>Save your Diaspora path</Text>
             <Text style={styles.subtitle}>
-              Start with 5 hearts, 0 XP, and your progress saved in the cloud.
+              Create your account to keep your language, goal, and progress safe across devices.
             </Text>
 
             <View style={styles.form}>

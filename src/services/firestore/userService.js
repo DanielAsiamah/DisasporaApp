@@ -26,20 +26,34 @@ function userDocRef(uid) {
   return doc(firebaseDb, COLLECTIONS.USERS, uid);
 }
 
-export async function createUserDocument(uid, { username, email }) {
+export async function createUserDocument(uid, { username, email, ...profileFields }) {
   const payload = {
     username,
     email,
+    preferredName: profileFields.preferredName || username,
     xp: DEFAULT_USER_PROFILE.xp,
     streak: DEFAULT_USER_PROFILE.streak,
     hearts: DEFAULT_USER_PROFILE.hearts,
     currentCourse: DEFAULT_USER_PROFILE.currentCourse,
     currentLesson: DEFAULT_USER_PROFILE.currentLesson,
+    ...profileFields,
     joinedAt: serverTimestamp(),
   };
 
   await setDoc(userDocRef(uid), payload);
   return payload;
+}
+
+export async function ensureUserDocument(uid, { username, email, ...profileFields }) {
+  const existing = await getUserDocument(uid);
+  if (!existing) return createUserDocument(uid, { username, email, ...profileFields });
+  const payload = removeUndefined({
+    ...profileFields,
+    preferredName: profileFields.preferredName || existing.preferredName || username,
+    lastActiveAt: serverTimestamp(),
+  });
+  await setDoc(userDocRef(uid), payload, { merge: true });
+  return { ...existing, ...payload };
 }
 
 export async function getUserDocument(uid) {
@@ -71,6 +85,13 @@ export async function updateUserProgress(uid, fields) {
     'selectedStartUnit',
     'recommendedStartUnit',
     'lastActiveAt',
+    'preferredName',
+    'guideRegion',
+    'motivation',
+    'dailyGoalMinutes',
+    'proficiencyLevel',
+    'reminderEnabled',
+    'reminderTime',
   ];
   const payload = Object.fromEntries(
     Object.entries(fields).filter(([key]) => allowed.includes(key))

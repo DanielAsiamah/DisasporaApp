@@ -30,9 +30,9 @@ const PHASES = [
     duration: 1400,
   },
   {
-    key: 'central-america',
-    line: 'Central America',
-    subline: 'Belizean Creole · Kriol roots',
+    key: 'americas',
+    line: 'The Americas',
+    subline: 'Belizean Kriol · Black American English · living roots',
     accent: colors.coral,
     gradient: ['#1A0A05', '#2B1510', '#1A0A05'],
     duration: 1400,

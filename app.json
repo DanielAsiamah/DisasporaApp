@@ -1,15 +1,19 @@
 {
   "expo": {
-    "name": "Patois Learn",
+    "name": "Diaspora",
     "slug": "patois-learn",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "scheme": "diaspora",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "com.diaspora.languagelearning"
     },
     "android": {
+      "package": "com.diaspora.languagelearning",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -21,7 +25,10 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-audio"
+      "expo-audio",
+      "expo-dev-client",
+      "expo-apple-authentication",
+      "@react-native-google-signin/google-signin"
     ]
   }
 }

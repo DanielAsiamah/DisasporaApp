@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import Constants from 'expo-constants';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -19,11 +20,12 @@ import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, radius, spacing } from '../theme';
 
 export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle, signInWithApple } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState(null);
 
   async function handleSignIn() {
     setFormError('');
@@ -42,6 +44,22 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
       setFormError(getAuthErrorMessage(error));
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleProviderSignIn(provider) {
+    setFormError('');
+    setLoadingProvider(provider);
+    try {
+      if (Constants.appOwnership === 'expo' && provider === 'google') {
+        throw new Error('Google sign-in needs the Diaspora development build. Email sign-in works in Expo Go.');
+      }
+      const result = provider === 'google' ? await signInWithGoogle() : await signInWithApple();
+      onSuccess(result.profile);
+    } catch (error) {
+      if (error?.code !== 'ERR_REQUEST_CANCELED') setFormError(error?.message || getAuthErrorMessage(error));
+    } finally {
+      setLoadingProvider(null);
     }
   }
 
@@ -91,6 +109,24 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
             ) : (
               <PrimaryButton label="Sign in" onPress={handleSignIn} />
             )}
+
+            <View style={styles.dividerRow}>
+              <View style={styles.divider} />
+              <Text style={styles.dividerText}>OR</Text>
+              <View style={styles.divider} />
+            </View>
+
+            <Pressable onPress={() => handleProviderSignIn('google')} style={styles.providerButton}>
+              {loadingProvider === 'google' ? <ActivityIndicator color={colors.text} /> : <Text style={styles.providerIcon}>G</Text>}
+              <Text style={styles.providerText}>Continue with Google</Text>
+            </Pressable>
+
+            {process.env.EXPO_OS === 'ios' ? (
+              <Pressable onPress={() => handleProviderSignIn('apple')} style={[styles.providerButton, styles.appleButton]}>
+                {loadingProvider === 'apple' ? <ActivityIndicator color="#FFFFFF" /> : <Text style={[styles.providerIcon, styles.appleText]}>●</Text>}
+                <Text style={[styles.providerText, styles.appleText]}>Continue with Apple</Text>
+              </Pressable>
+            ) : null}
 
             <Pressable onPress={onSignUp} style={styles.linkButton}>
               <Text style={styles.linkText}>Create an account</Text>
@@ -159,6 +195,14 @@ const styles = StyleSheet.create({
   loader: {
     marginVertical: spacing.md,
   },
+  dividerRow: { alignItems: 'center', flexDirection: 'row', gap: 12, marginVertical: spacing.md },
+  divider: { backgroundColor: colors.border, flex: 1, height: 1 },
+  dividerText: { color: colors.textLight, fontFamily: fonts.bold, fontSize: 11 },
+  providerButton: { alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderRadius: radius.md, borderWidth: 2, flexDirection: 'row', gap: 12, justifyContent: 'center', marginBottom: spacing.sm, minHeight: 54 },
+  appleButton: { backgroundColor: '#000000', borderColor: '#2F2F2F' },
+  providerIcon: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 18 },
+  providerText: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 14 },
+  appleText: { color: '#FFFFFF' },
   linkButton: {
     alignItems: 'center',
     marginTop: spacing.md,

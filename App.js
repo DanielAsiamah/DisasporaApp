@@ -9,6 +9,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { GameProvider } from './src/context/GameContext';
@@ -19,6 +20,8 @@ import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
+import GuidedOnboardingScreen from './src/screens/GuidedOnboardingScreen';
+import AccountChoiceScreen from './src/screens/AccountChoiceScreen';
 import { colors } from './src/theme';
 
 function AppContent() {
@@ -26,6 +29,7 @@ function AppContent() {
   const [screen, setScreen] = useState(null);
   const [userLanguage, setUserLanguage] = useState('english');
   const [selectedCourse, setSelectedCourse] = useState('patois');
+  const [onboardingDraft, setOnboardingDraft] = useState(null);
   const [routeReady, setRouteReady] = useState(false);
 
   useEffect(() => {
@@ -37,6 +41,13 @@ function AppContent() {
       }
 
       if (isAuthenticated) {
+        if (profile?.onboardingCompleted === false) {
+          if (!cancelled) {
+            setScreen('guided-onboarding');
+            setRouteReady(true);
+          }
+          return;
+        }
         const course = profile?.currentCourse || 'patois';
         if (!cancelled) {
           setSelectedCourse(course);
@@ -85,9 +96,24 @@ function AppContent() {
     [isAuthenticated, syncProgress]
   );
 
-  function goToPostAuthFlow() {
-    if (profile?.currentCourse) {
-      setSelectedCourse(profile.currentCourse);
+  function goToPostAuthFlow(profileOverride) {
+    const activeProfile = profileOverride || profile;
+    if (onboardingDraft?.currentCourse) {
+      setUserLanguage(onboardingDraft.baseLanguage || 'english');
+      setSelectedCourse(onboardingDraft.currentCourse);
+      AsyncStorage.removeItem('diaspora:onboarding-draft:v1').catch(() => {});
+      setOnboardingDraft(null);
+      setScreen('home');
+      return;
+    }
+
+    if (activeProfile?.onboardingCompleted === false) {
+      setScreen('guided-onboarding');
+      return;
+    }
+
+    if (activeProfile?.currentCourse) {
+      setSelectedCourse(activeProfile.currentCourse);
       setScreen('home');
       return;
     }
@@ -109,7 +135,7 @@ function AppContent() {
 
       {screen === 'welcome' ? (
         <WelcomeScreen
-          onGetStarted={() => setScreen('language-select')}
+          onGetStarted={() => setScreen('guided-onboarding')}
           onSignIn={() => setScreen('login')}
         />
       ) : null}
@@ -124,9 +150,45 @@ function AppContent() {
 
       {screen === 'signup' ? (
         <SignUpScreen
-          onBack={() => setScreen('login')}
+          onBack={() => setScreen(onboardingDraft ? 'account-choice' : 'login')}
           onSuccess={goToPostAuthFlow}
-          onSignIn={() => setScreen('login')}
+          onSignIn={() => {
+            setOnboardingDraft(null);
+            setScreen('login');
+          }}
+          onboardingData={onboardingDraft}
+        />
+      ) : null}
+
+      {screen === 'account-choice' ? (
+        <AccountChoiceScreen
+          onboardingData={onboardingDraft}
+          onBack={() => setScreen('guided-onboarding')}
+          onEmail={() => setScreen('signup')}
+          onExistingAccount={() => {
+            setOnboardingDraft(null);
+            setScreen('login');
+          }}
+          onSuccess={goToPostAuthFlow}
+        />
+      ) : null}
+
+      {screen === 'guided-onboarding' ? (
+        <GuidedOnboardingScreen
+          onBack={() => setScreen('welcome')}
+          onComplete={async (draft) => {
+            setOnboardingDraft(draft);
+            setUserLanguage(draft.baseLanguage);
+            setSelectedCourse(draft.currentCourse);
+            if (isAuthenticated) {
+              await syncProgress(draft);
+              await AsyncStorage.removeItem('diaspora:onboarding-draft:v1');
+              setOnboardingDraft(null);
+              setScreen('home');
+            } else {
+              setScreen('account-choice');
+            }
+          }}
         />
       ) : null}
 
@@ -183,9 +245,11 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 

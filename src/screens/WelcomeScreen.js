@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
-import MascotHero from '../components/MascotHero';
 import PrimaryButton from '../components/PrimaryButton';
 import SpeechBubble from '../components/SpeechBubble';
+import RegionalGuide from '../components/RegionalGuide';
 import { colors, fonts, radius, spacing } from '../theme';
 
 const GREETINGS = [
@@ -36,9 +36,9 @@ const REGIONS = [
     color: colors.caribbeanGreen,
   },
   {
-    id: 'central-america',
-    title: 'Central America',
-    caption: 'Belizean Kriol',
+    id: 'americas',
+    title: 'The Americas',
+    caption: 'Belizean Kriol · Black American English',
     color: colors.coral,
   },
   {
@@ -113,7 +113,11 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
               <Text style={styles.brandName}>Diaspora</Text>
             </View>
 
-            <MascotHero />
+            <View style={styles.guideRow}>
+              <RegionalGuide region="africa" size="small" showLabel />
+              <RegionalGuide region="caribbean" size="small" showLabel />
+              <RegionalGuide region="americas" size="small" showLabel />
+            </View>
 
             <View style={styles.heroCopy}>
               <Animated.View style={{ opacity: bubbleFade }}>
@@ -194,6 +198,12 @@ const styles = StyleSheet.create({
   heroCopy: {
     alignItems: 'center',
     marginTop: spacing.md,
+  },
+  guideRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.lg,
+    marginTop: spacing.sm,
   },
   title: {
     color: colors.textDark,
