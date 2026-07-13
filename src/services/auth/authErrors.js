@@ -1,7 +1,7 @@
 const AUTH_ERROR_MESSAGES = {
   'auth/email-already-in-use': 'That email is already registered. Try signing in.',
   'auth/invalid-email': 'Enter a valid email address.',
-  'auth/weak-password': 'Password must be at least 6 characters.',
+  'auth/weak-password': 'Use at least 8 characters with a letter and number.',
   'auth/user-not-found': 'No account found with that email.',
   'auth/wrong-password': 'Incorrect password. Try again.',
   'auth/invalid-credential': 'Email or password is incorrect.',

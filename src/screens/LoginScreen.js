@@ -28,6 +28,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
   const [loadingProvider, setLoadingProvider] = useState(null);
 
   async function handleSignIn() {
+    if (loading || loadingProvider) return;
     setFormError('');
 
     if (!email.trim() || !password) {
@@ -104,6 +105,8 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
                 secureTextEntry
                 autoComplete="current-password"
                 textContentType="password"
+                returnKeyType="done"
+                onSubmitEditing={handleSignIn}
               />
               <Pressable onPress={() => onForgotPassword(email.trim())} style={styles.forgotButton}>
                 <Text style={styles.forgotText}>Forgot password?</Text>
@@ -111,11 +114,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
               {formError ? <Text style={styles.formError}>{formError}</Text> : null}
             </View>
 
-            {loading ? (
-              <ActivityIndicator color={colors.primary} style={styles.loader} />
-            ) : (
-              <PrimaryButton disabled={Boolean(loadingProvider)} label="Sign in" onPress={handleSignIn} style={styles.controlWidth} />
-            )}
+            <PrimaryButton disabled={Boolean(loadingProvider)} label="Sign in" loading={loading} onPress={handleSignIn} style={styles.controlWidth} />
 
             <View style={styles.dividerRow}>
               <View style={styles.divider} />
@@ -204,9 +203,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semiBold,
     fontSize: 14,
     lineHeight: 20,
-  },
-  loader: {
-    marginVertical: spacing.md,
   },
   forgotButton: { alignSelf: 'flex-end', paddingVertical: spacing.xs },
   forgotText: { color: colors.blue, fontFamily: fonts.extraBold, fontSize: 13 },

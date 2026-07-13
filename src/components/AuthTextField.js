@@ -1,4 +1,5 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { colors, fonts, radius, spacing } from '../theme';
 
@@ -16,24 +17,44 @@ export default function AuthTextField({
   onSubmitEditing,
   error,
 }) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const isPassword = secureTextEntry;
+
   return (
     <View style={styles.wrapper}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        autoCapitalize={autoCapitalize}
-        autoComplete={autoComplete}
-        autoCorrect={false}
-        keyboardType={keyboardType}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textLight}
-        returnKeyType={returnKeyType}
-        secureTextEntry={secureTextEntry}
-        style={[styles.input, error && styles.inputError]}
-        value={value}
-        textContentType={textContentType}
-        onSubmitEditing={onSubmitEditing}
-      />
+      <View style={[styles.inputRow, focused && styles.inputFocused, error && styles.inputError]}>
+        <TextInput
+          accessibilityLabel={label}
+          autoCapitalize={autoCapitalize}
+          autoComplete={autoComplete}
+          autoCorrect={false}
+          keyboardType={keyboardType}
+          onBlur={() => setFocused(false)}
+          onChangeText={onChangeText}
+          onFocus={() => setFocused(true)}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textLight}
+          returnKeyType={returnKeyType}
+          secureTextEntry={isPassword && !passwordVisible}
+          style={styles.input}
+          value={value}
+          textContentType={textContentType}
+          onSubmitEditing={onSubmitEditing}
+        />
+        {isPassword ? (
+          <Pressable
+            accessibilityLabel={passwordVisible ? 'Hide password' : 'Show password'}
+            accessibilityRole="button"
+            hitSlop={8}
+            onPress={() => setPasswordVisible((current) => !current)}
+            style={styles.visibilityButton}
+          >
+            <Text style={styles.visibilityText}>{passwordVisible ? 'HIDE' : 'SHOW'}</Text>
+          </Pressable>
+        ) : null}
+      </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
@@ -48,15 +69,23 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     fontSize: 13,
   },
-  input: {
+  inputRow: {
+    alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.md,
     borderWidth: 1.5,
+    flexDirection: 'row',
+    minHeight: 52,
+  },
+  inputFocused: {
+    borderColor: colors.blue,
+  },
+  input: {
     color: colors.textDark,
+    flex: 1,
     fontFamily: fonts.semiBold,
     fontSize: 16,
-    minHeight: 52,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
@@ -67,5 +96,17 @@ const styles = StyleSheet.create({
     color: colors.error,
     fontFamily: fonts.semiBold,
     fontSize: 12,
+  },
+  visibilityButton: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+  },
+  visibilityText: {
+    color: colors.blue,
+    fontFamily: fonts.extraBold,
+    fontSize: 10,
+    letterSpacing: 0.5,
   },
 });

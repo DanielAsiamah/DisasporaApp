@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Animated, Pressable, StyleSheet, Text } from 'react-native';
 
 import { colors, fonts, radius } from '../theme';
 
@@ -8,6 +8,7 @@ export default function PrimaryButton({
   onPress,
   variant = 'primary',
   disabled = false,
+  loading = false,
   style,
 }) {
   const translateY = useRef(new Animated.Value(0)).current;
@@ -15,6 +16,7 @@ export default function PrimaryButton({
   const backgroundColor = isPrimary ? colors.primary : colors.surface;
   const borderColor = isPrimary ? colors.primaryDark : colors.border;
   const textColor = isPrimary ? colors.surface : colors.blue;
+  const unavailable = disabled || loading;
 
   function handlePressIn() {
     Animated.spring(translateY, {
@@ -36,10 +38,12 @@ export default function PrimaryButton({
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ busy: loading, disabled: unavailable }}
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      disabled={disabled}
+      disabled={unavailable}
       style={style}
     >
       <Animated.View
@@ -48,12 +52,12 @@ export default function PrimaryButton({
           {
             backgroundColor,
             borderColor,
-            opacity: disabled ? 0.55 : 1,
+            opacity: unavailable ? 0.55 : 1,
             transform: [{ translateY }],
           },
         ]}
       >
-        <Text style={[styles.label, { color: textColor }]}>{label}</Text>
+        {loading ? <ActivityIndicator color={textColor} /> : <Text style={[styles.label, { color: textColor }]}>{label}</Text>}
       </Animated.View>
     </Pressable>
   );
