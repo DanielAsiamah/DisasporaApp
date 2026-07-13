@@ -42,6 +42,7 @@ import {
   getMistakeKey,
   resolveReviewedMistakes,
 } from '../lessonEngine/adaptiveReview';
+import { calculateStreakAfterCompletion } from '../lessonEngine/streaks';
 import { colors, fonts, radius, shadows, spacing, type, ui } from '../theme';
 
 const getMarginLeft = (index) => {
@@ -357,6 +358,7 @@ function LessonPlayer({
   hearts,
   maxHearts,
   currentStreak,
+  lastLessonCompletedAt,
   hasNextLesson,
   onExit,
   onMistake,
@@ -402,6 +404,11 @@ function LessonPlayer({
   const completionLabel = lesson.type === 'review'
     ? adaptiveResult?.mastered ? 'REVIEW MASTERED' : 'REVIEW COMPLETE'
     : mistakeAttemptCount === 0 ? 'PERFECT LESSON' : 'LESSON COMPLETE';
+  const projectedStreak = calculateStreakAfterCompletion(
+    currentStreak,
+    lastLessonCompletedAt,
+    Date.now()
+  ).streak;
   const progress = sessionComplete ? 1 : lessonStage === 'review'
     ? 0.95
     : lessonStage === 'teaching'
@@ -732,7 +739,7 @@ function LessonPlayer({
                 ? `${Math.round((adaptiveResult?.accuracy || 0) * 100)}% mastery`
                 : `${Math.max(mistakeAttemptCount, 0)} mistakes saved`}
             </Text>
-            <Text style={styles.lessonCompleteStat}>🔥 {Math.max(currentStreak || 1, 1)} day streak</Text>
+            <Text style={styles.lessonCompleteStat}>🔥 {Math.max(projectedStreak, 1)} day streak</Text>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(600).duration(300)}>
             <PrimaryButton
@@ -1030,6 +1037,14 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       return;
     }
 
+    const completionTime = sessionSummary?.completedAt || Date.now();
+    const streakResult = calculateStreakAfterCompletion(
+      streak,
+      languageProgress?.lastLessonCompletedAt,
+      completionTime
+    );
+    const nextStreak = streakResult.streak;
+
     if (activeLesson.type === 'review') {
       const result = calculateReviewResult(sessionSummary);
       const nextXp = xp + result.xpEarned;
@@ -1062,20 +1077,23 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
       setXp(nextXp);
       setGems(nextGems);
+      setStreak(nextStreak);
       setLanguageProgress((current) => current ? {
         ...current,
         mistakes: nextMistakes,
         reviewStats,
-        lastPlayedAt: Date.now(),
+        lastLessonCompletedAt: completionTime,
+        lastPlayedAt: completionTime,
       } : current);
 
       if (isAuthenticated) {
-        syncProgress({ xp: nextXp, gems: nextGems });
+        syncProgress({ xp: nextXp, gems: nextGems, streak: nextStreak });
         syncLanguageProgress(courseId, {
           mistakes: nextMistakes,
           reviewStats,
           currentLesson: activeNodeId || null,
-          lastPlayedAt: Date.now(),
+          lastLessonCompletedAt: completionTime,
+          lastPlayedAt: completionTime,
         });
       }
 
@@ -1106,21 +1124,19 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
     if (wasFirstCompletion) {
       const nextXp = xp + activeLesson.xp;
-      const nextStreak = completed.length === 0 ? streak + 1 : streak;
       const nextGems = gems + 5;
       const nextCompleted = [...completed, activeLesson.id];
 
       setCompleted(nextCompleted);
       setXp(nextXp);
       setGems(nextGems);
-      if (completed.length === 0) {
-        setStreak(nextStreak);
-      }
+      setStreak(nextStreak);
       setLanguageProgress((current) => current ? {
         ...current,
         completedLessons: nextCompleted,
         currentLesson: nextLesson?.id || activeLesson.id,
-        lastPlayedAt: Date.now(),
+        lastLessonCompletedAt: completionTime,
+        lastPlayedAt: completionTime,
       } : current);
 
       if (isAuthenticated) {
@@ -1134,7 +1150,24 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         syncLanguageProgress(courseId, {
           completedLessons: nextCompleted,
           currentLesson: nextLesson?.id || activeLesson.id,
-          lastPlayedAt: Date.now(),
+          lastLessonCompletedAt: completionTime,
+          lastPlayedAt: completionTime,
+        });
+      }
+    } else {
+      setStreak(nextStreak);
+      setLanguageProgress((current) => current ? {
+        ...current,
+        currentLesson: nextLesson?.id || activeLesson.id,
+        lastLessonCompletedAt: completionTime,
+        lastPlayedAt: completionTime,
+      } : current);
+      if (isAuthenticated) {
+        syncProgress({ streak: nextStreak, currentCourse: courseId, currentLesson: activeLesson.id });
+        syncLanguageProgress(courseId, {
+          currentLesson: nextLesson?.id || activeLesson.id,
+          lastLessonCompletedAt: completionTime,
+          lastPlayedAt: completionTime,
         });
       }
     }
@@ -1215,6 +1248,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         hearts={hearts}
         maxHearts={maxHearts}
         currentStreak={streak}
+        lastLessonCompletedAt={languageProgress?.lastLessonCompletedAt}
         hasNextLesson={Boolean(nextLesson)}
         onExit={() => setActiveLesson(null)}
         onMistake={handleMistake}
