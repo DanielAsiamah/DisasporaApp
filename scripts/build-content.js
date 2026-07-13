@@ -24,6 +24,7 @@ const rows = (sheetName) =>
 
 const languages = rows('languages');
 const units = rows('units');
+const lessonBlueprints = rows('lessons');
 const vocabulary = rows('vocabulary');
 
 const unitByTitle = new Map(units.map((unit) => [keyPart(unit.title), unit]));
@@ -43,6 +44,33 @@ for (const row of vocabulary) {
 }
 
 const palette = ['#009B3A', '#D4782C', '#7B61A8', '#237A4B', '#B9523F', '#28766F'];
+const wordsPerLesson = 3;
+const chunk = (items, size) =>
+  Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
+    items.slice(index * size, (index + 1) * size)
+  );
+
+const exerciseTypesByLanguageAndUnit = new Map();
+lessonBlueprints.forEach((row) => {
+  const key = `${keyPart(row.language_id)}|${Number(row.unit)}`;
+  const types = exerciseTypesByLanguageAndUnit.get(key) || [];
+  const exerciseType = keyPart(row.exercise_type);
+  if (exerciseType && !types.includes(exerciseType)) types.push(exerciseType);
+  exerciseTypesByLanguageAndUnit.set(key, types);
+});
+
+const toVocabularyItem = (languageId, category, word, index) => ({
+  id: `${languageId}-${slug(category)}-${slug(word.native)}-${index + 1}`,
+  phrase: word.native,
+  meaning: word.english,
+  category,
+  note: normalise(word.pronunciation)
+    ? `Pronounced: ${normalise(word.pronunciation)}`
+    : 'Pronunciation guide coming soon.',
+  audioKey: normalise(word.audio_name) || null,
+  imageKey: normalise(word.image_name) || null,
+});
+
 const coursesData = {};
 
 languages.forEach((language, languageIndex) => {
@@ -65,6 +93,14 @@ languages.forEach((language, languageIndex) => {
       const categoryWords = languageWords.filter(
         (word) => (keyPart(word.category) || 'essentials') === category
       );
+      const vocabularyItems = categoryWords.map((word, index) =>
+        toVocabularyItem(languageId, category, word, index)
+      );
+      const lessonGroups = chunk(vocabularyItems, wordsPerLesson);
+      const sourceUnitNumber = Number(sourceUnit?.unit_number ?? unitIndex + 1);
+      const exerciseTypes = exerciseTypesByLanguageAndUnit.get(
+        `${languageId}|${sourceUnitNumber}`
+      ) || ['translate', 'listen', 'match', 'build_sentence'];
 
       return {
         id: `${languageId}-${slug(category)}`,
@@ -74,24 +110,22 @@ languages.forEach((language, languageIndex) => {
         description: titleCase(category),
         goal: normalise(sourceUnit?.objective) || `Learn essential ${category} words.`,
         themeColor: palette[unitIndex % palette.length],
-        lessons: categoryWords.map((word, lessonIndex) => ({
-          id: `${languageId}-${slug(category)}-${slug(word.native)}-${lessonIndex + 1}`,
+        exerciseTypes,
+        vocabulary: vocabularyItems,
+        lessons: lessonGroups.map((items, lessonIndex) => ({
+          id: `${languageId}-${slug(category)}-lesson-${lessonIndex + 1}`,
           order: lessonIndex + 1,
           status: 'published',
-          version: 1,
-          title: titleCase(word.english),
-          subtitle: 'Tap the word to reveal its meaning',
-          phrase: word.native,
-          meaning: word.english,
+          version: 2,
+          title: `${titleCase(category)} ${lessonIndex + 1}`,
+          subtitle: `${items.length} real phrases · listen, match, and build`,
           category,
-          note: normalise(word.pronunciation)
-            ? `Pronounced: ${normalise(word.pronunciation)}`
-            : 'Pronunciation guide coming soon.',
           type: 'star',
-          exerciseType: 'tap_reveal',
-          xp: 10,
-          audioKey: normalise(word.audio_name) || null,
-          imageKey: normalise(word.image_name) || null,
+          exerciseType: 'guided_practice',
+          exerciseTypes,
+          itemIds: items.map((item) => item.id),
+          legacyLessonIds: items.map((item) => item.id),
+          xp: 15,
         })),
       };
     }),
@@ -102,6 +136,6 @@ const generated = `// Generated from patois_learn_database_1.xlsx. Do not edit b
 fs.writeFileSync(outputPath, generated, 'utf8');
 
 console.log(
-  `Generated ${uniqueVocabulary.length} unique tap-to-reveal lessons across ${languages.length} languages. ` +
+  `Generated grouped lessons from ${uniqueVocabulary.length} unique vocabulary rows across ${languages.length} languages. ` +
     `Removed ${vocabulary.length - uniqueVocabulary.length} exact duplicate vocabulary rows.`
 );

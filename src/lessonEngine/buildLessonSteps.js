@@ -1,7 +1,27 @@
 import { LESSON_STEP_TYPES } from './lessonStepTypes';
 import { hasVocabImageSource } from '../data/generatedImageRegistry';
 
-const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
+function hashSeed(value) {
+  return String(value || 'diaspora').split('').reduce(
+    (hash, character) => Math.imul(hash ^ character.charCodeAt(0), 16777619),
+    2166136261
+  ) >>> 0;
+}
+
+function shuffle(items, seed = 'diaspora') {
+  const next = [...items];
+  let state = hashSeed(seed);
+  const random = () => {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+
+  for (let index = next.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
+  }
+  return next;
+}
 
 export function normaliseStepAnswer(value) {
   return value
@@ -22,26 +42,44 @@ function uniqueValues(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
-function choiceSet(answer, alternatives) {
-  return shuffle(uniqueValues([answer, ...alternatives]).slice(0, 3));
+function choiceSet(answer, alternatives, seed) {
+  const distractors = shuffle(
+    uniqueValues(alternatives).filter((value) => value !== answer),
+    `${seed}-distractors`
+  ).slice(0, 3);
+  return shuffle([answer, ...distractors], `${seed}-choices`);
 }
 
-function wordBank(answer, alternatives) {
+function wordBank(answer, alternatives, seed) {
   const answerWords = wordsFromAnswer(answer);
   const answerKeys = answerWords.map((word) => word.toLowerCase());
   const extras = alternatives
     .flatMap(wordsFromAnswer)
     .filter((word) => !answerKeys.includes(word.toLowerCase()));
 
-  return shuffle([...answerWords, ...uniqueValues(extras).slice(0, Math.max(2, 7 - answerWords.length))]);
+  return shuffle(
+    [...answerWords, ...uniqueValues(extras).slice(0, Math.max(2, 7 - answerWords.length))],
+    `${seed}-word-bank`
+  );
+}
+
+function uniqueItems(items = []) {
+  const seen = new Set();
+  return items.filter((item) => {
+    if (!item?.phrase || !item?.meaning || item.type === 'chest') return false;
+    const key = item.id || `${normaliseStepAnswer(item.phrase)}|${normaliseStepAnswer(item.meaning)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function getSourcePool(lesson, phrasePool = []) {
-  const usablePool = phrasePool.filter((item) => item.type !== 'chest' && item.phrase && item.meaning);
+  const usablePool = uniqueItems([...(lesson?.items || []), ...phrasePool]);
   return usablePool.length ? usablePool : [lesson].filter(Boolean);
 }
 
-function createImageChoiceStep(target, sourcePool = []) {
+function createImageChoiceStep(target, sourcePool = [], seed = 'image') {
   if (!target?.imageKey || !hasVocabImageSource(target.imageKey, target.category)) {
     return null;
   }
@@ -56,7 +94,10 @@ function createImageChoiceStep(target, sourcePool = []) {
     return null;
   }
 
-  const choices = shuffle([target, ...shuffle(otherChoices).slice(0, 3)])
+  const choices = shuffle(
+    [target, ...shuffle(otherChoices, `${seed}-others`).slice(0, 3)],
+    `${seed}-choices`
+  )
     .map((item) => ({
       value: item.meaning,
       imageKey: item.imageKey,
@@ -64,7 +105,7 @@ function createImageChoiceStep(target, sourcePool = []) {
     }));
 
   return {
-    id: 'image-choice',
+    id: `image-choice-${target.id}`,
     type: LESSON_STEP_TYPES.IMAGE_CHOICE,
     title: 'Select the correct image',
     prompt: target.phrase,
@@ -75,20 +116,23 @@ function createImageChoiceStep(target, sourcePool = []) {
   };
 }
 
-function createFirstAvailableImageChoiceStep(sourcePool = [], startIndex = 0) {
+function createFirstAvailableImageChoiceStep(sourcePool = [], startIndex = 0, seed = 'image') {
   for (let offset = 0; offset < sourcePool.length; offset += 1) {
     const item = sourcePool[(startIndex + offset) % sourcePool.length];
-    const step = createImageChoiceStep(item, sourcePool);
+    const step = createImageChoiceStep(item, sourcePool, `${seed}-${item.id}`);
     if (step) return step;
   }
 
   return null;
 }
 
-function createMatchPairsStep(sourcePool = [], startIndex = 0) {
-  const pairs = [0, 1, 2, 3]
-    .map((offset) => sourcePool[(startIndex + offset) % sourcePool.length])
-    .filter((item) => item?.phrase && item?.meaning)
+function createMatchPairsStep(sourcePool = [], startIndex = 0, seed = 'match') {
+  const orderedPool = uniqueItems([
+    ...sourcePool.slice(startIndex),
+    ...sourcePool.slice(0, startIndex),
+  ]);
+  const pairs = orderedPool
+    .slice(0, 4)
     .map((item) => ({
       id: item.id,
       left: item.phrase,
@@ -105,13 +149,22 @@ function createMatchPairsStep(sourcePool = [], startIndex = 0) {
     prompt: 'Tap a phrase, then its meaning',
     answer: '__matched__',
     pairs,
-    leftItems: shuffle(pairs.map((pair) => ({ id: pair.id, value: pair.left, pairId: pair.id, audioKey: pair.audioKey }))),
-    rightItems: shuffle(pairs.map((pair) => ({ id: `${pair.id}-meaning`, value: pair.right, pairId: pair.id }))),
+    leftItems: shuffle(
+      pairs.map((pair) => ({ id: pair.id, value: pair.left, pairId: pair.id, audioKey: pair.audioKey })),
+      `${seed}-left`
+    ),
+    rightItems: shuffle(
+      pairs.map((pair) => ({ id: `${pair.id}-meaning`, value: pair.right, pairId: pair.id })),
+      `${seed}-right`
+    ),
   };
 }
 
 export function createTeachingItems(lesson, phrasePool = []) {
   if (!lesson) return [];
+
+  const lessonItems = uniqueItems(lesson.items || []);
+  if (lessonItems.length) return lessonItems.slice(0, 3);
 
   const sourcePool = getSourcePool(lesson, phrasePool);
   const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lesson.id));
@@ -219,7 +272,7 @@ export function createMistakeStep(step, selectedAnswerValue) {
     };
   }
 
-  if (step?.id === 'listen-choice') {
+  if (step?.id?.startsWith('listen-choice-')) {
     return {
       type: LESSON_STEP_TYPES.WRONG_ANSWER_FEEDBACK,
       variant: 'fact',
@@ -250,83 +303,86 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
 
   const teachingItems = createTeachingItems(lesson, phrasePool);
   const sourcePool = getSourcePool(lesson, phrasePool);
-  const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lesson.id));
-  const pick = (offset) => sourcePool[(startIndex + offset) % sourcePool.length] || lesson;
+  const lessonSeed = `${languageId}-${lesson.id}`;
+  const lessonTargets = teachingItems.length ? teachingItems : sourcePool;
+  const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lessonTargets[0]?.id));
+  const pick = (offset) => lessonTargets[offset % lessonTargets.length] || lesson;
   const meanings = sourcePool.map((item) => item.meaning);
   const phrases = sourcePool.map((item) => item.phrase);
   const first = pick(0);
   const second = pick(1);
   const third = pick(2);
   const fourth = pick(3);
-  const imageChoiceStep = createFirstAvailableImageChoiceStep(sourcePool, startIndex);
-  const matchPairsStep = createMatchPairsStep(sourcePool, startIndex);
+  const imageChoiceStep = createFirstAvailableImageChoiceStep(sourcePool, startIndex, lessonSeed);
+  const matchPairsStep = createMatchPairsStep(lessonTargets, 0, lessonSeed);
   const practiceCandidates = [
     {
-      id: 'meaning-choice',
+      id: `meaning-choice-${first.id}`,
       type: LESSON_STEP_TYPES.MULTIPLE_CHOICE,
       title: 'Choose the correct meaning',
       prompt: first.phrase,
       answer: first.meaning,
-      choices: choiceSet(first.meaning, meanings.filter((value) => value !== first.meaning)),
+      choices: choiceSet(first.meaning, meanings, `${lessonSeed}-meaning-${first.id}`),
       audioKey: first.audioKey,
       note: first.note,
     },
     imageChoiceStep,
     matchPairsStep,
     {
-      id: 'reverse-choice',
+      id: `reverse-choice-${second.id}`,
       type: LESSON_STEP_TYPES.MULTIPLE_CHOICE,
       title: `How do you say "${second.meaning}"?`,
       prompt: second.meaning,
       answer: second.phrase,
-      choices: choiceSet(second.phrase, phrases.filter((value) => value !== second.phrase)),
+      choices: choiceSet(second.phrase, phrases, `${lessonSeed}-reverse-${second.id}`),
       note: second.note,
     },
     third?.audioKey ? {
-      id: 'listen-choice',
+      id: `listen-choice-${third.id}`,
       type: LESSON_STEP_TYPES.AUDIO_LISTEN,
       title: 'Listen and choose the meaning',
       prompt: 'Tap the speaker to hear the phrase',
       answer: third.meaning,
-      choices: choiceSet(third.meaning, meanings.filter((value) => value !== third.meaning)),
+      choices: choiceSet(third.meaning, meanings, `${lessonSeed}-listen-${third.id}`),
       audioKey: third.audioKey,
       audioLabel: 'Play the phrase',
       note: third.note,
     } : null,
     {
-      id: 'build-meaning',
+      id: `build-meaning-${fourth.id}`,
       type: LESSON_STEP_TYPES.BUILD_SENTENCE,
       title: 'Build the English meaning',
       prompt: fourth.phrase,
       answer: fourth.meaning,
-      wordBank: wordBank(fourth.meaning, meanings),
+      wordBank: wordBank(fourth.meaning, meanings, `${lessonSeed}-build-meaning-${fourth.id}`),
       audioKey: fourth.audioKey,
       note: fourth.note,
     },
     {
-      id: 'build-phrase',
+      id: `build-phrase-${first.id}`,
       type: LESSON_STEP_TYPES.BUILD_SENTENCE,
       title: `Build the ${languageId === 'patois' ? 'Patois' : 'language'} phrase`,
       prompt: first.meaning,
       answer: first.phrase,
-      wordBank: wordBank(first.phrase, phrases),
+      wordBank: wordBank(first.phrase, phrases, `${lessonSeed}-build-phrase-${first.id}`),
       note: first.note,
-    },
-    {
-      id: 'final-challenge',
-      type: LESSON_STEP_TYPES.MULTIPLE_CHOICE,
-      title: 'Final challenge',
-      prompt: second.phrase,
-      answer: second.meaning,
-      choices: choiceSet(second.meaning, meanings.filter((value) => value !== second.meaning)),
-      audioKey: second.audioKey,
-      note: second.note,
     },
   ].filter(Boolean);
 
-  const firstPractice = practiceCandidates[0];
-  const flexiblePractice = shuffle(practiceCandidates.slice(1));
-  const practiceSteps = [firstPractice, ...flexiblePractice].slice(0, Math.min(7, practiceCandidates.length));
+  const seenQuestions = new Set();
+  const uniquePracticeCandidates = practiceCandidates.filter((step) => {
+    const signature = [step.type, step.title, step.prompt, step.answer]
+      .map(normaliseStepAnswer)
+      .join('|');
+    if (seenQuestions.has(signature)) return false;
+    seenQuestions.add(signature);
+    return true;
+  });
+  const firstPractice = uniquePracticeCandidates[0];
+  const flexiblePractice = shuffle(uniquePracticeCandidates.slice(1), `${lessonSeed}-practice-order`);
+  const practiceSteps = [firstPractice, ...flexiblePractice]
+    .filter(Boolean)
+    .slice(0, Math.min(7, uniquePracticeCandidates.length));
 
   return [
     {

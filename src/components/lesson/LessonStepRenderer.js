@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 
+import RegionalGuide from '../RegionalGuide';
 import { LESSON_STEP_TYPES } from '../../lessonEngine/lessonStepTypes';
 import AudioPressable from './AudioPressable';
 import LessonAudioButton from './LessonAudioButton';
@@ -8,6 +11,7 @@ import LessonAudioButton from './LessonAudioButton';
 export default function LessonStepRenderer({
   step,
   styles,
+  guideRegion,
   selectedChoice,
   setSelectedChoice,
   builtWords,
@@ -20,8 +24,6 @@ export default function LessonStepRenderer({
   getImageForKey,
   onAudioFallbackPress,
 }) {
-  if (!step) return null;
-
   const isChoiceStep = [
     LESSON_STEP_TYPES.AUDIO_LISTEN,
     LESSON_STEP_TYPES.IMAGE_CHOICE,
@@ -35,16 +37,19 @@ export default function LessonStepRenderer({
   useEffect(() => {
     setSelectedMatch(null);
     setMatchedPairIds([]);
-  }, [step.id]);
+  }, [step?.id]);
 
   useEffect(() => {
     if (isMatchStep && matchedPairIds.length === step.pairs?.length) {
       setSelectedChoice('__matched__');
     }
-  }, [isMatchStep, matchedPairIds, setSelectedChoice, step.pairs?.length]);
+  }, [isMatchStep, matchedPairIds, setSelectedChoice, step?.pairs?.length]);
+
+  if (!step) return null;
 
   function handleMatchPress(side, item) {
     if (feedback || matchedPairIds.includes(item.pairId)) return;
+    Haptics.selectionAsync().catch(() => {});
 
     if (!selectedMatch || selectedMatch.side === side) {
       setSelectedMatch({ side, item });
@@ -62,33 +67,41 @@ export default function LessonStepRenderer({
 
   return (
     <ScrollView contentContainerStyle={styles.lessonContent} showsVerticalScrollIndicator={false}>
-      <Text style={styles.lessonTitle}>{step.title}</Text>
-      <View style={styles.lessonPromptRow}>
-        <View style={styles.speechCard}>
-          {lessonAudioSource ? (
-            <LessonAudioButton
-              key={`${step.id}-${step.audioKey}`}
-              label={step.audioLabel || `Play pronunciation for ${step.prompt}`}
-              source={lessonAudioSource}
-              fallbackText={step.prompt}
-              onFallbackPress={onAudioFallbackPress}
-              autoPlay
-            />
+      <Animated.View
+        key={step.id}
+        entering={FadeInDown.duration(280)}
+        exiting={FadeOutUp.duration(160)}
+      >
+        <Text style={styles.lessonTitle}>{step.title}</Text>
+        <View style={styles.lessonPromptRow}>
+          <View style={styles.guidePromptRow}>
+            <RegionalGuide region={guideRegion} size="small" />
+            <View style={styles.speechCard}>
+              {lessonAudioSource ? (
+                <LessonAudioButton
+                  key={`${step.id}-${step.audioKey}`}
+                  label={step.audioLabel || `Play pronunciation for ${step.prompt}`}
+                  source={lessonAudioSource}
+                  fallbackText={step.prompt}
+                  onFallbackPress={onAudioFallbackPress}
+                  autoPlay
+                />
+              ) : null}
+              <View style={styles.speechTextWrap}>
+                <Text style={styles.phraseText}>{step.prompt}</Text>
+                <Text style={styles.phraseHint}>
+                  {isBuildStep ? 'Tap the words in the correct order' : 'Choose one answer'}
+                </Text>
+              </View>
+            </View>
+          </View>
+          {audioHelperText ? (
+            <View style={styles.audioHelperCard}>
+              <Text style={styles.audioHelperTitle}>Can't listen right now?</Text>
+              <Text style={styles.audioHelperBody}>{audioHelperText}</Text>
+            </View>
           ) : null}
-          <View style={styles.speechTextWrap}>
-            <Text style={styles.phraseText}>{step.prompt}</Text>
-            <Text style={styles.phraseHint}>
-              {isBuildStep ? 'Tap the words in the correct order' : 'Choose one answer'}
-            </Text>
-          </View>
         </View>
-        {audioHelperText ? (
-          <View style={styles.audioHelperCard}>
-            <Text style={styles.audioHelperTitle}>Can't listen right now?</Text>
-            <Text style={styles.audioHelperBody}>{audioHelperText}</Text>
-          </View>
-        ) : null}
-      </View>
 
       {isChoiceStep ? (
         <View style={step.imageChoices ? styles.imageChoiceGrid : styles.choiceList}>
@@ -105,7 +118,10 @@ export default function LessonStepRenderer({
                 key={choice}
                 audioSource={getAudioForText?.(choice)}
                 disabled={Boolean(feedback)}
-                onPress={() => setSelectedChoice(choice)}
+                onPress={() => {
+                  Haptics.selectionAsync().catch(() => {});
+                  setSelectedChoice(choice);
+                }}
                 style={[
                   step.imageChoices ? styles.imageChoiceCard : styles.answerCard,
                   selected && styles.answerCardSelected,
@@ -181,7 +197,10 @@ export default function LessonStepRenderer({
                   key={`${word}-${index}`}
                   audioSource={getAudioForText?.(word)}
                   disabled={Boolean(feedback)}
-                  onPress={() => setBuiltWords((words) => words.filter((_, itemIndex) => itemIndex !== index))}
+                  onPress={() => {
+                    Haptics.selectionAsync().catch(() => {});
+                    setBuiltWords((words) => words.filter((_, itemIndex) => itemIndex !== index));
+                  }}
                   style={styles.wordChipSelected}
                 >
                   <Text style={styles.wordChipText}>{word}</Text>
@@ -197,7 +216,10 @@ export default function LessonStepRenderer({
                   key={`${word}-${index}`}
                   audioSource={getAudioForText?.(word)}
                   disabled={used || Boolean(feedback)}
-                  onPress={() => setBuiltWords((words) => [...words, word])}
+                  onPress={() => {
+                    Haptics.selectionAsync().catch(() => {});
+                    setBuiltWords((words) => [...words, word]);
+                  }}
                   style={[styles.wordChip, used && styles.wordChipUsed]}
                 >
                   <Text style={styles.wordChipText}>{word}</Text>
@@ -206,7 +228,8 @@ export default function LessonStepRenderer({
             })}
           </View>
         </View>
-      ) : null}
+        ) : null}
+      </Animated.View>
     </ScrollView>
   );
 }

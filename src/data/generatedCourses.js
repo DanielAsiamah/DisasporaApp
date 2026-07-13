@@ -15,142 +15,168 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "patois-greetings-wah-gwaan-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wah gwaan",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: wah gwan",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wah_gwaan.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "patois-greetings-mawnin-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Good Morning",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mawnin",
             "meaning": "good morning",
             "category": "greetings",
             "note": "Pronounced: maw-nin",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mawnin.mp3",
             "imageKey": "morning.png"
           },
           {
             "id": "patois-greetings-likkle-more-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "likkle more",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: lik-kul mor",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "likkle_more.mp3",
             "imageKey": "goodbye.png"
           },
           {
             "id": "patois-greetings-wah-deh-pon-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "How Are You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wah deh pon",
             "meaning": "how are you",
             "category": "greetings",
             "note": "Pronounced: wah deh pon",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wah_deh_pon.mp3",
             "imageKey": "question.png"
           },
           {
             "id": "patois-greetings-wah-gwaan-bredda-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "What'S Up",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wah gwaan bredda",
             "meaning": "what's up",
             "category": "greetings",
             "note": "Pronounced: wah gwan bred-da",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wah_gwaan_bredda.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "patois-greetings-lata-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "See You Later",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "lata",
             "meaning": "see you later",
             "category": "greetings",
             "note": "Pronounced: lay-ta",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "lata.mp3",
             "imageKey": "wave.png"
           },
           {
             "id": "patois-greetings-gud-nite-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Good Night",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "gud nite",
             "meaning": "good night",
             "category": "greetings",
             "note": "Pronounced: gud nite",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "gud_nite.mp3",
             "imageKey": "night.png"
           },
           {
             "id": "patois-greetings-welcome-8",
-            "order": 8,
-            "status": "published",
-            "version": 1,
-            "title": "Welcome",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "welcome",
             "meaning": "welcome",
             "category": "greetings",
             "note": "Pronounced: wel-kum",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "welcome.mp3",
             "imageKey": "welcome.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "patois-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-greetings-wah-gwaan-1",
+              "patois-greetings-mawnin-2",
+              "patois-greetings-likkle-more-3"
+            ],
+            "legacyLessonIds": [
+              "patois-greetings-wah-gwaan-1",
+              "patois-greetings-mawnin-2",
+              "patois-greetings-likkle-more-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-greetings-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-greetings-wah-deh-pon-4",
+              "patois-greetings-wah-gwaan-bredda-5",
+              "patois-greetings-lata-6"
+            ],
+            "legacyLessonIds": [
+              "patois-greetings-wah-deh-pon-4",
+              "patois-greetings-wah-gwaan-bredda-5",
+              "patois-greetings-lata-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-greetings-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 3",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-greetings-gud-nite-7",
+              "patois-greetings-welcome-8"
+            ],
+            "legacyLessonIds": [
+              "patois-greetings-gud-nite-7",
+              "patois-greetings-welcome-8"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -162,125 +188,157 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "patois-family-mada-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mada",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: mah-da",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mada.mp3",
             "imageKey": "mother.png"
           },
           {
             "id": "patois-family-fada-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Father",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "fada",
             "meaning": "father",
             "category": "family",
             "note": "Pronounced: fah-da",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "fada.mp3",
             "imageKey": "father.png"
           },
           {
             "id": "patois-family-bredda-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Brother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bredda",
             "meaning": "brother",
             "category": "family",
             "note": "Pronounced: bred-da",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bredda.mp3",
             "imageKey": "brother.png"
           },
           {
             "id": "patois-family-sistren-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Sister",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "sistren",
             "meaning": "sister",
             "category": "family",
             "note": "Pronounced: sis-tren",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "sistren.mp3",
             "imageKey": "sister.png"
           },
           {
             "id": "patois-family-pickney-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Child",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "pickney",
             "meaning": "child",
             "category": "family",
             "note": "Pronounced: pick-knee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "pickney.mp3",
             "imageKey": "child.png"
           },
           {
             "id": "patois-family-granmada-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Grandmother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "granmada",
             "meaning": "grandmother",
             "category": "family",
             "note": "Pronounced: gran-mah-da",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "granmada.mp3",
             "imageKey": "grandmother.png"
           },
           {
             "id": "patois-family-bredren-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Friend",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bredren",
             "meaning": "friend",
             "category": "family",
             "note": "Pronounced: bred-ren",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bredren.mp3",
             "imageKey": "friend.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "patois-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-family-mada-1",
+              "patois-family-fada-2",
+              "patois-family-bredda-3"
+            ],
+            "legacyLessonIds": [
+              "patois-family-mada-1",
+              "patois-family-fada-2",
+              "patois-family-bredda-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-family-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Family 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-family-sistren-4",
+              "patois-family-pickney-5",
+              "patois-family-granmada-6"
+            ],
+            "legacyLessonIds": [
+              "patois-family-sistren-4",
+              "patois-family-pickney-5",
+              "patois-family-granmada-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-family-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Family 3",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-family-bredren-7"
+            ],
+            "legacyLessonIds": [
+              "patois-family-bredren-7"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -292,142 +350,168 @@ export const coursesData = {
         "description": "Food",
         "goal": "Order food and name dishes",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "patois-food-rice-an-peas-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Rice And Peas",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "rice an peas",
             "meaning": "rice and peas",
             "category": "food",
             "note": "Pronounced: rice an peez",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "rice_peas.mp3",
             "imageKey": "rice_peas.png"
           },
           {
             "id": "patois-food-plantain-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Plantain",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "plantain",
             "meaning": "plantain",
             "category": "food",
             "note": "Pronounced: plan-tin",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "plantain.mp3",
             "imageKey": "plantain.png"
           },
           {
             "id": "patois-food-bread-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Bread",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bread",
             "meaning": "bread",
             "category": "food",
             "note": "Pronounced: bred",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bread.mp3",
             "imageKey": "bread.png"
           },
           {
             "id": "patois-food-food-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Food",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "food",
             "meaning": "food",
             "category": "food",
             "note": "Pronounced: fuud",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "food.mp3",
             "imageKey": "food.png"
           },
           {
             "id": "patois-food-hungry-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Hungry",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "hungry",
             "meaning": "hungry",
             "category": "food",
             "note": "Pronounced: hung-ree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "hungry.mp3",
             "imageKey": "hungry.png"
           },
           {
             "id": "patois-food-wata-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Water",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wata",
             "meaning": "water",
             "category": "food",
             "note": "Pronounced: wah-ta",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wata.mp3",
             "imageKey": "water.png"
           },
           {
             "id": "patois-food-jerk-chicken-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Jerk Chicken",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "jerk chicken",
             "meaning": "jerk chicken",
             "category": "food",
             "note": "Pronounced: jurk chik-en",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "jerk_chicken.mp3",
             "imageKey": "jerk_chicken.png"
           },
           {
             "id": "patois-food-ackee-8",
-            "order": 8,
-            "status": "published",
-            "version": 1,
-            "title": "Ackee",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ackee",
             "meaning": "ackee",
             "category": "food",
             "note": "Pronounced: ak-ee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ackee.mp3",
             "imageKey": "ackee.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "patois-food-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Food 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-food-rice-an-peas-1",
+              "patois-food-plantain-2",
+              "patois-food-bread-3"
+            ],
+            "legacyLessonIds": [
+              "patois-food-rice-an-peas-1",
+              "patois-food-plantain-2",
+              "patois-food-bread-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-food-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Food 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-food-food-4",
+              "patois-food-hungry-5",
+              "patois-food-wata-6"
+            ],
+            "legacyLessonIds": [
+              "patois-food-food-4",
+              "patois-food-hungry-5",
+              "patois-food-wata-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-food-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Food 3",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-food-jerk-chicken-7",
+              "patois-food-ackee-8"
+            ],
+            "legacyLessonIds": [
+              "patois-food-jerk-chicken-7",
+              "patois-food-ackee-8"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -439,91 +523,113 @@ export const coursesData = {
         "description": "Numbers",
         "goal": "Count and use numbers 1–100",
         "themeColor": "#237A4B",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "patois-numbers-one-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "One",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "one",
             "meaning": "one",
             "category": "numbers",
             "note": "Pronounced: wun",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "one.mp3",
             "imageKey": "1.png"
           },
           {
             "id": "patois-numbers-two-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Two",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "two",
             "meaning": "two",
             "category": "numbers",
             "note": "Pronounced: tuu",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "two.mp3",
             "imageKey": "2.png"
           },
           {
             "id": "patois-numbers-three-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Three",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "three",
             "meaning": "three",
             "category": "numbers",
             "note": "Pronounced: tree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "three.mp3",
             "imageKey": "3.png"
           },
           {
             "id": "patois-numbers-four-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Four",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "four",
             "meaning": "four",
             "category": "numbers",
             "note": "Pronounced: faw",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "four.mp3",
             "imageKey": "4.png"
           },
           {
             "id": "patois-numbers-five-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Five",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "five",
             "meaning": "five",
             "category": "numbers",
             "note": "Pronounced: faiv",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "five.mp3",
             "imageKey": "5.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "patois-numbers-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-numbers-one-1",
+              "patois-numbers-two-2",
+              "patois-numbers-three-3"
+            ],
+            "legacyLessonIds": [
+              "patois-numbers-one-1",
+              "patois-numbers-two-2",
+              "patois-numbers-three-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-numbers-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 2",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-numbers-four-4",
+              "patois-numbers-five-5"
+            ],
+            "legacyLessonIds": [
+              "patois-numbers-four-4",
+              "patois-numbers-five-5"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -535,91 +641,113 @@ export const coursesData = {
         "description": "Emotions",
         "goal": "Express feelings and moods",
         "themeColor": "#B9523F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "patois-emotions-appy-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Happy",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "appy",
             "meaning": "happy",
             "category": "emotions",
             "note": "Pronounced: ap-ee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "appy.mp3",
             "imageKey": "happy.png"
           },
           {
             "id": "patois-emotions-sad-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Sad",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "sad",
             "meaning": "sad",
             "category": "emotions",
             "note": "Pronounced: sad",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "sad.mp3",
             "imageKey": "sad.png"
           },
           {
             "id": "patois-emotions-vex-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Angry",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "vex",
             "meaning": "angry",
             "category": "emotions",
             "note": "Pronounced: veks",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "vex.mp3",
             "imageKey": "angry.png"
           },
           {
             "id": "patois-emotions-tired-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Tired",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "tired",
             "meaning": "tired",
             "category": "emotions",
             "note": "Pronounced: tie-red",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "tired.mp3",
             "imageKey": "tired.png"
           },
           {
             "id": "patois-emotions-love-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Love",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "love",
             "meaning": "love",
             "category": "emotions",
             "note": "Pronounced: luv",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "love.mp3",
             "imageKey": "love.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "patois-emotions-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-emotions-appy-1",
+              "patois-emotions-sad-2",
+              "patois-emotions-vex-3"
+            ],
+            "legacyLessonIds": [
+              "patois-emotions-appy-1",
+              "patois-emotions-sad-2",
+              "patois-emotions-vex-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-emotions-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 2",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-emotions-tired-4",
+              "patois-emotions-love-5"
+            ],
+            "legacyLessonIds": [
+              "patois-emotions-tired-4",
+              "patois-emotions-love-5"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -631,108 +759,124 @@ export const coursesData = {
         "description": "Culture",
         "goal": "Cultural phrases and traditions",
         "themeColor": "#28766F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "patois-culture-respek-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Respect",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "respek",
             "meaning": "respect",
             "category": "culture",
             "note": "Pronounced: reh-spek",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "respek.mp3",
             "imageKey": "respect.png"
           },
           {
             "id": "patois-culture-irie-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Everything Is Fine",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "irie",
             "meaning": "everything is fine",
             "category": "culture",
             "note": "Pronounced: eye-ree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "irie.mp3",
             "imageKey": "peace.png"
           },
           {
             "id": "patois-culture-tru-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "True",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "tru",
             "meaning": "true",
             "category": "culture",
             "note": "Pronounced: truu",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "tru.mp3",
             "imageKey": "truth.png"
           },
           {
             "id": "patois-culture-mek-wi-go-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Let'S Go",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mek wi go",
             "meaning": "let's go",
             "category": "culture",
             "note": "Pronounced: mek wi go",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mek_wi_go.mp3",
             "imageKey": "go.png"
           },
           {
             "id": "patois-culture-foolishness-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Nonsense",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "foolishness",
             "meaning": "nonsense",
             "category": "culture",
             "note": "Pronounced: foo-lish-nes",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "foolishness.mp3",
             "imageKey": "no.png"
           },
           {
             "id": "patois-culture-mek-haste-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Hurry Up",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mek haste",
             "meaning": "hurry up",
             "category": "culture",
             "note": "Pronounced: mek heist",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mek_haste.mp3",
             "imageKey": "run.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "patois-culture-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-culture-respek-1",
+              "patois-culture-irie-2",
+              "patois-culture-tru-3"
+            ],
+            "legacyLessonIds": [
+              "patois-culture-respek-1",
+              "patois-culture-irie-2",
+              "patois-culture-tru-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "patois-culture-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "patois-culture-mek-wi-go-4",
+              "patois-culture-foolishness-5",
+              "patois-culture-mek-haste-6"
+            ],
+            "legacyLessonIds": [
+              "patois-culture-mek-wi-go-4",
+              "patois-culture-foolishness-5",
+              "patois-culture-mek-haste-6"
+            ],
+            "xp": 15
           }
         ]
       }
@@ -752,159 +896,179 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "swahili-greetings-habari-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "habari",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: ha-BAH-ree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "habari.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "swahili-greetings-habari-za-asubuhi-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Good Morning",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "habari za asubuhi",
             "meaning": "good morning",
             "category": "greetings",
             "note": "Pronounced: ha-BAH-ree za ah-soo-BOO-hee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "habari_asubuhi.mp3",
             "imageKey": "morning.png"
           },
           {
             "id": "swahili-greetings-kwaheri-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "kwaheri",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: kwa-HEH-ree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "kwaheri.mp3",
             "imageKey": "goodbye.png"
           },
           {
             "id": "swahili-greetings-habari-yako-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "How Are You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "habari yako",
             "meaning": "how are you",
             "category": "greetings",
             "note": "Pronounced: ha-BAH-ree YAH-ko",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "habari_yako.mp3",
             "imageKey": "question.png"
           },
           {
             "id": "swahili-greetings-nzuri-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Fine / Good",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nzuri",
             "meaning": "fine / good",
             "category": "greetings",
             "note": "Pronounced: NZOO-ree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nzuri.mp3",
             "imageKey": "good.png"
           },
           {
             "id": "swahili-greetings-asante-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Thank You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "asante",
             "meaning": "thank you",
             "category": "greetings",
             "note": "Pronounced: ah-SAN-teh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "asante.mp3",
             "imageKey": "thankyou.png"
           },
           {
             "id": "swahili-greetings-tafadhali-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Please",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "tafadhali",
             "meaning": "please",
             "category": "greetings",
             "note": "Pronounced: ta-fa-DHA-lee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "tafadhali.mp3",
             "imageKey": "please.png"
           },
           {
             "id": "swahili-greetings-ndiyo-8",
-            "order": 8,
-            "status": "published",
-            "version": 1,
-            "title": "Yes",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ndiyo",
             "meaning": "yes",
             "category": "greetings",
             "note": "Pronounced: n-DEE-yo",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ndiyo.mp3",
             "imageKey": "yes.png"
           },
           {
             "id": "swahili-greetings-hapana-9",
-            "order": 9,
-            "status": "published",
-            "version": 1,
-            "title": "No",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "hapana",
             "meaning": "no",
             "category": "greetings",
             "note": "Pronounced: ha-PAH-na",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "hapana.mp3",
             "imageKey": "no.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "swahili-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-greetings-habari-1",
+              "swahili-greetings-habari-za-asubuhi-2",
+              "swahili-greetings-kwaheri-3"
+            ],
+            "legacyLessonIds": [
+              "swahili-greetings-habari-1",
+              "swahili-greetings-habari-za-asubuhi-2",
+              "swahili-greetings-kwaheri-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "swahili-greetings-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-greetings-habari-yako-4",
+              "swahili-greetings-nzuri-5",
+              "swahili-greetings-asante-6"
+            ],
+            "legacyLessonIds": [
+              "swahili-greetings-habari-yako-4",
+              "swahili-greetings-nzuri-5",
+              "swahili-greetings-asante-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "swahili-greetings-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 3",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-greetings-tafadhali-7",
+              "swahili-greetings-ndiyo-8",
+              "swahili-greetings-hapana-9"
+            ],
+            "legacyLessonIds": [
+              "swahili-greetings-tafadhali-7",
+              "swahili-greetings-ndiyo-8",
+              "swahili-greetings-hapana-9"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -916,74 +1080,102 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "swahili-family-mama-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mama",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: MAH-ma",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mama.mp3",
             "imageKey": "mother.png"
           },
           {
             "id": "swahili-family-baba-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Father",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "baba",
             "meaning": "father",
             "category": "family",
             "note": "Pronounced: BAH-ba",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "baba.mp3",
             "imageKey": "father.png"
           },
           {
             "id": "swahili-family-mtoto-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Child",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mtoto",
             "meaning": "child",
             "category": "family",
             "note": "Pronounced: m-TOH-to",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mtoto.mp3",
             "imageKey": "child.png"
           },
           {
             "id": "swahili-family-rafiki-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Friend",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "rafiki",
             "meaning": "friend",
             "category": "family",
             "note": "Pronounced: ra-FEE-kee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "rafiki.mp3",
             "imageKey": "friend.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "swahili-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-family-mama-1",
+              "swahili-family-baba-2",
+              "swahili-family-mtoto-3"
+            ],
+            "legacyLessonIds": [
+              "swahili-family-mama-1",
+              "swahili-family-baba-2",
+              "swahili-family-mtoto-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "swahili-family-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Family 2",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-family-rafiki-4"
+            ],
+            "legacyLessonIds": [
+              "swahili-family-rafiki-4"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -995,74 +1187,102 @@ export const coursesData = {
         "description": "Food",
         "goal": "Order food and name dishes",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "swahili-food-chakula-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Food",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "chakula",
             "meaning": "food",
             "category": "food",
             "note": "Pronounced: cha-KOO-la",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "chakula.mp3",
             "imageKey": "food.png"
           },
           {
             "id": "swahili-food-maji-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Water",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "maji",
             "meaning": "water",
             "category": "food",
             "note": "Pronounced: MAH-jee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "maji.mp3",
             "imageKey": "water.png"
           },
           {
             "id": "swahili-food-kula-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Eat",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "kula",
             "meaning": "eat",
             "category": "food",
             "note": "Pronounced: KOO-la",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "kula.mp3",
             "imageKey": "eating.png"
           },
           {
             "id": "swahili-food-wali-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Rice",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wali",
             "meaning": "rice",
             "category": "food",
             "note": "Pronounced: WAH-lee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wali.mp3",
             "imageKey": "rice.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "swahili-food-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Food 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-food-chakula-1",
+              "swahili-food-maji-2",
+              "swahili-food-kula-3"
+            ],
+            "legacyLessonIds": [
+              "swahili-food-chakula-1",
+              "swahili-food-maji-2",
+              "swahili-food-kula-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "swahili-food-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Food 2",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-food-wali-4"
+            ],
+            "legacyLessonIds": [
+              "swahili-food-wali-4"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1074,91 +1294,113 @@ export const coursesData = {
         "description": "Numbers",
         "goal": "Count and use numbers 1–100",
         "themeColor": "#237A4B",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "swahili-numbers-moja-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "One",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "moja",
             "meaning": "one",
             "category": "numbers",
             "note": "Pronounced: MOH-ja",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "moja.mp3",
             "imageKey": "1.png"
           },
           {
             "id": "swahili-numbers-mbili-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Two",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mbili",
             "meaning": "two",
             "category": "numbers",
             "note": "Pronounced: m-BEE-lee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mbili.mp3",
             "imageKey": "2.png"
           },
           {
             "id": "swahili-numbers-tatu-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Three",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "tatu",
             "meaning": "three",
             "category": "numbers",
             "note": "Pronounced: TAH-too",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "tatu.mp3",
             "imageKey": "3.png"
           },
           {
             "id": "swahili-numbers-nne-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Four",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nne",
             "meaning": "four",
             "category": "numbers",
             "note": "Pronounced: n-NEH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nne.mp3",
             "imageKey": "4.png"
           },
           {
             "id": "swahili-numbers-tano-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Five",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "tano",
             "meaning": "five",
             "category": "numbers",
             "note": "Pronounced: TAH-no",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "tano.mp3",
             "imageKey": "5.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "swahili-numbers-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-numbers-moja-1",
+              "swahili-numbers-mbili-2",
+              "swahili-numbers-tatu-3"
+            ],
+            "legacyLessonIds": [
+              "swahili-numbers-moja-1",
+              "swahili-numbers-mbili-2",
+              "swahili-numbers-tatu-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "swahili-numbers-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 2",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-numbers-nne-4",
+              "swahili-numbers-tano-5"
+            ],
+            "legacyLessonIds": [
+              "swahili-numbers-nne-4",
+              "swahili-numbers-tano-5"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1170,40 +1412,58 @@ export const coursesData = {
         "description": "Emotions",
         "goal": "Express feelings and moods",
         "themeColor": "#B9523F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "swahili-emotions-upendo-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Love",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "upendo",
             "meaning": "love",
             "category": "emotions",
             "note": "Pronounced: oo-PEN-do",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "upendo.mp3",
             "imageKey": "love.png"
           },
           {
             "id": "swahili-emotions-furaha-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Happy",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "furaha",
             "meaning": "happy",
             "category": "emotions",
             "note": "Pronounced: foo-RAH-ha",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "furaha.mp3",
             "imageKey": "happy.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "swahili-emotions-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-emotions-upendo-1",
+              "swahili-emotions-furaha-2"
+            ],
+            "legacyLessonIds": [
+              "swahili-emotions-upendo-1",
+              "swahili-emotions-furaha-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1215,57 +1475,69 @@ export const coursesData = {
         "description": "Culture",
         "goal": "Cultural phrases and traditions",
         "themeColor": "#28766F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "swahili-culture-umoja-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Unity",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "umoja",
             "meaning": "unity",
             "category": "culture",
             "note": "Pronounced: oo-MOH-ja",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "umoja.mp3",
             "imageKey": "unity.png"
           },
           {
             "id": "swahili-culture-uhuru-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Freedom",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "uhuru",
             "meaning": "freedom",
             "category": "culture",
             "note": "Pronounced: oo-HOO-roo",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "uhuru.mp3",
             "imageKey": "freedom.png"
           },
           {
             "id": "swahili-culture-jamaa-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Community",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "jamaa",
             "meaning": "community",
             "category": "culture",
             "note": "Pronounced: ja-MAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "jamaa.mp3",
             "imageKey": "community.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "swahili-culture-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "swahili-culture-umoja-1",
+              "swahili-culture-uhuru-2",
+              "swahili-culture-jamaa-3"
+            ],
+            "legacyLessonIds": [
+              "swahili-culture-umoja-1",
+              "swahili-culture-uhuru-2",
+              "swahili-culture-jamaa-3"
+            ],
+            "xp": 15
           }
         ]
       }
@@ -1285,125 +1557,157 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "igbo-greetings-nne-nna-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nne / nna",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: n-neh / n-nah",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nne.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "igbo-greetings-ututu-oma-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Good Morning",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ụtụtụ ọma",
             "meaning": "good morning",
             "category": "greetings",
             "note": "Pronounced: oo-too-too OH-ma",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ututu_oma.mp3",
             "imageKey": "morning.png"
           },
           {
             "id": "igbo-greetings-ka-o-di-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ka ọ dị",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: ka oh dee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ka_o_di.mp3",
             "imageKey": "goodbye.png"
           },
           {
             "id": "igbo-greetings-nnoo-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Welcome",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nnọọ",
             "meaning": "welcome",
             "category": "greetings",
             "note": "Pronounced: n-NOH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nnoo.mp3",
             "imageKey": "welcome.png"
           },
           {
             "id": "igbo-greetings-daalu-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Thank You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "daalụ",
             "meaning": "thank you",
             "category": "greetings",
             "note": "Pronounced: DAH-loo",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "daalu.mp3",
             "imageKey": "thankyou.png"
           },
           {
             "id": "igbo-greetings-ee-i-bu-eziokwu-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Yes",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ee / ị bụ eziokwu",
             "meaning": "yes",
             "category": "greetings",
             "note": "Pronounced: EH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ee.mp3",
             "imageKey": "yes.png"
           },
           {
             "id": "igbo-greetings-mba-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "No",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mba",
             "meaning": "no",
             "category": "greetings",
             "note": "Pronounced: m-BAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mba.mp3",
             "imageKey": "no.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "igbo-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-greetings-nne-nna-1",
+              "igbo-greetings-ututu-oma-2",
+              "igbo-greetings-ka-o-di-3"
+            ],
+            "legacyLessonIds": [
+              "igbo-greetings-nne-nna-1",
+              "igbo-greetings-ututu-oma-2",
+              "igbo-greetings-ka-o-di-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "igbo-greetings-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-greetings-nnoo-4",
+              "igbo-greetings-daalu-5",
+              "igbo-greetings-ee-i-bu-eziokwu-6"
+            ],
+            "legacyLessonIds": [
+              "igbo-greetings-nnoo-4",
+              "igbo-greetings-daalu-5",
+              "igbo-greetings-ee-i-bu-eziokwu-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "igbo-greetings-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 3",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-greetings-mba-7"
+            ],
+            "legacyLessonIds": [
+              "igbo-greetings-mba-7"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1415,91 +1719,113 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "igbo-family-nne-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nne",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: n-NEH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nne_family.mp3",
             "imageKey": "mother.png"
           },
           {
             "id": "igbo-family-nna-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Father",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nna",
             "meaning": "father",
             "category": "family",
             "note": "Pronounced: n-NAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nna.mp3",
             "imageKey": "father.png"
           },
           {
             "id": "igbo-family-nwanna-nwoke-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Brother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nwanna nwoke",
             "meaning": "brother",
             "category": "family",
             "note": "Pronounced: nwan-na nwoh-keh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nwanna_nwoke.mp3",
             "imageKey": "brother.png"
           },
           {
             "id": "igbo-family-nwanna-nwanyi-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Sister",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nwanna nwanyị",
             "meaning": "sister",
             "category": "family",
             "note": "Pronounced: nwan-na nwan-yee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nwanna_nwanyi.mp3",
             "imageKey": "sister.png"
           },
           {
             "id": "igbo-family-nwa-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Child",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nwa",
             "meaning": "child",
             "category": "family",
             "note": "Pronounced: n-WAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nwa.mp3",
             "imageKey": "child.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "igbo-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-family-nne-1",
+              "igbo-family-nna-2",
+              "igbo-family-nwanna-nwoke-3"
+            ],
+            "legacyLessonIds": [
+              "igbo-family-nne-1",
+              "igbo-family-nna-2",
+              "igbo-family-nwanna-nwoke-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "igbo-family-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Family 2",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-family-nwanna-nwanyi-4",
+              "igbo-family-nwa-5"
+            ],
+            "legacyLessonIds": [
+              "igbo-family-nwanna-nwanyi-4",
+              "igbo-family-nwa-5"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1511,74 +1837,102 @@ export const coursesData = {
         "description": "Food",
         "goal": "Order food and name dishes",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "igbo-food-nri-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Food",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nri",
             "meaning": "food",
             "category": "food",
             "note": "Pronounced: n-REE",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nri.mp3",
             "imageKey": "food.png"
           },
           {
             "id": "igbo-food-mmiri-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Water",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mmiri",
             "meaning": "water",
             "category": "food",
             "note": "Pronounced: m-MEE-ree",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mmiri.mp3",
             "imageKey": "water.png"
           },
           {
             "id": "igbo-food-ji-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Yam",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ji",
             "meaning": "yam",
             "category": "food",
             "note": "Pronounced: jee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ji.mp3",
             "imageKey": "yam.png"
           },
           {
             "id": "igbo-food-mmanu-nri-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Palm Oil",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mmanụ nri",
             "meaning": "palm oil",
             "category": "food",
             "note": "Pronounced: m-MAH-noo n-REE",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mmanu_nri.mp3",
             "imageKey": "palm_oil.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "igbo-food-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Food 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-food-nri-1",
+              "igbo-food-mmiri-2",
+              "igbo-food-ji-3"
+            ],
+            "legacyLessonIds": [
+              "igbo-food-nri-1",
+              "igbo-food-mmiri-2",
+              "igbo-food-ji-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "igbo-food-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Food 2",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-food-mmanu-nri-4"
+            ],
+            "legacyLessonIds": [
+              "igbo-food-mmanu-nri-4"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1590,91 +1944,113 @@ export const coursesData = {
         "description": "Numbers",
         "goal": "Count and use numbers 1–100",
         "themeColor": "#237A4B",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "igbo-numbers-otu-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "One",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "otu",
             "meaning": "one",
             "category": "numbers",
             "note": "Pronounced: OH-too",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "otu.mp3",
             "imageKey": "1.png"
           },
           {
             "id": "igbo-numbers-abuo-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Two",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "abụọ",
             "meaning": "two",
             "category": "numbers",
             "note": "Pronounced: ah-BWOH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "abuo.mp3",
             "imageKey": "2.png"
           },
           {
             "id": "igbo-numbers-ato-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Three",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "atọ",
             "meaning": "three",
             "category": "numbers",
             "note": "Pronounced: ah-TOH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ato.mp3",
             "imageKey": "3.png"
           },
           {
             "id": "igbo-numbers-ano-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Four",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "anọ",
             "meaning": "four",
             "category": "numbers",
             "note": "Pronounced: ah-NOH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ano.mp3",
             "imageKey": "4.png"
           },
           {
             "id": "igbo-numbers-ise-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Five",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ise",
             "meaning": "five",
             "category": "numbers",
             "note": "Pronounced: ee-SEH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ise.mp3",
             "imageKey": "5.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "igbo-numbers-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-numbers-otu-1",
+              "igbo-numbers-abuo-2",
+              "igbo-numbers-ato-3"
+            ],
+            "legacyLessonIds": [
+              "igbo-numbers-otu-1",
+              "igbo-numbers-abuo-2",
+              "igbo-numbers-ato-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "igbo-numbers-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 2",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-numbers-ano-4",
+              "igbo-numbers-ise-5"
+            ],
+            "legacyLessonIds": [
+              "igbo-numbers-ano-4",
+              "igbo-numbers-ise-5"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1686,23 +2062,47 @@ export const coursesData = {
         "description": "Emotions",
         "goal": "Express feelings and moods",
         "themeColor": "#B9523F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "igbo-emotions-ihunanya-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Love",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ịhụnanya",
             "meaning": "love",
             "category": "emotions",
             "note": "Pronounced: ee-HOO-na-nya",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ihunanya.mp3",
             "imageKey": "love.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "igbo-emotions-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-emotions-ihunanya-1"
+            ],
+            "legacyLessonIds": [
+              "igbo-emotions-ihunanya-1"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1714,40 +2114,58 @@ export const coursesData = {
         "description": "Culture",
         "goal": "Cultural phrases and traditions",
         "themeColor": "#28766F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "igbo-culture-udo-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Peace",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "udo",
             "meaning": "peace",
             "category": "culture",
             "note": "Pronounced: OO-do",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "udo.mp3",
             "imageKey": "peace.png"
           },
           {
             "id": "igbo-culture-ike-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Strength",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ike",
             "meaning": "strength",
             "category": "culture",
             "note": "Pronounced: EE-keh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ike.mp3",
             "imageKey": "strength.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "igbo-culture-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "igbo-culture-udo-1",
+              "igbo-culture-ike-2"
+            ],
+            "legacyLessonIds": [
+              "igbo-culture-udo-1",
+              "igbo-culture-ike-2"
+            ],
+            "xp": 15
           }
         ]
       }
@@ -1767,142 +2185,168 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "wolof-greetings-salaam-aleekum-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "salaam aleekum",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: sa-LAHM a-LEY-kum",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "salaam.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "wolof-greetings-jamm-nga-fanaan-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Good Morning",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "jàmm nga fanaan",
             "meaning": "good morning",
             "category": "greetings",
             "note": "Pronounced: jam nga fa-NAHN",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "jamm_fanaan.mp3",
             "imageKey": "morning.png"
           },
           {
             "id": "wolof-greetings-ba-beneen-yoon-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ba beneen yoon",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: ba be-NEYN yoon",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ba_beneen.mp3",
             "imageKey": "goodbye.png"
           },
           {
             "id": "wolof-greetings-nanga-def-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "How Are You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "nanga def",
             "meaning": "how are you",
             "category": "greetings",
             "note": "Pronounced: NAN-ga def",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nanga_def.mp3",
             "imageKey": "question.png"
           },
           {
             "id": "wolof-greetings-maa-ngi-fi-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Fine",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "maa ngi fi",
             "meaning": "fine",
             "category": "greetings",
             "note": "Pronounced: mah ngee fee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "maangi_fi.mp3",
             "imageKey": "good.png"
           },
           {
             "id": "wolof-greetings-jerejef-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Thank You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "jërejëf",
             "meaning": "thank you",
             "category": "greetings",
             "note": "Pronounced: JEH-reh-jef",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "jerejef.mp3",
             "imageKey": "thankyou.png"
           },
           {
             "id": "wolof-greetings-waaw-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Yes",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "waaw",
             "meaning": "yes",
             "category": "greetings",
             "note": "Pronounced: wahw",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "waaw.mp3",
             "imageKey": "yes.png"
           },
           {
             "id": "wolof-greetings-deedeet-8",
-            "order": 8,
-            "status": "published",
-            "version": 1,
-            "title": "No",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "déedéet",
             "meaning": "no",
             "category": "greetings",
             "note": "Pronounced: DEH-det",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "deedet.mp3",
             "imageKey": "no.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "wolof-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-greetings-salaam-aleekum-1",
+              "wolof-greetings-jamm-nga-fanaan-2",
+              "wolof-greetings-ba-beneen-yoon-3"
+            ],
+            "legacyLessonIds": [
+              "wolof-greetings-salaam-aleekum-1",
+              "wolof-greetings-jamm-nga-fanaan-2",
+              "wolof-greetings-ba-beneen-yoon-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "wolof-greetings-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-greetings-nanga-def-4",
+              "wolof-greetings-maa-ngi-fi-5",
+              "wolof-greetings-jerejef-6"
+            ],
+            "legacyLessonIds": [
+              "wolof-greetings-nanga-def-4",
+              "wolof-greetings-maa-ngi-fi-5",
+              "wolof-greetings-jerejef-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "wolof-greetings-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 3",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-greetings-waaw-7",
+              "wolof-greetings-deedeet-8"
+            ],
+            "legacyLessonIds": [
+              "wolof-greetings-waaw-7",
+              "wolof-greetings-deedeet-8"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1914,57 +2358,69 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "wolof-family-yaay-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "yaay",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: yah-EE",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "yaay.mp3",
             "imageKey": "mother.png"
           },
           {
             "id": "wolof-family-baay-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Father",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "baay",
             "meaning": "father",
             "category": "family",
             "note": "Pronounced: bah-EE",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "baay.mp3",
             "imageKey": "father.png"
           },
           {
             "id": "wolof-family-xarit-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Friend",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "xarit",
             "meaning": "friend",
             "category": "family",
             "note": "Pronounced: kha-REET",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "xarit.mp3",
             "imageKey": "friend.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "wolof-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-family-yaay-1",
+              "wolof-family-baay-2",
+              "wolof-family-xarit-3"
+            ],
+            "legacyLessonIds": [
+              "wolof-family-yaay-1",
+              "wolof-family-baay-2",
+              "wolof-family-xarit-3"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -1976,40 +2432,58 @@ export const coursesData = {
         "description": "Food",
         "goal": "Order food and name dishes",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "wolof-food-lekk-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Food",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "lekk",
             "meaning": "food",
             "category": "food",
             "note": "Pronounced: lek",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "lekk.mp3",
             "imageKey": "food.png"
           },
           {
             "id": "wolof-food-ndox-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Water",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ndox",
             "meaning": "water",
             "category": "food",
             "note": "Pronounced: n-DOH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "ndox.mp3",
             "imageKey": "water.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "wolof-food-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Food 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-food-lekk-1",
+              "wolof-food-ndox-2"
+            ],
+            "legacyLessonIds": [
+              "wolof-food-lekk-1",
+              "wolof-food-ndox-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2021,57 +2495,69 @@ export const coursesData = {
         "description": "Numbers",
         "goal": "Count and use numbers 1–100",
         "themeColor": "#237A4B",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "wolof-numbers-benn-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "One",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "benn",
             "meaning": "one",
             "category": "numbers",
             "note": "Pronounced: ben",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "benn.mp3",
             "imageKey": "1.png"
           },
           {
             "id": "wolof-numbers-naar-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Two",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ñaar",
             "meaning": "two",
             "category": "numbers",
             "note": "Pronounced: nyahr",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "naar.mp3",
             "imageKey": "2.png"
           },
           {
             "id": "wolof-numbers-nett-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Three",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "ñett",
             "meaning": "three",
             "category": "numbers",
             "note": "Pronounced: nyet",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "nett.mp3",
             "imageKey": "3.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "wolof-numbers-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-numbers-benn-1",
+              "wolof-numbers-naar-2",
+              "wolof-numbers-nett-3"
+            ],
+            "legacyLessonIds": [
+              "wolof-numbers-benn-1",
+              "wolof-numbers-naar-2",
+              "wolof-numbers-nett-3"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2083,23 +2569,47 @@ export const coursesData = {
         "description": "Emotions",
         "goal": "Express feelings and moods",
         "themeColor": "#B9523F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "wolof-emotions-mbeggel-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Love",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mbëggël",
             "meaning": "love",
             "category": "emotions",
             "note": "Pronounced: m-BEH-gel",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mbegel.mp3",
             "imageKey": "love.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "wolof-emotions-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-emotions-mbeggel-1"
+            ],
+            "legacyLessonIds": [
+              "wolof-emotions-mbeggel-1"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2111,23 +2621,47 @@ export const coursesData = {
         "description": "Culture",
         "goal": "Cultural phrases and traditions",
         "themeColor": "#28766F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "wolof-culture-jamm-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Peace",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "jàmm",
             "meaning": "peace",
             "category": "culture",
             "note": "Pronounced: jam",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "jamm.mp3",
             "imageKey": "peace.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "wolof-culture-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "wolof-culture-jamm-1"
+            ],
+            "legacyLessonIds": [
+              "wolof-culture-jamm-1"
+            ],
+            "xp": 15
           }
         ]
       }
@@ -2147,159 +2681,179 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "haitian-greetings-bonjou-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bonjou",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: bon-JOO",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bonjou.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "haitian-greetings-bonjou-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Good Morning",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bonjou",
             "meaning": "good morning",
             "category": "greetings",
             "note": "Pronounced: bon-JOO",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bonjou_am.mp3",
             "imageKey": "morning.png"
           },
           {
             "id": "haitian-greetings-bonswa-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Good Evening",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bonswa",
             "meaning": "good evening",
             "category": "greetings",
             "note": "Pronounced: bon-SWAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bonswa.mp3",
             "imageKey": "evening.png"
           },
           {
             "id": "haitian-greetings-orevwa-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "orevwa",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: oh-reh-VWAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "orevwa.mp3",
             "imageKey": "goodbye.png"
           },
           {
             "id": "haitian-greetings-kijan-ou-ye-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "How Are You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "kijan ou ye",
             "meaning": "how are you",
             "category": "greetings",
             "note": "Pronounced: kee-JAN oo yeh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "kijan_ou_ye.mp3",
             "imageKey": "question.png"
           },
           {
             "id": "haitian-greetings-mwen-byen-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Fine",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mwen byen",
             "meaning": "fine",
             "category": "greetings",
             "note": "Pronounced: mwen BYEN",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mwen_byen.mp3",
             "imageKey": "good.png"
           },
           {
             "id": "haitian-greetings-mesi-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Thank You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mèsi",
             "meaning": "thank you",
             "category": "greetings",
             "note": "Pronounced: MEH-see",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mesi.mp3",
             "imageKey": "thankyou.png"
           },
           {
             "id": "haitian-greetings-wi-8",
-            "order": 8,
-            "status": "published",
-            "version": 1,
-            "title": "Yes",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wi",
             "meaning": "yes",
             "category": "greetings",
             "note": "Pronounced: wee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wi.mp3",
             "imageKey": "yes.png"
           },
           {
             "id": "haitian-greetings-non-9",
-            "order": 9,
-            "status": "published",
-            "version": 1,
-            "title": "No",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "non",
             "meaning": "no",
             "category": "greetings",
             "note": "Pronounced: nohn",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "non.mp3",
             "imageKey": "no.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "haitian-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-greetings-bonjou-1",
+              "haitian-greetings-bonjou-2",
+              "haitian-greetings-bonswa-3"
+            ],
+            "legacyLessonIds": [
+              "haitian-greetings-bonjou-1",
+              "haitian-greetings-bonjou-2",
+              "haitian-greetings-bonswa-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "haitian-greetings-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-greetings-orevwa-4",
+              "haitian-greetings-kijan-ou-ye-5",
+              "haitian-greetings-mwen-byen-6"
+            ],
+            "legacyLessonIds": [
+              "haitian-greetings-orevwa-4",
+              "haitian-greetings-kijan-ou-ye-5",
+              "haitian-greetings-mwen-byen-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "haitian-greetings-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 3",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-greetings-mesi-7",
+              "haitian-greetings-wi-8",
+              "haitian-greetings-non-9"
+            ],
+            "legacyLessonIds": [
+              "haitian-greetings-mesi-7",
+              "haitian-greetings-wi-8",
+              "haitian-greetings-non-9"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2311,40 +2865,58 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "haitian-family-manman-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "manman",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: man-MAN",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "manman.mp3",
             "imageKey": "mother.png"
           },
           {
             "id": "haitian-family-papa-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Father",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "papa",
             "meaning": "father",
             "category": "family",
             "note": "Pronounced: pa-PAH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "papa.mp3",
             "imageKey": "father.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "haitian-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-family-manman-1",
+              "haitian-family-papa-2"
+            ],
+            "legacyLessonIds": [
+              "haitian-family-manman-1",
+              "haitian-family-papa-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2356,40 +2928,58 @@ export const coursesData = {
         "description": "Food",
         "goal": "Order food and name dishes",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "haitian-food-manje-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Food",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "manje",
             "meaning": "food",
             "category": "food",
             "note": "Pronounced: man-JEH",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "manje.mp3",
             "imageKey": "food.png"
           },
           {
             "id": "haitian-food-dlo-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Water",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "dlo",
             "meaning": "water",
             "category": "food",
             "note": "Pronounced: dloh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "dlo.mp3",
             "imageKey": "water.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "haitian-food-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Food 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-food-manje-1",
+              "haitian-food-dlo-2"
+            ],
+            "legacyLessonIds": [
+              "haitian-food-manje-1",
+              "haitian-food-dlo-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2401,23 +2991,47 @@ export const coursesData = {
         "description": "Emotions",
         "goal": "Express feelings and moods",
         "themeColor": "#237A4B",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "haitian-emotions-renmen-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Love",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "renmen",
             "meaning": "love",
             "category": "emotions",
             "note": "Pronounced: ren-MEN",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "renmen.mp3",
             "imageKey": "love.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "haitian-emotions-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-emotions-renmen-1"
+            ],
+            "legacyLessonIds": [
+              "haitian-emotions-renmen-1"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2429,23 +3043,47 @@ export const coursesData = {
         "description": "Culture",
         "goal": "Cultural phrases and traditions",
         "themeColor": "#B9523F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "haitian-culture-libete-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Freedom",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "libète",
             "meaning": "freedom",
             "category": "culture",
             "note": "Pronounced: lee-BEH-teh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "libete.mp3",
             "imageKey": "freedom.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "haitian-culture-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "haitian-culture-libete-1"
+            ],
+            "legacyLessonIds": [
+              "haitian-culture-libete-1"
+            ],
+            "xp": 15
           }
         ]
       }
@@ -2472,91 +3110,113 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "belizean-greetings-weh-di-go-aan-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "weh di go aan",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: weh dee go on",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "weh_di_go.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "belizean-greetings-mawnin-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Good Morning",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mawnin",
             "meaning": "good morning",
             "category": "greetings",
             "note": "Pronounced: maw-nin",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mawnin_bz.mp3",
             "imageKey": "morning.png"
           },
           {
             "id": "belizean-greetings-lata-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "lata",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: lay-ta",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "lata_bz.mp3",
             "imageKey": "goodbye.png"
           },
           {
             "id": "belizean-greetings-how-yuh-do-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "How Are You",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "how yuh do",
             "meaning": "how are you",
             "category": "greetings",
             "note": "Pronounced: how yuh doo",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "how_yuh_do.mp3",
             "imageKey": "question.png"
           },
           {
             "id": "belizean-greetings-arait-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Fine",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "arait",
             "meaning": "fine",
             "category": "greetings",
             "note": "Pronounced: ah-RAIT",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "arait.mp3",
             "imageKey": "good.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "belizean-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "belizean-greetings-weh-di-go-aan-1",
+              "belizean-greetings-mawnin-2",
+              "belizean-greetings-lata-3"
+            ],
+            "legacyLessonIds": [
+              "belizean-greetings-weh-di-go-aan-1",
+              "belizean-greetings-mawnin-2",
+              "belizean-greetings-lata-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "belizean-greetings-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 2",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "belizean-greetings-how-yuh-do-4",
+              "belizean-greetings-arait-5"
+            ],
+            "legacyLessonIds": [
+              "belizean-greetings-how-yuh-do-4",
+              "belizean-greetings-arait-5"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2568,40 +3228,58 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "belizean-family-bredda-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Friend",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bredda",
             "meaning": "friend",
             "category": "family",
             "note": "Pronounced: bred-da",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bredda_bz.mp3",
             "imageKey": "friend.png"
           },
           {
             "id": "belizean-family-mama-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mama",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: mah-ma",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mama_bz.mp3",
             "imageKey": "mother.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "belizean-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "belizean-family-bredda-1",
+              "belizean-family-mama-2"
+            ],
+            "legacyLessonIds": [
+              "belizean-family-bredda-1",
+              "belizean-family-mama-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2613,40 +3291,58 @@ export const coursesData = {
         "description": "Food",
         "goal": "Order food and name dishes",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "belizean-food-fuud-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Food",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "fuud",
             "meaning": "food",
             "category": "food",
             "note": "Pronounced: fuud",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "fuud_bz.mp3",
             "imageKey": "food.png"
           },
           {
             "id": "belizean-food-rice-and-beans-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Rice And Beans",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "rice and beans",
             "meaning": "rice and beans",
             "category": "food",
             "note": "Pronounced: rice an beenz",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "rice_beans_bz.mp3",
             "imageKey": "rice_beans.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "belizean-food-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Food 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "food",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "belizean-food-fuud-1",
+              "belizean-food-rice-and-beans-2"
+            ],
+            "legacyLessonIds": [
+              "belizean-food-fuud-1",
+              "belizean-food-rice-and-beans-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2658,23 +3354,47 @@ export const coursesData = {
         "description": "Numbers",
         "goal": "Count and use numbers 1–100",
         "themeColor": "#237A4B",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "belizean-numbers-wan-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "One",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "wan",
             "meaning": "one",
             "category": "numbers",
             "note": "Pronounced: wan",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "wan_bz.mp3",
             "imageKey": "1.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "belizean-numbers-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Numbers 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "numbers",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "belizean-numbers-wan-1"
+            ],
+            "legacyLessonIds": [
+              "belizean-numbers-wan-1"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2686,23 +3406,47 @@ export const coursesData = {
         "description": "Emotions",
         "goal": "Express feelings and moods",
         "themeColor": "#B9523F",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "belizean-emotions-luv-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Love",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "luv",
             "meaning": "love",
             "category": "emotions",
             "note": "Pronounced: luv",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "luv_bz.mp3",
             "imageKey": "love.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "belizean-emotions-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Emotions 1",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "emotions",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "belizean-emotions-luv-1"
+            ],
+            "legacyLessonIds": [
+              "belizean-emotions-luv-1"
+            ],
+            "xp": 15
           }
         ]
       }
@@ -2722,57 +3466,69 @@ export const coursesData = {
         "description": "Greetings",
         "goal": "Say hello and goodbye",
         "themeColor": "#009B3A",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "aave-greetings-what-s-good-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "What'S Up",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "what's good",
             "meaning": "what's up",
             "category": "greetings",
             "note": "Pronounced: whuts good",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "whats_good.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "aave-greetings-aye-yo-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Hello",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "aye / yo",
             "meaning": "hello",
             "category": "greetings",
             "note": "Pronounced: ay / yoh",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "aye.mp3",
             "imageKey": "hello.png"
           },
           {
             "id": "aave-greetings-later-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "Goodbye",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "later",
             "meaning": "goodbye",
             "category": "greetings",
             "note": "Pronounced: lay-ter",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "later_aave.mp3",
             "imageKey": "goodbye.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "aave-greetings-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Greetings 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "greetings",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "aave-greetings-what-s-good-1",
+              "aave-greetings-aye-yo-2",
+              "aave-greetings-later-3"
+            ],
+            "legacyLessonIds": [
+              "aave-greetings-what-s-good-1",
+              "aave-greetings-aye-yo-2",
+              "aave-greetings-later-3"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2784,40 +3540,58 @@ export const coursesData = {
         "description": "Family",
         "goal": "Talk about family members",
         "themeColor": "#D4782C",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "aave-family-homie-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Friend",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "homie",
             "meaning": "friend",
             "category": "family",
             "note": "Pronounced: hoh-mee",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "homie.mp3",
             "imageKey": "friend.png"
           },
           {
             "id": "aave-family-mama-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "Mother",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "mama",
             "meaning": "mother",
             "category": "family",
             "note": "Pronounced: mah-ma",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "mama_aave.mp3",
             "imageKey": "mother.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "aave-family-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Family 1",
+            "subtitle": "2 real phrases · listen, match, and build",
+            "category": "family",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "aave-family-homie-1",
+              "aave-family-mama-2"
+            ],
+            "legacyLessonIds": [
+              "aave-family-homie-1",
+              "aave-family-mama-2"
+            ],
+            "xp": 15
           }
         ]
       },
@@ -2829,125 +3603,157 @@ export const coursesData = {
         "description": "Culture",
         "goal": "Cultural phrases and traditions",
         "themeColor": "#7B61A8",
-        "lessons": [
+        "exerciseTypes": [
+          "translate",
+          "listen",
+          "match",
+          "build_sentence"
+        ],
+        "vocabulary": [
           {
             "id": "aave-culture-fye-fire-1",
-            "order": 1,
-            "status": "published",
-            "version": 1,
-            "title": "Very Good / Excellent",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "fye / fire",
             "meaning": "very good / excellent",
             "category": "culture",
             "note": "Pronounced: fiye",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "fye.mp3",
             "imageKey": "good.png"
           },
           {
             "id": "aave-culture-no-cap-2",
-            "order": 2,
-            "status": "published",
-            "version": 1,
-            "title": "It'S All Good",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "no cap",
             "meaning": "it's all good",
             "category": "culture",
             "note": "Pronounced: no kap",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "no_cap.mp3",
             "imageKey": "truth.png"
           },
           {
             "id": "aave-culture-i-feel-you-3",
-            "order": 3,
-            "status": "published",
-            "version": 1,
-            "title": "I Understand",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "I feel you",
             "meaning": "I understand",
             "category": "culture",
             "note": "Pronounced: I feel you",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "feel_you.mp3",
             "imageKey": "understand.png"
           },
           {
             "id": "aave-culture-bussin-4",
-            "order": 4,
-            "status": "published",
-            "version": 1,
-            "title": "Impressive",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bussin",
             "meaning": "impressive",
             "category": "culture",
             "note": "Pronounced: bus-sin",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bussin.mp3",
             "imageKey": "good.png"
           },
           {
             "id": "aave-culture-periodt-5",
-            "order": 5,
-            "status": "published",
-            "version": 1,
-            "title": "Expression Of Surprise",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "periodt",
             "meaning": "expression of surprise",
             "category": "culture",
             "note": "Pronounced: pee-ree-udt",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "periodt.mp3",
             "imageKey": "surprise.png"
           },
           {
             "id": "aave-culture-bread-gwap-6",
-            "order": 6,
-            "status": "published",
-            "version": 1,
-            "title": "Money",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "bread / gwap",
             "meaning": "money",
             "category": "culture",
             "note": "Pronounced: bred / gwap",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "bread_money.mp3",
             "imageKey": "money.png"
           },
           {
             "id": "aave-culture-on-god-7",
-            "order": 7,
-            "status": "published",
-            "version": 1,
-            "title": "Authentic / Real",
-            "subtitle": "Tap the word to reveal its meaning",
             "phrase": "on god",
             "meaning": "authentic / real",
             "category": "culture",
             "note": "Pronounced: on god",
-            "type": "star",
-            "exerciseType": "tap_reveal",
-            "xp": 10,
             "audioKey": "on_god.mp3",
             "imageKey": "real.png"
+          }
+        ],
+        "lessons": [
+          {
+            "id": "aave-culture-lesson-1",
+            "order": 1,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 1",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "aave-culture-fye-fire-1",
+              "aave-culture-no-cap-2",
+              "aave-culture-i-feel-you-3"
+            ],
+            "legacyLessonIds": [
+              "aave-culture-fye-fire-1",
+              "aave-culture-no-cap-2",
+              "aave-culture-i-feel-you-3"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "aave-culture-lesson-2",
+            "order": 2,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 2",
+            "subtitle": "3 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "aave-culture-bussin-4",
+              "aave-culture-periodt-5",
+              "aave-culture-bread-gwap-6"
+            ],
+            "legacyLessonIds": [
+              "aave-culture-bussin-4",
+              "aave-culture-periodt-5",
+              "aave-culture-bread-gwap-6"
+            ],
+            "xp": 15
+          },
+          {
+            "id": "aave-culture-lesson-3",
+            "order": 3,
+            "status": "published",
+            "version": 2,
+            "title": "Culture 3",
+            "subtitle": "1 real phrases · listen, match, and build",
+            "category": "culture",
+            "type": "star",
+            "exerciseType": "guided_practice",
+            "exerciseTypes": [
+              "translate",
+              "listen",
+              "match",
+              "build_sentence"
+            ],
+            "itemIds": [
+              "aave-culture-on-god-7"
+            ],
+            "legacyLessonIds": [
+              "aave-culture-on-god-7"
+            ],
+            "xp": 15
           }
         ]
       }

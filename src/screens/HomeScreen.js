@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAudioPlayer } from 'expo-audio';
+import * as Haptics from 'expo-haptics';
 import { StatusBar } from 'expo-status-bar';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import {
@@ -47,6 +48,14 @@ const getMarginLeft = (index) => {
   if (cycle === 6) return -76;
   return -44;
 };
+
+const isNodeCompleted = (node, completedIds = []) => (
+  completedIds.includes(node?.id)
+  || (
+    node?.legacyLessonIds?.length > 0
+    && node.legacyLessonIds.every((id) => completedIds.includes(id))
+  )
+);
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
 
@@ -319,6 +328,7 @@ function LessonPlayer({
   lesson,
   phrasePool,
   courseId,
+  guideRegion,
   hearts,
   maxHearts,
   hasNextLesson,
@@ -443,7 +453,11 @@ function LessonPlayer({
     setAttempts((current) => [...current, attempt]);
     onAnswer?.(sessionIdRef.current, attempt)?.catch(() => {});
     playFeedbackSound(correct ? correctSound : wrongSound);
-    Vibration.vibrate(correct ? 35 : [0, 80, 70, 120]);
+    Haptics.notificationAsync(
+      correct
+        ? Haptics.NotificationFeedbackType.Success
+        : Haptics.NotificationFeedbackType.Error
+    ).catch(() => Vibration.vibrate(correct ? 35 : [0, 80, 70, 120]));
     if (!correct) {
       onMistake({
         lessonId: lesson.id,
@@ -678,6 +692,7 @@ function LessonPlayer({
 
       <LessonStepRenderer
         step={exercise}
+        guideRegion={guideRegion}
         styles={styles}
         selectedChoice={selectedChoice}
         setSelectedChoice={setSelectedChoice}
@@ -837,7 +852,9 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
   const activeLessonPool = useMemo(() => {
     if (!activeLesson) return [];
     const unit = course.units.find((item) => item.lessons.some((lesson) => lesson.id === activeLesson.id));
-    return unit?.lessons.filter((lesson) => lesson.type !== 'chest') || [];
+    return unit?.vocabulary?.length
+      ? unit.vocabulary
+      : unit?.lessons.filter((lesson) => lesson.type !== 'chest') || [];
   }, [activeLesson, course.units]);
   const nextLesson = useMemo(() => {
     if (!activeLesson) return null;
@@ -847,8 +864,8 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
 
   const activeNodeId = useMemo(() => {
     const next = lessons.find((lesson, index) => {
-      const previousComplete = index === 0 || completed.includes(lessons[index - 1].id);
-      return previousComplete && !completed.includes(lesson.id) && lesson.type !== 'chest';
+      const previousComplete = index === 0 || isNodeCompleted(lessons[index - 1], completed);
+      return previousComplete && !isNodeCompleted(lesson, completed) && lesson.type !== 'chest';
     });
     return next?.id;
   }, [completed, lessons]);
@@ -858,14 +875,14 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
       return;
     }
 
-    const isLocked = index > 0 && !completed.includes(lessons[index - 1].id);
+    const isLocked = index > 0 && !isNodeCompleted(lessons[index - 1], completed);
     if (isLocked) {
       showNotice('Lesson locked', 'Finish the previous step first to unlock this lesson.');
       return;
     }
 
     if (node.type === 'chest') {
-      if (completed.includes(node.id)) {
+      if (isNodeCompleted(node, completed)) {
         showNotice('Already opened', 'You claimed this reward already.');
         return;
       }
@@ -912,7 +929,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
       return;
     }
 
-    const wasFirstCompletion = !completed.includes(activeLesson.id);
+    const wasFirstCompletion = !isNodeCompleted(activeLesson, completed);
     const xpEarned = wasFirstCompletion ? activeLesson.xp : 0;
     const gemsEarned = wasFirstCompletion ? 5 : 0;
 
@@ -1018,6 +1035,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
         lesson={activeLesson}
         phrasePool={activeLessonPool}
         courseId={courseId}
+        guideRegion={profile?.guideRegion || (courseId === 'patois' ? 'caribbean' : 'africa')}
         hearts={hearts}
         maxHearts={maxHearts}
         hasNextLesson={Boolean(nextLesson)}
@@ -1058,7 +1076,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
               const unitColor = unit.themeColor || course.themeColor;
               const firstGlobalIndex = lessons.findIndex((lesson) => lesson.id === unit.lessons[0]?.id);
               const playableInUnit = unit.lessons.filter((lesson) => lesson.type !== 'chest');
-              const completedInUnit = playableInUnit.filter((lesson) => completed.includes(lesson.id)).length;
+              const completedInUnit = playableInUnit.filter((lesson) => isNodeCompleted(lesson, completed)).length;
               const unitProgress = playableInUnit.length ? completedInUnit / playableInUnit.length : 0;
               const containsActiveLesson = unit.lessons.some((lesson) => lesson.id === activeNodeId);
 
@@ -1099,8 +1117,8 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
                   <View style={styles.pathMapContainer}>
                     {unit.lessons.map((node, unitIndex) => {
                       const globalIndex = firstGlobalIndex + unitIndex;
-                      const isCompleted = completed.includes(node.id);
-                      const isLocked = globalIndex > 0 && !completed.includes(lessons[globalIndex - 1].id);
+                      const isCompleted = isNodeCompleted(node, completed);
+                      const isLocked = globalIndex > 0 && !isNodeCompleted(lessons[globalIndex - 1], completed);
                       const isActive = node.id === activeNodeId && !isLocked && !isCompleted;
 
                       return (
@@ -1924,6 +1942,11 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: spacing.md,
   },
+  guidePromptRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
   speechCard: {
     alignItems: 'center',
     backgroundColor: '#1E1612',
@@ -2087,7 +2110,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 5,
     borderRadius: radius.lg,
     borderWidth: 2,
-    padding: spacing.md,
+    justifyContent: 'center',
+    minHeight: 56,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 11,
   },
   imageChoiceCard: {
     alignItems: 'center',
@@ -2123,7 +2149,8 @@ const styles = StyleSheet.create({
   answerCardText: {
     color: colors.text,
     fontFamily: fonts.bold,
-    fontSize: 20,
+    fontSize: 17,
+    lineHeight: 22,
     textAlign: 'center',
   },
   buildArea: {
@@ -2157,8 +2184,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderRadius: radius.md,
     borderWidth: 2,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
   },
   wordChipSelected: {
     backgroundColor: '#2B211B',
@@ -2166,8 +2193,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4,
     borderRadius: radius.md,
     borderWidth: 2,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
   },
   wordChipUsed: {
     opacity: 0.22,
@@ -2175,7 +2202,7 @@ const styles = StyleSheet.create({
   wordChipText: {
     color: colors.text,
     fontFamily: fonts.bold,
-    fontSize: 18,
+    fontSize: 16,
   },
   lessonReviewScreen: {
     padding: spacing.lg,

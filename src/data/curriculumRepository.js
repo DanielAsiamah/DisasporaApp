@@ -4,12 +4,24 @@ import { coursesData } from './generatedCourses';
 function sortUnits(units = []) {
   return units
     .filter((unit) => unit.status !== 'draft')
-    .map((unit) => ({
-      ...unit,
-      lessons: [...(unit.lessons || [])]
-        .filter((lesson) => lesson.status !== 'draft')
-        .sort((a, b) => (a.order || 0) - (b.order || 0)),
-    }))
+    .map((unit) => {
+      const vocabularyById = new Map(
+        (unit.vocabulary || []).map((item) => [item.id, item])
+      );
+
+      return {
+        ...unit,
+        lessons: [...(unit.lessons || [])]
+          .filter((lesson) => lesson.status !== 'draft')
+          .map((lesson) => ({
+            ...lesson,
+            items: lesson.items?.length
+              ? lesson.items
+              : (lesson.itemIds || []).map((id) => vocabularyById.get(id)).filter(Boolean),
+          }))
+          .sort((a, b) => (a.order || 0) - (b.order || 0)),
+      };
+    })
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 

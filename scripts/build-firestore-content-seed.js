@@ -90,7 +90,14 @@ function wordBank(answer, alternatives) {
 }
 
 function getSourcePool(lesson, phrasePool = []) {
-  const usablePool = phrasePool.filter((item) => item.type !== 'chest' && item.phrase && item.meaning);
+  const seen = new Set();
+  const usablePool = [...(lesson?.items || []), ...phrasePool].filter((item) => {
+    if (item?.type === 'chest' || !item?.phrase || !item?.meaning) return false;
+    const key = item.id || `${item.phrase}|${item.meaning}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
   return usablePool.length ? usablePool : [lesson].filter(Boolean);
 }
 
@@ -107,6 +114,10 @@ function stripTeachingItem(item) {
 }
 
 function createTeachingItems(lesson, phrasePool = []) {
+  if (lesson?.items?.length) {
+    return lesson.items.slice(0, 3).map(stripTeachingItem);
+  }
+
   const sourcePool = getSourcePool(lesson, phrasePool);
   const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lesson.id));
 
@@ -160,9 +171,13 @@ function createFirstAvailableImageChoiceStep(sourcePool = [], startIndex, order)
 }
 
 function createMatchPairsStep(sourcePool = [], startIndex, order) {
-  const pairs = [0, 1, 2, 3]
-    .map((offset) => sourcePool[(startIndex + offset) % sourcePool.length])
-    .filter((item) => item?.phrase && item?.meaning)
+  const pairs = [...sourcePool.slice(startIndex), ...sourcePool.slice(0, startIndex)]
+    .filter((item, index, items) => (
+      item?.phrase
+      && item?.meaning
+      && items.findIndex((candidate) => candidate.id === item.id) === index
+    ))
+    .slice(0, 4)
     .map((item) => ({
       id: item.id,
       left: item.phrase,
@@ -214,15 +229,16 @@ function createCorrectCutscene(item, languageId, order) {
 
 function createLessonSteps(courseId, lesson, phrasePool = []) {
   const sourcePool = getSourcePool(lesson, phrasePool);
-  const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lesson.id));
-  const pick = (offset) => sourcePool[(startIndex + offset) % sourcePool.length] || lesson;
+  const teachingItems = createTeachingItems(lesson, phrasePool);
+  const lessonTargets = lesson?.items?.length ? lesson.items : sourcePool;
+  const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lessonTargets[0]?.id));
+  const pick = (offset) => lessonTargets[offset % lessonTargets.length] || lesson;
   const meanings = sourcePool.map((item) => item.meaning);
   const phrases = sourcePool.map((item) => item.phrase);
   const first = pick(0);
   const second = pick(1);
   const third = pick(2);
   const fourth = pick(3);
-  const teachingItems = createTeachingItems(lesson, phrasePool);
   let order = 0;
   const practiceSteps = [
     {
@@ -239,7 +255,7 @@ function createLessonSteps(courseId, lesson, phrasePool = []) {
       wrongFeedback: createWrongFeedback(first.meaning),
     },
     createFirstAvailableImageChoiceStep(sourcePool, startIndex, order += 1),
-    createMatchPairsStep(sourcePool, startIndex, order += 1),
+    createMatchPairsStep(lessonTargets, 0, order += 1),
     {
       id: `reverse-choice-${second.id}`,
       order: order += 1,
@@ -322,8 +338,9 @@ function createLessonSteps(courseId, lesson, phrasePool = []) {
 }
 
 function cleanLessonDoc(courseId, unit, lesson, phrasePool) {
+  const { items, ...lessonFields } = lesson;
   const lessonDoc = {
-    ...lesson,
+    ...lessonFields,
     courseId,
     unitId: unit.id,
     unitTitle: unit.description || unit.title || null,
@@ -352,9 +369,16 @@ function buildSeed(coursesData) {
     (course.units || []).forEach((unit) => {
       const lessons = {};
 
-      const phrasePool = (unit.lessons || []).filter((lesson) => lesson.type !== 'chest');
+      const vocabularyById = new Map((unit.vocabulary || []).map((item) => [item.id, item]));
+      const phrasePool = unit.vocabulary || [];
 
-      (unit.lessons || []).forEach((lesson) => {
+      (unit.lessons || []).forEach((rawLesson) => {
+        const lesson = {
+          ...rawLesson,
+          items: rawLesson.items?.length
+            ? rawLesson.items
+            : (rawLesson.itemIds || []).map((id) => vocabularyById.get(id)).filter(Boolean),
+        };
         lessons[lesson.id] = cleanLessonDoc(courseId, unit, lesson, phrasePool);
       });
 
