@@ -33,7 +33,7 @@ export default function OutOfHeartsModal({
             <Text style={styles.secondaryText}>Maybe later</Text>
           </Pressable>
 
-          <Text style={styles.note}>Payments coming later · Free refill for now while testing</Text>
+          <Text style={styles.note}>Beta refill · No charge during early access</Text>
         </View>
       </View>
     </Modal>

@@ -101,6 +101,7 @@ export async function updateUserProgress(uid, fields) {
     'proficiencyLevel',
     'reminderEnabled',
     'reminderTime',
+    'soundEffectsEnabled',
     'emailVerified',
   ];
   const payload = Object.fromEntries(

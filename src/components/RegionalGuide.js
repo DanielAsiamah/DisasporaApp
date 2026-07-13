@@ -32,7 +32,12 @@ export const REGIONAL_GUIDES = {
   },
 };
 
-export default function RegionalGuide({ region = 'caribbean', size = 'medium', showLabel = false }) {
+export default function RegionalGuide({
+  region = 'caribbean',
+  size = 'medium',
+  showLabel = false,
+  wearHat = false,
+}) {
   const guide = REGIONAL_GUIDES[region] || REGIONAL_GUIDES.caribbean;
   const dimension = size === 'large' ? 116 : size === 'small' ? 58 : 82;
   const emojiSize = size === 'large' ? 62 : size === 'small' ? 31 : 44;
@@ -50,6 +55,7 @@ export default function RegionalGuide({ region = 'caribbean', size = 'medium', s
           },
         ]}
       >
+        {wearHat ? <Text style={[styles.hat, { fontSize: emojiSize * 0.72 }]}>🎩</Text> : null}
         <Text style={{ fontSize: emojiSize }}>{guide.emoji}</Text>
         <View style={[styles.accessory, { backgroundColor: guide.color }]}>
           <Text style={styles.accessoryText}>{guide.accessory}</Text>
@@ -87,6 +93,12 @@ const styles = StyleSheet.create({
     width: 30,
   },
   accessoryText: { fontSize: 16 },
+  hat: {
+    position: 'absolute',
+    top: -20,
+    transform: [{ rotate: '-8deg' }],
+    zIndex: 2,
+  },
   labelRow: { alignItems: 'center' },
   name: { fontFamily: fonts.extraBold, fontSize: 14 },
   region: { color: colors.textMuted, fontFamily: fonts.semiBold, fontSize: 11 },

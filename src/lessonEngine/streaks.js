@@ -7,7 +7,12 @@ function localDayNumber(value) {
   return Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / DAY_MS);
 }
 
-export function calculateStreakAfterCompletion(currentStreak = 0, lastCompletedAt, completedAt = Date.now()) {
+export function calculateStreakAfterCompletion(
+  currentStreak = 0,
+  lastCompletedAt,
+  completedAt = Date.now(),
+  { hasStreakFreeze = false } = {}
+) {
   const safeCurrent = Math.max(Number(currentStreak) || 0, 0);
   const currentDay = localDayNumber(completedAt);
   const previousDay = localDayNumber(lastCompletedAt);
@@ -24,7 +29,14 @@ export function calculateStreakAfterCompletion(currentStreak = 0, lastCompletedA
   }
 
   const dayGap = currentDay - previousDay;
-  if (dayGap <= 0) return { streak: Math.max(safeCurrent, 1), status: 'same-day' };
-  if (dayGap === 1) return { streak: Math.max(safeCurrent, 0) + 1, status: 'extended' };
+  if (dayGap <= 0) return { streak: Math.max(safeCurrent, 1), status: 'same-day', freezeUsed: false };
+  if (dayGap === 1) return { streak: Math.max(safeCurrent, 0) + 1, status: 'extended', freezeUsed: false };
+  if (dayGap === 2 && hasStreakFreeze) {
+    return {
+      streak: Math.max(safeCurrent, 0) + 1,
+      status: 'frozen',
+      freezeUsed: true,
+    };
+  }
   return { streak: 1, status: 'restarted' };
 }

@@ -345,14 +345,14 @@ function PathNode({ node, index, isCompleted, isActive, isLocked, themeColor, ac
   );
 }
 
-function PathGuide({ region }) {
+function PathGuide({ region, wearHat = false }) {
   return (
     <Animated.View entering={FadeInDown.delay(220).springify()} style={styles.pathGuide}>
       <View style={styles.pathGuideBubble}>
         <Text style={styles.pathGuideBubbleEyebrow}>YOUR GUIDE</Text>
         <Text style={styles.pathGuideBubbleText}>Your next lesson is ready.</Text>
       </View>
-      <RegionalGuide region={region} size="medium" showLabel />
+      <RegionalGuide region={region} size="medium" showLabel wearHat={wearHat} />
     </Animated.View>
   );
 }
@@ -366,6 +366,9 @@ function LessonPlayer({
   maxHearts,
   currentStreak,
   lastLessonCompletedAt,
+  hasStreakFreeze,
+  soundEffectsEnabled,
+  wearHat,
   hasNextLesson,
   onExit,
   onMistake,
@@ -414,7 +417,8 @@ function LessonPlayer({
   const projectedStreak = calculateStreakAfterCompletion(
     currentStreak,
     lastLessonCompletedAt,
-    Date.now()
+    Date.now(),
+    { hasStreakFreeze }
   ).streak;
   const progress = sessionComplete ? 1 : lessonStage === 'review'
     ? 0.95
@@ -466,6 +470,7 @@ function LessonPlayer({
   }
 
   function playFeedbackSound(soundPlayer) {
+    if (!soundEffectsEnabled) return;
     const now = Date.now();
     if (now - lastSoundAtRef.current < 500) {
       return;
@@ -711,7 +716,7 @@ function LessonPlayer({
           </View>
 
           <Animated.View entering={BounceIn.delay(100)} style={styles.lessonCompleteGuide}>
-            <RegionalGuide region={guideRegion} size="medium" />
+            <RegionalGuide region={guideRegion} size="medium" wearHat={wearHat} />
             <View style={styles.lessonCompleteCheck}>
               <Text style={styles.lessonCompleteCheckText}>✓</Text>
             </View>
@@ -855,9 +860,9 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
   const [activeTab, setActiveTab] = useState('path');
   const [completed, setCompleted] = useState([]);
-  const [xp, setXp] = useState(profile?.xp ?? 120);
-  const [gems, setGems] = useState(565);
-  const [streak, setStreak] = useState(profile?.streak ?? 3);
+  const [xp, setXp] = useState(profile?.xp ?? 0);
+  const [gems, setGems] = useState(profile?.gems ?? 100);
+  const [streak, setStreak] = useState(profile?.streak ?? 0);
   const [selectedNode, setSelectedNode] = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
   const [purchasedItems, setPurchasedItems] = useState([]);
@@ -867,6 +872,9 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   const [notice, setNotice] = useState(null);
   const [reminderEnabled, setReminderEnabled] = useState(Boolean(profile?.reminderEnabled));
   const [reminderBusy, setReminderBusy] = useState(false);
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(
+    profile?.soundEffectsEnabled !== false
+  );
   const [goalClock, setGoalClock] = useState(Date.now());
   const activeGuideRegion = profile?.guideRegion || guideRegionForCourse(courseId);
 
@@ -881,8 +889,16 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       setGems(profile.gems ?? 100);
       setPurchasedItems(profile.purchasedItems || []);
       setReminderEnabled(Boolean(profile.reminderEnabled));
+      setSoundEffectsEnabled(profile.soundEffectsEnabled !== false);
     }
-  }, [profile?.xp, profile?.streak, profile?.gems, profile?.purchasedItems, profile?.reminderEnabled]);
+  }, [
+    profile?.xp,
+    profile?.streak,
+    profile?.gems,
+    profile?.purchasedItems,
+    profile?.reminderEnabled,
+    profile?.soundEffectsEnabled,
+  ]);
 
   useEffect(() => {
     if (!isAuthenticated || profile?.reminderEnabled == null) return;
@@ -1092,9 +1108,15 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     const streakResult = calculateStreakAfterCompletion(
       streak,
       languageProgress?.lastLessonCompletedAt,
-      completionTime
+      completionTime,
+      { hasStreakFreeze: purchasedItems.includes('freeze') }
     );
     const nextStreak = streakResult.streak;
+    if (streakResult.freezeUsed) {
+      const nextPurchasedItems = purchasedItems.filter((item) => item !== 'freeze');
+      setPurchasedItems(nextPurchasedItems);
+      if (isAuthenticated) syncProgress({ purchasedItems: nextPurchasedItems }).catch(() => {});
+    }
 
     if (activeLesson.type === 'review') {
       const result = calculateReviewResult(sessionSummary);
@@ -1159,9 +1181,17 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
       setActiveLesson(null);
       showNotice(
-        dailyGoalResult.justCompleted ? 'Daily goal complete' : result.mastered ? 'Review mastered' : 'Good practice',
+        dailyGoalResult.justCompleted
+          ? 'Daily goal complete'
+          : streakResult.freezeUsed
+            ? 'Streak saved'
+            : result.mastered
+              ? 'Review mastered'
+              : 'Good practice',
         dailyGoalResult.justCompleted
           ? `You reached ${dailyGoalResult.goalMinutes} minutes and earned ${dailyGoalResult.rewardGems} bonus gems.`
+          : streakResult.freezeUsed
+            ? `Your Streak Freeze covered yesterday. You are now on a ${nextStreak}-day streak.`
           : result.mastered
           ? `${activeLesson.items?.length || 0} weak phrases strengthened. +${result.xpEarned} XP.`
           : `You earned ${result.xpEarned} XP. The phrases will stay in review for another pass.`,
@@ -1250,6 +1280,12 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       showNotice(
         'Daily goal complete',
         `You reached ${dailyGoalResult.goalMinutes} minutes and earned ${dailyGoalResult.rewardGems} bonus gems.`,
+        'success'
+      );
+    } else if (streakResult.freezeUsed) {
+      showNotice(
+        'Streak saved',
+        `Your Streak Freeze covered yesterday. You are now on a ${nextStreak}-day streak.`,
         'success'
       );
     }
@@ -1343,7 +1379,9 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     }
 
     const nextGems = gems - cost;
-    const nextPurchasedItems = [...purchasedItems, itemId];
+    const nextPurchasedItems = itemId === 'refill'
+      ? purchasedItems
+      : [...new Set([...purchasedItems, itemId])];
 
     setGems(nextGems);
     setPurchasedItems(nextPurchasedItems);
@@ -1373,6 +1411,9 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         maxHearts={maxHearts}
         currentStreak={streak}
         lastLessonCompletedAt={languageProgress?.lastLessonCompletedAt}
+        hasStreakFreeze={purchasedItems.includes('freeze')}
+        soundEffectsEnabled={soundEffectsEnabled}
+        wearHat={purchasedItems.includes('hat')}
         hasNextLesson={Boolean(nextLesson)}
         onExit={() => setActiveLesson(null)}
         onMistake={handleMistake}
@@ -1528,7 +1569,10 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
                     })}
                     {containsActiveLesson ? (
                       <View style={styles.mascotContainer}>
-                        <PathGuide region={activeGuideRegion} />
+                        <PathGuide
+                          region={activeGuideRegion}
+                          wearHat={purchasedItems.includes('hat')}
+                        />
                       </View>
                     ) : null}
                   </View>
@@ -1546,7 +1590,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
             <ShopItem
               emoji="🔥"
               title="Streak Freeze"
-              detail="Protect your streak if you miss a day."
+              detail="Automatically protects one missed day, then gets used."
               action={purchasedItems.includes('freeze') ? 'ACTIVE' : '300 💎'}
               disabled={purchasedItems.includes('freeze')}
               onPress={() => buyItem('freeze', 300)}
@@ -1554,7 +1598,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
             <ShopItem
               emoji="🎩"
               title="Mascot Hat"
-              detail="Give your guide a fresh lesson look."
+              detail="Your regional guide wears it on the path and reward screen."
               action={purchasedItems.includes('hat') ? 'OWNED' : '400 💎'}
               disabled={purchasedItems.includes('hat')}
               onPress={() => buyItem('hat', 400)}
@@ -1564,18 +1608,18 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
         {activeTab === 'leaderboard' ? (
           <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
-            <Text style={styles.tabTitle}>Leagues</Text>
-            <Text style={styles.tabSubtitle}>Climb by finishing lessons and keeping your streak alive.</Text>
+            <Text style={styles.tabTitle}>Your progress</Text>
+            <Text style={styles.tabSubtitle}>A real snapshot of the work you have put in.</Text>
             {[
-              ['🥇', 'Aisha S.', '1,450 XP'],
-              ['🥈', 'Kofi B.', '1,210 XP'],
-              ['🥉', 'Marcus J.', '980 XP'],
-              ['4', 'You', `${xp} XP`],
-            ].map(([rank, name, score]) => (
-              <View key={name} style={[styles.leaderRow, name === 'You' && styles.leaderRowUser]}>
-                <Text style={styles.leaderRank}>{safeLeaderRank(rank, name)}</Text>
-                <Text style={styles.leaderName}>{name}</Text>
-                <Text style={styles.leaderXp}>{score}</Text>
+              ['⚡', 'Total XP', `${xp} XP`],
+              ['🔥', 'Current streak', `${streak} days`],
+              ['🎯', 'Today', `${dailyGoal.creditedMinutes}/${dailyGoal.goalMinutes} min`],
+              ['✅', 'Lessons complete', `${completed.filter((id) => playableLessons.some((lesson) => lesson.id === id)).length}`],
+            ].map(([icon, label, value]) => (
+              <View key={label} style={styles.leaderRow}>
+                <Text style={styles.leaderRank}>{icon}</Text>
+                <Text style={styles.leaderName}>{label}</Text>
+                <Text style={styles.leaderXp}>{value}</Text>
               </View>
             ))}
           </ScrollView>
@@ -1610,7 +1654,16 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
           <ScrollView contentContainerStyle={styles.tabContent} showsVerticalScrollIndicator={false}>
             <Text style={styles.tabTitle}>Settings</Text>
             <Text style={styles.tabSubtitle}>Lesson-focused settings for the learning path.</Text>
-            <SettingRow label="Sound effects" detail="Correct-answer and lesson feedback" active />
+            <SettingRow
+              label="Sound effects"
+              detail={soundEffectsEnabled ? 'Correct-answer feedback is on' : 'Lesson feedback is muted'}
+              active={soundEffectsEnabled}
+              onPress={() => {
+                const next = !soundEffectsEnabled;
+                setSoundEffectsEnabled(next);
+                if (isAuthenticated) syncProgress({ soundEffectsEnabled: next }).catch(() => {});
+              }}
+            />
             <SettingRow
               label="Daily reminders"
               detail={reminderBusy
@@ -1646,7 +1699,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       <View style={styles.bottomTabBar}>
         <TabButton icon="🏠" label="Path" active={activeTab === 'path'} color={course.themeColor} onPress={() => setActiveTab('path')} />
         <TabButton icon="🛍️" label="Shop" active={activeTab === 'shop'} color={course.themeColor} onPress={() => setActiveTab('shop')} />
-        <TabButton icon="🏆" label="Leagues" active={activeTab === 'leaderboard'} color={course.themeColor} onPress={() => setActiveTab('leaderboard')} />
+        <TabButton icon="📈" label="Progress" active={activeTab === 'leaderboard'} color={course.themeColor} onPress={() => setActiveTab('leaderboard')} />
         <TabButton icon="👤" label="Profile" active={activeTab === 'profile'} color={course.themeColor} onPress={() => setActiveTab('profile')} />
         <TabButton icon="⚙️" label="Settings" active={activeTab === 'settings'} color={course.themeColor} onPress={() => setActiveTab('settings')} />
       </View>
@@ -1752,13 +1805,6 @@ function ShopItem({ emoji, title, detail, action, disabled, onPress }) {
       </Pressable>
     </View>
   );
-}
-
-function safeLeaderRank(rank, name) {
-  if (name === 'Aisha S.') return '1';
-  if (name === 'Kofi B.') return '2';
-  if (name === 'Marcus J.') return '3';
-  return rank;
 }
 
 function StatCard({ label, value }) {
