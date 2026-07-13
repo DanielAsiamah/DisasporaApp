@@ -16,7 +16,7 @@ const PHASES = [
   {
     key: 'africa',
     line: 'Africa',
-    subline: 'Swahili · Igbo · Wolof · Nubian',
+    subline: 'Swahili · Igbo · Wolof · more coming soon',
     accent: colors.africaGold,
     gradient: [colors.splashWarm, '#2A1808', colors.splashWarm],
     duration: 1400,

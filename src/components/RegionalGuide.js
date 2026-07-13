@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { colors, fonts, radius } from '../theme';
 
@@ -37,17 +38,58 @@ export default function RegionalGuide({
   size = 'medium',
   showLabel = false,
   wearHat = false,
+  animated = false,
+  active = false,
 }) {
   const guide = REGIONAL_GUIDES[region] || REGIONAL_GUIDES.caribbean;
   const dimension = size === 'large' ? 116 : size === 'small' ? 58 : 82;
   const emojiSize = size === 'large' ? 62 : size === 'small' ? 31 : 44;
+  const float = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!animated) {
+      float.setValue(0);
+      return undefined;
+    }
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(float, {
+          duration: active ? 850 : 1200,
+          easing: Easing.inOut(Easing.sin),
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+        Animated.timing(float, {
+          duration: active ? 850 : 1200,
+          easing: Easing.inOut(Easing.sin),
+          toValue: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [active, animated, float]);
+
+  const animatedStyle = animated
+    ? {
+        transform: [
+          { translateY: float.interpolate({ inputRange: [0, 1], outputRange: [0, active ? -7 : -3] }) },
+          { rotate: float.interpolate({ inputRange: [0, 1], outputRange: ['-1deg', '1deg'] }) },
+          { scale: active ? 1.06 : 1 },
+        ],
+      }
+    : null;
 
   return (
-    <View style={styles.wrapper}>
-      <View
+    <Animated.View style={[styles.wrapper, animatedStyle]}>
+      <Animated.View
         accessibilityLabel={`${guide.name}, ${guide.region} guide`}
+        accessibilityState={{ selected: active }}
         style={[
           styles.avatar,
+          active && styles.avatarActive,
           {
             borderColor: guide.color,
             height: dimension,
@@ -60,14 +102,14 @@ export default function RegionalGuide({
         <View style={[styles.accessory, { backgroundColor: guide.color }]}>
           <Text style={styles.accessoryText}>{guide.accessory}</Text>
         </View>
-      </View>
+      </Animated.View>
       {showLabel ? (
         <View style={styles.labelRow}>
           <Text style={[styles.name, { color: guide.color }]}>{guide.name}</Text>
           <Text style={styles.region}>{guide.region}</Text>
         </View>
       ) : null}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -81,6 +123,13 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     justifyContent: 'center',
     position: 'relative',
+  },
+  avatarActive: {
+    backgroundColor: colors.surface,
+    shadowColor: '#000000',
+    shadowOffset: { height: 6, width: 0 },
+    shadowOpacity: 0.24,
+    shadowRadius: 10,
   },
   accessory: {
     alignItems: 'center',

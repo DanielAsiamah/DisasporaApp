@@ -16,10 +16,11 @@ import RegionalGuide from '../components/RegionalGuide';
 import { colors, fonts, radius, spacing } from '../theme';
 
 const GREETINGS = [
-  'Wah gwaan!',
-  'Hujambo!',
-  'Sak pase!',
-  'Nangaadef!',
+  { region: 'caribbean', text: 'Wah gwaan!', translation: 'Hello from the Caribbean' },
+  { region: 'africa', text: 'Hujambo!', translation: 'Hello from East Africa' },
+  { region: 'caribbean', text: 'Sak pase!', translation: 'Hello from Haiti' },
+  { region: 'africa', text: 'Nangaadef!', translation: 'Hello from West Africa' },
+  { region: 'americas', text: 'Welcome home!', translation: 'Language connects the diaspora' },
 ];
 
 const REGIONS = [
@@ -48,6 +49,12 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
   const slideAnim = useRef(new Animated.Value(22)).current;
   const [greetingIndex, setGreetingIndex] = useState(0);
   const bubbleFade = useRef(new Animated.Value(1)).current;
+  const activeGreeting = GREETINGS[greetingIndex];
+
+  function selectRegion(regionId) {
+    const nextIndex = GREETINGS.findIndex((item) => item.region === regionId);
+    if (nextIndex >= 0) setGreetingIndex(nextIndex);
+  }
 
   useEffect(() => {
     Animated.parallel([
@@ -108,15 +115,16 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
             </View>
 
             <View style={styles.guideRow}>
-              <RegionalGuide region="africa" size="small" showLabel />
-              <RegionalGuide region="caribbean" size="small" showLabel />
-              <RegionalGuide region="americas" size="small" showLabel />
+              <RegionalGuide animated active={activeGreeting.region === 'africa'} region="africa" size="small" showLabel />
+              <RegionalGuide animated active={activeGreeting.region === 'caribbean'} region="caribbean" size="small" showLabel />
+              <RegionalGuide animated active={activeGreeting.region === 'americas'} region="americas" size="small" showLabel />
             </View>
 
             <View style={styles.heroCopy}>
               <Animated.View style={{ opacity: bubbleFade }}>
-                <SpeechBubble text={GREETINGS[greetingIndex]} />
+                <SpeechBubble text={activeGreeting.text} />
               </Animated.View>
+              <Text style={styles.greetingTranslation}>{activeGreeting.translation}</Text>
               <Text style={styles.title}>Learn the languages{'\n'}of the diaspora</Text>
               <Text style={styles.subtitle}>
                 Fun, bite-sized lessons for mother tongues, creoles, and dialects that carry culture.
@@ -127,13 +135,22 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
               <Text style={styles.sectionHeader}>START YOUR PATH</Text>
               <View style={styles.regionsGrid}>
                 {REGIONS.map((region) => (
-                  <View
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: activeGreeting.region === region.id }}
                     key={region.id}
-                    style={[styles.regionCard, { borderColor: region.color + '66' }]}
+                    onPress={() => selectRegion(region.id)}
+                    style={({ pressed }) => [
+                      styles.regionCard,
+                      { borderColor: region.color + '66' },
+                      activeGreeting.region === region.id && { backgroundColor: region.color + '18', borderColor: region.color },
+                      pressed && styles.regionCardPressed,
+                    ]}
                   >
                     <Text style={[styles.regionTitle, { color: region.color }]}>{region.title}</Text>
                     <Text style={styles.regionCaption}>{region.caption}</Text>
-                  </View>
+                    <Text style={[styles.meetGuide, { color: region.color }]}>MEET YOUR GUIDE</Text>
+                  </Pressable>
                 ))}
               </View>
             </View>
@@ -215,6 +232,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     textAlign: 'center',
   },
+  greetingTranslation: {
+    color: colors.textLight,
+    fontFamily: fonts.bold,
+    fontSize: 11,
+    marginTop: 5,
+    textAlign: 'center',
+  },
   regionsSection: {
     marginTop: spacing.lg,
   },
@@ -239,6 +263,9 @@ const styles = StyleSheet.create({
     minWidth: '47%',
     padding: spacing.sm,
   },
+  regionCardPressed: {
+    transform: [{ translateY: 2 }],
+  },
   regionTitle: {
     fontFamily: fonts.black,
     fontSize: 15,
@@ -249,6 +276,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
     marginTop: 4,
+  },
+  meetGuide: {
+    fontFamily: fonts.black,
+    fontSize: 9,
+    letterSpacing: 0.5,
+    marginTop: 8,
   },
   footer: {
     backgroundColor: colors.skyBottom,
