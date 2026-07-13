@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import Animated, { BounceIn, FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import {
+  AppState,
   Modal,
   Pressable,
   SafeAreaView,
@@ -47,6 +48,7 @@ import {
   getMistakeKey,
   resolveReviewedMistakes,
 } from '../lessonEngine/adaptiveReview';
+import { getDailyGoalSnapshot, recordDailyGoalSession } from '../lessonEngine/dailyGoal';
 import { calculateStreakAfterCompletion } from '../lessonEngine/streaks';
 import { colors, fonts, radius, shadows, spacing, type, ui } from '../theme';
 
@@ -865,6 +867,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   const [notice, setNotice] = useState(null);
   const [reminderEnabled, setReminderEnabled] = useState(Boolean(profile?.reminderEnabled));
   const [reminderBusy, setReminderBusy] = useState(false);
+  const [goalClock, setGoalClock] = useState(Date.now());
   const activeGuideRegion = profile?.guideRegion || guideRegionForCourse(courseId);
 
   function showNotice(title, body, tone = 'info') {
@@ -901,6 +904,17 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       cancelled = true;
     };
   }, [isAuthenticated, profile?.preferredName, profile?.reminderEnabled, profile?.reminderTime, profile?.username]);
+
+  useEffect(() => {
+    const interval = setInterval(() => setGoalClock(Date.now()), 60 * 1000);
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') setGoalClock(Date.now());
+    });
+    return () => {
+      clearInterval(interval);
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -984,6 +998,14 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   const adaptiveReviewLesson = useMemo(
     () => buildAdaptiveReviewLesson(course, languageProgress?.mistakes || []),
     [course, languageProgress?.mistakes]
+  );
+  const dailyGoal = useMemo(
+    () => getDailyGoalSnapshot(
+      languageProgress?.dailyActivity,
+      profile?.dailyGoalMinutes || 10,
+      goalClock
+    ),
+    [goalClock, languageProgress?.dailyActivity, profile?.dailyGoalMinutes]
   );
 
   const activeNodeId = useMemo(() => {
@@ -1076,8 +1098,14 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
     if (activeLesson.type === 'review') {
       const result = calculateReviewResult(sessionSummary);
+      const dailyGoalResult = recordDailyGoalSession(
+        languageProgress?.dailyActivity,
+        { ...sessionSummary, xpEarned: result.xpEarned },
+        profile?.dailyGoalMinutes || 10
+      );
+      const totalGemsEarned = result.gemsEarned + dailyGoalResult.rewardGems;
       const nextXp = xp + result.xpEarned;
-      const nextGems = gems + result.gemsEarned;
+      const nextGems = gems + totalGemsEarned;
       const nextMistakes = resolveReviewedMistakes(
         languageProgress?.mistakes || [],
         activeLesson.reviewMistakeIds,
@@ -1096,11 +1124,12 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         finishLessonSession(sessionSummary.sessionId, {
           ...sessionSummary,
           xpEarned: result.xpEarned,
-          gemsEarned: result.gemsEarned,
+          gemsEarned: totalGemsEarned,
           wasFirstCompletion: false,
           isAdaptiveReview: true,
           reviewMistakeKeys: activeLesson.reviewMistakeKeys,
           mastered: result.mastered,
+          dailyGoalCompleted: dailyGoalResult.justCompleted,
         }).catch(() => {});
       }
 
@@ -1111,6 +1140,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         ...current,
         mistakes: nextMistakes,
         reviewStats,
+        dailyActivity: dailyGoalResult.activity,
         lastLessonCompletedAt: completionTime,
         lastPlayedAt: completionTime,
       } : current);
@@ -1120,6 +1150,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         syncLanguageProgress(courseId, {
           mistakes: nextMistakes,
           reviewStats,
+          dailyActivity: dailyGoalResult.activity,
           currentLesson: activeNodeId || null,
           lastLessonCompletedAt: completionTime,
           lastPlayedAt: completionTime,
@@ -1128,11 +1159,13 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
 
       setActiveLesson(null);
       showNotice(
-        result.mastered ? 'Review mastered' : 'Good practice',
-        result.mastered
+        dailyGoalResult.justCompleted ? 'Daily goal complete' : result.mastered ? 'Review mastered' : 'Good practice',
+        dailyGoalResult.justCompleted
+          ? `You reached ${dailyGoalResult.goalMinutes} minutes and earned ${dailyGoalResult.rewardGems} bonus gems.`
+          : result.mastered
           ? `${activeLesson.items?.length || 0} weak phrases strengthened. +${result.xpEarned} XP.`
           : `You earned ${result.xpEarned} XP. The phrases will stay in review for another pass.`,
-        result.mastered ? 'success' : 'info'
+        dailyGoalResult.justCompleted || result.mastered ? 'success' : 'info'
       );
       return;
     }
@@ -1140,20 +1173,27 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
     const wasFirstCompletion = !isNodeCompleted(activeLesson, completed);
     const xpEarned = wasFirstCompletion ? activeLesson.xp : 0;
     const gemsEarned = wasFirstCompletion ? 5 : 0;
+    const dailyGoalResult = recordDailyGoalSession(
+      languageProgress?.dailyActivity,
+      { ...sessionSummary, xpEarned },
+      profile?.dailyGoalMinutes || 10
+    );
+    const totalGemsEarned = gemsEarned + dailyGoalResult.rewardGems;
 
     if (isAuthenticated && sessionSummary?.sessionId) {
       finishLessonSession(sessionSummary.sessionId, {
         ...sessionSummary,
         xpEarned,
-        gemsEarned,
+        gemsEarned: totalGemsEarned,
         wasFirstCompletion,
         nextLessonId: nextLesson?.id || null,
+        dailyGoalCompleted: dailyGoalResult.justCompleted,
       }).catch(() => {});
     }
 
     if (wasFirstCompletion) {
       const nextXp = xp + activeLesson.xp;
-      const nextGems = gems + 5;
+      const nextGems = gems + totalGemsEarned;
       const nextCompleted = [...completed, activeLesson.id];
 
       setCompleted(nextCompleted);
@@ -1164,6 +1204,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         ...current,
         completedLessons: nextCompleted,
         currentLesson: nextLesson?.id || activeLesson.id,
+        dailyActivity: dailyGoalResult.activity,
         lastLessonCompletedAt: completionTime,
         lastPlayedAt: completionTime,
       } : current);
@@ -1179,26 +1220,38 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         syncLanguageProgress(courseId, {
           completedLessons: nextCompleted,
           currentLesson: nextLesson?.id || activeLesson.id,
+          dailyActivity: dailyGoalResult.activity,
           lastLessonCompletedAt: completionTime,
           lastPlayedAt: completionTime,
         });
       }
     } else {
+      const nextGems = gems + dailyGoalResult.rewardGems;
+      setGems(nextGems);
       setStreak(nextStreak);
       setLanguageProgress((current) => current ? {
         ...current,
         currentLesson: nextLesson?.id || activeLesson.id,
+        dailyActivity: dailyGoalResult.activity,
         lastLessonCompletedAt: completionTime,
         lastPlayedAt: completionTime,
       } : current);
       if (isAuthenticated) {
-        syncProgress({ streak: nextStreak, currentCourse: courseId, currentLesson: activeLesson.id });
+        syncProgress({ gems: nextGems, streak: nextStreak, currentCourse: courseId, currentLesson: activeLesson.id });
         syncLanguageProgress(courseId, {
           currentLesson: nextLesson?.id || activeLesson.id,
+          dailyActivity: dailyGoalResult.activity,
           lastLessonCompletedAt: completionTime,
           lastPlayedAt: completionTime,
         });
       }
+    }
+    if (dailyGoalResult.justCompleted) {
+      showNotice(
+        'Daily goal complete',
+        `You reached ${dailyGoalResult.goalMinutes} minutes and earned ${dailyGoalResult.rewardGems} bonus gems.`,
+        'success'
+      );
     }
     setActiveLesson(nextLesson);
   }
@@ -1354,6 +1407,33 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
       <View style={styles.mainContainer}>
         {activeTab === 'path' ? (
           <ScrollView contentContainerStyle={styles.pathContent} showsVerticalScrollIndicator={false}>
+            <LinearGradient
+              colors={dailyGoal.completed ? ['#123B27', '#172C25'] : ['#2C2118', '#201A17']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={[styles.dailyGoalCard, dailyGoal.completed && styles.dailyGoalCardComplete]}
+            >
+              <View style={styles.dailyGoalHeader}>
+                <View style={styles.dailyGoalIconWrap}>
+                  <Text style={styles.dailyGoalIcon}>{dailyGoal.completed ? '✓' : '🔥'}</Text>
+                </View>
+                <View style={styles.dailyGoalCopy}>
+                  <Text style={styles.dailyGoalEyebrow}>TODAY’S GOAL</Text>
+                  <Text style={styles.dailyGoalTitle}>
+                    {dailyGoal.completed ? 'Daily goal complete!' : `${dailyGoal.creditedMinutes} of ${dailyGoal.goalMinutes} minutes`}
+                  </Text>
+                  <Text style={styles.dailyGoalBody}>
+                    {dailyGoal.completed
+                      ? `${dailyGoal.activity.lessonsCompleted} ${dailyGoal.activity.lessonsCompleted === 1 ? 'lesson' : 'lessons'} today · reward claimed`
+                      : 'Complete lessons or reviews to earn 10 bonus gems.'}
+                  </Text>
+                </View>
+                <Text style={styles.dailyGoalPercent}>{Math.round(dailyGoal.progress * 100)}%</Text>
+              </View>
+              <View style={styles.dailyGoalTrack}>
+                <View style={[styles.dailyGoalFill, { width: `${Math.max(dailyGoal.progress * 100, dailyGoal.progress ? 7 : 0)}%` }]} />
+              </View>
+            </LinearGradient>
             {adaptiveReviewLesson ? (
               <Pressable
                 accessibilityLabel={`Practice ${adaptiveReviewLesson.items.length} weak phrases`}
@@ -1777,6 +1857,76 @@ const styles = StyleSheet.create({
   pathContent: {
     padding: ui.screenPadding,
     paddingBottom: 140,
+  },
+  dailyGoalCard: {
+    borderColor: '#4A3529',
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+    padding: spacing.md,
+    ...shadows.card,
+  },
+  dailyGoalCardComplete: {
+    borderColor: colors.primaryDark,
+  },
+  dailyGoalHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  dailyGoalIconWrap: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.09)',
+    borderRadius: radius.lg,
+    height: 48,
+    justifyContent: 'center',
+    width: 48,
+  },
+  dailyGoalIcon: {
+    color: colors.primary,
+    fontFamily: fonts.black,
+    fontSize: 23,
+  },
+  dailyGoalCopy: {
+    flex: 1,
+  },
+  dailyGoalEyebrow: {
+    color: colors.accent,
+    fontFamily: fonts.extraBold,
+    fontSize: 10,
+    letterSpacing: 1.1,
+  },
+  dailyGoalTitle: {
+    color: colors.text,
+    fontFamily: fonts.black,
+    fontSize: 17,
+    lineHeight: 22,
+    marginTop: 2,
+  },
+  dailyGoalBody: {
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
+    fontSize: 10,
+    lineHeight: 15,
+    marginTop: 2,
+  },
+  dailyGoalPercent: {
+    color: colors.text,
+    fontFamily: fonts.black,
+    fontSize: 14,
+    fontVariant: ['tabular-nums'],
+  },
+  dailyGoalTrack: {
+    backgroundColor: colors.locked,
+    borderRadius: radius.pill,
+    height: 9,
+    marginTop: spacing.sm,
+    overflow: 'hidden',
+  },
+  dailyGoalFill: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.pill,
+    height: '100%',
   },
   reviewCardPressable: {
     marginBottom: spacing.lg,
