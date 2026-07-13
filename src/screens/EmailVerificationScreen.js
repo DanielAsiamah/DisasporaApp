@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PrimaryButton from '../components/PrimaryButton';
@@ -55,7 +55,7 @@ export default function EmailVerificationScreen({ email, verificationSent = true
   return (
     <View style={styles.root}>
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.mailBadge}><Text style={styles.mailEmoji}>✉️</Text></View>
           <RegionalGuide region={guideRegion} size="medium" showLabel />
           <Text style={styles.eyebrow}>ONE QUICK CHECK</Text>
@@ -75,7 +75,7 @@ export default function EmailVerificationScreen({ email, verificationSent = true
               <Text style={styles.skipText}>Continue for now</Text>
             </Pressable>
           </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -84,7 +84,7 @@ export default function EmailVerificationScreen({ email, verificationSent = true
 const styles = StyleSheet.create({
   root: { backgroundColor: colors.skyBottom, flex: 1 },
   safeArea: { flex: 1 },
-  content: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingVertical: spacing.lg },
+  content: { alignItems: 'center', flexGrow: 1, justifyContent: 'center', paddingVertical: spacing.xl },
   mailBadge: { alignItems: 'center', backgroundColor: colors.surfaceMuted, borderColor: colors.border, borderRadius: radius.pill, borderWidth: 2, height: 58, justifyContent: 'center', marginBottom: spacing.md, width: 58 },
   mailEmoji: { fontSize: 27 },
   eyebrow: { color: colors.primary, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1.3, marginTop: spacing.lg },

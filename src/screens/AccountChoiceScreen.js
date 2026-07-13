@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PrimaryButton from '../components/PrimaryButton';
@@ -49,7 +49,11 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
           <Text style={styles.headerLabel}>FINAL STEP</Text>
         </View>
 
-        <View style={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <RegionalGuide region={onboardingData?.guideRegion} size="large" showLabel />
           <View style={styles.copy}>
             <Text style={styles.eyebrow}>YOUR PATH IS READY</Text>
@@ -58,7 +62,13 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
           </View>
 
           <View style={styles.providers}>
-            <ProviderButton disabled={Boolean(loadingProvider)} icon="G" label="Continue with Google" loading={loadingProvider === 'google'} onPress={() => continueWith('google')} />
+            <ProviderButton
+              disabled={Boolean(loadingProvider) || !googleConfigured || isExpoGo}
+              icon="G"
+              label="Continue with Google"
+              loading={loadingProvider === 'google'}
+              onPress={() => continueWith('google')}
+            />
             {Platform.OS === 'ios' ? (
               <ProviderButton dark disabled={Boolean(loadingProvider)} icon="●" label="Continue with Apple" loading={loadingProvider === 'apple'} onPress={() => continueWith('apple')} />
             ) : null}
@@ -71,9 +81,9 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
           </View>
 
           {error ? <Text selectable style={styles.error}>{error}</Text> : null}
-          {isExpoGo ? <Text style={styles.devNote}>Google is enabled in the native development build; email remains available in Expo Go.</Text> : null}
-          {!googleConfigured ? <Text style={styles.devNote}>This build still needs its Google OAuth client ID before Google sign-in can open.</Text> : null}
-        </View>
+          {__DEV__ && isExpoGo ? <Text style={styles.devNote}>Google is enabled in the native development build; email remains available in Expo Go.</Text> : null}
+          {__DEV__ && !googleConfigured ? <Text style={styles.devNote}>This development build still needs its Google OAuth client ID.</Text> : null}
+        </ScrollView>
 
         <Pressable onPress={onExistingAccount} style={styles.signInLink}>
           <Text style={styles.signInText}>Already have an account? Sign in</Text>
@@ -99,7 +109,7 @@ const styles = StyleSheet.create({
   backButton: { alignItems: 'center', height: 42, justifyContent: 'center', width: 34 },
   backText: { color: colors.text, fontFamily: fonts.bold, fontSize: 34, lineHeight: 36 },
   headerLabel: { color: colors.accent, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1.4 },
-  content: { alignItems: 'center', flex: 1, gap: spacing.lg, justifyContent: 'center' },
+  content: { alignItems: 'center', flexGrow: 1, gap: spacing.lg, justifyContent: 'center', paddingVertical: spacing.lg },
   copy: { alignItems: 'center', gap: 8, width: '88%' },
   eyebrow: { color: colors.primary, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1.3 },
   title: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 35, textAlign: 'center' },

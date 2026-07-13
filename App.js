@@ -243,6 +243,7 @@ function AppContent() {
 
       {screen === 'guided-onboarding' ? (
         <GuidedOnboardingScreen
+          initialData={isAuthenticated ? profile : null}
           onBack={() => setScreen('welcome')}
           onComplete={async (draft) => {
             setOnboardingDraft(draft);

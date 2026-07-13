@@ -79,7 +79,19 @@ const INITIAL_DRAFT = {
   reminderTime: '19:00',
 };
 
-export default function GuidedOnboardingScreen({ onBack, onComplete }) {
+const DRAFT_FIELDS = new Set([
+  ...Object.keys(INITIAL_DRAFT),
+  'onboardingCompleted',
+  'selectedStartUnit',
+]);
+
+function onboardingFields(source) {
+  return Object.fromEntries(
+    Object.entries(source || {}).filter(([key]) => DRAFT_FIELDS.has(key))
+  );
+}
+
+export default function GuidedOnboardingScreen({ initialData, onBack, onComplete }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [draft, setDraft] = useState(INITIAL_DRAFT);
   const [hydrated, setHydrated] = useState(false);
@@ -89,7 +101,14 @@ export default function GuidedOnboardingScreen({ onBack, onComplete }) {
   useEffect(() => {
     AsyncStorage.getItem(DRAFT_KEY)
       .then((saved) => {
-        if (saved) setDraft((current) => ({ ...current, ...JSON.parse(saved) }));
+        const savedDraft = saved ? JSON.parse(saved) : null;
+        const restored = {
+          ...INITIAL_DRAFT,
+          ...onboardingFields(savedDraft),
+          ...onboardingFields(initialData),
+        };
+        setDraft(restored);
+        if (restored.onboardingCompleted) setStepIndex(STEPS.length - 1);
       })
       .catch(() => {})
       .finally(() => setHydrated(true));
@@ -101,6 +120,10 @@ export default function GuidedOnboardingScreen({ onBack, onComplete }) {
 
   function select(fields) {
     Haptics.selectionAsync().catch(() => {});
+    setDraft((current) => ({ ...current, ...fields }));
+  }
+
+  function update(fields) {
     setDraft((current) => ({ ...current, ...fields }));
   }
 
@@ -160,7 +183,7 @@ export default function GuidedOnboardingScreen({ onBack, onComplete }) {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            {renderStep(step, draft, select, availableCourses)}
+            {renderStep(step, draft, select, update, availableCourses)}
           </ScrollView>
         </Animated.View>
 
@@ -177,7 +200,7 @@ export default function GuidedOnboardingScreen({ onBack, onComplete }) {
   );
 }
 
-function renderStep(step, draft, select, courses) {
+function renderStep(step, draft, select, update, courses) {
   if (step === 'name') {
     return (
       <>
@@ -186,7 +209,7 @@ function renderStep(step, draft, select, courses) {
           autoCapitalize="words"
           autoCorrect={false}
           maxLength={32}
-          onChangeText={(preferredName) => select({ preferredName })}
+          onChangeText={(preferredName) => update({ preferredName })}
           placeholder="Your first name"
           placeholderTextColor={colors.textLight}
           style={styles.nameInput}

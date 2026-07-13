@@ -43,6 +43,8 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
   }
 
   async function handleSignUp() {
+    if (loading) return;
+
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length) {
       setFieldErrors(validationErrors);
@@ -59,7 +61,10 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
         username: username.trim(),
         email,
         password,
-        profileData: onboardingData || {},
+        profileData: {
+          ...(onboardingData || {}),
+          preferredName: username.trim(),
+        },
       });
       onSuccess(result);
     } catch (error) {
@@ -145,6 +150,8 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
                 secureTextEntry
                 autoComplete="new-password"
                 textContentType="newPassword"
+                returnKeyType="done"
+                onSubmitEditing={handleSignUp}
                 error={fieldErrors.confirmPassword}
               />
               {formError ? <Text style={styles.formError}>{formError}</Text> : null}

@@ -37,15 +37,9 @@ const REGIONS = [
   },
   {
     id: 'americas',
-    title: 'The Americas',
-    caption: 'Belizean Kriol · Black American English',
+    title: 'South America',
+    caption: 'Creoles · heritage · regional speech',
     color: colors.coral,
-  },
-  {
-    id: 'urban',
-    title: 'Urban dialects',
-    caption: 'AAVE & culture',
-    color: colors.blue,
   },
 ];
 
