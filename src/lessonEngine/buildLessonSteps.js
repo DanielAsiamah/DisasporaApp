@@ -1,5 +1,8 @@
-import { LESSON_STEP_TYPES } from './lessonStepTypes';
-import { hasVocabImageSource } from '../data/generatedImageRegistry';
+import { LESSON_STEP_TYPES } from './lessonStepTypes.js';
+import { hasVocabImageSource } from '../data/generatedImageRegistry.js';
+import { normaliseStepAnswer } from './answerNormalization.js';
+
+export { normaliseStepAnswer } from './answerNormalization.js';
 
 function hashSeed(value) {
   return String(value || 'diaspora').split('').reduce(
@@ -21,14 +24,6 @@ function shuffle(items, seed = 'diaspora') {
     [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
   }
   return next;
-}
-
-export function normaliseStepAnswer(value) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9' ]/gi, '')
-    .replace(/\s+/g, ' ')
-    .trim();
 }
 
 function wordsFromAnswer(answer) {
@@ -75,7 +70,10 @@ function uniqueItems(items = []) {
 }
 
 function getSourcePool(lesson, phrasePool = []) {
-  const usablePool = uniqueItems([...(lesson?.items || []), ...phrasePool]);
+  const resolvedLessonItems = (lesson?.itemIds || [])
+    .map((itemId) => phrasePool.find((item) => item.id === itemId))
+    .filter(Boolean);
+  const usablePool = uniqueItems([...(lesson?.items || []), ...resolvedLessonItems, ...phrasePool]);
   return usablePool.length ? usablePool : [lesson].filter(Boolean);
 }
 
@@ -116,9 +114,14 @@ function createImageChoiceStep(target, sourcePool = [], seed = 'image') {
   };
 }
 
-function createFirstAvailableImageChoiceStep(sourcePool = [], startIndex = 0, seed = 'image') {
-  for (let offset = 0; offset < sourcePool.length; offset += 1) {
-    const item = sourcePool[(startIndex + offset) % sourcePool.length];
+function createFirstAvailableImageChoiceStep(
+  targetPool = [],
+  sourcePool = targetPool,
+  startIndex = 0,
+  seed = 'image'
+) {
+  for (let offset = 0; offset < targetPool.length; offset += 1) {
+    const item = targetPool[(startIndex + offset) % targetPool.length];
     const step = createImageChoiceStep(item, sourcePool, `${seed}-${item.id}`);
     if (step) return step;
   }
@@ -163,7 +166,10 @@ function createMatchPairsStep(sourcePool = [], startIndex = 0, seed = 'match') {
 export function createTeachingItems(lesson, phrasePool = []) {
   if (!lesson) return [];
 
-  const lessonItems = uniqueItems(lesson.items || []);
+  const resolvedLessonItems = (lesson.itemIds || [])
+    .map((itemId) => phrasePool.find((item) => item.id === itemId))
+    .filter(Boolean);
+  const lessonItems = uniqueItems([...(lesson.items || []), ...resolvedLessonItems]);
   if (lessonItems.length) return lessonItems.slice(0, 3);
 
   const sourcePool = getSourcePool(lesson, phrasePool);
@@ -305,7 +311,6 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
   const sourcePool = getSourcePool(lesson, phrasePool);
   const lessonSeed = `${languageId}-${lesson.id}`;
   const lessonTargets = teachingItems.length ? teachingItems : sourcePool;
-  const startIndex = Math.max(0, sourcePool.findIndex((item) => item.id === lessonTargets[0]?.id));
   const pick = (offset) => lessonTargets[offset % lessonTargets.length] || lesson;
   const meanings = sourcePool.map((item) => item.meaning);
   const phrases = sourcePool.map((item) => item.phrase);
@@ -313,7 +318,12 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
   const second = pick(1);
   const third = pick(2);
   const fourth = pick(3);
-  const imageChoiceStep = createFirstAvailableImageChoiceStep(sourcePool, startIndex, lessonSeed);
+  const imageChoiceStep = createFirstAvailableImageChoiceStep(
+    lessonTargets,
+    sourcePool,
+    0,
+    lessonSeed
+  );
   const matchPairsStep = createMatchPairsStep(lessonTargets, 0, lessonSeed);
   const practiceCandidates = [
     {
@@ -335,6 +345,16 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
       prompt: second.meaning,
       answer: second.phrase,
       choices: choiceSet(second.phrase, phrases, `${lessonSeed}-reverse-${second.id}`),
+      note: second.note,
+    },
+    {
+      id: `type-meaning-${second.id}`,
+      type: LESSON_STEP_TYPES.TYPE_ANSWER,
+      title: 'Type the English meaning',
+      prompt: second.phrase,
+      answer: second.meaning,
+      placeholder: 'Type your answer',
+      audioKey: second.audioKey,
       note: second.note,
     },
     third?.audioKey ? {
@@ -371,7 +391,7 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
 
   const seenQuestions = new Set();
   const uniquePracticeCandidates = practiceCandidates.filter((step) => {
-    const signature = [step.type, step.title, step.prompt, step.answer]
+    const signature = [step.type, step.prompt, step.answer]
       .map(normaliseStepAnswer)
       .join('|');
     if (seenQuestions.has(signature)) return false;
@@ -379,8 +399,16 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
     return true;
   });
   const firstPractice = uniquePracticeCandidates[0];
-  const flexiblePractice = shuffle(uniquePracticeCandidates.slice(1), `${lessonSeed}-practice-order`);
-  const practiceSteps = [firstPractice, ...flexiblePractice]
+  const typedPractice = uniquePracticeCandidates.find(
+    (step) => step.type === LESSON_STEP_TYPES.TYPE_ANSWER
+  );
+  const flexiblePractice = shuffle(
+    uniquePracticeCandidates.filter(
+      (step) => step !== firstPractice && step !== typedPractice
+    ),
+    `${lessonSeed}-practice-order`
+  );
+  const practiceSteps = [firstPractice, typedPractice, ...flexiblePractice]
     .filter(Boolean)
     .slice(0, Math.min(7, uniquePracticeCandidates.length));
 
@@ -415,5 +443,6 @@ export function getPracticeSteps(steps) {
     LESSON_STEP_TYPES.IMAGE_CHOICE,
     LESSON_STEP_TYPES.MATCH_PAIRS,
     LESSON_STEP_TYPES.MULTIPLE_CHOICE,
+    LESSON_STEP_TYPES.TYPE_ANSWER,
   ].includes(step.type));
 }

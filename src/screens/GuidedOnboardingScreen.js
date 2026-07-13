@@ -7,9 +7,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PrimaryButton from '../components/PrimaryButton';
 import RegionalGuide from '../components/RegionalGuide';
+import { coursesData } from '../data/generatedCourses';
 import { colors, fonts, radius, spacing } from '../theme';
 
 const DRAFT_KEY = 'diaspora:onboarding-draft:v1';
+
+function courseHasLessons(courseId) {
+  return coursesData[courseId]?.units?.some((unit) => unit.lessons?.length > 0) === true;
+}
+
+function withAvailability(item) {
+  if (courseHasLessons(item.id)) return item;
+  return {
+    ...item,
+    badge: 'COMING SOON',
+    disabled: true,
+    note: 'Workbook lessons are being prepared',
+  };
+}
 
 const BASE_LANGUAGES = [
   { id: 'english', label: 'English', flag: '🇺🇸', note: 'Learn from English' },
@@ -96,7 +111,19 @@ export default function GuidedOnboardingScreen({ initialData, onBack, onComplete
   const [draft, setDraft] = useState(INITIAL_DRAFT);
   const [hydrated, setHydrated] = useState(false);
   const step = STEPS[stepIndex];
-  const availableCourses = useMemo(() => COURSES[draft.baseLanguage] || COURSES.english, [draft.baseLanguage]);
+  const availableCourses = useMemo(
+    () => (COURSES[draft.baseLanguage] || COURSES.english).map(withAvailability),
+    [draft.baseLanguage]
+  );
+  const baseLanguages = useMemo(
+    () => BASE_LANGUAGES.map((language) => {
+      const hasAvailableCourse = (COURSES[language.id] || []).some((course) => courseHasLessons(course.id));
+      return hasAvailableCourse
+        ? language
+        : { ...language, badge: 'COMING SOON', disabled: true, note: 'Courses are being prepared' };
+    }),
+    []
+  );
 
   useEffect(() => {
     AsyncStorage.getItem(DRAFT_KEY)
@@ -107,8 +134,11 @@ export default function GuidedOnboardingScreen({ initialData, onBack, onComplete
           ...onboardingFields(savedDraft),
           ...onboardingFields(initialData),
         };
-        setDraft(restored);
-        if (restored.onboardingCompleted) setStepIndex(STEPS.length - 1);
+        const safeRestored = courseHasLessons(restored.currentCourse)
+          ? restored
+          : { ...restored, currentCourse: null, onboardingCompleted: false };
+        setDraft(safeRestored);
+        if (safeRestored.onboardingCompleted) setStepIndex(STEPS.length - 1);
       })
       .catch(() => {})
       .finally(() => setHydrated(true));
@@ -134,7 +164,7 @@ export default function GuidedOnboardingScreen({ initialData, onBack, onComplete
 
   function canContinue() {
     if (step === 'name') return draft.preferredName.trim().length >= 2;
-    if (step === 'course') return Boolean(draft.currentCourse);
+    if (step === 'course') return courseHasLessons(draft.currentCourse);
     if (step === 'motivation') return Boolean(draft.motivation);
     if (step === 'level') return Boolean(draft.proficiencyLevel);
     if (step === 'reminder') return draft.reminderEnabled !== null;
@@ -183,7 +213,7 @@ export default function GuidedOnboardingScreen({ initialData, onBack, onComplete
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            {renderStep(step, draft, select, update, availableCourses)}
+            {renderStep(step, draft, select, update, availableCourses, baseLanguages)}
           </ScrollView>
         </Animated.View>
 
@@ -200,7 +230,7 @@ export default function GuidedOnboardingScreen({ initialData, onBack, onComplete
   );
 }
 
-function renderStep(step, draft, select, update, courses) {
+function renderStep(step, draft, select, update, courses, baseLanguages) {
   if (step === 'name') {
     return (
       <>
@@ -225,7 +255,7 @@ function renderStep(step, draft, select, update, courses) {
       <>
         <GuideIntro region="americas" eyebrow="YOUR APP LANGUAGE" title="What language do you speak?" body="We’ll use this for instructions and translations." />
         <OptionList
-          items={BASE_LANGUAGES}
+          items={baseLanguages}
           selected={draft.baseLanguage}
           onSelect={(item) => select({ baseLanguage: item.id, currentCourse: null })}
         />
@@ -339,15 +369,28 @@ function OptionList({ items, selected, onSelect, selectedKey = (item) => item.id
         const active = selected === key;
         return (
           <Pressable
+            disabled={item.disabled}
             accessibilityRole="radio"
-            accessibilityState={{ checked: active }}
+            accessibilityState={{ checked: active, disabled: Boolean(item.disabled) }}
             key={key}
             onPress={() => onSelect(item)}
-            style={({ pressed }) => [styles.option, active && styles.optionActive, pressed && styles.optionPressed]}
+            style={({ pressed }) => [
+              styles.option,
+              active && styles.optionActive,
+              item.disabled && styles.optionDisabled,
+              pressed && !item.disabled && styles.optionPressed,
+            ]}
           >
             {item.emoji || item.flag ? <Text style={styles.optionEmoji}>{item.emoji || item.flag}</Text> : null}
             <View style={styles.optionCopy}>
-              <Text style={styles.optionLabel}>{item.label}</Text>
+              <View style={styles.optionTitleRow}>
+                <Text style={[styles.optionLabel, item.disabled && styles.optionLabelDisabled]}>{item.label}</Text>
+                {item.badge ? (
+                  <View style={styles.optionBadge}>
+                    <Text style={styles.optionBadgeText}>{item.badge}</Text>
+                  </View>
+                ) : null}
+              </View>
               {item.note ? <Text style={styles.optionNote}>{item.note}</Text> : null}
             </View>
             <View style={[styles.radio, active && styles.radioActive]}>{active ? <View style={styles.radioDot} /> : null}</View>
@@ -379,10 +422,15 @@ const styles = StyleSheet.create({
   optionList: { gap: 11 },
   option: { alignItems: 'center', backgroundColor: colors.surface, borderBottomColor: '#0B0908', borderBottomWidth: 4, borderColor: colors.border, borderRadius: radius.lg, borderWidth: 2, flexDirection: 'row', gap: 13, minHeight: 66, padding: 14 },
   optionActive: { backgroundColor: colors.primaryLight, borderColor: colors.primary, borderBottomColor: colors.primaryDark },
+  optionDisabled: { opacity: 0.58 },
   optionPressed: { borderBottomWidth: 2, transform: [{ translateY: 2 }] },
   optionEmoji: { fontSize: 27, width: 36 },
   optionCopy: { flex: 1, gap: 3 },
+  optionTitleRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
   optionLabel: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 16 },
+  optionLabelDisabled: { color: colors.textMuted },
+  optionBadge: { backgroundColor: colors.africaGold, borderRadius: radius.sm, paddingHorizontal: 6, paddingVertical: 2 },
+  optionBadgeText: { color: colors.skyBottom, fontFamily: fonts.extraBold, fontSize: 8, letterSpacing: 0.4 },
   optionNote: { color: colors.textMuted, fontFamily: fonts.medium, fontSize: 12, lineHeight: 17 },
   radio: { alignItems: 'center', borderColor: colors.border, borderRadius: radius.pill, borderWidth: 2, height: 23, justifyContent: 'center', width: 23 },
   radioActive: { borderColor: colors.primary },

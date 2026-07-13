@@ -400,6 +400,7 @@ function LessonPlayer({
   const [step, setStep] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [builtWords, setBuiltWords] = useState([]);
+  const [typedAnswer, setTypedAnswer] = useState('');
   const [feedback, setFeedback] = useState(null);
   const [attempts, setAttempts] = useState([]);
   const [activeCutscene, setActiveCutscene] = useState(null);
@@ -468,12 +469,14 @@ function LessonPlayer({
 
   function selectedAnswer() {
     if (exercise?.type === 'match_pairs') return selectedChoice;
+    if (exercise?.type === 'type_answer') return typedAnswer;
     if (exercise?.choices) return selectedChoice;
     return builtWords.join(' ');
   }
 
   function canCheck() {
     if (exercise?.type === 'match_pairs') return selectedChoice === '__matched__';
+    if (exercise?.type === 'type_answer') return typedAnswer.trim().length > 0;
     return exercise?.choices ? Boolean(selectedChoice) : builtWords.length > 0;
   }
 
@@ -572,6 +575,7 @@ function LessonPlayer({
     setStep((current) => current + 1);
     setSelectedChoice(null);
     setBuiltWords([]);
+    setTypedAnswer('');
     setFeedback(null);
     setAudioHelperText(null);
   }
@@ -804,6 +808,8 @@ function LessonPlayer({
         setSelectedChoice={setSelectedChoice}
         builtWords={builtWords}
         setBuiltWords={setBuiltWords}
+        typedAnswer={typedAnswer}
+        setTypedAnswer={setTypedAnswer}
         feedback={feedback}
         audioHelperText={audioHelperText}
         normaliseAnswer={normaliseStepAnswer}
@@ -811,6 +817,7 @@ function LessonPlayer({
         getAudioForText={(text) => getLessonAudioSourceByText(courseId, text)}
         getImageForKey={(imageKey, category) => getVocabImageSource(imageKey, category)}
         onAudioFallbackPress={(text) => setAudioHelperText((current) => current === text ? null : text)}
+        onSubmitAnswer={checkAnswer}
       />
 
       <View
@@ -3239,6 +3246,43 @@ const styles = StyleSheet.create({
     color: colors.textLight,
     fontFamily: fonts.bold,
     fontSize: 15,
+  },
+  typedAnswerArea: {
+    marginTop: spacing.xl,
+  },
+  typedAnswerLabel: {
+    color: colors.textLight,
+    fontFamily: fonts.extraBold,
+    fontSize: 11,
+    letterSpacing: 1,
+    marginBottom: spacing.sm,
+  },
+  typedAnswerInput: {
+    backgroundColor: '#1E1612',
+    borderBottomWidth: 5,
+    borderColor: '#4A3529',
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    color: colors.text,
+    fontFamily: fonts.bold,
+    fontSize: 18,
+    minHeight: 64,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  typedAnswerInputCorrect: {
+    backgroundColor: 'rgba(88, 204, 2, 0.18)',
+    borderColor: colors.primary,
+  },
+  typedAnswerInputWrong: {
+    backgroundColor: 'rgba(255, 92, 92, 0.16)',
+    borderColor: colors.error,
+  },
+  typedAnswerHint: {
+    color: colors.textLight,
+    fontFamily: fonts.medium,
+    fontSize: 12,
+    marginTop: spacing.sm,
   },
   wordBank: {
     flexDirection: 'row',

@@ -30,8 +30,17 @@ import {
   scheduleDailyReminder,
 } from './src/services/reminderService';
 import { colors } from './src/theme';
+import { coursesData } from './src/data/generatedCourses';
 
 const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId || 'patois');
+const courseHasLessons = (courseId) => Boolean(courseId) && coursesData[normaliseCourseId(courseId)]?.units?.some(
+  (unit) => unit.lessons?.length > 0
+) === true;
+const courseBaseLanguage = (courseId) => {
+  if (['haitian', 'nouchi', 'wolof'].includes(courseId)) return 'french';
+  if (['sudanese', 'nubian'].includes(courseId)) return 'arabic';
+  return 'english';
+};
 
 function AppContent() {
   const { initializing, profile, syncProgress, isAuthenticated, user } = useAuth();
@@ -65,8 +74,13 @@ function AppContent() {
         }
         const course = normaliseCourseId(profile?.currentCourse);
         if (!cancelled) {
-          setSelectedCourse(course);
-          setScreen('home');
+          if (courseHasLessons(course)) {
+            setSelectedCourse(course);
+            setScreen('home');
+          } else {
+            setUserLanguage(courseBaseLanguage(course));
+            setScreen('course-select');
+          }
           setRouteReady(true);
         }
         return;
@@ -133,7 +147,7 @@ function AppContent() {
       cancelDailyReminder().catch(() => {});
     }
 
-    if (onboardingDraft?.currentCourse) {
+    if (courseHasLessons(onboardingDraft?.currentCourse)) {
       setUserLanguage(onboardingDraft.baseLanguage || 'english');
       setSelectedCourse(onboardingDraft.currentCourse);
       AsyncStorage.removeItem('diaspora:onboarding-draft:v1').catch(() => {});
@@ -148,8 +162,14 @@ function AppContent() {
     }
 
     if (activeProfile?.currentCourse) {
-      setSelectedCourse(normaliseCourseId(activeProfile.currentCourse));
-      setScreen('home');
+      const course = normaliseCourseId(activeProfile.currentCourse);
+      if (courseHasLessons(course)) {
+        setSelectedCourse(course);
+        setScreen('home');
+      } else {
+        setUserLanguage(courseBaseLanguage(course));
+        setScreen('course-select');
+      }
       return;
     }
 

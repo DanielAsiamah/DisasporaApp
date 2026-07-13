@@ -11,7 +11,12 @@ import {
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
 import PrimaryButton from '../components/PrimaryButton';
+import { coursesData } from '../data/generatedCourses';
 import { colors, fonts, radius, spacing } from '../theme';
+
+function courseHasLessons(courseId) {
+  return coursesData[courseId]?.units?.some((unit) => unit.lessons?.length > 0) === true;
+}
 
 const COURSES_BY_LANG = {
   english: [
@@ -165,13 +170,17 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 
               {courses.map((course) => {
                 const isSelected = selected === course.id;
+                const isAvailable = courseHasLessons(course.id);
                 return (
                   <Pressable
+                    accessibilityState={{ disabled: !isAvailable, selected: isSelected }}
+                    disabled={!isAvailable}
                     key={course.id}
                     onPress={() => setSelected(course.id)}
                     style={[
                       styles.card,
                       isSelected && styles.cardSelected,
+                      !isAvailable && styles.cardDisabled,
                       {
                         borderBottomColor: isSelected
                           ? colors.primaryDark
@@ -185,13 +194,19 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
                     <View style={styles.cardInfo}>
                       <View style={styles.labelRow}>
                         <Text style={styles.cardLabel}>{course.label}</Text>
-                        {course.isNew && (
+                        {!isAvailable ? (
+                          <View style={styles.newBadge}>
+                            <Text style={styles.newBadgeText}>COMING SOON</Text>
+                          </View>
+                        ) : course.isNew && (
                           <View style={styles.newBadge}>
                             <Text style={styles.newBadgeText}>NEW</Text>
                           </View>
                         )}
                       </View>
-                      <Text style={styles.cardSubtitle}>{course.subtitle}</Text>
+                      <Text style={styles.cardSubtitle}>
+                        {isAvailable ? course.subtitle : 'Workbook lessons are being prepared.'}
+                      </Text>
                       <View style={styles.tagWrapper}>
                         <Text style={styles.categoryText}>🏷️ {course.category}</Text>
                       </View>
@@ -308,6 +323,9 @@ const styles = StyleSheet.create({
   cardSelected: {
     borderColor: colors.primary,
     backgroundColor: colors.surfaceMuted,
+  },
+  cardDisabled: {
+    opacity: 0.58,
   },
   flagCircle: {
     alignItems: 'center',

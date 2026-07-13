@@ -32,6 +32,7 @@ const NATIVE_LANGUAGES = [
     subtitle: 'تعلم من اللغة العربية',
     flag: '🇸🇦',
     accentColor: colors.africaGold,
+    disabled: true,
   },
 ];
 
@@ -86,11 +87,14 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
           <View style={styles.list}>
             {NATIVE_LANGUAGES.map((lang) => (
               <Pressable
+                accessibilityState={{ disabled: Boolean(lang.disabled) }}
+                disabled={lang.disabled}
                 key={lang.id}
                 onPress={() => onSelectLanguage(lang.id)}
                 style={({ pressed }) => [
                   styles.card,
-                  pressed && styles.cardPressed,
+                  lang.disabled && styles.cardDisabled,
+                  pressed && !lang.disabled && styles.cardPressed,
                   { borderBottomColor: lang.accentColor + '99' },
                 ]}
               >
@@ -99,7 +103,7 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
                 </View>
                 <View style={styles.cardInfo}>
                   <Text style={styles.cardLabel}>{lang.label}</Text>
-                  <Text style={styles.cardSubtitle}>{lang.subtitle}</Text>
+                  <Text style={styles.cardSubtitle}>{lang.disabled ? 'Courses coming soon' : lang.subtitle}</Text>
                 </View>
                 <Text style={styles.arrow}>➔</Text>
               </Pressable>
@@ -187,6 +191,9 @@ const styles = StyleSheet.create({
   cardPressed: {
     transform: [{ translateY: 2 }],
     borderBottomWidth: 2,
+  },
+  cardDisabled: {
+    opacity: 0.58,
   },
   flagBadge: {
     alignItems: 'center',

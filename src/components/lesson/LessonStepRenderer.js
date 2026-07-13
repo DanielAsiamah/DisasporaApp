@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { Image, ScrollView, Text, TextInput, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown, FadeOutUp } from 'react-native-reanimated';
 
@@ -7,6 +7,7 @@ import RegionalGuide from '../RegionalGuide';
 import { LESSON_STEP_TYPES } from '../../lessonEngine/lessonStepTypes';
 import AudioPressable from './AudioPressable';
 import LessonAudioButton from './LessonAudioButton';
+import { colors } from '../../theme';
 
 export default function LessonStepRenderer({
   step,
@@ -16,6 +17,8 @@ export default function LessonStepRenderer({
   setSelectedChoice,
   builtWords,
   setBuiltWords,
+  typedAnswer,
+  setTypedAnswer,
   feedback,
   audioHelperText,
   normaliseAnswer,
@@ -23,6 +26,7 @@ export default function LessonStepRenderer({
   getAudioForText,
   getImageForKey,
   onAudioFallbackPress,
+  onSubmitAnswer,
 }) {
   const isChoiceStep = [
     LESSON_STEP_TYPES.AUDIO_LISTEN,
@@ -31,6 +35,7 @@ export default function LessonStepRenderer({
   ].includes(step.type);
   const isBuildStep = step.type === LESSON_STEP_TYPES.BUILD_SENTENCE;
   const isMatchStep = step.type === LESSON_STEP_TYPES.MATCH_PAIRS;
+  const isTypeStep = step.type === LESSON_STEP_TYPES.TYPE_ANSWER;
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [matchedPairIds, setMatchedPairIds] = useState([]);
 
@@ -66,7 +71,11 @@ export default function LessonStepRenderer({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.lessonContent} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.lessonContent}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <Animated.View
         key={step.id}
         entering={FadeInDown.duration(280)}
@@ -90,7 +99,11 @@ export default function LessonStepRenderer({
               <View style={styles.speechTextWrap}>
                 <Text style={styles.phraseText}>{step.prompt}</Text>
                 <Text style={styles.phraseHint}>
-                  {isBuildStep ? 'Tap the words in the correct order' : 'Choose one answer'}
+                  {isBuildStep
+                    ? 'Tap the words in the correct order'
+                    : isTypeStep
+                      ? 'Type your answer below'
+                      : 'Choose one answer'}
                 </Text>
               </View>
             </View>
@@ -183,6 +196,32 @@ export default function LessonStepRenderer({
               );
             })}
           </View>
+        </View>
+      ) : null}
+
+      {isTypeStep ? (
+        <View style={styles.typedAnswerArea}>
+          <Text style={styles.typedAnswerLabel}>YOUR ANSWER</Text>
+          <TextInput
+            accessibilityLabel="Type your answer"
+            autoCapitalize="none"
+            autoCorrect={false}
+            editable={!feedback}
+            onChangeText={setTypedAnswer}
+            onSubmitEditing={() => {
+              if (typedAnswer.trim() && !feedback) onSubmitAnswer?.();
+            }}
+            placeholder={step.placeholder || 'Type your answer'}
+            placeholderTextColor={colors.textLight}
+            returnKeyType="done"
+            style={[
+              styles.typedAnswerInput,
+              feedback?.correct && styles.typedAnswerInputCorrect,
+              feedback && !feedback.correct && styles.typedAnswerInputWrong,
+            ]}
+            value={typedAnswer}
+          />
+          <Text style={styles.typedAnswerHint}>Accents and capitalization are handled fairly.</Text>
         </View>
       ) : null}
 
