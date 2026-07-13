@@ -407,6 +407,7 @@ function LessonPlayer({
   const [audioHelperText, setAudioHelperText] = useState(null);
   const [sessionComplete, setSessionComplete] = useState(false);
   const advanceTimerRef = useRef(null);
+  const advancingRef = useRef(false);
   const lastSoundAtRef = useRef(0);
   const sessionIdRef = useRef(null);
 
@@ -501,6 +502,7 @@ function LessonPlayer({
   }
 
   function checkAnswer() {
+    if (feedback || !canCheck()) return;
     const answer = selectedAnswer();
     const correct = normaliseStepAnswer(answer) === normaliseStepAnswer(exercise.answer);
     const attempt = {
@@ -535,8 +537,19 @@ function LessonPlayer({
     }
     setFeedback({ correct, answer });
     if (correct) {
-      advanceTimerRef.current = setTimeout(showCutsceneOrAdvance, 650);
+      advancingRef.current = false;
+      advanceTimerRef.current = setTimeout(continueAfterCorrect, 1400);
     }
+  }
+
+  function continueAfterCorrect() {
+    if (advancingRef.current) return;
+    advancingRef.current = true;
+    if (advanceTimerRef.current) {
+      clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+    showCutsceneOrAdvance();
   }
 
   function createSessionSummary() {
@@ -567,6 +580,7 @@ function LessonPlayer({
   }
 
   function advanceLessonStep() {
+    advancingRef.current = false;
     if (step === practiceSteps.length - 1) {
       setLessonStage('review');
       setFeedback(null);
@@ -841,9 +855,9 @@ function LessonPlayer({
           </View>
         ) : null}
         <PrimaryButton
-          label={feedback?.correct ? 'NICE!' : feedback ? 'GOT IT' : 'CHECK'}
-          disabled={Boolean(feedback?.correct) || (!feedback && !canCheck())}
-          onPress={feedback ? showMistakeCutsceneOrAdvance : checkAnswer}
+          label={feedback ? 'CONTINUE' : 'CHECK'}
+          disabled={!feedback && !canCheck()}
+          onPress={feedback?.correct ? continueAfterCorrect : feedback ? showMistakeCutsceneOrAdvance : checkAnswer}
         />
       </View>
     </SafeAreaView>
@@ -2968,19 +2982,19 @@ const styles = StyleSheet.create({
   lessonTopBar: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: spacing.sm,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.sm,
   },
   closeButton: {
     alignItems: 'center',
     backgroundColor: '#2B211B',
     borderColor: '#4A3529',
-    borderRadius: 24,
+    borderRadius: 21,
     borderWidth: 1,
-    height: 48,
+    height: 42,
     justifyContent: 'center',
-    width: 48,
+    width: 42,
   },
   closeButtonPressed: {
     opacity: 0.65,
@@ -2988,14 +3002,14 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: colors.text,
     fontFamily: fonts.medium,
-    fontSize: 38,
-    lineHeight: 40,
+    fontSize: 32,
+    lineHeight: 34,
   },
   lessonProgressTrack: {
     backgroundColor: '#33261F',
     borderRadius: radius.pill,
     flex: 1,
-    height: 18,
+    height: 14,
     overflow: 'hidden',
   },
   lessonProgressFill: {
@@ -3004,15 +3018,16 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   lessonContent: {
-    padding: spacing.lg,
-    paddingBottom: 220,
+    paddingBottom: 200,
+    paddingHorizontal: 18,
+    paddingTop: 12,
   },
   lessonTitle: {
     color: colors.text,
     fontFamily: fonts.black,
-    fontSize: 31,
-    lineHeight: 38,
-    marginBottom: spacing.lg,
+    fontSize: 27,
+    lineHeight: 33,
+    marginBottom: 14,
   },
   lessonPromptRow: {
     alignItems: 'stretch',
@@ -3031,8 +3046,10 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     flex: 1,
     flexDirection: 'row',
-    gap: spacing.md,
-    padding: spacing.md,
+    gap: spacing.sm,
+    minHeight: 58,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
   soundIcon: {
     fontSize: 22,
@@ -3040,10 +3057,10 @@ const styles = StyleSheet.create({
   audioButton: {
     alignItems: 'center',
     backgroundColor: 'rgba(70, 180, 255, 0.12)',
-    borderRadius: 22,
-    height: 44,
+    borderRadius: 20,
+    height: 40,
     justifyContent: 'center',
-    width: 44,
+    width: 40,
   },
   audioButtonPressed: {
     opacity: 0.65,
@@ -3055,8 +3072,8 @@ const styles = StyleSheet.create({
   phraseText: {
     color: colors.text,
     fontFamily: fonts.bold,
-    fontSize: 23,
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 27,
   },
   phraseHint: {
     color: colors.textLight,
@@ -3087,23 +3104,23 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   choiceList: {
-    gap: spacing.md,
-    marginTop: spacing.xxl,
+    gap: 10,
+    marginTop: 18,
   },
   imageChoiceGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
-    marginTop: spacing.xl,
+    gap: 10,
+    marginTop: 18,
   },
   matchPairsGrid: {
     flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.xl,
+    gap: 10,
+    marginTop: 18,
   },
   matchPairColumn: {
     flex: 1,
-    gap: spacing.md,
+    gap: 10,
   },
   matchPairCard: {
     alignItems: 'center',
@@ -3113,7 +3130,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 2,
     justifyContent: 'center',
-    minHeight: 72,
+    minHeight: 62,
     padding: spacing.sm,
   },
   matchPairText: {
@@ -3187,9 +3204,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 2,
     justifyContent: 'center',
-    minHeight: 56,
+    minHeight: 50,
     paddingHorizontal: spacing.md,
-    paddingVertical: 11,
+    paddingVertical: 9,
   },
   imageChoiceCard: {
     alignItems: 'center',
@@ -3201,13 +3218,13 @@ const styles = StyleSheet.create({
     flexBasis: '47%',
     gap: spacing.sm,
     justifyContent: 'center',
-    minHeight: 170,
-    padding: spacing.md,
+    minHeight: 150,
+    padding: 12,
   },
   imageChoiceArt: {
     backgroundColor: 'rgba(255,255,255,0.05)',
     borderRadius: radius.lg,
-    height: 96,
+    height: 84,
     width: '100%',
   },
   answerCardSelected: {
@@ -3225,12 +3242,12 @@ const styles = StyleSheet.create({
   answerCardText: {
     color: colors.text,
     fontFamily: fonts.bold,
-    fontSize: 17,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 21,
     textAlign: 'center',
   },
   buildArea: {
-    marginTop: spacing.xl,
+    marginTop: 18,
   },
   answerTray: {
     alignContent: 'flex-start',
@@ -3239,8 +3256,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
-    minHeight: 76,
-    paddingBottom: spacing.md,
+    minHeight: 64,
+    paddingBottom: 10,
   },
   answerPlaceholder: {
     color: colors.textLight,
@@ -3248,7 +3265,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   typedAnswerArea: {
-    marginTop: spacing.xl,
+    marginTop: 18,
   },
   typedAnswerLabel: {
     color: colors.textLight,
@@ -3266,7 +3283,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontFamily: fonts.bold,
     fontSize: 18,
-    minHeight: 64,
+    minHeight: 56,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
   },
@@ -3289,7 +3306,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: spacing.sm,
     justifyContent: 'center',
-    marginTop: spacing.xxl,
+    marginTop: 20,
   },
   wordChip: {
     backgroundColor: '#1E1612',
@@ -3451,7 +3468,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     bottom: 0,
     left: 0,
-    padding: spacing.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 14,
     position: 'absolute',
     right: 0,
   },
@@ -3462,12 +3480,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#3A1D1C',
   },
   feedbackCopy: {
-    marginBottom: spacing.md,
+    marginBottom: 10,
   },
   feedbackTitle: {
     color: colors.primary,
     fontFamily: fonts.black,
-    fontSize: 24,
+    fontSize: 21,
   },
   feedbackTitleWrong: {
     color: colors.error,
@@ -3475,7 +3493,7 @@ const styles = StyleSheet.create({
   feedbackBody: {
     color: colors.text,
     fontFamily: fonts.bold,
-    fontSize: 16,
+    fontSize: 14,
     marginTop: spacing.xs,
   },
   feedbackHint: {
