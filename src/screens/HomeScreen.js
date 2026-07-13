@@ -16,9 +16,9 @@ import {
 } from 'react-native';
 
 import HeartsBar from '../components/HeartsBar';
-import MascotHero from '../components/MascotHero';
 import OutOfHeartsModal from '../components/OutOfHeartsModal';
 import PrimaryButton from '../components/PrimaryButton';
+import RegionalGuide from '../components/RegionalGuide';
 import LessonCutscene from '../components/lesson/LessonCutscene';
 import LessonStepRenderer from '../components/lesson/LessonStepRenderer';
 import TeachingSlide from '../components/lesson/TeachingSlide';
@@ -54,6 +54,12 @@ const getMarginLeft = (index) => {
   if (cycle === 5) return -44;
   if (cycle === 6) return -76;
   return -44;
+};
+
+const guideRegionForCourse = (courseId) => {
+  if (['patois', 'haitian'].includes(courseId)) return 'caribbean';
+  if (['belizean', 'aave'].includes(courseId)) return 'americas';
+  return 'africa';
 };
 
 const isNodeCompleted = (node, completedIds = []) => (
@@ -328,6 +334,18 @@ function PathNode({ node, index, isCompleted, isActive, isLocked, themeColor, ac
       </Pressable>
       {isActive ? <View style={[styles.activeRing, { borderColor: accentColor }]} /> : null}
     </View>
+  );
+}
+
+function PathGuide({ region }) {
+  return (
+    <Animated.View entering={FadeInDown.delay(220).springify()} style={styles.pathGuide}>
+      <View style={styles.pathGuideBubble}>
+        <Text style={styles.pathGuideBubbleEyebrow}>YOUR GUIDE</Text>
+        <Text style={styles.pathGuideBubbleText}>Your next lesson is ready.</Text>
+      </View>
+      <RegionalGuide region={region} size="medium" showLabel />
+    </Animated.View>
   );
 }
 
@@ -833,6 +851,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
   const [isProgressReady, setIsProgressReady] = useState(false);
   const [course, setCourse] = useState(() => getCourseById(courseId));
   const [notice, setNotice] = useState(null);
+  const activeGuideRegion = profile?.guideRegion || guideRegionForCourse(courseId);
 
   function showNotice(title, body, tone = 'info') {
     setNotice({ title, body, tone });
@@ -1192,7 +1211,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         lesson={activeLesson}
         phrasePool={activeLessonPool}
         courseId={courseId}
-        guideRegion={profile?.guideRegion || (courseId === 'patois' ? 'caribbean' : 'africa')}
+        guideRegion={activeGuideRegion}
         hearts={hearts}
         maxHearts={maxHearts}
         currentStreak={streak}
@@ -1324,7 +1343,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
                     })}
                     {containsActiveLesson ? (
                       <View style={styles.mascotContainer}>
-                        <MascotHero />
+                        <PathGuide region={activeGuideRegion} />
                       </View>
                     ) : null}
                   </View>
@@ -1850,9 +1869,37 @@ const styles = StyleSheet.create({
   },
   mascotContainer: {
     position: 'absolute',
-    right: 6,
-    top: 260,
-    transform: [{ scale: 0.82 }],
+    right: -2,
+    top: 275,
+  },
+  pathGuide: {
+    alignItems: 'center',
+    gap: spacing.sm,
+    width: 148,
+  },
+  pathGuideBubble: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 10,
+    ...shadows.soft,
+  },
+  pathGuideBubbleEyebrow: {
+    color: colors.accent,
+    fontFamily: fonts.extraBold,
+    fontSize: 9,
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
+  pathGuideBubbleText: {
+    color: colors.text,
+    fontFamily: fonts.bold,
+    fontSize: 11,
+    lineHeight: 15,
+    marginTop: 2,
+    textAlign: 'center',
   },
   tabContent: {
     padding: ui.screenPadding,
