@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-13T09:56:32.104Z",
+  "generatedAt": "2026-07-13T10:00:31.400Z",
   "collections": {
     "languages": {
       "patois": {
         "id": "patois",
         "status": "published",
+        "contentVersion": 2,
         "title": "Jamaican Patois",
         "flag": "",
         "themeColor": "#009B3A",
@@ -5159,6 +5160,7 @@
       "swahili": {
         "id": "swahili",
         "status": "published",
+        "contentVersion": 2,
         "title": "Swahili",
         "flag": "",
         "themeColor": "#D4782C",
@@ -8782,6 +8784,7 @@
       "igbo": {
         "id": "igbo",
         "status": "published",
+        "contentVersion": 2,
         "title": "Igbo",
         "flag": "",
         "themeColor": "#7B61A8",
@@ -12159,6 +12162,7 @@
       "wolof": {
         "id": "wolof",
         "status": "published",
+        "contentVersion": 2,
         "title": "Wolof",
         "flag": "",
         "themeColor": "#237A4B",
@@ -14636,6 +14640,7 @@
       "haitian": {
         "id": "haitian",
         "status": "published",
+        "contentVersion": 2,
         "title": "Haitian Creole",
         "flag": "",
         "themeColor": "#B9523F",
@@ -16749,6 +16754,7 @@
       "nouchi": {
         "id": "nouchi",
         "status": "published",
+        "contentVersion": 2,
         "title": "Nouchi Ivoirien",
         "flag": "",
         "themeColor": "#28766F",
@@ -16758,6 +16764,7 @@
       "belizean": {
         "id": "belizean",
         "status": "published",
+        "contentVersion": 2,
         "title": "Belizean Creole",
         "flag": "",
         "themeColor": "#009B3A",
@@ -18384,6 +18391,7 @@
       "aave": {
         "id": "aave",
         "status": "published",
+        "contentVersion": 2,
         "title": "Black American English",
         "flag": "",
         "themeColor": "#D4782C",
@@ -19934,6 +19942,7 @@
       "sudanese": {
         "id": "sudanese",
         "status": "published",
+        "contentVersion": 2,
         "title": "Sudanese Arabic",
         "flag": "",
         "themeColor": "#7B61A8",
@@ -19943,6 +19952,7 @@
       "nubian": {
         "id": "nubian",
         "status": "published",
+        "contentVersion": 2,
         "title": "Nubian",
         "flag": "",
         "themeColor": "#237A4B",

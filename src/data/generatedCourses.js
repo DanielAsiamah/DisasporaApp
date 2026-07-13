@@ -2,6 +2,7 @@
 
 export const coursesData = {
   "patois": {
+    "contentVersion": 2,
     "title": "Jamaican Patois",
     "flag": "",
     "themeColor": "#009B3A",
@@ -883,6 +884,7 @@ export const coursesData = {
     ]
   },
   "swahili": {
+    "contentVersion": 2,
     "title": "Swahili",
     "flag": "",
     "themeColor": "#D4782C",
@@ -1544,6 +1546,7 @@ export const coursesData = {
     ]
   },
   "igbo": {
+    "contentVersion": 2,
     "title": "Igbo",
     "flag": "",
     "themeColor": "#7B61A8",
@@ -2172,6 +2175,7 @@ export const coursesData = {
     ]
   },
   "wolof": {
+    "contentVersion": 2,
     "title": "Wolof",
     "flag": "",
     "themeColor": "#237A4B",
@@ -2668,6 +2672,7 @@ export const coursesData = {
     ]
   },
   "haitian": {
+    "contentVersion": 2,
     "title": "Haitian Creole",
     "flag": "",
     "themeColor": "#B9523F",
@@ -3090,6 +3095,7 @@ export const coursesData = {
     ]
   },
   "nouchi": {
+    "contentVersion": 2,
     "title": "Nouchi Ivoirien",
     "flag": "",
     "themeColor": "#28766F",
@@ -3097,6 +3103,7 @@ export const coursesData = {
     "units": []
   },
   "belizean": {
+    "contentVersion": 2,
     "title": "Belizean Creole",
     "flag": "",
     "themeColor": "#009B3A",
@@ -3453,6 +3460,7 @@ export const coursesData = {
     ]
   },
   "aave": {
+    "contentVersion": 2,
     "title": "Black American English",
     "flag": "",
     "themeColor": "#D4782C",
@@ -3760,6 +3768,7 @@ export const coursesData = {
     ]
   },
   "sudanese": {
+    "contentVersion": 2,
     "title": "Sudanese Arabic",
     "flag": "",
     "themeColor": "#7B61A8",
@@ -3767,6 +3776,7 @@ export const coursesData = {
     "units": []
   },
   "nubian": {
+    "contentVersion": 2,
     "title": "Nubian",
     "flag": "",
     "themeColor": "#237A4B",

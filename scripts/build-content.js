@@ -84,6 +84,7 @@ languages.forEach((language, languageIndex) => {
     });
 
   coursesData[languageId] = {
+    contentVersion: 2,
     title: normalise(language.language_name),
     flag: normalise(language.flag),
     themeColor: palette[languageIndex % palette.length],

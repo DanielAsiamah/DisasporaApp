@@ -44,6 +44,9 @@ export async function loadCourseById(courseId) {
   try {
     const firestoreCourse = await getFirestoreCourse(courseId);
     if (!firestoreCourse?.units?.length) return localCourse;
+    if (Number(firestoreCourse.contentVersion || 0) < Number(localCourse.contentVersion || 1)) {
+      return localCourse;
+    }
 
     return {
       ...localCourse,
