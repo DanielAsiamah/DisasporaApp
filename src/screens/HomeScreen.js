@@ -3,6 +3,7 @@ import { useAudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import { StatusBar } from 'expo-status-bar';
 import { useMemo, useState, useEffect, useRef } from 'react';
+import Animated, { BounceIn, FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
 import {
   Modal,
   Pressable,
@@ -337,6 +338,7 @@ function LessonPlayer({
   guideRegion,
   hearts,
   maxHearts,
+  currentStreak,
   hasNextLesson,
   onExit,
   onMistake,
@@ -379,6 +381,9 @@ function LessonPlayer({
     ? calculateReviewResult({ totalQuestions: practiceSteps.length, correctCount: correctAttemptCount })
     : null;
   const displayedRewardXp = adaptiveResult?.xpEarned ?? lesson.xp ?? 10;
+  const completionLabel = lesson.type === 'review'
+    ? adaptiveResult?.mastered ? 'REVIEW MASTERED' : 'REVIEW COMPLETE'
+    : mistakeAttemptCount === 0 ? 'PERFECT LESSON' : 'LESSON COMPLETE';
   const progress = sessionComplete ? 1 : lessonStage === 'review'
     ? 0.95
     : lessonStage === 'teaching'
@@ -556,6 +561,11 @@ function LessonPlayer({
     advanceLessonStep();
   }
 
+  function claimReward() {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    setSessionComplete(true);
+  }
+
   if (lessonStage === 'teaching') {
     return (
       <SafeAreaView style={styles.lessonSafeArea}>
@@ -637,7 +647,7 @@ function LessonPlayer({
         <View style={styles.lessonFooter}>
           <PrimaryButton
             label="CLAIM REWARD"
-            onPress={() => setSessionComplete(true)}
+            onPress={claimReward}
           />
         </View>
       </SafeAreaView>
@@ -648,13 +658,39 @@ function LessonPlayer({
     return (
       <SafeAreaView style={styles.lessonSafeArea}>
         <StatusBar style="light" />
-        <View style={styles.lessonCompleteScreen}>
-          <Text style={styles.lessonCompleteBadge}>✓</Text>
-          <Text style={styles.lessonCompleteEyebrow}>LESSON COMPLETE</Text>
-          <Text style={styles.lessonCompleteTitle}>
+        <Animated.View entering={FadeIn.duration(260)} style={styles.lessonCompleteScreen}>
+          <View pointerEvents="none" style={styles.confettiLayer}>
+            {[
+              ['★', '12%', 24, colors.accent],
+              ['●', '80%', 48, colors.primary],
+              ['◆', '22%', 112, colors.blue],
+              ['★', '72%', 142, colors.coral],
+              ['●', '8%', 206, colors.primary],
+              ['◆', '88%', 230, colors.accent],
+            ].map(([symbol, left, top, color], index) => (
+              <Animated.Text
+                entering={ZoomIn.delay(80 + index * 65).springify()}
+                key={`${symbol}-${left}`}
+                style={[styles.confettiPiece, { color, left, top, transform: [{ rotate: `${index * 23}deg` }] }]}
+              >
+                {symbol}
+              </Animated.Text>
+            ))}
+          </View>
+
+          <Animated.View entering={BounceIn.delay(100)} style={styles.lessonCompleteGuide}>
+            <RegionalGuide region={guideRegion} size="medium" />
+            <View style={styles.lessonCompleteCheck}>
+              <Text style={styles.lessonCompleteCheckText}>✓</Text>
+            </View>
+          </Animated.View>
+          <Animated.Text entering={FadeInDown.delay(220).duration(300)} style={styles.lessonCompleteEyebrow}>
+            {completionLabel}
+          </Animated.Text>
+          <Animated.Text entering={FadeInDown.delay(290).duration(320)} style={styles.lessonCompleteTitle}>
             {lesson.type === 'review' ? 'Your weak spots are stronger.' : 'You earned this one.'}
-          </Text>
-          <Text style={styles.lessonCompleteBody}>
+          </Animated.Text>
+          <Animated.Text entering={FadeInDown.delay(350).duration(320)} style={styles.lessonCompleteBody}>
             {lesson.type === 'review'
               ? adaptiveResult?.mastered
                 ? 'Review mastered. These phrases are leaving your practice queue.'
@@ -662,14 +698,14 @@ function LessonPlayer({
               : attempts.some((attempt) => !attempt.correct)
               ? 'You finished the lesson and turned mistakes into progress. That is real learning.'
               : 'Clean run. Keep the rhythm going while the phrases are fresh.'}
-          </Text>
-          <View style={styles.lessonCompleteReward}>
+          </Animated.Text>
+          <Animated.View entering={FadeInDown.delay(430).springify()} style={styles.lessonCompleteReward}>
             <Text style={styles.lessonCompleteRewardValue}>+{displayedRewardXp} XP</Text>
             <Text style={styles.lessonCompleteRewardLabel}>
               {lesson.type === 'review' ? 'Mastery reward' : 'Lesson reward'}
             </Text>
-          </View>
-          <View style={styles.lessonCompleteStats}>
+          </Animated.View>
+          <Animated.View entering={FadeInDown.delay(520).duration(300)} style={styles.lessonCompleteStats}>
             <Text style={styles.lessonCompleteStat}>
               {correctAttemptCount}/{practiceSteps.length} correct
             </Text>
@@ -678,17 +714,20 @@ function LessonPlayer({
                 ? `${Math.round((adaptiveResult?.accuracy || 0) * 100)}% mastery`
                 : `${Math.max(mistakeAttemptCount, 0)} mistakes saved`}
             </Text>
-          </View>
-          <PrimaryButton
-            label={hasNextLesson ? 'CONTINUE TO NEXT LESSON' : 'BACK TO THE PATH'}
-            onPress={() => {
-              onComplete({
-                ...createSessionSummary(),
-                sessionId: sessionIdRef.current,
-              });
-            }}
-          />
-        </View>
+            <Text style={styles.lessonCompleteStat}>🔥 {Math.max(currentStreak || 1, 1)} day streak</Text>
+          </Animated.View>
+          <Animated.View entering={FadeInDown.delay(600).duration(300)}>
+            <PrimaryButton
+              label={hasNextLesson ? 'CONTINUE TO NEXT LESSON' : 'BACK TO THE PATH'}
+              onPress={() => {
+                onComplete({
+                  ...createSessionSummary(),
+                  sessionId: sessionIdRef.current,
+                });
+              }}
+            />
+          </Animated.View>
+        </Animated.View>
       </SafeAreaView>
     );
   }
@@ -1156,6 +1195,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack, 
         guideRegion={profile?.guideRegion || (courseId === 'patois' ? 'caribbean' : 'africa')}
         hearts={hearts}
         maxHearts={maxHearts}
+        currentStreak={streak}
         hasNextLesson={Boolean(nextLesson)}
         onExit={() => setActiveLesson(null)}
         onMistake={handleMistake}
@@ -2476,13 +2516,38 @@ const styles = StyleSheet.create({
   lessonCompleteScreen: {
     flex: 1,
     justifyContent: 'center',
+    overflow: 'hidden',
     padding: spacing.xl,
   },
-  lessonCompleteBadge: {
-    alignSelf: 'center',
-    color: colors.primary,
+  confettiLayer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  confettiPiece: {
     fontFamily: fonts.black,
-    fontSize: 72,
+    fontSize: 20,
+    position: 'absolute',
+  },
+  lessonCompleteGuide: {
+    alignSelf: 'center',
+    position: 'relative',
+  },
+  lessonCompleteCheck: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderColor: colors.primaryDark,
+    borderRadius: radius.pill,
+    borderWidth: 2,
+    bottom: -5,
+    height: 34,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: -9,
+    width: 34,
+  },
+  lessonCompleteCheckText: {
+    color: colors.surface,
+    fontFamily: fonts.black,
+    fontSize: 19,
   },
   lessonCompleteEyebrow: {
     color: colors.accent,
@@ -2529,6 +2594,7 @@ const styles = StyleSheet.create({
   },
   lessonCompleteStats: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
     justifyContent: 'center',
     marginBottom: spacing.lg,
