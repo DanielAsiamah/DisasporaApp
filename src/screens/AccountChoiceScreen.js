@@ -11,12 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { coursesData } from '../data/generatedCourses';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, radius, spacing } from '../theme';
-
-const LEVEL_LABELS = {
-  beginner: 'Beginner start',
-  some: 'Basics refresher',
-  comfortable: 'Comfortable start',
-};
+const { getStartingLevelLabel } = require('../onboarding/authHandoff');
 
 function formatReminderTime(value = '19:00') {
   const [rawHour, minute = '00'] = value.split(':');
@@ -37,7 +32,7 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
   const planItems = [
     { id: 'course', emoji: '🗺️', label: 'LEARNING', value: courseTitle },
     { id: 'goal', emoji: '⏱️', label: 'DAILY GOAL', value: `${onboardingData?.dailyGoalMinutes || 10} minutes` },
-    { id: 'level', emoji: '🌱', label: 'STARTING AT', value: LEVEL_LABELS[onboardingData?.proficiencyLevel] || 'Beginner start' },
+    { id: 'level', emoji: '🌱', label: 'STARTING AT', value: getStartingLevelLabel(onboardingData?.proficiencyLevel) },
     {
       id: 'reminder',
       emoji: onboardingData?.reminderEnabled ? '🔔' : '🌙',
@@ -58,7 +53,7 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
       const result = provider === 'google'
         ? await signInWithGoogle(onboardingData)
         : await signInWithApple(onboardingData);
-      onSuccess(result.profile);
+      await onSuccess(result);
     } catch (providerError) {
       if (providerError?.code !== 'ERR_REQUEST_CANCELED') {
         setError(providerError?.message || getAuthErrorMessage(providerError));

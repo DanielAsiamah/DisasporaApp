@@ -30,6 +30,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
+    "test:onboarding": "node --test tests/onboardingFlow.test.cjs tests/onboardingRouting.test.cjs",
     "test:verification": "node --test tests/emailVerificationFlow.test.cjs",
     "test:lesson-audio": "node --test tests/lessonAudioAvailability.test.cjs",
     "test:guides": "node --test tests/regionalGuideModel.test.cjs",
@@ -50,6 +51,8 @@
   },
   "private": true,
   "devDependencies": {
-    "firebase-admin": "^14.1.0"
+    "@types/react": "~19.1.10",
+    "firebase-admin": "^14.1.0",
+    "typescript": "~5.9.2"
   }
 }

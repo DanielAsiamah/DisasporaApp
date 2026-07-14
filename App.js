@@ -7,7 +7,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -31,11 +31,20 @@ import {
 } from './src/services/reminderService';
 import { colors } from './src/theme';
 import { coursesData } from './src/data/generatedCourses';
+const {
+  resolveAuthenticatedRoute,
+  shouldReconcileAuthenticatedRoute,
+} = require('./src/onboarding/onboardingRoute');
+const {
+  getOnboardingBackAction,
+  getOnboardingCompletionAction,
+  shouldClearStoredOnboardingDraft,
+  unpackAuthResult,
+} = require('./src/onboarding/authHandoff');
 
-const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId || 'patois');
-const courseHasLessons = (courseId) => Boolean(courseId) && coursesData[normaliseCourseId(courseId)]?.units?.some(
-  (unit) => unit.lessons?.length > 0
-) === true;
+const ONBOARDING_DRAFT_KEY = 'diaspora:onboarding-draft:v1';
+const KNOWN_COURSE_IDS = new Set(Object.keys(coursesData));
+const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId);
 const courseBaseLanguage = (courseId) => {
   if (['haitian', 'nouchi', 'wolof'].includes(courseId)) return 'french';
   if (['sudanese', 'nubian'].includes(courseId)) return 'arabic';
@@ -43,7 +52,17 @@ const courseBaseLanguage = (courseId) => {
 };
 
 function AppContent() {
-  const { initializing, profile, syncProgress, isAuthenticated, user } = useAuth();
+  const {
+    initializing,
+    profile,
+    profileLoaded,
+    profileError,
+    refreshProfile,
+    signOut,
+    syncProgress,
+    isAuthenticated,
+    user,
+  } = useAuth();
   const [screen, setScreen] = useState(null);
   const [userLanguage, setUserLanguage] = useState('english');
   const [selectedCourse, setSelectedCourse] = useState('patois');
@@ -57,28 +76,55 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
+    if (
+      profileLoaded &&
+      !profileError &&
+      shouldClearStoredOnboardingDraft(profile)
+    ) {
+      AsyncStorage.removeItem(ONBOARDING_DRAFT_KEY).catch(() => {});
+    }
+  }, [profile?.onboardingCompleted, profileError, profileLoaded]);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function chooseInitialRoute() {
-      if (initializing || routeReady) {
+      if (initializing || routeReady || (isAuthenticated && !profileLoaded)) {
         return;
       }
 
       if (isAuthenticated) {
-        if (profile?.onboardingCompleted === false) {
+        const authenticatedRoute = resolveAuthenticatedRoute({
+          profileLoaded,
+          profile,
+          profileError,
+          knownCourseIds: KNOWN_COURSE_IDS,
+        });
+        if (!authenticatedRoute) return;
+
+        if (authenticatedRoute === 'profile-error') {
+          if (!cancelled) {
+            setScreen('profile-error');
+            setRouteReady(true);
+          }
+          return;
+        }
+
+        if (authenticatedRoute === 'guided-onboarding') {
           if (!cancelled) {
             setScreen('guided-onboarding');
             setRouteReady(true);
           }
           return;
         }
-        const course = normaliseCourseId(profile?.currentCourse);
+        const course = profile?.currentCourse ? normaliseCourseId(profile.currentCourse) : null;
         if (!cancelled) {
-          if (courseHasLessons(course)) {
+          if (authenticatedRoute === 'home') {
+            setUserLanguage(profile?.baseLanguage || courseBaseLanguage(course));
             setSelectedCourse(course);
             setScreen('home');
           } else {
-            setUserLanguage(courseBaseLanguage(course));
+            setUserLanguage(profile?.baseLanguage || 'english');
             setScreen('course-select');
           }
           setRouteReady(true);
@@ -98,7 +144,7 @@ function AppContent() {
     return () => {
       cancelled = true;
     };
-  }, [initializing, isAuthenticated, profile?.currentCourse, profile?.onboardingCompleted, routeReady]);
+  }, [initializing, isAuthenticated, profile?.baseLanguage, profile?.currentCourse, profile?.onboardingCompleted, profileError, profileLoaded, routeReady]);
 
   async function finishSplash() {
     await AsyncStorage.setItem('hasSeenSplash', 'true');
@@ -106,15 +152,38 @@ function AppContent() {
   }
 
   useEffect(() => {
-    if (initializing || !routeReady || screen !== 'splash') {
+    const shouldReconcile = shouldReconcileAuthenticatedRoute({
+      routeReady,
+      isAuthenticated,
+      profileLoaded,
+      screen,
+    });
+    if (initializing || !shouldReconcile) {
       return;
     }
 
-    if (isAuthenticated) {
-      setSelectedCourse(normaliseCourseId(profile?.currentCourse));
+    const authenticatedRoute = resolveAuthenticatedRoute({
+      profileLoaded,
+      profile,
+      profileError,
+      knownCourseIds: KNOWN_COURSE_IDS,
+    });
+    if (!authenticatedRoute) return;
+
+    if (authenticatedRoute === 'profile-error') {
+      setScreen('profile-error');
+    } else if (authenticatedRoute === 'guided-onboarding') {
+      setScreen('guided-onboarding');
+    } else if (authenticatedRoute === 'home') {
+      const course = normaliseCourseId(profile.currentCourse);
+      setUserLanguage(profile?.baseLanguage || courseBaseLanguage(course));
+      setSelectedCourse(course);
       setScreen('home');
+    } else {
+      setUserLanguage(profile?.baseLanguage || 'english');
+      setScreen('course-select');
     }
-  }, [initializing, isAuthenticated, profile?.currentCourse, routeReady, screen]);
+  }, [initializing, isAuthenticated, profile?.baseLanguage, profile?.currentCourse, profile?.onboardingCompleted, profileError, profileLoaded, routeReady, screen]);
 
   useEffect(() => {
     const authenticatedScreens = ['home', 'course-select', 'language-select', 'verify-email'];
@@ -134,46 +203,52 @@ function AppContent() {
     [isAuthenticated, syncProgress]
   );
 
-  function goToPostAuthFlow(profileOverride) {
-    const activeProfile = profileOverride || profile;
-    const reminderSource = onboardingDraft || activeProfile;
-    if (reminderSource?.reminderEnabled) {
+  function goToExistingAccountSignIn() {
+    setScreen('login');
+  }
+
+  async function goToPostAuthFlow(resultOrProfile) {
+    const authValue = arguments.length > 0 ? resultOrProfile : profile;
+    const { profile: activeProfile, handoff } = unpackAuthResult(authValue);
+
+    if (shouldClearStoredOnboardingDraft(activeProfile)) {
+      await AsyncStorage.removeItem(ONBOARDING_DRAFT_KEY).catch(() => {});
+      setOnboardingDraft(null);
+    }
+
+    if (activeProfile?.reminderEnabled) {
       scheduleDailyReminder({
-        time: reminderSource.reminderTime || '19:00',
-        preferredName: reminderSource.preferredName || reminderSource.username || '',
-        requestPermission: Boolean(onboardingDraft),
+        time: activeProfile.reminderTime || '19:00',
+        preferredName: activeProfile.preferredName || activeProfile.username || '',
+        requestPermission: handoff?.onboardingDraftApplied === true,
       }).catch(() => {});
-    } else if (onboardingDraft?.reminderEnabled === false) {
+    } else if (activeProfile?.reminderEnabled === false) {
       cancelDailyReminder().catch(() => {});
     }
 
-    if (courseHasLessons(onboardingDraft?.currentCourse)) {
-      setUserLanguage(onboardingDraft.baseLanguage || 'english');
-      setSelectedCourse(onboardingDraft.currentCourse);
-      AsyncStorage.removeItem('diaspora:onboarding-draft:v1').catch(() => {});
-      setOnboardingDraft(null);
-      setScreen('home');
-      return;
-    }
+    const authenticatedRoute = resolveAuthenticatedRoute({
+      profileLoaded: true,
+      profile: activeProfile,
+      profileError: null,
+      knownCourseIds: KNOWN_COURSE_IDS,
+    });
+    if (!authenticatedRoute) return;
 
-    if (activeProfile?.onboardingCompleted === false) {
+    if (authenticatedRoute === 'guided-onboarding') {
       setScreen('guided-onboarding');
       return;
     }
 
-    if (activeProfile?.currentCourse) {
+    if (authenticatedRoute === 'home') {
       const course = normaliseCourseId(activeProfile.currentCourse);
-      if (courseHasLessons(course)) {
-        setSelectedCourse(course);
-        setScreen('home');
-      } else {
-        setUserLanguage(courseBaseLanguage(course));
-        setScreen('course-select');
-      }
+      setUserLanguage(activeProfile.baseLanguage || courseBaseLanguage(course));
+      setSelectedCourse(course);
+      setScreen('home');
       return;
     }
 
-    setScreen('language-select');
+    setUserLanguage(activeProfile?.baseLanguage || 'english');
+    setScreen('course-select');
   }
 
   if (initializing || !routeReady || !screen) {
@@ -197,7 +272,15 @@ function AppContent() {
       {screen === 'welcome' ? (
         <WelcomeScreen
           onGetStarted={() => setScreen('guided-onboarding')}
-          onSignIn={() => setScreen('login')}
+          onSignIn={goToExistingAccountSignIn}
+        />
+      ) : null}
+
+      {screen === 'profile-error' ? (
+        <ProfileLoadErrorScreen
+          onRetry={() => {
+            refreshProfile().catch(() => {});
+          }}
         />
       ) : null}
 
@@ -224,13 +307,13 @@ function AppContent() {
         <SignUpScreen
           onBack={() => setScreen(onboardingDraft ? 'account-choice' : 'login')}
           onSuccess={(result) => {
+            if (shouldClearStoredOnboardingDraft(result.profile)) {
+              AsyncStorage.removeItem(ONBOARDING_DRAFT_KEY).catch(() => {});
+            }
             setPendingSignup(result);
             setScreen('verify-email');
           }}
-          onSignIn={() => {
-            setOnboardingDraft(null);
-            setScreen('login');
-          }}
+          onSignIn={goToExistingAccountSignIn}
           onboardingData={onboardingDraft}
         />
       ) : null}
@@ -241,9 +324,9 @@ function AppContent() {
           guideRegion={onboardingDraft?.guideRegion || 'caribbean'}
           verificationSent={pendingSignup.verificationSent}
           onContinue={() => {
-            const signupProfile = pendingSignup.profile;
+            const signupResult = pendingSignup;
             setPendingSignup(null);
-            goToPostAuthFlow(signupProfile);
+            goToPostAuthFlow(signupResult);
           }}
         />
       ) : null}
@@ -253,10 +336,7 @@ function AppContent() {
           onboardingData={onboardingDraft}
           onBack={() => setScreen('guided-onboarding')}
           onEmail={() => setScreen('signup')}
-          onExistingAccount={() => {
-            setOnboardingDraft(null);
-            setScreen('login');
-          }}
+          onExistingAccount={goToExistingAccountSignIn}
           onSuccess={goToPostAuthFlow}
         />
       ) : null}
@@ -264,14 +344,55 @@ function AppContent() {
       {screen === 'guided-onboarding' ? (
         <GuidedOnboardingScreen
           initialData={isAuthenticated ? profile : null}
-          onBack={() => setScreen('welcome')}
+          backAccessibilityLabel={
+            isAuthenticated ? 'Sign out and go back' : 'Go back'
+          }
+          onBack={async () => {
+            const backAction = getOnboardingBackAction({ isAuthenticated });
+            if (backAction === 'sign-out-and-welcome') {
+              try {
+                await signOut();
+              } catch {
+                return;
+              }
+            }
+            setScreen('welcome');
+          }}
           onComplete={async (draft) => {
+            const completionAction = getOnboardingCompletionAction({
+              isAuthenticated,
+              profileLoaded,
+              profileError,
+              profile,
+            });
+
+            if (completionAction === 'wait-for-profile') {
+              throw new Error('Your saved profile is still loading. Please try again.');
+            }
+            if (completionAction === 'profile-error') {
+              setScreen('profile-error');
+              throw new Error('Your saved profile could not be verified.');
+            }
+            if (completionAction === 'use-durable-profile') {
+              await goToPostAuthFlow(profile);
+              return;
+            }
+
             setOnboardingDraft(draft);
             setUserLanguage(draft.baseLanguage);
             setSelectedCourse(draft.currentCourse);
-            if (isAuthenticated) {
+            if (completionAction === 'persist-draft') {
               await syncProgress(draft);
-              await AsyncStorage.removeItem('diaspora:onboarding-draft:v1');
+              if (draft.reminderEnabled) {
+                await scheduleDailyReminder({
+                  time: draft.reminderTime || '19:00',
+                  preferredName: draft.preferredName || '',
+                  requestPermission: true,
+                }).catch(() => {});
+              } else {
+                await cancelDailyReminder().catch(() => {});
+              }
+              await AsyncStorage.removeItem(ONBOARDING_DRAFT_KEY);
               setOnboardingDraft(null);
               setScreen('home');
             } else {
@@ -317,6 +438,27 @@ function AppContent() {
   );
 }
 
+function ProfileLoadErrorScreen({ onRetry }) {
+  return (
+    <View accessibilityLiveRegion="polite" style={styles.profileErrorRoot}>
+      <Text style={styles.profileErrorTitle}>We couldn&apos;t load your progress</Text>
+      <Text style={styles.profileErrorBody}>
+        Your saved learning path is still protected. Check your connection and try again.
+      </Text>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onRetry}
+        style={({ pressed }) => [
+          styles.profileErrorButton,
+          pressed && styles.profileErrorButtonPressed,
+        ]}
+      >
+        <Text style={styles.profileErrorButtonText}>TRY AGAIN</Text>
+      </Pressable>
+    </View>
+  );
+}
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_400Regular,
@@ -349,5 +491,47 @@ const styles = StyleSheet.create({
     backgroundColor: colors.splash,
     flex: 1,
     justifyContent: 'center',
+  },
+  profileErrorRoot: {
+    alignItems: 'center',
+    backgroundColor: colors.splash,
+    flex: 1,
+    gap: 16,
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  profileErrorTitle: {
+    color: colors.text,
+    fontFamily: 'PlusJakartaSans_800ExtraBold',
+    fontSize: 26,
+    lineHeight: 34,
+    textAlign: 'center',
+  },
+  profileErrorBody: {
+    color: colors.textMuted,
+    fontFamily: 'PlusJakartaSans_500Medium',
+    fontSize: 15,
+    lineHeight: 23,
+    maxWidth: 360,
+    textAlign: 'center',
+  },
+  profileErrorButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 16,
+    justifyContent: 'center',
+    marginTop: 8,
+    minHeight: 54,
+    paddingHorizontal: 36,
+  },
+  profileErrorButtonPressed: {
+    opacity: 0.85,
+    transform: [{ translateY: 1 }],
+  },
+  profileErrorButtonText: {
+    color: '#FFFFFF',
+    fontFamily: 'PlusJakartaSans_800ExtraBold',
+    fontSize: 14,
+    letterSpacing: 0.6,
   },
 });

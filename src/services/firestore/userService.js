@@ -13,6 +13,10 @@ import {
 import { firebaseDb } from '../../firebase/app';
 import { COLLECTIONS } from '../../firebase/collections';
 import { MAX_HEARTS } from '../../theme';
+const {
+  filterCompletedProfileMergeFields,
+  getEnsurePreferredName,
+} = require('../../onboarding/authHandoff');
 
 export const DEFAULT_USER_PROFILE = {
   xp: 0,
@@ -54,9 +58,17 @@ export async function ensureUserDocument(uid, { username, email, ...profileField
       onboardingCompleted: profileFields.onboardingCompleted ?? false,
     });
   }
+  const safeProfileFields = filterCompletedProfileMergeFields(
+    existing,
+    profileFields
+  );
   const payload = removeUndefined({
-    ...profileFields,
-    preferredName: profileFields.preferredName || existing.preferredName || username,
+    ...safeProfileFields,
+    preferredName: getEnsurePreferredName({
+      existingProfile: existing,
+      safeProfileFields,
+      incomingUsername: username,
+    }),
     lastActiveAt: serverTimestamp(),
   });
   await setDoc(userDocRef(uid), payload, { merge: true });
