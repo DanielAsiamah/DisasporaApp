@@ -10,11 +10,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { GameProvider } from './src/context/GameContext';
 import CourseSelectScreen from './src/screens/CourseSelectScreen';
-import HomeScreen from './src/screens/HomeScreen';
+import HomeScreen from './src/screens/MvpHomeScreen';
 import LanguageSelectScreen from './src/screens/LanguageSelectScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
@@ -30,7 +31,11 @@ import {
   scheduleDailyReminder,
 } from './src/services/reminderService';
 import { colors } from './src/theme';
-import { coursesData } from './src/data/generatedCourses';
+const {
+  AVAILABLE_COURSE_IDS,
+  getBaseLanguageForCourse,
+  normalizeCourseId,
+} = require('./src/data/courseCatalog.cjs');
 const {
   resolveAuthenticatedRoute,
   shouldReconcileAuthenticatedRoute,
@@ -43,13 +48,7 @@ const {
 } = require('./src/onboarding/authHandoff');
 
 const ONBOARDING_DRAFT_KEY = 'diaspora:onboarding-draft:v1';
-const KNOWN_COURSE_IDS = new Set(Object.keys(coursesData));
-const normaliseCourseId = (courseId) => (courseId === 'belize' ? 'belizean' : courseId);
-const courseBaseLanguage = (courseId) => {
-  if (['haitian', 'nouchi', 'wolof'].includes(courseId)) return 'french';
-  if (['sudanese', 'nubian'].includes(courseId)) return 'arabic';
-  return 'english';
-};
+const AVAILABLE_COURSE_ID_SET = new Set(AVAILABLE_COURSE_IDS);
 
 function AppContent() {
   const {
@@ -65,7 +64,7 @@ function AppContent() {
   } = useAuth();
   const [screen, setScreen] = useState(null);
   const [userLanguage, setUserLanguage] = useState('english');
-  const [selectedCourse, setSelectedCourse] = useState('patois');
+  const [selectedCourse, setSelectedCourse] = useState('jamaican-patois');
   const [onboardingDraft, setOnboardingDraft] = useState(null);
   const [pendingSignup, setPendingSignup] = useState(null);
   const [resetEmail, setResetEmail] = useState('');
@@ -98,7 +97,7 @@ function AppContent() {
           profileLoaded,
           profile,
           profileError,
-          knownCourseIds: KNOWN_COURSE_IDS,
+          knownCourseIds: AVAILABLE_COURSE_ID_SET,
         });
         if (!authenticatedRoute) return;
 
@@ -117,10 +116,10 @@ function AppContent() {
           }
           return;
         }
-        const course = profile?.currentCourse ? normaliseCourseId(profile.currentCourse) : null;
+        const course = normalizeCourseId(profile?.currentCourse);
         if (!cancelled) {
           if (authenticatedRoute === 'home') {
-            setUserLanguage(profile?.baseLanguage || courseBaseLanguage(course));
+            setUserLanguage(profile?.baseLanguage || getBaseLanguageForCourse(course));
             setSelectedCourse(course);
             setScreen('home');
           } else {
@@ -166,7 +165,7 @@ function AppContent() {
       profileLoaded,
       profile,
       profileError,
-      knownCourseIds: KNOWN_COURSE_IDS,
+      knownCourseIds: AVAILABLE_COURSE_ID_SET,
     });
     if (!authenticatedRoute) return;
 
@@ -175,8 +174,8 @@ function AppContent() {
     } else if (authenticatedRoute === 'guided-onboarding') {
       setScreen('guided-onboarding');
     } else if (authenticatedRoute === 'home') {
-      const course = normaliseCourseId(profile.currentCourse);
-      setUserLanguage(profile?.baseLanguage || courseBaseLanguage(course));
+      const course = normalizeCourseId(profile.currentCourse);
+      setUserLanguage(profile?.baseLanguage || getBaseLanguageForCourse(course));
       setSelectedCourse(course);
       setScreen('home');
     } else {
@@ -230,7 +229,7 @@ function AppContent() {
       profileLoaded: true,
       profile: activeProfile,
       profileError: null,
-      knownCourseIds: KNOWN_COURSE_IDS,
+      knownCourseIds: AVAILABLE_COURSE_ID_SET,
     });
     if (!authenticatedRoute) return;
 
@@ -240,8 +239,8 @@ function AppContent() {
     }
 
     if (authenticatedRoute === 'home') {
-      const course = normaliseCourseId(activeProfile.currentCourse);
-      setUserLanguage(activeProfile.baseLanguage || courseBaseLanguage(course));
+      const course = normalizeCourseId(activeProfile.currentCourse);
+      setUserLanguage(activeProfile.baseLanguage || getBaseLanguageForCourse(course));
       setSelectedCourse(course);
       setScreen('home');
       return;
@@ -478,6 +477,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
+      <StatusBar style="dark" />
       <AuthProvider>
         <AppContent />
       </AuthProvider>

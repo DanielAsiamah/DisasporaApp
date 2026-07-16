@@ -1,0 +1,79 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const MVP_HOME_PATH = path.join(__dirname, '..', 'src', 'screens', 'MvpHomeScreen.js');
+const source = fs.readFileSync(MVP_HOME_PATH, 'utf8');
+
+test('MVP shell delegates lessons to the production Patois lesson modal', () => {
+  assert.match(source, /import PatoisLessonModal from ['"]\.\.\/components\/mvp\/PatoisLessonModal['"]/);
+  assert.match(source, /<PatoisLessonModal\b/);
+  assert.doesNotMatch(source, /function\s+LessonModal\s*\(/);
+  assert.doesNotMatch(source, /function\s+buildExercises\s*\(/);
+  assert.doesNotMatch(source, /^\s*Modal,\s*$/m);
+  assert.doesNotMatch(source, /\bJAMAICAN_PATOIS_VOCABULARY\b/);
+});
+
+test('MVP shell retains the approved chapter contract', () => {
+  assert.match(source, />Greetings & basic conversations</);
+  assert.match(source, />9 topics • 39 words</);
+  assert.match(source, /\[['"]learn['"],\s*[^,]+,\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*[^,]+,\s*['"]Leaderboard['"]\]/);
+});
+
+test('the chapter uses original Jamaica artwork behind the animated approved guide', () => {
+  assert.match(source, /jamaican-patois-greetings\.png/);
+  assert.match(source, /function\s+ChapterHero\s*\(/);
+  assert.match(source, /<BreathingGuide\s+name="Kai"/);
+  assert.match(source, /<Cloud\b/);
+  assert.match(source, /courseId\s*=\s*['"]jamaican-patois['"]/);
+});
+
+test('legacy product destinations and exercises are absent from visible MVP copy', () => {
+  const bannedVisibleCopy = [
+    'Shop',
+    'Progress',
+    'Profile',
+    'Settings',
+    'Video call',
+    'Microphone',
+    'Mascot store',
+    'Brown path',
+  ];
+
+  for (const label of bannedVisibleCopy) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const visibleLiteral = new RegExp("(?:>|['\"])\\s*" + escaped + "\\s*(?:<|['\"])", 'i');
+    assert.doesNotMatch(source, visibleLiteral, `${label} must not appear as MVP navigation or lesson copy`);
+  }
+});
+
+test('the retired brown-path lesson implementation is physically removed', () => {
+  const retiredPaths = [
+    'src/screens/HomeScreen.js',
+    'src/screens/StartUnitScreen.js',
+    'src/screens/ProficiencyCheckScreen.js',
+    'src/data/curriculumRepository.js',
+    'src/data/generatedCourses.js',
+    'src/data/generatedImageRegistry.js',
+    'src/data/lessons.js',
+    'src/data/patoisCurriculum.js',
+    'src/lessonEngine/buildLessonSteps.js',
+    'src/components/lesson/AudioPressable.js',
+    'src/components/lesson/LanguageMascot.js',
+    'src/components/lesson/LessonAudioButton.js',
+    'src/components/lesson/LessonCutscene.js',
+    'src/components/lesson/LessonStepRenderer.js',
+    'src/components/lesson/MascotSpeechBubble.js',
+    'src/components/lesson/TeachingSlide.js',
+    'src/components/lesson/VocabularyCard.js',
+  ];
+
+  for (const relativePath of retiredPaths) {
+    assert.equal(
+      fs.existsSync(path.join(__dirname, '..', relativePath)),
+      false,
+      `${relativePath} must not remain as a fallback to the retired lesson UI`
+    );
+  }
+});

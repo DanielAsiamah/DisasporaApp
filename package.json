@@ -7,7 +7,7 @@
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-google-signin/google-signin": "^16.1.2",
-    "expo": "~54.0.0",
+    "expo": "~54.0.36",
     "expo-apple-authentication": "~8.0.8",
     "expo-asset": "~12.0.13",
     "expo-audio": "~1.1.1",
@@ -32,17 +32,17 @@
   "scripts": {
     "test:onboarding": "node --test tests/onboardingFlow.test.cjs tests/onboardingRouting.test.cjs",
     "test:verification": "node --test tests/emailVerificationFlow.test.cjs",
-    "test:lesson-audio": "node --test tests/lessonAudioAvailability.test.cjs",
+    "test:lesson-audio": "node --test tests/lessonAudioAvailability.test.cjs tests/lessonAudioPolicy.test.cjs tests/lessonAudioController.test.cjs tests/lessonAudioEventGate.test.cjs tests/controlledLessonAudioRuntime.test.cjs tests/audioManifestContract.test.cjs tests/voiceRoleContract.test.cjs tests/audioSafetyContract.test.cjs",
     "test:guides": "node --test tests/regionalGuideModel.test.cjs",
-    "audio:dry-run": "node scripts/generate-audio.js --dry-run",
-    "audio:dry-run:interactive": "node scripts/generate-audio.js --dry-run --include-interactions",
-    "audio:generate": "node scripts/generate-audio.js",
-    "audio:generate:interactive": "node scripts/generate-audio.js --include-interactions",
+    "test:image-audit": "node --test tests/imageAuditContract.test.cjs tests/imageNormalization.test.cjs",
+    "test:rebuild-contracts": "node --test tests/curriculumContract.test.cjs tests/courseCatalogContract.test.cjs tests/workbookRuntimeSource.test.cjs tests/contentValidator.test.cjs tests/mvpNavigationContract.test.cjs tests/mvpShellCleanup.test.cjs tests/legacyPipelineCleanup.test.cjs tests/mvpProgressPersistence.test.cjs tests/topicProgress.test.cjs tests/lessonAudioPolicy.test.cjs tests/lessonAudioController.test.cjs tests/lessonAudioEventGate.test.cjs tests/controlledLessonAudioRuntime.test.cjs tests/audioManifestContract.test.cjs tests/voiceRoleContract.test.cjs tests/audioSafetyContract.test.cjs tests/motionAccessibilityContract.test.cjs tests/phoneShellVisualContract.test.cjs tests/vocabImageManifestContract.test.cjs tests/imageAuditContract.test.cjs tests/imageNormalization.test.cjs tests/patoisLessonSteps.test.cjs tests/patoisLessonSession.test.cjs",
+    "audio:patois-audition:dry-run": "node scripts/generate-patois-audition.js",
+    "audio:patois-audition:generate": "node scripts/generate-patois-audition.js --generate --max-credits 250",
     "voices:audit": "node scripts/audit-voices.js",
-    "content:build": "node scripts/build-content.js",
-    "content:firestore-seed": "node scripts/build-firestore-content-seed.js",
-    "content:upload-firestore": "node scripts/upload-firestore-content.js",
-    "images:registry": "node scripts/build-image-registry.js",
+    "content:build": "node scripts/generate-runtime-curriculum.mjs",
+    "content:validate": "node scripts/validate-content.js",
+    "images:normalize": "node scripts/normalize-vocab-images.js",
+    "images:repair-legacy-patois": "node scripts/repair-vocab-cutouts.js --course jamaican-patois --key-mode magenta --concepts which-language-do-you-speak,family,parents,husband,wife,son,daughter,grandfather",
     "images:audit": "node scripts/audit-images.js",
     "start": "expo start",
     "android": "expo start --android",
@@ -52,7 +52,6 @@
   "private": true,
   "devDependencies": {
     "@types/react": "~19.1.10",
-    "firebase-admin": "^14.1.0",
     "typescript": "~5.9.2"
   }
 }

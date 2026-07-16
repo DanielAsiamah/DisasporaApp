@@ -8,9 +8,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import PrimaryButton from '../components/PrimaryButton';
 import RegionalGuide from '../components/RegionalGuide';
 import { useAuth } from '../context/AuthContext';
-import { coursesData } from '../data/generatedCourses';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, radius, spacing } from '../theme';
+const { getCourseById } = require('../data/courseCatalog.cjs');
 const { getStartingLevelLabel } = require('../onboarding/authHandoff');
 
 function formatReminderTime(value = '19:00') {
@@ -28,7 +28,7 @@ export default function AccountChoiceScreen({ onboardingData, onBack, onEmail, o
   const [error, setError] = useState('');
   const isExpoGo = Constants.appOwnership === 'expo';
   const googleConfigured = Boolean(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID);
-  const courseTitle = coursesData[onboardingData?.currentCourse]?.title || 'Your language';
+  const courseTitle = getCourseById(onboardingData?.currentCourse)?.displayName || 'Your language';
   const planItems = [
     { id: 'course', emoji: '🗺️', label: 'LEARNING', value: courseTitle },
     { id: 'goal', emoji: '⏱️', label: 'DAILY GOAL', value: `${onboardingData?.dailyGoalMinutes || 10} minutes` },

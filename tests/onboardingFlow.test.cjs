@@ -23,25 +23,44 @@ test('uses the exact approved seven-screen order', () => {
 test('filters the six MVP courses by base language in the approved order', () => {
   assert.deepEqual(
     onboarding.getCoursesForBaseLanguage('english').map((course) => course.id),
-    ['patois', 'swahili']
+    ['jamaican-patois', 'swahili']
   );
   assert.deepEqual(
     onboarding.getCoursesForBaseLanguage('french').map((course) => course.id),
-    ['wolof', 'haitian']
+    ['wolof', 'haitian-creole']
   );
   assert.deepEqual(
     onboarding.getCoursesForBaseLanguage('arabic').map((course) => course.id),
-    ['sudanese', 'nubian']
+    ['sudanese-arabic', 'nobiin']
   );
   assert.deepEqual(
     onboarding.getCoursesForBaseLanguage('unknown').map((course) => course.id),
-    ['patois', 'swahili']
+    ['jamaican-patois', 'swahili']
+  );
+});
+
+test('shows upcoming MVP courses without allowing an unavailable path to continue', () => {
+  assert.deepEqual(
+    onboarding.getCoursesForBaseLanguage('french').map((course) => course.available),
+    [false, false]
+  );
+  assert.equal(
+    onboarding.canContinueOnboarding('course', {
+      ...onboarding.INITIAL_ONBOARDING_DRAFT,
+      baseLanguage: 'french',
+      currentCourse: 'wolof',
+    }),
+    false
+  );
+  assert.equal(
+    onboarding.canContinueOnboarding('course', onboarding.INITIAL_ONBOARDING_DRAFT),
+    true
   );
 });
 
 test('changing the base language cannot retain an incompatible course', () => {
   const frenchDraft = onboarding.selectBaseLanguage(
-    { ...onboarding.INITIAL_ONBOARDING_DRAFT, currentCourse: 'patois' },
+    { ...onboarding.INITIAL_ONBOARDING_DRAFT, currentCourse: 'jamaican-patois' },
     'french'
   );
 
@@ -61,13 +80,13 @@ test('hydrates only known fields and gives the signed-in profile precedence', ()
     {
       preferredName: 'Cloud learner',
       baseLanguage: 'french',
-      currentCourse: 'haitian',
+      currentCourse: 'haitian-creole',
     }
   );
 
   assert.equal(hydrated.preferredName, 'Cloud learner');
   assert.equal(hydrated.baseLanguage, 'french');
-  assert.equal(hydrated.currentCourse, 'haitian');
+  assert.equal(hydrated.currentCourse, 'haitian-creole');
   assert.equal(Object.hasOwn(hydrated, 'unexpectedField'), false);
 });
 
@@ -133,12 +152,12 @@ test('replaces a legacy course that is outside the six-course MVP', () => {
     currentCourse: 'igbo',
   });
 
-  assert.equal(hydrated.currentCourse, 'patois');
+  assert.equal(hydrated.currentCourse, 'jamaican-patois');
 });
 
 test('defaults to the approved example journey and 7 PM reminder', () => {
   assert.equal(onboarding.INITIAL_ONBOARDING_DRAFT.baseLanguage, 'english');
-  assert.equal(onboarding.INITIAL_ONBOARDING_DRAFT.currentCourse, 'patois');
+  assert.equal(onboarding.INITIAL_ONBOARDING_DRAFT.currentCourse, 'jamaican-patois');
   assert.equal(onboarding.INITIAL_ONBOARDING_DRAFT.motivation, 'heritage');
   assert.equal(onboarding.INITIAL_ONBOARDING_DRAFT.dailyGoalMinutes, 10);
   assert.equal(onboarding.INITIAL_ONBOARDING_DRAFT.proficiencyLevel, 'some');
@@ -158,7 +177,7 @@ test('creates the durable completion payload once the ready screen finishes', ()
   assert.equal(complete.onboardingCompleted, true);
   assert.equal(complete.recommendedStartUnit, 2);
   assert.equal(complete.selectedStartUnit, 2);
-  assert.equal(complete.currentCourse, 'patois');
+  assert.equal(complete.currentCourse, 'jamaican-patois');
   assert.equal(complete.reminderTime, '19:00');
 });
 

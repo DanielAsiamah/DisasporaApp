@@ -1,15 +1,13 @@
 'use strict';
 
+const { normalizeCourseId } = require('../data/courseCatalog.cjs');
+
 const AUTH_RECONCILIATION_SCREENS = new Set([
   'splash',
   'welcome',
   'guided-onboarding',
   'profile-error',
 ]);
-
-function normalizeCourseId(courseId) {
-  return courseId === 'belize' ? 'belizean' : courseId;
-}
 
 function resolveAuthenticatedRoute({
   profileLoaded,

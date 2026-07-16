@@ -38,11 +38,7 @@ const filterCompletedProfileMergeFields =
 const getEnsurePreferredName =
   authHandoff.getEnsurePreferredName || (() => undefined);
 const knownCourseIds = new Set([
-  'patois',
-  'swahili',
-  'belizean',
-  'sudanese',
-  'nubian',
+  'jamaican-patois',
 ]);
 
 function resolve(profileLoaded, profile, profileError = null) {
@@ -81,18 +77,25 @@ test('routes an incomplete profile into guided onboarding', () => {
   );
 });
 
-test('normalizes a known legacy Belize course before routing home', () => {
+test('normalizes the legacy Patois ID before routing home', () => {
   assert.equal(
-    resolve(true, { onboardingCompleted: true, currentCourse: 'belize' }),
+    resolve(true, { onboardingCompleted: true, currentCourse: 'patois' }),
     'home'
   );
 });
 
-test('routes known courses with no generated lessons home', () => {
-  for (const currentCourse of ['sudanese', 'nubian']) {
+test('routes the canonical published Patois course home', () => {
+  assert.equal(
+    resolve(true, { onboardingCompleted: true, currentCourse: 'jamaican-patois' }),
+    'home'
+  );
+});
+
+test('routes known but unavailable courses to course selection', () => {
+  for (const currentCourse of ['swahili', 'wolof', 'sudanese-arabic', 'nobiin']) {
     assert.equal(
       resolve(true, { onboardingCompleted: true, currentCourse }),
-      'home'
+      'course-select'
     );
   }
 });
@@ -150,7 +153,7 @@ test('waits for route, authentication, and profile readiness before reconciling'
 const completedGuestDraft = {
   preferredName: 'New name',
   baseLanguage: 'english',
-  currentCourse: 'patois',
+  currentCourse: 'jamaican-patois',
   onboardingCompleted: true,
   reminderEnabled: true,
   reminderTime: '19:00',
@@ -328,7 +331,7 @@ test('protects onboarding fields when ensure encounters an existing completed pr
     onboardingCompleted: true,
     preferredName: 'Guest name',
     baseLanguage: 'english',
-    currentCourse: 'patois',
+    currentCourse: 'jamaican-patois',
     motivation: 'heritage',
     dailyGoalMinutes: 10,
     reminderEnabled: true,

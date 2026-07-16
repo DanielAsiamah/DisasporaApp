@@ -590,20 +590,26 @@ function OptionList({
       {items.map((item) => {
         const id = getId(item);
         const active = selectedId === id;
-        const detail = item.detail || item.note;
+        const disabled = item.available === false;
+        const itemDetail = item.detail || item.note || item.subtitle;
+        const detail = disabled
+          ? `${itemDetail ? `${itemDetail} ` : ''}Coming soon.`
+          : itemDetail;
 
         return (
           <Pressable
             accessibilityLabel={detail ? `${item.label}, ${detail}` : item.label}
             accessibilityRole="radio"
-            accessibilityState={{ checked: active }}
+            accessibilityState={{ checked: active, disabled }}
+            disabled={disabled}
             key={id}
             onPress={() => onSelect(item)}
             style={({ pressed }) => [
               styles.option,
               grid && styles.optionGridItem,
               active && styles.optionActive,
-              pressed && styles.optionPressed,
+              disabled && styles.optionDisabled,
+              pressed && !disabled && styles.optionPressed,
             ]}
           >
             {item.flag ? <Text style={styles.optionFlag}>{item.flag}</Text> : null}
@@ -1014,6 +1020,9 @@ const styles = StyleSheet.create({
   optionPressed: {
     opacity: 0.82,
     transform: [{ translateY: 1 }],
+  },
+  optionDisabled: {
+    opacity: 0.56,
   },
   optionFlag: {
     fontSize: 26,

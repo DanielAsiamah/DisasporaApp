@@ -8,6 +8,9 @@ node_modules/
 dist/
 web-build/
 /outputs/
+/tmp/
+/remotion-preview/
+*.inspect.ndjson
 expo-env.d.ts
 
 # Native

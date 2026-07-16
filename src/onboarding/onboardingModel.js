@@ -1,5 +1,10 @@
 'use strict';
 
+const {
+  getCourseById,
+  getOnboardingCourses,
+} = require('../data/courseCatalog.cjs');
+
 const ONBOARDING_STEPS = [
   'welcome',
   'baseLanguage',
@@ -16,20 +21,11 @@ const BASE_LANGUAGES = [
   { id: 'arabic', label: 'Arabic', flag: '🇸🇦' },
 ];
 
-const COURSES_BY_BASE_LANGUAGE = {
-  english: [
-    { id: 'patois', label: 'Jamaican Patois', flag: '🇯🇲', region: 'caribbean' },
-    { id: 'swahili', label: 'Swahili', flag: '🇰🇪', region: 'africa' },
-  ],
-  french: [
-    { id: 'wolof', label: 'Wolof', flag: '🇸🇳', region: 'africa' },
-    { id: 'haitian', label: 'Haitian Creole', flag: '🇭🇹', region: 'caribbean' },
-  ],
-  arabic: [
-    { id: 'sudanese', label: 'Sudanese Arabic', flag: '🇸🇩', region: 'africa' },
-    { id: 'nubian', label: 'Nubian', flag: '🇪🇬', region: 'africa' },
-  ],
-};
+const COURSES_BY_BASE_LANGUAGE = Object.freeze({
+  english: Object.freeze(getOnboardingCourses('english')),
+  french: Object.freeze(getOnboardingCourses('french')),
+  arabic: Object.freeze(getOnboardingCourses('arabic')),
+});
 
 const MOTIVATIONS = [
   { id: 'heritage', label: 'Heritage', detail: 'Reconnect with my roots' },
@@ -54,7 +50,7 @@ const STARTING_LEVELS = [
 const INITIAL_ONBOARDING_DRAFT = {
   preferredName: '',
   baseLanguage: 'english',
-  currentCourse: 'patois',
+  currentCourse: 'jamaican-patois',
   guideRegion: 'caribbean',
   motivation: 'heritage',
   dailyGoalMinutes: 10,
@@ -81,7 +77,10 @@ function getCoursesForBaseLanguage(baseLanguage) {
 }
 
 function getCourse(baseLanguage, courseId) {
-  return getCoursesForBaseLanguage(baseLanguage).find((course) => course.id === courseId);
+  const course = getCourseById(courseId);
+  return course && getCoursesForBaseLanguage(baseLanguage).some(({ id }) => id === course.id)
+    ? course
+    : null;
 }
 
 function selectBaseLanguage(draft, baseLanguage) {
@@ -175,7 +174,10 @@ function canContinueOnboarding(step, draft) {
       && safeDraft.preferredName.trim().length >= 2;
   }
   if (step === 'baseLanguage') return BASE_LANGUAGE_IDS.has(safeDraft.baseLanguage);
-  if (step === 'course') return Boolean(getCourse(safeDraft.baseLanguage, safeDraft.currentCourse));
+  if (step === 'course') {
+    const course = getCourse(safeDraft.baseLanguage, safeDraft.currentCourse);
+    return Boolean(course?.available && course?.published);
+  }
   if (step === 'motivation') return MOTIVATION_IDS.has(safeDraft.motivation);
   if (step === 'goal') return DAILY_GOAL_MINUTES.has(safeDraft.dailyGoalMinutes);
   if (step === 'level') return STARTING_LEVEL_IDS.has(safeDraft.proficiencyLevel);

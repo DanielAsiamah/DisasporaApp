@@ -2,117 +2,30 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
 import PrimaryButton from '../components/PrimaryButton';
-import { coursesData } from '../data/generatedCourses';
 import { colors, fonts, radius, spacing } from '../theme';
 
-function courseHasLessons(courseId) {
-  return coursesData[courseId]?.units?.some((unit) => unit.lessons?.length > 0) === true;
-}
+const { getOnboardingCourses } = require('../data/courseCatalog.cjs');
 
-const COURSES_BY_LANG = {
-  english: [
-    {
-      id: 'patois',
-      label: 'Jamaican Patois',
-      subtitle: 'Learn greetings, respect, and daily Patois talk.',
-      flag: '🇯🇲',
-      category: 'Caribbean Creole',
-      isNew: false,
-    },
-    {
-      id: 'swahili',
-      label: 'Swahili',
-      subtitle: 'Master Kiswahili basics, numbers, and expressions.',
-      flag: '🇰🇪',
-      category: 'East African Bantu',
-      isNew: false,
-    },
-    {
-      id: 'igbo',
-      label: 'Igbo',
-      subtitle: 'Speak traditional Igbo greetings and cultural idioms.',
-      flag: '🇳🇬',
-      category: 'West African Tongue',
-      isNew: true,
-    },
-    {
-      id: 'belizean',
-      label: 'Belizean Creole',
-      subtitle: 'Discover Central American Kriol from Belize.',
-      flag: '🇧🇿',
-      category: 'Central American Kriol',
-      isNew: true,
-    },
-    {
-      id: 'aave',
-      label: 'Black American English',
-      subtitle: 'Learn the roots and slang of African American Vernacular.',
-      flag: '🇺🇸',
-      category: 'Black American Vernacular',
-      isNew: false,
-    },
-  ],
-  french: [
-    {
-      id: 'haitian',
-      label: 'Créole Haïtien',
-      subtitle: 'Apprenez les bases du créole des Caraïbes.',
-      flag: '🇭🇹',
-      category: 'Caribbean French Creole',
-      isNew: false,
-    },
-    {
-      id: 'nouchi',
-      label: 'Nouchi Ivoirien',
-      subtitle: 'Parlez l\'argot populaire d\'Abidjan, Côte d\'Ivoire.',
-      flag: '🇨🇮',
-      category: 'Ivorian Urban Slang',
-      isNew: true,
-    },
-    {
-      id: 'wolof',
-      label: 'Wolof',
-      subtitle: 'Pratiquez le Wolof parlé au Sénégal et en Gambie.',
-      flag: '🇸🇳',
-      category: 'West African Wolof',
-      isNew: false,
-    },
-  ],
-  arabic: [
-    {
-      id: 'sudanese',
-      label: 'العامية السودانية',
-      subtitle: 'تعلم لهجة السودان اليومية والترحيب.',
-      flag: '🇸🇩',
-      category: 'Sudanese Arabic',
-      isNew: false,
-    },
-    {
-      id: 'nubian',
-      label: 'اللغة النوبية',
-      subtitle: 'اكتشف الكلمات النوبية القديمة وتراث النيل.',
-      flag: '🇪🇬',
-      category: 'Ancient Nubian Tongue',
-      isNew: true,
-    },
-  ],
-};
+const LANGUAGE_SECTION_LABELS = Object.freeze({
+  english: 'For English speakers',
+  french: 'Pour les francophones',
+  arabic: '\u0644\u0644\u0645\u062a\u062d\u062f\u062b\u064a\u0646 \u0628\u0627\u0644\u0639\u0631\u0628\u064a\u0629',
+});
 
 export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBack }) {
   const [selected, setSelected] = useState(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
-
-  const courses = COURSES_BY_LANG[userLanguage] || COURSES_BY_LANG.english;
+  const courses = getOnboardingCourses(userLanguage);
 
   useEffect(() => {
     Animated.parallel([
@@ -128,19 +41,19 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   return (
     <View style={styles.root}>
       <AnimatedAtmosphere
-        colors={[colors.splashGreen, colors.skyTop, colors.skyBottom]}
         accent={colors.caribbeanGreen}
+        colors={[colors.splashGreen, colors.skyTop, colors.skyBottom]}
       />
 
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
-          <Pressable onPress={onBack} style={styles.backButton}>
-            <Text style={styles.backText}>←</Text>
+          <Pressable accessibilityLabel="Go back" onPress={onBack} style={styles.backButton}>
+            <Text style={styles.backText}>\u2039</Text>
           </Pressable>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar} />
@@ -155,37 +68,36 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
         >
           <Text style={styles.title}>What would you like to learn?</Text>
           <Text style={styles.subtitle}>
-            Choose a dialect or language of the diaspora to begin your path.
+            Choose one of the six MVP language paths. New paths unlock only after their
+            lessons, artwork, and audio are approved.
           </Text>
 
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
             <View style={styles.list}>
               <Text style={styles.sectionLabel}>
-                {userLanguage === 'french'
-                  ? 'Pour les francophones'
-                  : userLanguage === 'arabic'
-                  ? 'للمتحدثين بالعربية'
-                  : 'For English speakers'}
+                {LANGUAGE_SECTION_LABELS[userLanguage] || LANGUAGE_SECTION_LABELS.english}
               </Text>
 
               {courses.map((course) => {
                 const isSelected = selected === course.id;
-                const isAvailable = courseHasLessons(course.id);
+                const isAvailable = course.available && course.published;
+
                 return (
                   <Pressable
-                    accessibilityState={{ disabled: !isAvailable, selected: isSelected }}
+                    accessibilityLabel={`${course.displayName}${isAvailable ? '' : ', coming soon'}`}
+                    accessibilityRole="radio"
+                    accessibilityState={{
+                      checked: isSelected,
+                      disabled: !isAvailable,
+                    }}
                     disabled={!isAvailable}
                     key={course.id}
                     onPress={() => setSelected(course.id)}
-                    style={[
+                    style={({ pressed }) => [
                       styles.card,
                       isSelected && styles.cardSelected,
                       !isAvailable && styles.cardDisabled,
-                      {
-                        borderBottomColor: isSelected
-                          ? colors.primaryDark
-                          : colors.border,
-                      },
+                      pressed && isAvailable && styles.cardPressed,
                     ]}
                   >
                     <View style={styles.flagCircle}>
@@ -193,31 +105,20 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
                     </View>
                     <View style={styles.cardInfo}>
                       <View style={styles.labelRow}>
-                        <Text style={styles.cardLabel}>{course.label}</Text>
+                        <Text style={styles.cardLabel}>{course.displayName}</Text>
                         {!isAvailable ? (
-                          <View style={styles.newBadge}>
-                            <Text style={styles.newBadgeText}>COMING SOON</Text>
+                          <View style={styles.badge}>
+                            <Text style={styles.badgeText}>COMING SOON</Text>
                           </View>
-                        ) : course.isNew && (
-                          <View style={styles.newBadge}>
-                            <Text style={styles.newBadgeText}>NEW</Text>
-                          </View>
-                        )}
+                        ) : null}
                       </View>
                       <Text style={styles.cardSubtitle}>
-                        {isAvailable ? course.subtitle : 'Workbook lessons are being prepared.'}
+                        {isAvailable ? course.subtitle : 'This complete course is being prepared.'}
                       </Text>
-                      <View style={styles.tagWrapper}>
-                        <Text style={styles.categoryText}>🏷️ {course.category}</Text>
-                      </View>
+                      <Text style={styles.categoryText}>{course.category}</Text>
                     </View>
-                    <View
-                      style={[
-                        styles.radioCircle,
-                        isSelected && styles.radioCircleActive,
-                      ]}
-                    >
-                      {isSelected && <View style={styles.radioInner} />}
+                    <View style={[styles.radioCircle, isSelected && styles.radioCircleActive]}>
+                      {isSelected ? <View style={styles.radioInner} /> : null}
                     </View>
                   </Pressable>
                 );
@@ -227,8 +128,8 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 
           <View style={styles.footer}>
             <PrimaryButton
-              label="Continue"
               disabled={!selected}
+              label="Continue"
               onPress={() => selected && onSelectCourse(selected)}
             />
           </View>
@@ -239,30 +140,16 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.skyBottom,
-  },
-  safeArea: {
-    flex: 1,
-  },
+  root: { backgroundColor: colors.skyBottom, flex: 1 },
+  safeArea: { flex: 1 },
   header: {
     alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
-  backButton: {
-    alignItems: 'center',
-    height: 40,
-    justifyContent: 'center',
-    width: 40,
-  },
-  backText: {
-    color: colors.textMuted,
-    fontFamily: fonts.black,
-    fontSize: 24,
-  },
+  backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
+  backText: { color: colors.textMuted, fontFamily: fonts.black, fontSize: 34, lineHeight: 38 },
   progressContainer: {
     backgroundColor: colors.border,
     borderRadius: radius.pill,
@@ -271,15 +158,8 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
     overflow: 'hidden',
   },
-  progressBar: {
-    backgroundColor: colors.primary,
-    height: '100%',
-    width: '66%',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing.lg,
-  },
+  progressBar: { backgroundColor: colors.primary, height: '100%', width: '66%' },
+  content: { flex: 1, paddingHorizontal: spacing.lg },
   title: {
     color: colors.textDark,
     fontFamily: fonts.black,
@@ -289,101 +169,63 @@ const styles = StyleSheet.create({
   subtitle: {
     color: colors.textMuted,
     fontFamily: fonts.semiBold,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 21,
     marginTop: spacing.xs,
   },
-  scrollView: {
-    flex: 1,
-    marginTop: spacing.md,
-  },
-  list: {
-    gap: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
+  scrollView: { flex: 1, marginTop: spacing.md },
+  list: { gap: spacing.sm, paddingBottom: spacing.xl },
   sectionLabel: {
     color: colors.textLight,
     fontFamily: fonts.black,
-    fontSize: 14,
-    letterSpacing: 0.8,
+    fontSize: 13,
+    letterSpacing: 0.7,
     marginBottom: spacing.xs,
     textTransform: 'uppercase',
   },
   card: {
     alignItems: 'center',
     backgroundColor: colors.surface,
-    borderColor: colors.border,
+    borderBottomColor: colors.border,
     borderBottomWidth: 4,
+    borderColor: colors.border,
     borderRadius: radius.lg,
     borderWidth: 2,
     flexDirection: 'row',
     gap: spacing.md,
     padding: spacing.md,
   },
-  cardSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.surfaceMuted,
-  },
-  cardDisabled: {
-    opacity: 0.58,
-  },
+  cardSelected: { backgroundColor: colors.surfaceMuted, borderColor: colors.primary },
+  cardDisabled: { opacity: 0.58 },
+  cardPressed: { opacity: 0.85, transform: [{ translateY: 1 }] },
   flagCircle: {
     alignItems: 'center',
     backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
     borderRadius: radius.pill,
+    borderWidth: 1,
     height: 48,
     justifyContent: 'center',
     width: 48,
-    borderColor: colors.border,
-    borderWidth: 1,
   },
-  flagEmoji: {
-    fontSize: 26,
-  },
-  cardInfo: {
-    flex: 1,
-  },
-  labelRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-  },
-  cardLabel: {
-    color: colors.textDark,
-    fontFamily: fonts.black,
-    fontSize: 17,
-  },
-  newBadge: {
+  flagEmoji: { fontSize: 26 },
+  cardInfo: { flex: 1, gap: 4 },
+  labelRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  cardLabel: { color: colors.textDark, fontFamily: fonts.black, fontSize: 17 },
+  badge: {
     backgroundColor: colors.africaGold,
     borderRadius: radius.sm,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  newBadgeText: {
-    color: colors.skyBottom,
-    fontFamily: fonts.black,
-    fontSize: 9,
-  },
+  badgeText: { color: colors.skyBottom, fontFamily: fonts.black, fontSize: 9 },
   cardSubtitle: {
     color: colors.textMuted,
     fontFamily: fonts.medium,
     fontSize: 13,
     lineHeight: 18,
-    marginTop: 2,
   },
-  tagWrapper: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(244, 185, 66, 0.1)',
-    borderRadius: radius.sm,
-    marginTop: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  categoryText: {
-    color: colors.africaGold,
-    fontFamily: fonts.bold,
-    fontSize: 11,
-  },
+  categoryText: { color: colors.africaGold, fontFamily: fonts.bold, fontSize: 11 },
   radioCircle: {
     alignItems: 'center',
     borderColor: colors.border,
@@ -393,20 +235,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 22,
   },
-  radioCircleActive: {
-    borderColor: colors.primary,
-  },
-  radioInner: {
-    backgroundColor: colors.primary,
-    borderRadius: 999,
-    height: 12,
-    width: 12,
-  },
+  radioCircleActive: { borderColor: colors.primary },
+  radioInner: { backgroundColor: colors.primary, borderRadius: 999, height: 12, width: 12 },
   footer: {
+    backgroundColor: colors.skyBottom,
     borderTopColor: colors.border,
     borderTopWidth: 1.5,
     paddingBottom: spacing.lg,
     paddingTop: spacing.md,
-    backgroundColor: colors.skyBottom,
   },
 });
