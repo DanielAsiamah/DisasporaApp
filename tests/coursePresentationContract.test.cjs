@@ -7,7 +7,7 @@ const {
 } = require('../src/data/coursePresentationContract.cjs');
 
 test('course presentation metadata is explicit and never falls back to another culture', () => {
-  assert.deepEqual(Object.keys(COURSE_PRESENTATIONS).sort(), ['haitian-creole', 'jamaican-patois', 'swahili', 'wolof']);
+  assert.deepEqual(Object.keys(COURSE_PRESENTATIONS).sort(), ['haitian-creole', 'jamaican-patois', 'sudanese-arabic', 'swahili', 'wolof']);
   assert.deepEqual(getCoursePresentationMetadata('swahili'), {
     flag: '\u{1F1F0}\u{1F1EA}',
     heroAsset: 'assets/images/chapters/swahili-greetings.png',
@@ -19,6 +19,10 @@ test('course presentation metadata is explicit and never falls back to another c
   assert.deepEqual(getCoursePresentationMetadata('haitian-creole'), {
     flag: '\u{1F1ED}\u{1F1F9}',
     heroAsset: 'assets/images/chapters/haitian-creole-greetings.png',
+  });
+  assert.deepEqual(getCoursePresentationMetadata('sudanese-arabic'), {
+    flag: '\u{1F1F8}\u{1F1E9}',
+    heroAsset: 'assets/images/chapters/sudanese-arabic-greetings.png',
   });
   assert.equal(getCoursePresentationMetadata('toString'), null);
   assert.equal(getCoursePresentationMetadata(null), null);

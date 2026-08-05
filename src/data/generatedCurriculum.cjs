@@ -3,13 +3,13 @@ const GENERATED_CURRICULUM = Object.freeze({
   "meta": {
     "schemaVersion": 1,
     "sourceWorkbook": "patois_learn_database_1.xlsx",
-    "sourceSha256": "92aeb169900341c2526b68308337a296bff16f8c1d832a354a75fbea732b0d50",
+    "sourceSha256": "ffc1cd5a5b20ecde536b769849b45d97d55c2f1592811d53ba939213d0d27d6d",
     "courseContentSha256": {
       "jamaican-patois": "9187b643422db1f3548009e25d76cd43790149276a17b84f4f7ad24ab064cd19",
       "swahili": "e2db5bcd7d2aacfb001ae3fb0dae0063e11b2d89b19beba9f33cb47125bdd42b",
       "wolof": "3dc1198950a9ee7dac27ab59c79637d1142c4692171b8a6de05ca53c6f1124f7",
       "haitian-creole": "48700f02b8435b1184a0e4d4b48c36da10609fd2fe1d687446a06bf73d5c7c3f",
-      "sudanese-arabic": "298f21a20405cc7625768d55f3ebca34dbd969faa70ead68ef93ccd633446922",
+      "sudanese-arabic": "bc6c3ebc6fdc0e9654fc33243982e5ad75ac311ab357be621f1f1eeaa1326cb5",
       "nobiin": "08fb13725f497495497ca5e20a9236d2cdc2da712742ef0e31495d3663bffd1b",
       "igbo": "e210c706d78dc4429c2dcf0c7acddd7de18923a794adead24c8d90b755be68ac",
       "belizean-kriol": "09bb4a4cf9083f4d53f1effa6b65f9dd9dd345b008601a78df6216303d95cc0e",
@@ -2397,507 +2397,507 @@ const GENERATED_CURRICULUM = Object.freeze({
     {
       "courseId": "sudanese-arabic",
       "conceptId": "yes",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "أيوه",
+      "pronunciation": "aywa",
+      "scriptAid": "Khartoum colloquial yes",
       "image": "assets/images/vocab/sudanese-arabic/yes.png",
-      "audio": "assets/audio/sudanese-arabic/yes.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 1
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "no",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "لا",
+      "pronunciation": "la",
+      "scriptAid": "Arabic script",
       "image": "assets/images/vocab/sudanese-arabic/no.png",
-      "audio": "assets/audio/sudanese-arabic/no.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 2
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "maybe",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "يمكن",
+      "pronunciation": "yimkin",
+      "scriptAid": "Khartoum colloquial maybe",
       "image": "assets/images/vocab/sudanese-arabic/maybe.png",
-      "audio": "assets/audio/sudanese-arabic/maybe.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 3
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "okay",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "تمام",
+      "pronunciation": "tamam",
+      "scriptAid": "Common Sudanese agreement",
       "image": "assets/images/vocab/sudanese-arabic/okay.png",
-      "audio": "assets/audio/sudanese-arabic/okay.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 4
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "again",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "تاني",
+      "pronunciation": "tani",
+      "scriptAid": "Sudanese colloquial again",
       "image": "assets/images/vocab/sudanese-arabic/again.png",
-      "audio": "assets/audio/sudanese-arabic/again.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 5
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "good-afternoon",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "مساء الخير",
+      "pronunciation": "masa al-kheir",
+      "scriptAid": "Afternoon/evening greeting",
       "image": "assets/images/vocab/sudanese-arabic/good-afternoon.png",
-      "audio": "assets/audio/sudanese-arabic/good-afternoon.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 6
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "nice-to-meet-you",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "اتشرفت بيك",
+      "pronunciation": "it-sharraft beek",
+      "scriptAid": "Polite meeting phrase",
       "image": "assets/images/vocab/sudanese-arabic/nice-to-meet-you.png",
-      "audio": "assets/audio/sudanese-arabic/nice-to-meet-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 7
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "long-time-no-see",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "زمن ما شفناك",
+      "pronunciation": "zaman ma shufnak",
+      "scriptAid": "Long time no see",
       "image": "assets/images/vocab/sudanese-arabic/long-time-no-see.png",
-      "audio": "assets/audio/sudanese-arabic/long-time-no-see.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 8
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "how-is-your-day",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "يومك كيف؟",
+      "pronunciation": "yomak keef?",
+      "scriptAid": "How is your day?",
       "image": "assets/images/vocab/sudanese-arabic/how-is-your-day.png",
-      "audio": "assets/audio/sudanese-arabic/how-is-your-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 9
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "have-a-good-day",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "يومك سعيد",
+      "pronunciation": "yomak saeed",
+      "scriptAid": "Have a good day",
       "image": "assets/images/vocab/sudanese-arabic/have-a-good-day.png",
-      "audio": "assets/audio/sudanese-arabic/have-a-good-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 10
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "what-is-your-name",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "اسمك منو؟",
+      "pronunciation": "ismak minu?",
+      "scriptAid": "What is your name?",
       "image": "assets/images/vocab/sudanese-arabic/what-is-your-name.png",
-      "audio": "assets/audio/sudanese-arabic/what-is-your-name.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 11
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "my-name-is",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "اسمي...",
+      "pronunciation": "ismi...",
+      "scriptAid": "My name is...",
       "image": "assets/images/vocab/sudanese-arabic/my-name-is.png",
-      "audio": "assets/audio/sudanese-arabic/my-name-is.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 12
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "i-am-a-student",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "أنا طالب",
+      "pronunciation": "ana talib",
+      "scriptAid": "I am a student",
       "image": "assets/images/vocab/sudanese-arabic/i-am-a-student.png",
-      "audio": "assets/audio/sudanese-arabic/i-am-a-student.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 13
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "i-am-learning",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "أنا بتعلم...",
+      "pronunciation": "ana batallam...",
+      "scriptAid": "I am learning...",
       "image": "assets/images/vocab/sudanese-arabic/i-am-learning.png",
-      "audio": "assets/audio/sudanese-arabic/i-am-learning.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 14
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "i-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "أنا بتكلم...",
+      "pronunciation": "ana batakallam...",
+      "scriptAid": "I speak...",
       "image": "assets/images/vocab/sudanese-arabic/i-speak.png",
-      "audio": "assets/audio/sudanese-arabic/i-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 15
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "where-are-you-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "إنت من وين؟",
+      "pronunciation": "inta min wein?",
+      "scriptAid": "Where are you from?",
       "image": "assets/images/vocab/sudanese-arabic/where-are-you-from.png",
-      "audio": "assets/audio/sudanese-arabic/where-are-you-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 16
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "i-am-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "أنا من...",
+      "pronunciation": "ana min...",
+      "scriptAid": "I am from...",
       "image": "assets/images/vocab/sudanese-arabic/i-am-from.png",
-      "audio": "assets/audio/sudanese-arabic/i-am-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 17
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "where-do-you-live",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "ساكن وين؟",
+      "pronunciation": "sakin wein?",
+      "scriptAid": "Where do you live?",
       "image": "assets/images/vocab/sudanese-arabic/where-do-you-live.png",
-      "audio": "assets/audio/sudanese-arabic/where-do-you-live.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 18
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "i-live-in",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "ساكن في...",
+      "pronunciation": "sakin fi...",
+      "scriptAid": "I live in...",
       "image": "assets/images/vocab/sudanese-arabic/i-live-in.png",
-      "audio": "assets/audio/sudanese-arabic/i-live-in.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 19
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "which-language-do-you-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "بتتكلم ياتو لغة؟",
+      "pronunciation": "bititkallam yatu lughah?",
+      "scriptAid": "Which language do you speak?",
       "image": "assets/images/vocab/sudanese-arabic/which-language-do-you-speak.png",
-      "audio": "assets/audio/sudanese-arabic/which-language-do-you-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 20
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "family",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "أسرة",
+      "pronunciation": "usra",
+      "scriptAid": "Family",
       "image": "assets/images/vocab/sudanese-arabic/family.png",
-      "audio": "assets/audio/sudanese-arabic/family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 21
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "parents",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "الأهل",
+      "pronunciation": "al-ahl",
+      "scriptAid": "Parents/family elders",
       "image": "assets/images/vocab/sudanese-arabic/parents.png",
-      "audio": "assets/audio/sudanese-arabic/parents.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 22
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "husband",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "زوج",
+      "pronunciation": "zawj",
+      "scriptAid": "Husband",
       "image": "assets/images/vocab/sudanese-arabic/husband.png",
-      "audio": "assets/audio/sudanese-arabic/husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 23
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "wife",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "زوجة",
+      "pronunciation": "zawjah",
+      "scriptAid": "Wife",
       "image": "assets/images/vocab/sudanese-arabic/wife.png",
-      "audio": "assets/audio/sudanese-arabic/wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 24
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "son",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "ولد",
+      "pronunciation": "walad",
+      "scriptAid": "Son/boy",
       "image": "assets/images/vocab/sudanese-arabic/son.png",
-      "audio": "assets/audio/sudanese-arabic/son.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 25
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "daughter",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "بنت",
+      "pronunciation": "bint",
+      "scriptAid": "Daughter/girl",
       "image": "assets/images/vocab/sudanese-arabic/daughter.png",
-      "audio": "assets/audio/sudanese-arabic/daughter.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 26
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "grandfather",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "جد",
+      "pronunciation": "jadd",
+      "scriptAid": "Grandfather",
       "image": "assets/images/vocab/sudanese-arabic/grandfather.png",
-      "audio": "assets/audio/sudanese-arabic/grandfather.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 27
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "please",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "لو سمحت",
+      "pronunciation": "law samaht",
+      "scriptAid": "Please",
       "image": "assets/images/vocab/sudanese-arabic/please.png",
-      "audio": "assets/audio/sudanese-arabic/please.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 28
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "thank-you",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "شكراً",
+      "pronunciation": "shukran",
+      "scriptAid": "Thank you",
       "image": "assets/images/vocab/sudanese-arabic/thank-you.png",
-      "audio": "assets/audio/sudanese-arabic/thank-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 29
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "no-problem",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "ما في مشكلة",
+      "pronunciation": "ma fi mushkila",
+      "scriptAid": "No problem",
       "image": "assets/images/vocab/sudanese-arabic/no-problem.png",
-      "audio": "assets/audio/sudanese-arabic/no-problem.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 30
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "excuse-me",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "عن إذنك",
+      "pronunciation": "an iznak",
+      "scriptAid": "Excuse me",
       "image": "assets/images/vocab/sudanese-arabic/excuse-me.png",
-      "audio": "assets/audio/sudanese-arabic/excuse-me.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 31
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "sorry",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "آسف",
+      "pronunciation": "asif",
+      "scriptAid": "Sorry",
       "image": "assets/images/vocab/sudanese-arabic/sorry.png",
-      "audio": "assets/audio/sudanese-arabic/sorry.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 32
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "this-is-my-family",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "دي أسرتي",
+      "pronunciation": "di usriti",
+      "scriptAid": "This is my family",
       "image": "assets/images/vocab/sudanese-arabic/this-is-my-family.png",
-      "audio": "assets/audio/sudanese-arabic/this-is-my-family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 33
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "this-is-my-husband",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "دا زوجي",
+      "pronunciation": "da zawji",
+      "scriptAid": "This is my husband",
       "image": "assets/images/vocab/sudanese-arabic/this-is-my-husband.png",
-      "audio": "assets/audio/sudanese-arabic/this-is-my-husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 34
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "this-is-my-wife",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "دي زوجتي",
+      "pronunciation": "di zawjati",
+      "scriptAid": "This is my wife",
       "image": "assets/images/vocab/sudanese-arabic/this-is-my-wife.png",
-      "audio": "assets/audio/sudanese-arabic/this-is-my-wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 35
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "he-lives-here",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "هو ساكن هنا",
+      "pronunciation": "huwa sakin hina",
+      "scriptAid": "He lives here",
       "image": "assets/images/vocab/sudanese-arabic/he-lives-here.png",
-      "audio": "assets/audio/sudanese-arabic/he-lives-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 36
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "she-works-here",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "هي شغالة هنا",
+      "pronunciation": "hiya shaghala hina",
+      "scriptAid": "She works here",
       "image": "assets/images/vocab/sudanese-arabic/she-works-here.png",
-      "audio": "assets/audio/sudanese-arabic/she-works-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 37
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "we-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "نحن بنتكلم...",
+      "pronunciation": "nahna binitkallam...",
+      "scriptAid": "We speak...",
       "image": "assets/images/vocab/sudanese-arabic/we-speak.png",
-      "audio": "assets/audio/sudanese-arabic/we-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 38
     },
     {
       "courseId": "sudanese-arabic",
       "conceptId": "they-are-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "هم من...",
+      "pronunciation": "hum min...",
+      "scriptAid": "They are from...",
       "image": "assets/images/vocab/sudanese-arabic/they-are-from.png",
-      "audio": "assets/audio/sudanese-arabic/they-are-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 39
     },
@@ -11157,6 +11157,1341 @@ const GENERATED_CURRICULUM = Object.freeze({
         "Non",
         "Bon apremidi",
         "Pase yon bon jounen"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "getting-started",
+      "id": "sudanese-arabic-getting-started-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"أيوه\" mean in Sudanese Arabic?",
+      "answer": "yes",
+      "distractors": [
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "getting-started",
+      "id": "sudanese-arabic-getting-started-02-no",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"no\".",
+      "answer": "لا",
+      "distractors": [
+        "أيوه",
+        "يمكن",
+        "تمام"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "getting-started",
+      "id": "sudanese-arabic-getting-started-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "getting-started",
+      "id": "sudanese-arabic-getting-started-04-okay",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"تمام\".",
+      "answer": "okay",
+      "distractors": [
+        "yes",
+        "no",
+        "maybe"
+      ],
+      "conceptId": "okay",
+      "conceptRefs": [
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "getting-started",
+      "id": "sudanese-arabic-getting-started-05-again",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"again\".",
+      "answer": "تاني",
+      "distractors": [
+        "أيوه",
+        "لا",
+        "يمكن"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "getting-started",
+      "id": "sudanese-arabic-getting-started-06-again",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "again",
+      "distractors": [
+        "yes",
+        "no",
+        "maybe"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "easy-greetings",
+      "id": "sudanese-arabic-easy-greetings-01-good-afternoon",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"مساء الخير\" mean in Sudanese Arabic?",
+      "answer": "good afternoon",
+      "distractors": [
+        "nice to meet you",
+        "long time no see",
+        "how is your day"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "easy-greetings",
+      "id": "sudanese-arabic-easy-greetings-02-nice-to-meet-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"nice to meet you\".",
+      "answer": "اتشرفت بيك",
+      "distractors": [
+        "مساء الخير",
+        "زمن ما شفناك",
+        "يومك كيف؟"
+      ],
+      "conceptId": "nice-to-meet-you",
+      "conceptRefs": [
+        "nice-to-meet-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "easy-greetings",
+      "id": "sudanese-arabic-easy-greetings-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "good-afternoon",
+        "nice-to-meet-you",
+        "long-time-no-see",
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "easy-greetings",
+      "id": "sudanese-arabic-easy-greetings-04-how-is-your-day",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"يومك كيف؟\".",
+      "answer": "how is your day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "how-is-your-day",
+      "conceptRefs": [
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "easy-greetings",
+      "id": "sudanese-arabic-easy-greetings-05-have-a-good-day",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"have a good day\".",
+      "answer": "يومك سعيد",
+      "distractors": [
+        "مساء الخير",
+        "اتشرفت بيك",
+        "زمن ما شفناك"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "easy-greetings",
+      "id": "sudanese-arabic-easy-greetings-06-have-a-good-day",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "have a good day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-yourself",
+      "id": "sudanese-arabic-introducing-yourself-01-what-is-your-name",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"اسمك منو؟\" mean in Sudanese Arabic?",
+      "answer": "what is your name",
+      "distractors": [
+        "my name is",
+        "i am a student",
+        "i am learning"
+      ],
+      "conceptId": "what-is-your-name",
+      "conceptRefs": [
+        "what-is-your-name"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-yourself",
+      "id": "sudanese-arabic-introducing-yourself-02-my-name-is",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"my name is\".",
+      "answer": "اسمي...",
+      "distractors": [
+        "اسمك منو؟",
+        "أنا طالب",
+        "أنا بتعلم..."
+      ],
+      "conceptId": "my-name-is",
+      "conceptRefs": [
+        "my-name-is"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-yourself",
+      "id": "sudanese-arabic-introducing-yourself-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "what-is-your-name",
+        "my-name-is",
+        "i-am-a-student",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-yourself",
+      "id": "sudanese-arabic-introducing-yourself-04-i-am-learning",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"أنا بتعلم...\".",
+      "answer": "i am learning",
+      "distractors": [
+        "what is your name",
+        "my name is",
+        "i am a student"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-yourself",
+      "id": "sudanese-arabic-introducing-yourself-05-i-speak",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"i speak\".",
+      "answer": "أنا بتكلم...",
+      "distractors": [
+        "اسمك منو؟",
+        "اسمي...",
+        "أنا طالب"
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-yourself",
+      "id": "sudanese-arabic-introducing-yourself-06-i-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "i speak",
+      "distractors": [
+        "what is your name",
+        "my name is",
+        "i am a student"
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "your-background",
+      "id": "sudanese-arabic-your-background-01-where-are-you-from",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"إنت من وين؟\" mean in Sudanese Arabic?",
+      "answer": "where are you from",
+      "distractors": [
+        "i am from",
+        "where do you live",
+        "i live in"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "your-background",
+      "id": "sudanese-arabic-your-background-02-i-am-from",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"i am from\".",
+      "answer": "أنا من...",
+      "distractors": [
+        "إنت من وين؟",
+        "ساكن وين؟",
+        "ساكن في..."
+      ],
+      "conceptId": "i-am-from",
+      "conceptRefs": [
+        "i-am-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "your-background",
+      "id": "sudanese-arabic-your-background-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "where-are-you-from",
+        "i-am-from",
+        "where-do-you-live",
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "your-background",
+      "id": "sudanese-arabic-your-background-04-i-live-in",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"ساكن في...\".",
+      "answer": "i live in",
+      "distractors": [
+        "where are you from",
+        "i am from",
+        "where do you live"
+      ],
+      "conceptId": "i-live-in",
+      "conceptRefs": [
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "your-background",
+      "id": "sudanese-arabic-your-background-05-which-language-do-you-speak",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"which language do you speak\".",
+      "answer": "بتتكلم ياتو لغة؟",
+      "distractors": [
+        "إنت من وين؟",
+        "أنا من...",
+        "ساكن وين؟"
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "your-background",
+      "id": "sudanese-arabic-your-background-06-which-language-do-you-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "which language do you speak",
+      "distractors": [
+        "where are you from",
+        "i am from",
+        "where do you live"
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-01-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"أسرة\" mean in Sudanese Arabic?",
+      "answer": "family",
+      "distractors": [
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-02-parents",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"parents\".",
+      "answer": "الأهل",
+      "distractors": [
+        "أسرة",
+        "زوج",
+        "زوجة"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "family",
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-04-wife",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"زوجة\".",
+      "answer": "wife",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "wife",
+      "conceptRefs": [
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-05-son",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"son\".",
+      "answer": "ولد",
+      "distractors": [
+        "أسرة",
+        "الأهل",
+        "زوج"
+      ],
+      "conceptId": "son",
+      "conceptRefs": [
+        "son"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-06-daughter",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "daughter",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-07-grandfather",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"grandfather\".",
+      "answer": "جد",
+      "distractors": [
+        "أسرة",
+        "الأهل",
+        "زوج"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "family-members",
+      "id": "sudanese-arabic-family-members-08-grandfather",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"جد\" mean in Sudanese Arabic?",
+      "answer": "grandfather",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "polite-conversation",
+      "id": "sudanese-arabic-polite-conversation-01-please",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"لو سمحت\" mean in Sudanese Arabic?",
+      "answer": "please",
+      "distractors": [
+        "thank you",
+        "no problem",
+        "excuse me"
+      ],
+      "conceptId": "please",
+      "conceptRefs": [
+        "please"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "polite-conversation",
+      "id": "sudanese-arabic-polite-conversation-02-thank-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"thank you\".",
+      "answer": "شكراً",
+      "distractors": [
+        "لو سمحت",
+        "ما في مشكلة",
+        "عن إذنك"
+      ],
+      "conceptId": "thank-you",
+      "conceptRefs": [
+        "thank-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "polite-conversation",
+      "id": "sudanese-arabic-polite-conversation-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "please",
+        "thank-you",
+        "no-problem",
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "polite-conversation",
+      "id": "sudanese-arabic-polite-conversation-04-excuse-me",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"عن إذنك\".",
+      "answer": "excuse me",
+      "distractors": [
+        "please",
+        "thank you",
+        "no problem"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "polite-conversation",
+      "id": "sudanese-arabic-polite-conversation-05-sorry",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"sorry\".",
+      "answer": "آسف",
+      "distractors": [
+        "لو سمحت",
+        "شكراً",
+        "ما في مشكلة"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "polite-conversation",
+      "id": "sudanese-arabic-polite-conversation-06-sorry",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "sorry",
+      "distractors": [
+        "please",
+        "thank you",
+        "no problem"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-01-this-is-my-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"دي أسرتي\" mean in Sudanese Arabic?",
+      "answer": "this is my family",
+      "distractors": [
+        "this is my husband",
+        "this is my wife",
+        "he lives here"
+      ],
+      "conceptId": "this-is-my-family",
+      "conceptRefs": [
+        "this-is-my-family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-02-this-is-my-husband",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"this is my husband\".",
+      "answer": "دا زوجي",
+      "distractors": [
+        "دي أسرتي",
+        "دي زوجتي",
+        "هو ساكن هنا"
+      ],
+      "conceptId": "this-is-my-husband",
+      "conceptRefs": [
+        "this-is-my-husband"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "this-is-my-family",
+        "this-is-my-husband",
+        "this-is-my-wife",
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-04-he-lives-here",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"هو ساكن هنا\".",
+      "answer": "he lives here",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-05-she-works-here",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"she works here\".",
+      "answer": "هي شغالة هنا",
+      "distractors": [
+        "دي أسرتي",
+        "دا زوجي",
+        "دي زوجتي"
+      ],
+      "conceptId": "she-works-here",
+      "conceptRefs": [
+        "she-works-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-06-we-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "we speak",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "we-speak",
+      "conceptRefs": [
+        "we-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-07-they-are-from",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"they are from\".",
+      "answer": "هم من...",
+      "distractors": [
+        "دي أسرتي",
+        "دا زوجي",
+        "دي زوجتي"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "introducing-others",
+      "id": "sudanese-arabic-introducing-others-08-they-are-from",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"هم من...\" mean in Sudanese Arabic?",
+      "answer": "they are from",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"أيوه\" mean in Sudanese Arabic?",
+      "answer": "yes",
+      "distractors": [
+        "good afternoon",
+        "what is your name",
+        "where are you from"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"good afternoon\".",
+      "answer": "مساء الخير",
+      "distractors": [
+        "أيوه",
+        "اسمك منو؟",
+        "إنت من وين؟"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "good-afternoon",
+        "what-is-your-name",
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-04-where-are-you-from",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"إنت من وين؟\".",
+      "answer": "where are you from",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-05-family",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"family\".",
+      "answer": "أسرة",
+      "distractors": [
+        "أيوه",
+        "مساء الخير",
+        "اسمك منو؟"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-06-daughter",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "daughter",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-07-excuse-me",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"excuse me\".",
+      "answer": "عن إذنك",
+      "distractors": [
+        "أيوه",
+        "مساء الخير",
+        "اسمك منو؟"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-08-he-lives-here",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"هو ساكن هنا\" mean in Sudanese Arabic?",
+      "answer": "he lives here",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "words-practice",
+      "id": "sudanese-arabic-words-practice-09-he-lives-here",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"he lives here\".",
+      "answer": "هو ساكن هنا",
+      "distractors": [
+        "أيوه",
+        "مساء الخير",
+        "اسمك منو؟"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-01-no",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"لا\" mean in Sudanese Arabic?",
+      "answer": "no",
+      "distractors": [
+        "good afternoon",
+        "have a good day",
+        "i am learning"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Sudanese Arabic phrase for \"good afternoon\".",
+      "answer": "مساء الخير",
+      "distractors": [
+        "لا",
+        "يومك سعيد",
+        "أنا بتعلم..."
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Sudanese Arabic phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "no",
+        "good-afternoon",
+        "have-a-good-day",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-04-i-am-learning",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"أنا بتعلم...\".",
+      "answer": "i am learning",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-05-where-do-you-live",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"where do you live\".",
+      "answer": "ساكن وين؟",
+      "distractors": [
+        "لا",
+        "مساء الخير",
+        "يومك سعيد"
+      ],
+      "conceptId": "where-do-you-live",
+      "conceptRefs": [
+        "where-do-you-live"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-06-parents",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "parents",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-07-daughter",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"daughter\".",
+      "answer": "بنت",
+      "distractors": [
+        "لا",
+        "مساء الخير",
+        "يومك سعيد"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-08-no-problem",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"ما في مشكلة\" mean in Sudanese Arabic?",
+      "answer": "no problem",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "sudanese-arabic",
+      "topicId": "practice-challenge",
+      "id": "sudanese-arabic-practice-challenge-09-no-problem",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Sudanese Arabic for \"no problem\".",
+      "answer": "ما في مشكلة",
+      "distractors": [
+        "لا",
+        "مساء الخير",
+        "يومك سعيد"
       ],
       "conceptId": "no-problem",
       "conceptRefs": [

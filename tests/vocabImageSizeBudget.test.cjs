@@ -6,7 +6,7 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const COURSE_BUDGET_BYTES = 32 * 1024 * 1024;
 
-for (const courseId of ['jamaican-patois', 'swahili', 'wolof', 'haitian-creole']) {
+for (const courseId of ['jamaican-patois', 'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic']) {
   test(`${courseId} transparent vocabulary artwork stays within the mobile asset budget`, () => {
     const directory = path.join(ROOT, 'assets', 'images', 'vocab', courseId);
     const files = fs.readdirSync(directory).filter((name) => name.endsWith('.png'));

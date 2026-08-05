@@ -5,6 +5,7 @@ const COURSE_HERO_SOURCES = Object.freeze({
   swahili: require('../../assets/images/chapters/swahili-greetings.png'),
   wolof: require('../../assets/images/chapters/wolof-greetings.png'),
   'haitian-creole': require('../../assets/images/chapters/haitian-creole-greetings.png'),
+  'sudanese-arabic': require('../../assets/images/chapters/sudanese-arabic-greetings.png'),
 });
 
 export function getCoursePresentation(courseId) {
