@@ -521,7 +521,7 @@ function validateContent(options = {}) {
   requireFields(
     'course_vocabulary',
     data.course_vocabulary,
-    ['course_id', 'concept_id', 'image_path', 'audio_path', 'review_status', 'publication_state'],
+    ['course_id', 'concept_id', 'image_path', 'review_status', 'publication_state'],
     errors
   );
   requireFields(
@@ -531,9 +531,28 @@ function validateContent(options = {}) {
     errors,
     (row) => ['preview', 'published'].includes(text(row.publication_state).toLocaleLowerCase('en'))
   );
+  requireFields(
+    'course_vocabulary',
+    data.course_vocabulary,
+    ['audio_path'],
+    errors,
+    (row) => text(row.publication_state).toLocaleLowerCase('en') === 'published'
+  );
   requireFields('chapters', data.chapters, REQUIRED_COLUMNS.chapters, errors);
   requireFields('topics', data.topics, REQUIRED_COLUMNS.topics, errors);
-  requireFields('lesson_steps', data.lesson_steps, REQUIRED_COLUMNS.lesson_steps, errors);
+  requireFields(
+    'lesson_steps',
+    data.lesson_steps,
+    REQUIRED_COLUMNS.lesson_steps.filter((field) => field !== 'voice_cast'),
+    errors
+  );
+  requireFields(
+    'lesson_steps',
+    data.lesson_steps,
+    ['voice_cast'],
+    errors,
+    (row) => ['preview', 'published'].includes(text(row.publication_state).toLocaleLowerCase('en'))
+  );
 
   if (data.concepts.length !== 39 || new Set(data.concepts.map((row) => text(row.concept_id))).size !== 39) {
     errors.push(`Workbook must define exactly 39 unique concepts; found ${data.concepts.length} rows.`);

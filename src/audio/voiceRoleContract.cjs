@@ -69,6 +69,16 @@ const VOICE_ROLES = Object.freeze({
     enabled: false,
     status: 'voice-audition-required',
   }),
+  'target-swahili-yna': Object.freeze({
+    roleKind: 'target-language',
+    character: null,
+    locale: 'sw-KE',
+    purpose: 'core-vocabulary',
+    voiceEnvVar: 'ELEVENLABS_VOICE_ID_SWAHILI',
+    displayName: 'Yna Agalo - Kenyan Lady (candidate)',
+    enabled: false,
+    status: 'voice-audition-required',
+  }),
   'sol-silent': Object.freeze({
     roleKind: 'silent-character',
     character: 'Sol',

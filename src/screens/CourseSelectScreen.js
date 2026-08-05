@@ -80,7 +80,7 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 
               {courses.map((course) => {
                 const isSelected = selected === course.id;
-                const isAvailable = course.available && course.published;
+                const isAvailable = course.available;
 
                 return (
                   <Pressable

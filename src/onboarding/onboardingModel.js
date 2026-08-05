@@ -156,6 +156,12 @@ function completeOnboarding(draft) {
   if (preferredName.length < 2) {
     throw new Error('Preferred name must be at least 2 characters.');
   }
+  if (!canContinueOnboarding('course', completeDraft)) {
+    throw new Error('Select an available course before completing onboarding.');
+  }
+  if (!canCompleteOnboarding(completeDraft)) {
+    throw new Error('Complete every onboarding step before saving your path.');
+  }
 
   return {
     ...completeDraft,
@@ -176,7 +182,7 @@ function canContinueOnboarding(step, draft) {
   if (step === 'baseLanguage') return BASE_LANGUAGE_IDS.has(safeDraft.baseLanguage);
   if (step === 'course') {
     const course = getCourse(safeDraft.baseLanguage, safeDraft.currentCourse);
-    return Boolean(course?.available && course?.published);
+    return Boolean(course?.available);
   }
   if (step === 'motivation') return MOTIVATION_IDS.has(safeDraft.motivation);
   if (step === 'goal') return DAILY_GOAL_MINUTES.has(safeDraft.dailyGoalMinutes);
@@ -184,6 +190,10 @@ function canContinueOnboarding(step, draft) {
   if (step === 'ready') return safeDraft.reminderTime === '19:00';
 
   return false;
+}
+
+function canCompleteOnboarding(draft) {
+  return ONBOARDING_STEPS.every((step) => canContinueOnboarding(step, draft));
 }
 
 function needsOnboarding(profile) {
@@ -204,6 +214,7 @@ module.exports = {
   hydrateOnboardingDraft,
   restoreOnboardingProgress,
   completeOnboarding,
+  canCompleteOnboarding,
   canContinueOnboarding,
   needsOnboarding,
 };

@@ -2,17 +2,33 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { JAMAICAN_PATOIS_VOCABULARY } = require('../src/data/jamaicanPatoisVocabulary.cjs');
+const { GENERATED_CURRICULUM } = require('../src/data/generatedCurriculum.cjs');
 const {
-  buildPatoisAudioManifest,
-  createAuditionPlan,
+  buildCourseAudioManifest,
+  createCourseAuditionPlan,
   shouldGenerateClip,
+  validateVocabularyForGeneration,
   validateSpendGate,
 } = require('../src/audio/patoisAudioManifest.cjs');
 
 const projectRoot = path.resolve(__dirname, '..');
-const plannedManifestPath = path.join(projectRoot, 'outputs', 'audio', 'patois-manifest.planned.json');
-const auditionRoot = path.join(projectRoot, 'assets', 'audio', 'auditions', 'jamaican-patois');
-const generatedManifestPath = path.join(auditionRoot, 'manifest.json');
+const COURSE_CONFIGS = Object.freeze({
+  'jamaican-patois': Object.freeze({
+    vocabulary: JAMAICAN_PATOIS_VOCABULARY,
+    defaultVoiceRole: null,
+    plannedManifestFilename: 'patois-manifest.planned.json',
+    expectedNames: Object.freeze({
+      'target-patois-denzel': /Denzel/i,
+      'target-patois-annakay': /Annakay/i,
+    }),
+  }),
+  swahili: Object.freeze({
+    vocabulary: GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === 'swahili'),
+    defaultVoiceRole: 'target-swahili-yna',
+    plannedManifestFilename: 'swahili-manifest.planned.json',
+    expectedNames: Object.freeze({ 'target-swahili-yna': /Yna Agalo/i }),
+  }),
+});
 
 function loadPrivateEnvironment() {
   for (const filename of ['.env.local', '.env']) {
@@ -27,7 +43,14 @@ function loadPrivateEnvironment() {
 }
 
 function parseArgs(argv) {
-  const options = { generate: false, approved: false, force: false, maxCredits: 250, account: 'primary' };
+  const options = {
+    generate: false,
+    approved: false,
+    force: false,
+    maxCredits: 250,
+    account: 'primary',
+    courseId: 'jamaican-patois',
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === '--generate') options.generate = true;
@@ -35,6 +58,7 @@ function parseArgs(argv) {
     else if (argument === '--force') options.force = true;
     else if (argument === '--max-credits') options.maxCredits = Number(argv[++index]);
     else if (argument === '--account') options.account = argv[++index];
+    else if (argument === '--course') options.courseId = argv[++index];
     else if (argument === '--help') options.help = true;
     else throw new Error(`Unknown argument: ${argument}`);
   }
@@ -44,17 +68,20 @@ function parseArgs(argv) {
   if (!['primary', 'secondary'].includes(options.account)) {
     throw new Error('--account must be either primary or secondary.');
   }
+  if (!COURSE_CONFIGS[options.courseId]) {
+    throw new Error(`--course must be one of: ${Object.keys(COURSE_CONFIGS).join(', ')}.`);
+  }
   return options;
 }
 
 function printHelp() {
-  console.log(`Prepare or generate the three-phrase Jamaican Patois voice audition.
+  console.log(`Prepare or generate a three-phrase course voice audition.
 
 Default behavior is a zero-credit dry run.
 
 Usage:
   node scripts/generate-patois-audition.js
-  node scripts/generate-patois-audition.js --generate --approve-spend [--account primary|secondary] [--max-credits 250] [--force]
+  node scripts/generate-patois-audition.js --course swahili --generate --approve-spend [--account primary|secondary] [--max-credits 250] [--force]
 
 Paid generation is impossible without both --generate and --approve-spend.`);
 }
@@ -75,7 +102,7 @@ async function requestJson(url, apiKey) {
   return response.json();
 }
 
-async function resolveAndValidateCast(entries, apiKey) {
+async function resolveAndValidateCast(entries, apiKey, expectedNames) {
   const roles = [...new Set(entries.map(({ voiceRole, voiceEnvVar }) => `${voiceRole}|${voiceEnvVar}`))]
     .map((entry) => {
       const [voiceRole, voiceEnvVar] = entry.split('|');
@@ -84,14 +111,14 @@ async function resolveAndValidateCast(entries, apiKey) {
       return { voiceRole, voiceEnvVar, voiceId };
     });
   if (new Set(roles.map(({ voiceId }) => voiceId)).size !== roles.length) {
-    throw new Error('Denzel and Annakay target-language roles must not resolve to the same ElevenLabs voice ID.');
+    throw new Error('Distinct target-language roles must not resolve to the same ElevenLabs voice ID.');
   }
 
-  const expectedNames = { 'target-patois-denzel': /Denzel/i, 'target-patois-annakay': /Annakay/i };
   for (const role of roles) {
     const voice = await requestJson(`https://api.elevenlabs.io/v1/voices/${encodeURIComponent(role.voiceId)}`, apiKey);
-    if (!expectedNames[role.voiceRole].test(voice.name || '')) {
-      throw new Error(`${role.voiceEnvVar} resolved to "${voice.name || 'unknown'}", not the approved ${role.voiceRole} voice.`);
+    const expectedName = expectedNames[role.voiceRole];
+    if (!expectedName || !expectedName.test(voice.name || '')) {
+      throw new Error(`${role.voiceEnvVar} resolved to "${voice.name || 'unknown'}", not the configured ${role.voiceRole} candidate.`);
     }
     role.resolvedName = voice.name;
   }
@@ -131,8 +158,16 @@ async function main() {
   const options = parseArgs(process.argv.slice(2));
   if (options.help) return printHelp();
 
-  const manifest = buildPatoisAudioManifest(JAMAICAN_PATOIS_VOCABULARY);
-  const audition = createAuditionPlan(manifest);
+  const config = COURSE_CONFIGS[options.courseId];
+  const manifest = buildCourseAudioManifest({
+    courseId: options.courseId,
+    vocabulary: config.vocabulary,
+    defaultVoiceRole: config.defaultVoiceRole,
+  });
+  const audition = createCourseAuditionPlan(manifest);
+  const plannedManifestPath = path.join(projectRoot, 'outputs', 'audio', config.plannedManifestFilename);
+  const auditionRoot = path.join(projectRoot, 'assets', 'audio', 'auditions', options.courseId);
+  const generatedManifestPath = path.join(auditionRoot, 'manifest.json');
   writeJson(plannedManifestPath, manifest);
 
   console.log(`Planned manifest: ${path.relative(projectRoot, plannedManifestPath)}`);
@@ -147,6 +182,10 @@ async function main() {
   if (!options.approved) {
     throw new Error('Pass --approve-spend after explicit user approval; generation stops before any ElevenLabs request.');
   }
+  const vocabularyErrors = validateVocabularyForGeneration(config.vocabulary);
+  if (vocabularyErrors.length) {
+    throw new Error(vocabularyErrors.join(' '));
+  }
   if (process.env.ELEVENLABS_KEYS_ROTATED !== 'true') {
     throw new Error('Rotate the exposed ElevenLabs keys, then set ELEVENLABS_KEYS_ROTATED=true in the private development environment.');
   }
@@ -154,7 +193,7 @@ async function main() {
   const apiKeyEnvVar = options.account === 'secondary' ? 'ELEVENLABS_API_KEY_SECONDARY' : 'ELEVENLABS_API_KEY';
   const apiKey = process.env[apiKeyEnvVar];
   if (!apiKey) throw new Error(`${apiKeyEnvVar} is missing from the private development environment.`);
-  const cast = await resolveAndValidateCast(audition.entries, apiKey);
+  const cast = await resolveAndValidateCast(audition.entries, apiKey, config.expectedNames);
   const balance = await getLiveBalance(apiKey);
   const spendErrors = validateSpendGate({
     approved: options.approved,
@@ -173,18 +212,21 @@ async function main() {
   for (const entry of audition.entries) {
     const outputPath = path.join(auditionRoot, `${entry.conceptId}.mp3`);
     const existing = existingByConcept.get(entry.conceptId);
-    if (!shouldGenerateClip({ planned: entry, existing, fileExists: fs.existsSync(outputPath), force: options.force })) {
+    const voiceId = voiceIdByRole.get(entry.voiceRole);
+    const plannedEntry = { ...entry, voiceId };
+    if (!shouldGenerateClip({ planned: plannedEntry, existing, fileExists: fs.existsSync(outputPath), force: options.force })) {
       generatedEntries.push(existing);
       console.log(`[reuse] ${entry.conceptId}`);
       continue;
     }
-    const result = await requestSpeech(entry, voiceIdByRole.get(entry.voiceRole), apiKey);
+    const result = await requestSpeech(entry, voiceId, apiKey);
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(`${outputPath}.tmp`, result.audio);
     fs.renameSync(`${outputPath}.tmp`, outputPath);
     generatedEntries.push({
       ...entry,
-      filename: path.posix.join('auditions', 'jamaican-patois', `${entry.conceptId}.mp3`),
+      voiceId,
+      filename: path.posix.join('auditions', options.courseId, `${entry.conceptId}.mp3`),
       requestId: result.requestId,
       characterCost: result.characterCost,
       status: 'audition-generated-awaiting-approval',
@@ -195,18 +237,18 @@ async function main() {
 
   writeJson(generatedManifestPath, {
     schemaVersion: 1,
-    courseId: 'jamaican-patois',
+    courseId: options.courseId,
     generatedAt: new Date().toISOString(),
     liveBalanceBeforeBatch: balance.liveBalance,
     estimatedCredits: audition.estimatedCredits,
     maxCredits: options.maxCredits,
-    cast: cast.map(({ voiceRole, voiceEnvVar, resolvedName }) => ({ voiceRole, voiceEnvVar, resolvedName })),
+    cast: cast.map(({ voiceId, voiceRole, voiceEnvVar, resolvedName }) => ({ voiceId, voiceRole, voiceEnvVar, resolvedName })),
     entries: generatedEntries,
   });
   console.log(`Audition complete: ${generatedCount} new clip(s). Approval is still required before these can become lesson audio.`);
 }
 
 main().catch((error) => {
-  console.error(`Patois audition failed: ${error.message}`);
+  console.error(`Course audition failed: ${error.message}`);
   process.exitCode = 1;
 });

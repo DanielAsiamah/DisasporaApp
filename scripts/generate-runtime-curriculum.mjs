@@ -3,6 +3,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import XLSX from 'xlsx';
+import courseContentFingerprint from './lib/course-content-fingerprint.cjs';
+
+const { buildCourseContentSha256ById } = courseContentFingerprint;
 
 const projectRoot = path.resolve(import.meta.dirname, '..');
 const workbookPath = path.join(projectRoot, 'patois_learn_database_1.xlsx');
@@ -133,18 +136,22 @@ export function buildGeneratedCurriculum(workbookBytes) {
     publicationState: String(row.publication_state),
   })), [(row) => courses.findIndex(({ id }) => id === row.courseId), (row) => topics.find((topic) => topic.courseId === row.courseId && topic.id === row.topicId)?.order || 0, (row) => row.order]);
 
-  return {
-    meta: {
-      schemaVersion: 1,
-      sourceWorkbook: 'patois_learn_database_1.xlsx',
-      sourceSha256: crypto.createHash('sha256').update(workbookBytes).digest('hex'),
-    },
+  const curriculum = {
     concepts,
     courses,
     courseVocabulary,
     chapters,
     topics,
     lessonSteps,
+  };
+  return {
+    meta: {
+      schemaVersion: 1,
+      sourceWorkbook: 'patois_learn_database_1.xlsx',
+      sourceSha256: crypto.createHash('sha256').update(workbookBytes).digest('hex'),
+      courseContentSha256: buildCourseContentSha256ById(curriculum),
+    },
+    ...curriculum,
   };
 }
 

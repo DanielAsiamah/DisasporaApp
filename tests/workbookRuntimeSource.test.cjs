@@ -48,11 +48,30 @@ test('generated runtime curriculum is a byte-hash-matched projection of the work
 
   assert.equal(GENERATED_CURRICULUM.meta.sourceWorkbook, 'patois_learn_database_1.xlsx');
   assert.equal(GENERATED_CURRICULUM.meta.sourceSha256, sourceHash);
+  assert.deepEqual(
+    Object.keys(GENERATED_CURRICULUM.meta.courseContentSha256).sort(),
+    GENERATED_CURRICULUM.courses.map(({ id }) => id).sort()
+  );
+  for (const digest of Object.values(GENERATED_CURRICULUM.meta.courseContentSha256)) {
+    assert.match(digest, /^[a-f0-9]{64}$/);
+  }
   assert.equal(GENERATED_CURRICULUM.concepts.length, 39);
   assert.equal(GENERATED_CURRICULUM.courses.length, 9);
   assert.equal(GENERATED_CURRICULUM.courseVocabulary.length, 351);
   assert.equal(GENERATED_CURRICULUM.topics.length, 81);
-  assert.equal(GENERATED_CURRICULUM.lessonSteps.length, 64);
+  assert.equal(GENERATED_CURRICULUM.lessonSteps.length, 128);
+  assert.equal(
+    GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => courseId === 'jamaican-patois').length,
+    64
+  );
+  assert.equal(
+    GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => courseId === 'swahili').length,
+    64
+  );
+  assert.equal(
+    GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => !['jamaican-patois', 'swahili'].includes(courseId)).length,
+    0
+  );
 });
 
 test('runtime curriculum adapters expose only workbook-generated content', () => {

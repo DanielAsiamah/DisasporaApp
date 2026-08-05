@@ -4,7 +4,7 @@ const zlib = require('node:zlib');
 
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 const COURSE_ID = 'jamaican-patois';
-const EXPECTED_VOCAB_SIZE = 1254;
+const EXPECTED_VOCAB_SIZE = 768;
 const CHAPTER_HERO_PATH = 'assets/images/chapters/jamaican-patois-greetings.png';
 const REGISTRY_PATH = 'src/data/jamaicanPatoisImageRegistry.js';
 const LEGACY_SOURCE_EXTENSIONS = new Set(['.js', '.cjs', '.mjs', '.ts', '.tsx', '.jsx', '.json']);
@@ -144,10 +144,16 @@ function hasTransparentNeighbor(alpha, width, height, x, y, radius = 2) {
   return false;
 }
 
-function isForbiddenChromaKey(r, g, b) {
+function isStrictChromaKey(r, g, b) {
   const nearMagentaKey = Math.max(Math.abs(255 - r), g, Math.abs(255 - b)) <= 65;
   const nearGreenKey = Math.max(r, Math.abs(255 - g), b) <= 65;
   return nearMagentaKey || nearGreenKey;
+}
+
+function isDarkPurpleKey(r, g, b) {
+  return r >= 40 && b >= 30
+    && r - g >= 20 && b - g >= 10
+    && Math.abs(r - b) <= 55;
 }
 
 function inspectRgbaPixels(pixels, width, height) {
@@ -194,14 +200,19 @@ function inspectRgbaPixels(pixels, width, height) {
     perimeterPixelCount += width > 1 ? 2 : 1;
   }
 
-  let haloPixels = 0;
+  let strictHaloPixels = 0;
+  let purpleHaloPixels = 0;
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const pixelIndex = y * width + x;
       if (alpha[pixelIndex] === 0) continue;
       const byteIndex = pixelIndex * 4;
-      if (!isForbiddenChromaKey(pixels[byteIndex], pixels[byteIndex + 1], pixels[byteIndex + 2])) continue;
-      if (hasTransparentNeighbor(alpha, width, height, x, y)) haloPixels += 1;
+      if (!hasTransparentNeighbor(alpha, width, height, x, y)) continue;
+      if (isStrictChromaKey(pixels[byteIndex], pixels[byteIndex + 1], pixels[byteIndex + 2])) {
+        strictHaloPixels += 1;
+      } else if (isDarkPurpleKey(pixels[byteIndex], pixels[byteIndex + 1], pixels[byteIndex + 2])) {
+        purpleHaloPixels += 1;
+      }
     }
   }
 
@@ -212,7 +223,9 @@ function inspectRgbaPixels(pixels, width, height) {
     opaquePixels,
     opaqueCornerRatio: cornerPixelCount ? opaqueCornerPixels / cornerPixelCount : 1,
     opaquePerimeterRatio: perimeterPixelCount ? opaquePerimeterPixels / perimeterPixelCount : 1,
-    haloPixels,
+    haloPixels: strictHaloPixels + purpleHaloPixels,
+    purpleHaloPixels,
+    strictHaloPixels,
   };
 }
 
@@ -284,12 +297,18 @@ function auditPngBuffer(buffer, options = {}) {
       { opaqueCornerRatio: stats.opaqueCornerRatio, opaquePerimeterRatio: stats.opaquePerimeterRatio }
     ));
   }
-  if (stats.haloPixels > 0) {
+  const purpleHaloAllowance = Math.max(1, Math.floor(stats.pixelCount * 0.00005));
+  if (stats.strictHaloPixels > 0 || stats.purpleHaloPixels > purpleHaloAllowance) {
     failures.push(failure(
       'CHROMA_KEY_HALO',
       target,
-      `Found ${stats.haloPixels} chroma-key-like pixel(s) within two pixels of transparency.`,
-      { pixelCount: stats.haloPixels }
+      `Found ${stats.strictHaloPixels} strict-key and ${stats.purpleHaloPixels} dark-purple edge pixel(s) within two pixels of transparency.`,
+      {
+        pixelCount: stats.strictHaloPixels + stats.purpleHaloPixels,
+        purpleHaloAllowance,
+        purpleHaloPixels: stats.purpleHaloPixels,
+        strictHaloPixels: stats.strictHaloPixels,
+      }
     ));
   }
 

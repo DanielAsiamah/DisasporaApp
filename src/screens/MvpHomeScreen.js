@@ -14,10 +14,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '../context/AuthContext';
 import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
+import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { fonts } from '../theme';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
-const { TOPICS } = require('../data/curriculumContract.cjs');
+const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
+const { getCourseById } = require('../data/courseCatalog.cjs');
+const { canAccessRuntimeCourse } = require('../data/courseAccessPolicy.cjs');
+const { buildCourseProgressStorageKey } = require('../lessonEngine/courseProgressKey.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 
 const SKY = '#1CB0F6';
@@ -27,14 +31,11 @@ const BORDER = '#D8E8F2';
 const MUTED = '#718397';
 const GREEN = '#22B65D';
 const CLOUD_FILL = '#F4FBFF';
-const STORAGE_PREFIX = 'diaspora:mvp-topics:v1:';
 const guideArt = {
   Kai: require('../../assets/guides/kai.png'),
   Amara: require('../../assets/guides/amara.png'),
   Sol: require('../../assets/guides/sol.png'),
 };
-const chapterHeroArt = require('../../assets/images/chapters/jamaican-patois-greetings.png');
-
 function Cloud({ top, size, delay = 0, duration = 17000, reducedMotion }) {
   const drift = useRef(new Animated.Value(-120)).current;
   useEffect(() => {
@@ -81,7 +82,7 @@ function BreathingGuide({ name = 'Kai', style, reducedMotion }) {
   );
 }
 
-function ChapterHero({ reducedMotion }) {
+function ChapterHero({ heroSource, reducedMotion }) {
   const drift = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (reducedMotion) {
@@ -100,7 +101,7 @@ function ChapterHero({ reducedMotion }) {
     <View style={styles.hero}>
       <Animated.Image
         resizeMode="cover"
-        source={chapterHeroArt}
+        source={heroSource}
         style={[
           styles.heroBackground,
           {
@@ -187,16 +188,26 @@ function Leaderboard({ profile }) {
   );
 }
 
-export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
+export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCourseId = null }) {
   const { loadLanguageProgress, profile, syncLanguageProgress, user } = useAuth();
   const reducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState('learn');
   const [completedTopicIds, setCompletedTopicIds] = useState([]);
   const [progressHydrated, setProgressHydrated] = useState(false);
   const [activeTopic, setActiveTopic] = useState(null);
-  const storageCourseId = courseId === 'patois' ? 'jamaican-patois' : courseId;
-  const storageKey = `${STORAGE_PREFIX}${user?.uid || 'guest'}:${storageCourseId}`;
-  const topicStates = useMemo(() => buildTopicStates(TOPICS, completedTopicIds), [completedTopicIds]);
+  const requestedCourseId = courseId === 'patois' ? 'jamaican-patois' : courseId;
+  const requestedCourse = getCourseById(requestedCourseId);
+  const storageCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
+    ? requestedCourse.id
+    : 'jamaican-patois';
+  const courseConfig = getCoursePresentation(storageCourseId);
+  const topics = useMemo(() => (
+    GENERATED_CURRICULUM.topics
+      .filter((topic) => topic.courseId === storageCourseId)
+      .sort((left, right) => left.order - right.order)
+  ), [storageCourseId]);
+  const storageKey = buildCourseProgressStorageKey(user?.uid, storageCourseId);
+  const topicStates = useMemo(() => buildTopicStates(topics, completedTopicIds), [completedTopicIds, topics]);
 
   useEffect(() => {
     let cancelled = false;
@@ -219,7 +230,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
         localIds = [];
       }
       const merged = mergeCompletedTopicIds(
-        TOPICS,
+        topics,
         Array.isArray(localIds) ? localIds : [],
         Array.isArray(remoteProgress?.completedTopicIds) ? remoteProgress.completedTopicIds : []
       );
@@ -231,7 +242,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
     return () => {
       cancelled = true;
     };
-  }, [loadLanguageProgress, storageCourseId, storageKey, user?.uid]);
+  }, [loadLanguageProgress, storageCourseId, storageKey, topics, user?.uid]);
 
   useEffect(() => {
     if (!progressHydrated) return;
@@ -245,8 +256,8 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
   }, [completedTopicIds, progressHydrated, storageCourseId, storageKey, syncLanguageProgress, user?.uid]);
 
   const completeTopic = useCallback((topicId) => {
-    setCompletedTopicIds((current) => mergeCompletedTopicIds(TOPICS, current, [topicId]));
-  }, []);
+    setCompletedTopicIds((current) => mergeCompletedTopicIds(topics, current, [topicId]));
+  }, [topics]);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -254,7 +265,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
         {activeTab === 'learn' ? (
           <ScrollView contentContainerStyle={styles.learnContent} showsVerticalScrollIndicator={false}>
             <View style={styles.brandRow}>
-              <View style={styles.flagBadge}><Text style={styles.flag}>🇯🇲</Text></View>
+              <View style={styles.flagBadge}><Text style={styles.flag}>{courseConfig.flag}</Text></View>
               <Text style={styles.brand}>Diaspora</Text>
               <View style={styles.statPill}><Text>🔥</Text><Text style={styles.statText}>{profile?.streak || 0}</Text></View>
               <View style={styles.statPill}><Text>⭐</Text><Text style={styles.statText}>{profile?.xp || 0}</Text></View>
@@ -263,7 +274,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
               <View><Text style={styles.streakTitle}>Start your streak!</Text><Text style={styles.streakSubtitle}>Do a lesson to start your day.</Text></View>
               <Text style={styles.bigFlame}>🔥</Text>
             </View>
-            <ChapterHero reducedMotion={reducedMotion} />
+            <ChapterHero heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
             <View style={styles.chapterHeader}>
               <Text style={styles.chapterTitle}>Greetings & basic conversations</Text>
               <Text style={styles.chapterMeta}>9 topics • 39 words</Text>
@@ -282,7 +293,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois' }) {
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal onClose={() => setActiveTopic(null)} onComplete={completeTopic} topic={activeTopic} visible={Boolean(activeTopic)} />
+      <PatoisLessonModal courseId={storageCourseId} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic)} />
     </SafeAreaView>
   );
 }

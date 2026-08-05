@@ -50,6 +50,17 @@ function toggleWordBankItem(response, item) {
   return { ...response, builtWords };
 }
 
+function isResponseReady(exercise, response) {
+  if (!exercise || !response) return false;
+  if (exercise.type === 'match-pairs') {
+    return response.matchedPairIds.length === exercise.pairs.length;
+  }
+  if (exercise.type === 'sentence-build' || exercise.type === 'word-tray') {
+    return response.builtWords.length > 0;
+  }
+  return Boolean(response.selectedChoice);
+}
+
 function evaluateExerciseResponse(exercise, response = {}) {
   if (!exercise) return false;
   if (exercise.type === 'match-pairs') {
@@ -67,6 +78,7 @@ function evaluateExerciseResponse(exercise, response = {}) {
 module.exports = {
   createExerciseResponse,
   evaluateExerciseResponse,
+  isResponseReady,
   normalizeAnswer,
   selectMatchItem,
   toggleWordBankItem,

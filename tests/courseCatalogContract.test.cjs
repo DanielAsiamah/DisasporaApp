@@ -11,6 +11,10 @@ const {
   getOnboardingCourses,
   normalizeCourseId,
 } = require('../src/data/courseCatalog.cjs');
+const { VERIFIED_COURSE_RELEASES } = require('../src/data/verifiedCourseReleases.cjs');
+const { hasVerifiedCourseRelease } = require('../src/data/verifiedCourseReleases.cjs');
+const { GENERATED_CURRICULUM } = require('../src/data/generatedCurriculum.cjs');
+const { deriveCourseReleaseState } = require('../src/data/courseAccessPolicy.cjs');
 
 const EXPECTED_COURSE_IDS = [
   'jamaican-patois',
@@ -59,15 +63,41 @@ test('onboarding contains only the six MVP courses grouped by base language', ()
   );
 });
 
-test('only Jamaican Patois is currently available and published', () => {
-  assert.deepEqual(AVAILABLE_COURSE_IDS, ['jamaican-patois']);
+test('catalog availability is derived from workbook state plus an exact verified release', () => {
+  const expectedStates = Object.fromEntries(GENERATED_CURRICULUM.courses.map((course) => [
+    course.id,
+    deriveCourseReleaseState(course, {
+      hasVerifiedRelease: hasVerifiedCourseRelease(
+        course.id,
+        GENERATED_CURRICULUM.meta.courseContentSha256[course.id]
+      ),
+    }),
+  ]));
+  for (const course of COURSE_CATALOG) {
+    assert.equal(course.available, expectedStates[course.id].available);
+    assert.equal(course.published, expectedStates[course.id].published);
+  }
   assert.deepEqual(
-    COURSE_CATALOG.filter((course) => course.available).map((course) => course.id),
-    ['jamaican-patois']
+    AVAILABLE_COURSE_IDS,
+    COURSE_CATALOG.filter((course) => course.available).map((course) => course.id)
   );
-  assert.deepEqual(
-    COURSE_CATALOG.filter((course) => course.published).map((course) => course.id),
-    ['jamaican-patois']
+  for (const [courseId, record] of Object.entries(VERIFIED_COURSE_RELEASES)) {
+    assert.equal(
+      record.courseContentSha256,
+      GENERATED_CURRICULUM.meta.courseContentSha256[courseId]
+    );
+  }
+});
+
+test('catalog verifies the current per-course content fingerprint instead of registry-key presence', () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, '..', 'src', 'data', 'courseCatalog.cjs'),
+    'utf8'
+  );
+
+  assert.match(
+    source,
+    /hasVerifiedCourseRelease\(\s*sourceCourse\.id,\s*GENERATED_CURRICULUM\.meta\.courseContentSha256\?\.\[sourceCourse\.id\]\s*\)/s
   );
 });
 

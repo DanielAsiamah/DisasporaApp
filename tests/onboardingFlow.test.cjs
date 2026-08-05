@@ -181,6 +181,28 @@ test('creates the durable completion payload once the ready screen finishes', ()
   assert.equal(complete.reminderTime, '19:00');
 });
 
+test('a restored ready screen cannot complete with an unreleased course', () => {
+  const unavailableCourse = ['english', 'french', 'arabic']
+    .flatMap((baseLanguage) => onboarding.getCoursesForBaseLanguage(baseLanguage))
+    .find((course) => !course.available);
+  assert.ok(unavailableCourse, 'at least one MVP course remains unreleased during incremental delivery');
+  const restored = onboarding.restoreOnboardingProgress({
+    ...onboarding.INITIAL_ONBOARDING_DRAFT,
+    preferredName: 'Maya',
+    baseLanguage: unavailableCourse.baseLanguage,
+    currentCourse: unavailableCourse.id,
+    onboardingStepIndex: 6,
+  });
+
+  assert.equal(restored.stepIndex, 6);
+  assert.equal(onboarding.canContinueOnboarding('ready', restored.draft), true);
+  assert.equal(onboarding.canCompleteOnboarding(restored.draft), false);
+  assert.throws(
+    () => onboarding.completeOnboarding(restored.draft),
+    { message: 'Select an available course before completing onboarding.' }
+  );
+});
+
 test('derives both start-unit fields from proficiency instead of inconsistent input', () => {
   const complete = onboarding.completeOnboarding({
     ...onboarding.INITIAL_ONBOARDING_DRAFT,

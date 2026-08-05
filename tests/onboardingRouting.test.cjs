@@ -37,9 +37,8 @@ const filterCompletedProfileMergeFields =
   authHandoff.filterCompletedProfileMergeFields || (() => undefined);
 const getEnsurePreferredName =
   authHandoff.getEnsurePreferredName || (() => undefined);
-const knownCourseIds = new Set([
-  'jamaican-patois',
-]);
+const { AVAILABLE_COURSE_IDS, COURSE_CATALOG } = require('../src/data/courseCatalog.cjs');
+const knownCourseIds = new Set(AVAILABLE_COURSE_IDS);
 
 function resolve(profileLoaded, profile, profileError = null) {
   return resolveAuthenticatedRoute({
@@ -91,11 +90,20 @@ test('routes the canonical published Patois course home', () => {
   );
 });
 
-test('routes known but unavailable courses to course selection', () => {
-  for (const currentCourse of ['swahili', 'wolof', 'sudanese-arabic', 'nobiin']) {
+test('routes every currently unavailable course to course selection', () => {
+  for (const currentCourse of COURSE_CATALOG.filter(({ available }) => !available).map(({ id }) => id)) {
     assert.equal(
       resolve(true, { onboardingCompleted: true, currentCourse }),
       'course-select'
+    );
+  }
+});
+
+test('routes every currently available canonical course home', () => {
+  for (const currentCourse of AVAILABLE_COURSE_IDS) {
+    assert.equal(
+      resolve(true, { onboardingCompleted: true, currentCourse }),
+      'home'
     );
   }
 });

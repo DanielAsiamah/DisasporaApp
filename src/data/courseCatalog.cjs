@@ -1,6 +1,8 @@
 'use strict';
 
 const { GENERATED_CURRICULUM } = require('./generatedCurriculum.cjs');
+const { deriveCourseReleaseState } = require('./courseAccessPolicy.cjs');
+const { hasVerifiedCourseRelease } = require('./verifiedCourseReleases.cjs');
 
 const UI_METADATA = Object.freeze({
   'jamaican-patois': Object.freeze({
@@ -59,22 +61,26 @@ const UI_METADATA = Object.freeze({
   }),
 });
 
-const ACTIVE_AVAILABILITY = new Set(['preview', 'published']);
 const COURSE_CATALOG = Object.freeze(GENERATED_CURRICULUM.courses.map((sourceCourse) => {
-  const available = ACTIVE_AVAILABILITY.has(sourceCourse.availability);
+  const { available, published } = deriveCourseReleaseState(sourceCourse, {
+    hasVerifiedRelease: hasVerifiedCourseRelease(
+      sourceCourse.id,
+      GENERATED_CURRICULUM.meta.courseContentSha256?.[sourceCourse.id]
+    ),
+  });
   return Object.freeze({
     ...sourceCourse,
     ...UI_METADATA[sourceCourse.id],
     label: sourceCourse.displayName,
     baseLanguage: sourceCourse.baseLanguage.toLowerCase(),
     available,
-    published: available,
+    published,
   });
 }));
 
 const COURSE_IDS = Object.freeze(COURSE_CATALOG.map((course) => course.id));
 const AVAILABLE_COURSE_IDS = Object.freeze(
-  COURSE_CATALOG.filter((course) => course.available && course.published).map((course) => course.id)
+  COURSE_CATALOG.filter((course) => course.available).map((course) => course.id)
 );
 const COURSE_BY_ID = new Map(COURSE_CATALOG.map((course) => [course.id, course]));
 const LEGACY_COURSE_ID_ALIASES = Object.freeze({

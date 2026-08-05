@@ -28,10 +28,15 @@ const results = [];
 for (const conceptId of conceptIds) {
   const filePath = path.join(projectRoot, 'assets', 'images', 'vocab', courseId, `${conceptId}.png`);
   if (!fs.existsSync(filePath)) throw new Error(`Missing vocabulary image: ${filePath}`);
-  const parsed = parseRgbaPng(fs.readFileSync(filePath));
+  const input = fs.readFileSync(filePath);
+  const source = parseRgbaPng(input);
+  const normalizedInput = source.width === 768 && source.height === 768
+    ? input
+    : normalizeRgbaPng(input, { canvasSize: 768, subjectSpan: 674 });
+  const parsed = parseRgbaPng(normalizedInput);
   const decontaminated = decontaminateChromaEdges(parsed, {
     edgeRadius: 8,
-    searchRadius: 18,
+    searchRadius: 48,
     keyMode,
   });
   const hasPartialAlpha = decontaminated.pixels.some((value, index) => (
@@ -41,9 +46,8 @@ for (const conceptId of conceptIds) {
     ? { ...decontaminated, featheredPixels: 0 }
     : featherVisibleAlphaEdges(decontaminated, { radius: 2 });
   const cleaned = encodeRgbaPng(feathered);
-  const normalized = normalizeRgbaPng(cleaned, { canvasSize: 1254, subjectSpan: 1100 });
   const temporaryPath = `${filePath}.repairing`;
-  fs.writeFileSync(temporaryPath, normalized);
+  fs.writeFileSync(temporaryPath, cleaned);
   fs.renameSync(temporaryPath, filePath);
   results.push({
     conceptId,

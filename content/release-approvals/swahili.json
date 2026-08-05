@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "courseId": "swahili",
+  "sourceWorkbookSha256": "ba742825078a6b0b718aabff63010bfe64ce18b11452af98c1a3ae19905d4376",
+  "candidateDigest": "",
+  "nativeReview": {
+    "status": "pending",
+    "candidateDigest": "",
+    "receiptPath": "",
+    "receiptSha256": ""
+  },
+  "artReview": {
+    "status": "pending",
+    "candidateDigest": "",
+    "approvedBy": "",
+    "approvedAt": "",
+    "contactSheetPath": "content/release-evidence/art/swahili/contact-sheet.png",
+    "contactSheetSha256": "e188bdac087e9fa00427d0259829ad90a765290c428473523428bbb3f254c674"
+  },
+  "targetAudio": {
+    "status": "pending",
+    "candidateDigest": "",
+    "roleId": "target-swahili-yna",
+    "voiceId": "",
+    "modelId": "",
+    "outputFormat": "",
+    "voiceApprovalStatus": "pending",
+    "voiceApprovedBy": "",
+    "voiceApprovedAt": "",
+    "auditionManifestPath": "content/release-evidence/audio/swahili/audition-manifest.json",
+    "auditionManifestSha256": "",
+    "manifestPath": "content/release-evidence/audio/swahili/target-manifest.json",
+    "manifestSha256": ""
+  },
+  "narratorAudio": {
+    "status": "pending",
+    "candidateDigest": "",
+    "roleId": "narrator-en",
+    "voiceId": "",
+    "modelId": "",
+    "outputFormat": "",
+    "voiceApprovedBy": "",
+    "voiceApprovedAt": "",
+    "manifestPath": "content/release-evidence/audio/narrator-en/manifest.json",
+    "manifestSha256": ""
+  },
+  "automatedChecks": {
+    "status": "pending",
+    "candidateDigest": "",
+    "sourceWorkbookSha256": "ba742825078a6b0b718aabff63010bfe64ce18b11452af98c1a3ae19905d4376",
+    "commands": [],
+    "recordedAt": ""
+  },
+  "phoneTest": {
+    "status": "pending",
+    "candidateDigest": "",
+    "sourceWorkbookSha256": "ba742825078a6b0b718aabff63010bfe64ce18b11452af98c1a3ae19905d4376",
+    "platform": "ios",
+    "expoSdk": "54",
+    "deviceKind": "physical",
+    "client": "expo-go",
+    "completedTopicIds": [],
+    "audioPlaybackVerified": false,
+    "restartPersistenceVerified": false,
+    "authHandoffVerified": false,
+    "testedBy": "",
+    "testedAt": ""
+  },
+  "publicationApproval": {
+    "status": "pending",
+    "candidateDigest": "",
+    "sourceWorkbookSha256": "ba742825078a6b0b718aabff63010bfe64ce18b11452af98c1a3ae19905d4376",
+    "approvedBy": "",
+    "approvedAt": ""
+  }
+}

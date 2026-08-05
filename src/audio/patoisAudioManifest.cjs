@@ -16,44 +16,59 @@ function hashText(text) {
   return crypto.createHash('sha256').update(String(text), 'utf8').digest('hex');
 }
 
-function buildPatoisAudioManifest(vocabulary = []) {
+function buildCourseAudioManifest({ courseId, vocabulary = [], defaultVoiceRole = null } = {}) {
+  if (!courseId) throw new Error('courseId is required for an audio manifest.');
+  const usedRoles = new Set();
+  const entries = vocabulary.map((row) => {
+    const voiceRole = row.voiceId || defaultVoiceRole;
+    const cast = VOICE_ROLES[voiceRole];
+    if (!cast || cast.roleKind !== 'target-language') {
+      throw new Error(`Unknown target-language voice role for ${courseId}: ${voiceRole || '(blank)'}`);
+    }
+    usedRoles.add(voiceRole);
+    return {
+      conceptId: row.conceptId,
+      text: row.localized,
+      textHash: hashText(row.localized),
+      filename: `${courseId}/${row.conceptId}.mp3`,
+      voiceRole,
+      voiceEnvVar: cast.voiceEnvVar,
+      roleKind: cast.roleKind,
+      locale: cast.locale,
+      modelId: 'eleven_multilingual_v2',
+      outputFormat: 'mp3_44100_128',
+      requestId: null,
+      characterCost: null,
+      status: 'planned-native-review-required',
+    };
+  });
   return {
     schemaVersion: 1,
-    courseId: 'jamaican-patois',
+    courseId,
     modelId: 'eleven_multilingual_v2',
     outputFormat: 'mp3_44100_128',
-    cast: VOICE_CAST,
-    entries: vocabulary.map((row) => {
-      const cast = VOICE_CAST[row.voiceId];
-      if (!cast) throw new Error(`Unknown Patois voice role: ${row.voiceId}`);
-      return {
-        conceptId: row.conceptId,
-        text: row.localized,
-        textHash: hashText(row.localized),
-        filename: `jamaican-patois/${row.conceptId}.mp3`,
-        voiceRole: row.voiceId,
-        voiceEnvVar: cast.voiceEnvVar,
-        roleKind: cast.roleKind,
-        locale: cast.locale,
-        modelId: 'eleven_multilingual_v2',
-        outputFormat: 'mp3_44100_128',
-        requestId: null,
-        characterCost: null,
-        status: 'planned-native-review-required',
-      };
-    }),
+    cast: Object.fromEntries([...usedRoles].map((roleId) => [roleId, VOICE_ROLES[roleId]])),
+    entries,
   };
 }
 
-function createAuditionPlan(manifest) {
+function buildPatoisAudioManifest(vocabulary = []) {
+  return buildCourseAudioManifest({ courseId: 'jamaican-patois', vocabulary });
+}
+
+function createCourseAuditionPlan(manifest, conceptIds = AUDITION_CONCEPT_IDS) {
   const byConceptId = new Map((manifest?.entries || []).map((entry) => [entry.conceptId, entry]));
-  const entries = AUDITION_CONCEPT_IDS.map((conceptId) => byConceptId.get(conceptId)).filter(Boolean);
+  const entries = conceptIds.map((conceptId) => byConceptId.get(conceptId)).filter(Boolean);
   return {
-    courseId: manifest?.courseId || 'jamaican-patois',
+    courseId: manifest?.courseId || '',
     maxCredits: 250,
     estimatedCredits: entries.reduce((total, entry) => total + entry.text.length, 0),
     entries,
   };
+}
+
+function createAuditionPlan(manifest) {
+  return createCourseAuditionPlan(manifest);
 }
 
 function validateSpendGate({ approved, estimatedCredits, liveBalance, maxCredits = 250 } = {}) {
@@ -65,19 +80,37 @@ function validateSpendGate({ approved, estimatedCredits, liveBalance, maxCredits
   return errors;
 }
 
+function validateVocabularyForGeneration(vocabulary = []) {
+  const errors = [];
+  const conceptIds = vocabulary.map((row) => String(row?.conceptId || '').trim()).filter(Boolean);
+  const approvedRows = vocabulary.filter((row) => row?.reviewStatus === 'approved');
+  if (vocabulary.length !== 39 || new Set(conceptIds).size !== 39) {
+    errors.push('Paid generation requires exactly 39 unique vocabulary rows.');
+  }
+  if (approvedRows.length !== 39) {
+    errors.push(`Paid generation requires 39 approved native-review rows; found ${approvedRows.length}.`);
+  }
+  return errors;
+}
+
 function shouldGenerateClip({ planned, existing, fileExists, force = false } = {}) {
   if (force || !fileExists || !planned || !existing) return true;
   return planned.textHash !== existing.textHash
     || planned.voiceRole !== existing.voiceRole
-    || planned.modelId !== existing.modelId;
+    || planned.voiceId !== existing.voiceId
+    || planned.modelId !== existing.modelId
+    || planned.outputFormat !== existing.outputFormat;
 }
 
 module.exports = {
   AUDITION_CONCEPT_IDS,
   VOICE_CAST,
+  buildCourseAudioManifest,
   buildPatoisAudioManifest,
+  createCourseAuditionPlan,
   createAuditionPlan,
   hashText,
   shouldGenerateClip,
+  validateVocabularyForGeneration,
   validateSpendGate,
 };

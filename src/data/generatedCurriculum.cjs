@@ -3,7 +3,18 @@ const GENERATED_CURRICULUM = Object.freeze({
   "meta": {
     "schemaVersion": 1,
     "sourceWorkbook": "patois_learn_database_1.xlsx",
-    "sourceSha256": "17b6b28f5261ccc6758880137cac0d9acb00c7d7689c8e6e321ffaae40869e7c"
+    "sourceSha256": "ba742825078a6b0b718aabff63010bfe64ce18b11452af98c1a3ae19905d4376",
+    "courseContentSha256": {
+      "jamaican-patois": "9187b643422db1f3548009e25d76cd43790149276a17b84f4f7ad24ab064cd19",
+      "swahili": "e2db5bcd7d2aacfb001ae3fb0dae0063e11b2d89b19beba9f33cb47125bdd42b",
+      "wolof": "c6848541073c5b49ab80f92c4bb443c2413c9133e941ceea8ac4073586e02eb7",
+      "haitian-creole": "a374614bfb2ffa40ae875978e7e4d851a1e4e855d0713c7037ccccbfe8a7e226",
+      "sudanese-arabic": "298f21a20405cc7625768d55f3ebca34dbd969faa70ead68ef93ccd633446922",
+      "nobiin": "08fb13725f497495497ca5e20a9236d2cdc2da712742ef0e31495d3663bffd1b",
+      "igbo": "e210c706d78dc4429c2dcf0c7acddd7de18923a794adead24c8d90b755be68ac",
+      "belizean-kriol": "09bb4a4cf9083f4d53f1effa6b65f9dd9dd345b008601a78df6216303d95cc0e",
+      "aave": "4aa89ffebfcf25b1585ee6c41403722b1470aa784d03a365afa145ef6231cafc"
+    }
   },
   "concepts": [
     {
@@ -865,507 +876,507 @@ const GENERATED_CURRICULUM = Object.freeze({
     {
       "courseId": "swahili",
       "conceptId": "yes",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Ndiyo",
+      "pronunciation": "N-DEE-yoh",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/yes.png",
-      "audio": "assets/audio/swahili/yes.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 1
     },
     {
       "courseId": "swahili",
       "conceptId": "no",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Hapana",
+      "pronunciation": "hah-PAH-nah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/no.png",
-      "audio": "assets/audio/swahili/no.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 2
     },
     {
       "courseId": "swahili",
       "conceptId": "maybe",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Labda",
+      "pronunciation": "LAHB-dah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/maybe.png",
-      "audio": "assets/audio/swahili/maybe.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 3
     },
     {
       "courseId": "swahili",
       "conceptId": "okay",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Sawa",
+      "pronunciation": "SAH-wah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/okay.png",
-      "audio": "assets/audio/swahili/okay.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 4
     },
     {
       "courseId": "swahili",
       "conceptId": "again",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Tena",
+      "pronunciation": "TEH-nah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/again.png",
-      "audio": "assets/audio/swahili/again.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 5
     },
     {
       "courseId": "swahili",
       "conceptId": "good-afternoon",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Habari ya mchana",
+      "pronunciation": "hah-BAH-ree yah m-CHAH-nah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/good-afternoon.png",
-      "audio": "assets/audio/swahili/good-afternoon.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 6
     },
     {
       "courseId": "swahili",
       "conceptId": "nice-to-meet-you",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Nimefurahi kukutana nawe",
+      "pronunciation": "nee-meh-foo-RAH-hee koo-koo-TAH-nah NAH-weh",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/nice-to-meet-you.png",
-      "audio": "assets/audio/swahili/nice-to-meet-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 7
     },
     {
       "courseId": "swahili",
       "conceptId": "long-time-no-see",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Hatujaonana kwa muda mrefu",
+      "pronunciation": "hah-too-jah-oh-NAH-nah kwah MOO-dah m-REH-foo",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/long-time-no-see.png",
-      "audio": "assets/audio/swahili/long-time-no-see.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 8
     },
     {
       "courseId": "swahili",
       "conceptId": "how-is-your-day",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Siku yako inaendeleaje?",
+      "pronunciation": "SEE-koo YAH-koh ee-nah-ehn-deh-leh-AH-jeh",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/how-is-your-day.png",
-      "audio": "assets/audio/swahili/how-is-your-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 9
     },
     {
       "courseId": "swahili",
       "conceptId": "have-a-good-day",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Uwe na siku njema",
+      "pronunciation": "OO-weh nah SEE-koo N-JEH-mah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/have-a-good-day.png",
-      "audio": "assets/audio/swahili/have-a-good-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 10
     },
     {
       "courseId": "swahili",
       "conceptId": "what-is-your-name",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Jina lako ni nani?",
+      "pronunciation": "JEE-nah LAH-koh nee NAH-nee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/what-is-your-name.png",
-      "audio": "assets/audio/swahili/what-is-your-name.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 11
     },
     {
       "courseId": "swahili",
       "conceptId": "my-name-is",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Jina langu ni...",
+      "pronunciation": "JEE-nah LAHN-goo nee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/my-name-is.png",
-      "audio": "assets/audio/swahili/my-name-is.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 12
     },
     {
       "courseId": "swahili",
       "conceptId": "i-am-a-student",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Mimi ni mwanafunzi",
+      "pronunciation": "MEE-mee nee mwah-nah-FOON-zee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/i-am-a-student.png",
-      "audio": "assets/audio/swahili/i-am-a-student.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 13
     },
     {
       "courseId": "swahili",
       "conceptId": "i-am-learning",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Ninajifunza...",
+      "pronunciation": "nee-nah-jee-FOON-zah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/i-am-learning.png",
-      "audio": "assets/audio/swahili/i-am-learning.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 14
     },
     {
       "courseId": "swahili",
       "conceptId": "i-speak",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Ninazungumza...",
+      "pronunciation": "nee-nah-zoon-GOOM-zah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/i-speak.png",
-      "audio": "assets/audio/swahili/i-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 15
     },
     {
       "courseId": "swahili",
       "conceptId": "where-are-you-from",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Unatoka wapi?",
+      "pronunciation": "oo-nah-TOH-kah WAH-pee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/where-are-you-from.png",
-      "audio": "assets/audio/swahili/where-are-you-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 16
     },
     {
       "courseId": "swahili",
       "conceptId": "i-am-from",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Ninatoka...",
+      "pronunciation": "nee-nah-TOH-kah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/i-am-from.png",
-      "audio": "assets/audio/swahili/i-am-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 17
     },
     {
       "courseId": "swahili",
       "conceptId": "where-do-you-live",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Unaishi wapi?",
+      "pronunciation": "oo-nah-EE-shee WAH-pee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/where-do-you-live.png",
-      "audio": "assets/audio/swahili/where-do-you-live.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 18
     },
     {
       "courseId": "swahili",
       "conceptId": "i-live-in",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Ninaishi...",
+      "pronunciation": "nee-nah-EE-shee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/i-live-in.png",
-      "audio": "assets/audio/swahili/i-live-in.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 19
     },
     {
       "courseId": "swahili",
       "conceptId": "which-language-do-you-speak",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Unazungumza lugha gani?",
+      "pronunciation": "oo-nah-zoon-GOOM-zah LOO-ghah GAH-nee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/which-language-do-you-speak.png",
-      "audio": "assets/audio/swahili/which-language-do-you-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 20
     },
     {
       "courseId": "swahili",
       "conceptId": "family",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Familia",
+      "pronunciation": "fah-MEE-lee-ah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/family.png",
-      "audio": "assets/audio/swahili/family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 21
     },
     {
       "courseId": "swahili",
       "conceptId": "parents",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Wazazi",
+      "pronunciation": "wah-ZAH-zee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/parents.png",
-      "audio": "assets/audio/swahili/parents.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 22
     },
     {
       "courseId": "swahili",
       "conceptId": "husband",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Mume",
+      "pronunciation": "MOO-meh",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/husband.png",
-      "audio": "assets/audio/swahili/husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 23
     },
     {
       "courseId": "swahili",
       "conceptId": "wife",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Mke",
+      "pronunciation": "m-KEH",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/wife.png",
-      "audio": "assets/audio/swahili/wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 24
     },
     {
       "courseId": "swahili",
       "conceptId": "son",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Mtoto wa kiume",
+      "pronunciation": "m-TOH-toh wah kee-OO-meh",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/son.png",
-      "audio": "assets/audio/swahili/son.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 25
     },
     {
       "courseId": "swahili",
       "conceptId": "daughter",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Binti",
+      "pronunciation": "BEEN-tee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/daughter.png",
-      "audio": "assets/audio/swahili/daughter.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 26
     },
     {
       "courseId": "swahili",
       "conceptId": "grandfather",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Babu",
+      "pronunciation": "BAH-boo",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/grandfather.png",
-      "audio": "assets/audio/swahili/grandfather.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 27
     },
     {
       "courseId": "swahili",
       "conceptId": "please",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Tafadhali",
+      "pronunciation": "tah-fah-DHAH-lee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/please.png",
-      "audio": "assets/audio/swahili/please.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 28
     },
     {
       "courseId": "swahili",
       "conceptId": "thank-you",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Asante",
+      "pronunciation": "ah-SAHN-teh",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/thank-you.png",
-      "audio": "assets/audio/swahili/thank-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 29
     },
     {
       "courseId": "swahili",
       "conceptId": "no-problem",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Hakuna shida",
+      "pronunciation": "hah-KOO-nah SHEE-dah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/no-problem.png",
-      "audio": "assets/audio/swahili/no-problem.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 30
     },
     {
       "courseId": "swahili",
       "conceptId": "excuse-me",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Niwie radhi",
+      "pronunciation": "nee-WEE-eh RAH-dhee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/excuse-me.png",
-      "audio": "assets/audio/swahili/excuse-me.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 31
     },
     {
       "courseId": "swahili",
       "conceptId": "sorry",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Samahani",
+      "pronunciation": "sah-mah-HAH-nee",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/sorry.png",
-      "audio": "assets/audio/swahili/sorry.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 32
     },
     {
       "courseId": "swahili",
       "conceptId": "this-is-my-family",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Hii ni familia yangu",
+      "pronunciation": "HEE nee fah-MEE-lee-ah YAH-ngoo",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/this-is-my-family.png",
-      "audio": "assets/audio/swahili/this-is-my-family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 33
     },
     {
       "courseId": "swahili",
       "conceptId": "this-is-my-husband",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Huyu ni mume wangu",
+      "pronunciation": "HOO-yoo nee MOO-meh WAH-ngoo",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/this-is-my-husband.png",
-      "audio": "assets/audio/swahili/this-is-my-husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 34
     },
     {
       "courseId": "swahili",
       "conceptId": "this-is-my-wife",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Huyu ni mke wangu",
+      "pronunciation": "HOO-yoo nee m-KEH WAH-ngoo",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/this-is-my-wife.png",
-      "audio": "assets/audio/swahili/this-is-my-wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 35
     },
     {
       "courseId": "swahili",
       "conceptId": "he-lives-here",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Anaishi hapa",
+      "pronunciation": "ah-nah-EE-shee HAH-pah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/he-lives-here.png",
-      "audio": "assets/audio/swahili/he-lives-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 36
     },
     {
       "courseId": "swahili",
       "conceptId": "she-works-here",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Anafanya kazi hapa",
+      "pronunciation": "ah-nah-FAHN-yah KAH-zee HAH-pah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/she-works-here.png",
-      "audio": "assets/audio/swahili/she-works-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 37
     },
     {
       "courseId": "swahili",
       "conceptId": "we-speak",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Tunazungumza...",
+      "pronunciation": "too-nah-zoon-GOOM-zah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/we-speak.png",
-      "audio": "assets/audio/swahili/we-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 38
     },
     {
       "courseId": "swahili",
       "conceptId": "they-are-from",
-      "localized": "",
-      "pronunciation": "",
+      "localized": "Wanatoka...",
+      "pronunciation": "wah-nah-TOH-kah",
       "scriptAid": "",
       "image": "assets/images/vocab/swahili/they-are-from.png",
-      "audio": "assets/audio/swahili/they-are-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 39
     },
@@ -7149,6 +7160,1341 @@ const GENERATED_CURRICULUM = Object.freeze({
       "voiceId": "target-patois-denzel",
       "primary": false,
       "publicationState": "preview"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "getting-started",
+      "id": "swahili-getting-started-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Ndiyo\" mean?",
+      "answer": "yes",
+      "distractors": [
+        "no",
+        "okay",
+        "maybe"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "getting-started",
+      "id": "swahili-getting-started-02-no",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"no\".",
+      "answer": "Hapana",
+      "distractors": [
+        "Labda",
+        "Tena",
+        "Sawa"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "getting-started",
+      "id": "swahili-getting-started-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "getting-started",
+      "id": "swahili-getting-started-04-maybe",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Labda\".",
+      "answer": "maybe",
+      "distractors": [
+        "yes",
+        "okay",
+        "no"
+      ],
+      "conceptId": "maybe",
+      "conceptRefs": [
+        "maybe"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "getting-started",
+      "id": "swahili-getting-started-05-okay",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"okay\".",
+      "answer": "Sawa",
+      "distractors": [
+        "Hapana",
+        "Tena",
+        "Labda"
+      ],
+      "conceptId": "okay",
+      "conceptRefs": [
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "getting-started",
+      "id": "swahili-getting-started-06-again",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "again",
+      "distractors": [
+        "yes",
+        "okay",
+        "maybe"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "easy-greetings",
+      "id": "swahili-easy-greetings-01-good-afternoon",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Habari ya mchana\" mean?",
+      "answer": "good afternoon",
+      "distractors": [
+        "nice to meet you",
+        "have a good day",
+        "how is your day"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "easy-greetings",
+      "id": "swahili-easy-greetings-02-nice-to-meet-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"nice to meet you\".",
+      "answer": "Nimefurahi kukutana nawe",
+      "distractors": [
+        "Siku yako inaendeleaje?",
+        "Uwe na siku njema",
+        "Habari ya mchana"
+      ],
+      "conceptId": "nice-to-meet-you",
+      "conceptRefs": [
+        "nice-to-meet-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "easy-greetings",
+      "id": "swahili-easy-greetings-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "good-afternoon",
+        "nice-to-meet-you",
+        "long-time-no-see",
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "easy-greetings",
+      "id": "swahili-easy-greetings-04-long-time-no-see",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Hatujaonana kwa muda mrefu\".",
+      "answer": "long time no see",
+      "distractors": [
+        "how is your day",
+        "have a good day",
+        "nice to meet you"
+      ],
+      "conceptId": "long-time-no-see",
+      "conceptRefs": [
+        "long-time-no-see"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "easy-greetings",
+      "id": "swahili-easy-greetings-05-how-is-your-day",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"how is your day\".",
+      "answer": "Siku yako inaendeleaje?",
+      "distractors": [
+        "Habari ya mchana",
+        "Hatujaonana kwa muda mrefu",
+        "Uwe na siku njema"
+      ],
+      "conceptId": "how-is-your-day",
+      "conceptRefs": [
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "easy-greetings",
+      "id": "swahili-easy-greetings-06-have-a-good-day",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "have a good day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-yourself",
+      "id": "swahili-introducing-yourself-01-what-is-your-name",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Jina lako ni nani?\" mean?",
+      "answer": "what is your name",
+      "distractors": [
+        "my name is...",
+        "I am a student",
+        "I am learning..."
+      ],
+      "conceptId": "what-is-your-name",
+      "conceptRefs": [
+        "what-is-your-name"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-yourself",
+      "id": "swahili-introducing-yourself-02-my-name-is",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"my name is...\".",
+      "answer": "Jina langu ni...",
+      "distractors": [
+        "Mimi ni mwanafunzi",
+        "Ninazungumza...",
+        "Ninajifunza..."
+      ],
+      "conceptId": "my-name-is",
+      "conceptRefs": [
+        "my-name-is"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-yourself",
+      "id": "swahili-introducing-yourself-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "what-is-your-name",
+        "my-name-is",
+        "i-am-a-student",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-yourself",
+      "id": "swahili-introducing-yourself-04-i-am-a-student",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Mimi ni mwanafunzi\".",
+      "answer": "I am a student",
+      "distractors": [
+        "what is your name",
+        "I am learning...",
+        "my name is..."
+      ],
+      "conceptId": "i-am-a-student",
+      "conceptRefs": [
+        "i-am-a-student"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-yourself",
+      "id": "swahili-introducing-yourself-05-i-am-learning",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"I am learning...\".",
+      "answer": "Ninajifunza...",
+      "distractors": [
+        "Jina lako ni nani?",
+        "Mimi ni mwanafunzi",
+        "Ninazungumza..."
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-yourself",
+      "id": "swahili-introducing-yourself-06-i-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "I speak...",
+      "distractors": [
+        "what is your name",
+        "I am a student",
+        "my name is..."
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "your-background",
+      "id": "swahili-your-background-01-where-are-you-from",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Unatoka wapi?\" mean?",
+      "answer": "where are you from",
+      "distractors": [
+        "I am from...",
+        "where do you live",
+        "I live in..."
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "your-background",
+      "id": "swahili-your-background-02-i-am-from",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"I am from...\".",
+      "answer": "Ninatoka...",
+      "distractors": [
+        "Unaishi wapi?",
+        "Unazungumza lugha gani?",
+        "Ninaishi..."
+      ],
+      "conceptId": "i-am-from",
+      "conceptRefs": [
+        "i-am-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "your-background",
+      "id": "swahili-your-background-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "where-are-you-from",
+        "i-am-from",
+        "where-do-you-live",
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "your-background",
+      "id": "swahili-your-background-04-where-do-you-live",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Unaishi wapi?\".",
+      "answer": "where do you live",
+      "distractors": [
+        "where are you from",
+        "I live in...",
+        "I am from..."
+      ],
+      "conceptId": "where-do-you-live",
+      "conceptRefs": [
+        "where-do-you-live"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "your-background",
+      "id": "swahili-your-background-05-i-live-in",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"I live in...\".",
+      "answer": "Ninaishi...",
+      "distractors": [
+        "Ninatoka...",
+        "Unazungumza lugha gani?",
+        "Unatoka wapi?"
+      ],
+      "conceptId": "i-live-in",
+      "conceptRefs": [
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "your-background",
+      "id": "swahili-your-background-06-which-language-do-you-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "which language do you speak",
+      "distractors": [
+        "where do you live",
+        "I live in...",
+        "I am from..."
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-01-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Familia\" mean?",
+      "answer": "family",
+      "distractors": [
+        "husband",
+        "daughter",
+        "wife"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-02-parents",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"parents\".",
+      "answer": "Wazazi",
+      "distractors": [
+        "Mume",
+        "Binti",
+        "Mtoto wa kiume"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "family",
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-04-husband",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Mume\".",
+      "answer": "husband",
+      "distractors": [
+        "parents",
+        "wife",
+        "daughter"
+      ],
+      "conceptId": "husband",
+      "conceptRefs": [
+        "husband"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-05-wife",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"wife\".",
+      "answer": "Mke",
+      "distractors": [
+        "Familia",
+        "Mtoto wa kiume",
+        "Binti"
+      ],
+      "conceptId": "wife",
+      "conceptRefs": [
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-06-son",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "son",
+      "distractors": [
+        "family",
+        "daughter",
+        "husband"
+      ],
+      "conceptId": "son",
+      "conceptRefs": [
+        "son"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-07-daughter",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"daughter\".",
+      "answer": "Binti",
+      "distractors": [
+        "Babu",
+        "Mtoto wa kiume",
+        "Wazazi"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "family-members",
+      "id": "swahili-family-members-08-grandfather",
+      "order": 8,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"grandfather\".",
+      "answer": "Babu",
+      "distractors": [
+        "Mume",
+        "Mtoto wa kiume",
+        "Familia"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "polite-conversation",
+      "id": "swahili-polite-conversation-01-please",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Tafadhali\" mean?",
+      "answer": "please",
+      "distractors": [
+        "thank you",
+        "sorry",
+        "excuse me"
+      ],
+      "conceptId": "please",
+      "conceptRefs": [
+        "please"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "polite-conversation",
+      "id": "swahili-polite-conversation-02-thank-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"thank you\".",
+      "answer": "Asante",
+      "distractors": [
+        "Hakuna shida",
+        "Tafadhali",
+        "Samahani"
+      ],
+      "conceptId": "thank-you",
+      "conceptRefs": [
+        "thank-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "polite-conversation",
+      "id": "swahili-polite-conversation-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "please",
+        "thank-you",
+        "no-problem",
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "polite-conversation",
+      "id": "swahili-polite-conversation-04-no-problem",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Hakuna shida\".",
+      "answer": "no problem",
+      "distractors": [
+        "please",
+        "excuse me",
+        "thank you"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "polite-conversation",
+      "id": "swahili-polite-conversation-05-excuse-me",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"excuse me\".",
+      "answer": "Niwie radhi",
+      "distractors": [
+        "Tafadhali",
+        "Hakuna shida",
+        "Samahani"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "polite-conversation",
+      "id": "swahili-polite-conversation-06-sorry",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "sorry",
+      "distractors": [
+        "please",
+        "excuse me",
+        "no problem"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-01-this-is-my-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Hii ni familia yangu\" mean?",
+      "answer": "this is my family",
+      "distractors": [
+        "this is my husband",
+        "he lives here",
+        "we speak..."
+      ],
+      "conceptId": "this-is-my-family",
+      "conceptRefs": [
+        "this-is-my-family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-02-this-is-my-husband",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"this is my husband\".",
+      "answer": "Huyu ni mume wangu",
+      "distractors": [
+        "Tunazungumza...",
+        "Wanatoka...",
+        "Anaishi hapa"
+      ],
+      "conceptId": "this-is-my-husband",
+      "conceptRefs": [
+        "this-is-my-husband"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "this-is-my-family",
+        "this-is-my-husband",
+        "this-is-my-wife",
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-04-this-is-my-wife",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Huyu ni mke wangu\".",
+      "answer": "this is my wife",
+      "distractors": [
+        "this is my family",
+        "he lives here",
+        "we speak..."
+      ],
+      "conceptId": "this-is-my-wife",
+      "conceptRefs": [
+        "this-is-my-wife"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-05-he-lives-here",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"he lives here\".",
+      "answer": "Anaishi hapa",
+      "distractors": [
+        "Huyu ni mume wangu",
+        "Huyu ni mke wangu",
+        "Anafanya kazi hapa"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-06-she-works-here",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "she works here",
+      "distractors": [
+        "this is my family",
+        "they are from...",
+        "we speak..."
+      ],
+      "conceptId": "she-works-here",
+      "conceptRefs": [
+        "she-works-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-07-we-speak",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"we speak...\".",
+      "answer": "Tunazungumza...",
+      "distractors": [
+        "Huyu ni mke wangu",
+        "Anaishi hapa",
+        "Anafanya kazi hapa"
+      ],
+      "conceptId": "we-speak",
+      "conceptRefs": [
+        "we-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "introducing-others",
+      "id": "swahili-introducing-others-08-they-are-from",
+      "order": 8,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"they are from...\".",
+      "answer": "Wanatoka...",
+      "distractors": [
+        "Huyu ni mke wangu",
+        "Huyu ni mume wangu",
+        "Hii ni familia yangu"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Ndiyo\" mean?",
+      "answer": "yes",
+      "distractors": [
+        "where are you from",
+        "excuse me",
+        "good afternoon"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"good afternoon\".",
+      "answer": "Habari ya mchana",
+      "distractors": [
+        "Anaishi hapa",
+        "Familia",
+        "Unatoka wapi?"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "good-afternoon",
+        "what-is-your-name",
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-04-what-is-your-name",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Jina lako ni nani?\".",
+      "answer": "what is your name",
+      "distractors": [
+        "where are you from",
+        "family",
+        "good afternoon"
+      ],
+      "conceptId": "what-is-your-name",
+      "conceptRefs": [
+        "what-is-your-name"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-05-where-are-you-from",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"where are you from\".",
+      "answer": "Unatoka wapi?",
+      "distractors": [
+        "Anaishi hapa",
+        "Binti",
+        "Jina lako ni nani?"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-06-family",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "family",
+      "distractors": [
+        "what is your name",
+        "good afternoon",
+        "yes"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-07-daughter",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"daughter\".",
+      "answer": "Binti",
+      "distractors": [
+        "Anaishi hapa",
+        "Jina lako ni nani?",
+        "Familia"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-08-excuse-me",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Niwie radhi\" mean?",
+      "answer": "excuse me",
+      "distractors": [
+        "yes",
+        "what is your name",
+        "he lives here"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "words-practice",
+      "id": "swahili-words-practice-09-he-lives-here",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"he lives here\".",
+      "answer": "Anaishi hapa",
+      "distractors": [
+        "Niwie radhi",
+        "Ndiyo",
+        "Habari ya mchana"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-01-no",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Hapana\" mean?",
+      "answer": "no",
+      "distractors": [
+        "I am learning...",
+        "parents",
+        "no problem"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Swahili phrase for \"good afternoon\".",
+      "answer": "Habari ya mchana",
+      "distractors": [
+        "Hapana",
+        "Wazazi",
+        "Unaishi wapi?"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Swahili phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "no",
+        "good-afternoon",
+        "have-a-good-day",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-04-have-a-good-day",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Uwe na siku njema\".",
+      "answer": "have a good day",
+      "distractors": [
+        "daughter",
+        "no problem",
+        "good afternoon"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-05-i-am-learning",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"I am learning...\".",
+      "answer": "Ninajifunza...",
+      "distractors": [
+        "Wazazi",
+        "Uwe na siku njema",
+        "Hakuna shida"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-06-where-do-you-live",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "where do you live",
+      "distractors": [
+        "no",
+        "parents",
+        "I am learning..."
+      ],
+      "conceptId": "where-do-you-live",
+      "conceptRefs": [
+        "where-do-you-live"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-07-parents",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"parents\".",
+      "answer": "Wazazi",
+      "distractors": [
+        "Uwe na siku njema",
+        "Habari ya mchana",
+        "Hapana"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-08-daughter",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Binti\" mean?",
+      "answer": "daughter",
+      "distractors": [
+        "no",
+        "I am learning...",
+        "have a good day"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "swahili",
+      "topicId": "practice-challenge",
+      "id": "swahili-practice-challenge-09-no-problem",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Swahili for \"no problem\".",
+      "answer": "Hakuna shida",
+      "distractors": [
+        "Unaishi wapi?",
+        "Habari ya mchana",
+        "Hapana"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
     }
   ]
 });

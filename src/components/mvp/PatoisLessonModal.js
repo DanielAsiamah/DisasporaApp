@@ -12,21 +12,27 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { hasApprovedPatoisAudio } from '../../audio/patoisProductionAudioRegistry';
+import {
+  getCourseProductionAudioRegistry,
+  hasApprovedCourseAudio,
+} from '../../audio/courseProductionAudioRegistry';
 import { useControlledLessonAudio } from '../../audio/useControlledLessonAudio';
-import { JAMAICAN_PATOIS_IMAGE_REGISTRY } from '../../data/jamaicanPatoisImageRegistry';
+import { getCourseImageRegistry } from '../../data/courseImageRegistry';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { fonts } from '../../theme';
 
 const { CONCEPTS } = require('../../data/curriculumContract.cjs');
-const { JAMAICAN_PATOIS_VOCABULARY } = require('../../data/jamaicanPatoisVocabulary.cjs');
+const { GENERATED_CURRICULUM } = require('../../data/generatedCurriculum.cjs');
+const { getCourseById } = require('../../data/courseCatalog.cjs');
+const { canAccessRuntimeCourse } = require('../../data/courseAccessPolicy.cjs');
 const {
   LESSON_EXERCISE_TYPES,
-  buildPatoisTopicExercises,
+  buildCourseTopicExercises,
 } = require('../../lessonEngine/patoisLessonSteps.cjs');
 const {
   createExerciseResponse,
   evaluateExerciseResponse,
+  isResponseReady,
   selectMatchItem,
   toggleWordBankItem,
 } = require('../../lessonEngine/patoisLessonSession.cjs');
@@ -40,7 +46,7 @@ const MUTED = '#718397';
 const GREEN = '#22B65D';
 const RED = '#FF5D66';
 
-function BreathingVocabularyImage({ conceptId, reducedMotion }) {
+function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
   const breathe = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (reducedMotion) {
@@ -55,7 +61,7 @@ function BreathingVocabularyImage({ conceptId, reducedMotion }) {
     return () => animation.stop();
   }, [breathe, reducedMotion]);
 
-  const source = JAMAICAN_PATOIS_IMAGE_REGISTRY[conceptId];
+  const source = imageRegistry[conceptId];
   if (!source) return null;
   return (
     <Animated.Image
@@ -191,8 +197,8 @@ function MatchExercise({
   );
 }
 
-function AudioControls({ conceptId, controller }) {
-  if (!hasApprovedPatoisAudio(conceptId)) return null;
+function AudioControls({ conceptId, controller, hasAudio }) {
+  if (!hasAudio(conceptId)) return null;
   return (
     <View style={styles.audioControls}>
       <Pressable
@@ -255,25 +261,27 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-function isResponseReady(exercise, response) {
-  if (!exercise || !response) return false;
-  if (exercise.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS) {
-    return response.matchedPairIds.length === exercise.pairs.length;
-  }
-  if ([LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise.type)) {
-    return response.builtWords.length > 0;
-  }
-  return Boolean(response.selectedChoice);
-}
-
-export default function PatoisLessonModal({ onClose, onComplete, topic, visible }) {
-  const audio = useControlledLessonAudio();
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClose, onComplete, previewCourseId = null, topic, visible }) {
+  const requestedCourse = getCourseById(courseId);
+  const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
+    ? requestedCourse.id
+    : null;
+  const phraseRegistry = getCourseProductionAudioRegistry(runtimeCourseId);
+  const audio = useControlledLessonAudio({ phraseRegistry });
   const reducedMotion = useReducedMotion();
-  const exercises = useMemo(() => topic ? buildPatoisTopicExercises(topic.id, {
+  const imageRegistry = useMemo(() => getCourseImageRegistry(runtimeCourseId), [runtimeCourseId]);
+  const vocabulary = useMemo(() => (
+    GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === runtimeCourseId)
+  ), [runtimeCourseId]);
+  const hasCourseAudio = useMemo(
+    () => (conceptId) => hasApprovedCourseAudio(runtimeCourseId, conceptId),
+    [runtimeCourseId]
+  );
+  const exercises = useMemo(() => topic && runtimeCourseId ? buildCourseTopicExercises(runtimeCourseId, topic.id, {
     concepts: CONCEPTS,
-    vocabulary: JAMAICAN_PATOIS_VOCABULARY,
-    hasAudio: hasApprovedPatoisAudio,
-  }) : [], [topic]);
+    vocabulary,
+    hasAudio: hasCourseAudio,
+  }) : [], [hasCourseAudio, runtimeCourseId, topic, vocabulary]);
   const [index, setIndex] = useState(0);
   const [response, setResponse] = useState(() => createExerciseResponse(exercises[0]));
   const [feedback, setFeedback] = useState(null);
@@ -384,7 +392,7 @@ export default function PatoisLessonModal({ onClose, onComplete, topic, visible 
         {finished ? (
           <View style={styles.completeScreen}>
             <Text style={styles.confetti}>✦  ✧  ✦</Text>
-            <Image resizeMode="contain" source={JAMAICAN_PATOIS_IMAGE_REGISTRY[exercises[0]?.conceptId]} style={styles.completeImage} />
+            <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
             <Text style={styles.completeTitle}>Topic complete!</Text>
             <Text style={styles.completeBody}>You finished {topic.title} and unlocked the next topic.</Text>
             <Pressable onPress={closeLesson} style={styles.primaryButton}><Text style={styles.primaryButtonText}>BACK TO CHAPTER</Text></Pressable>
@@ -397,10 +405,10 @@ export default function PatoisLessonModal({ onClose, onComplete, topic, visible 
               {!isMatch ? (
                 <View style={styles.scene}>
                   <LessonClouds reducedMotion={reducedMotion} />
-                  <BreathingVocabularyImage conceptId={exercise?.imageConceptId} reducedMotion={reducedMotion} />
+                  <BreathingVocabularyImage conceptId={exercise?.imageConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
                 </View>
               ) : null}
-              <AudioControls conceptId={exercise?.conceptId} controller={audio} />
+              <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
               {isChoice ? <ChoiceExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
               {isMatch ? (
                 <MatchExercise

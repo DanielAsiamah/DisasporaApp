@@ -8,8 +8,8 @@ const courseId = process.argv.includes('--course')
   ? process.argv[process.argv.indexOf('--course') + 1]
   : 'jamaican-patois';
 const force = process.argv.includes('--force');
-const canvasSize = 1254;
-const subjectSpan = 1100;
+const canvasSize = 768;
+const subjectSpan = 674;
 const directory = path.join(projectRoot, 'assets', 'images', 'vocab', courseId);
 
 if (!/^[a-z0-9-]+$/.test(courseId || '')) throw new Error(`Invalid course ID: ${courseId}`);

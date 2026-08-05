@@ -47,6 +47,7 @@ const {
   hydrateOnboardingDraft,
   restoreOnboardingProgress,
   completeOnboarding,
+  canCompleteOnboarding,
   canContinueOnboarding,
 } = require('../onboarding/onboardingModel');
 
@@ -171,11 +172,11 @@ export default function GuidedOnboardingScreen({
   }, [hydrated, step, stepIndex]);
 
   const readyForStep = canContinueOnboarding(step, draft);
-  const validName = canContinueOnboarding('welcome', draft);
+  const readyForCompletion = canCompleteOnboarding(draft);
   const canAdvance = hydrated
     && !isCompleting
     && readyForStep
-    && (step !== 'ready' || validName);
+    && (step !== 'ready' || readyForCompletion);
 
   function choose(fields) {
     Haptics.selectionAsync().catch(() => {});

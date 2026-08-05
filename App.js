@@ -36,6 +36,7 @@ const {
   getBaseLanguageForCourse,
   normalizeCourseId,
 } = require('./src/data/courseCatalog.cjs');
+const { resolveDeveloperPreviewCourseId } = require('./src/data/courseAccessPolicy.cjs');
 const {
   resolveAuthenticatedRoute,
   shouldReconcileAuthenticatedRoute,
@@ -49,6 +50,11 @@ const {
 
 const ONBOARDING_DRAFT_KEY = 'diaspora:onboarding-draft:v1';
 const AVAILABLE_COURSE_ID_SET = new Set(AVAILABLE_COURSE_IDS);
+const previewCourseId = resolveDeveloperPreviewCourseId({
+  requestedCourseId: process.env.EXPO_PUBLIC_PREVIEW_COURSE_ID,
+  isDevelopment: typeof __DEV__ !== 'undefined' && __DEV__ === true,
+  previewOptIn: process.env.EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW === 'true',
+});
 
 function AppContent() {
   const {
@@ -428,7 +434,8 @@ function AppContent() {
       {screen === 'home' ? (
         <HomeScreen
           userLanguage={userLanguage}
-          courseId={selectedCourse}
+          courseId={previewCourseId || selectedCourse}
+          previewCourseId={previewCourseId}
           onBack={() => setScreen('course-select')}
           onSignedOut={() => setScreen('welcome')}
         />

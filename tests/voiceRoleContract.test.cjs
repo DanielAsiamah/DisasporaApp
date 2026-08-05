@@ -26,6 +26,19 @@ test('character dialogue and target-language vocabulary are separate roles', () 
   assert.equal(VOICE_ROLES['target-patois-annakay'].locale, 'en-JM');
 });
 
+test('Swahili core vocabulary has its own disabled audition candidate role', () => {
+  assert.deepEqual(VOICE_ROLES['target-swahili-yna'], {
+    roleKind: 'target-language',
+    character: null,
+    locale: 'sw-KE',
+    purpose: 'core-vocabulary',
+    voiceEnvVar: 'ELEVENLABS_VOICE_ID_SWAHILI',
+    displayName: 'Yna Agalo - Kenyan Lady (candidate)',
+    enabled: false,
+    status: 'voice-audition-required',
+  });
+});
+
 test('Sol is explicitly silent until a suitable voice is approved', () => {
   assert.deepEqual(VOICE_ROLES['sol-silent'], {
     roleKind: 'silent-character',

@@ -236,6 +236,46 @@ test('preview content requires its referenced images and hero but not audio', ()
   assert.doesNotMatch(report.errors.join('\n'), /missing audio file/i);
 });
 
+test('unavailable lesson steps may remain silent until a voice is approved', () => {
+  const data = makeDataset({ availability: 'backlog' });
+  data.course_vocabulary.forEach((row) => {
+    row.audio_path = '';
+    row.publication_state = 'unavailable';
+  });
+  data.chapters.forEach((row) => { row.publication_state = 'unavailable'; });
+  data.lesson_steps.forEach((row) => {
+    row.voice_cast = '';
+    row.publication_state = 'unavailable';
+  });
+  const fixture = makeTempProject(data);
+  const report = validateContent(fixture);
+
+  assert.equal(report.ok, true, report.errors.join('\n'));
+});
+
+test('published vocabulary still requires an audio path', () => {
+  const data = makeDataset({ availability: 'published' });
+  const fixture = makeTempProject(data);
+  createPublishedAssets(fixture.projectRoot, data);
+  data.course_vocabulary[0].audio_path = '';
+  fixture.workbookPath = writeWorkbook(fixture.projectRoot, data);
+  const report = validateContent(fixture);
+
+  assert.equal(report.ok, false);
+  assert.match(report.errors.join('\n'), /course_vocabulary row 2: missing required field audio_path/i);
+});
+
+test('preview lesson steps still require an approved voice cast', () => {
+  const data = makeDataset();
+  data.lesson_steps[0].voice_cast = '';
+  const fixture = makeTempProject(data);
+  createPreviewVisualAssets(fixture.projectRoot, data);
+  const report = validateContent(fixture);
+
+  assert.equal(report.ok, false);
+  assert.match(report.errors.join('\n'), /lesson_steps row 2: missing required field voice_cast/i);
+});
+
 test('published content requires exactly 39 unique concepts, nine topics, and unique normalized answers', () => {
   const data = makeDataset({ availability: 'published' });
   data.course_vocabulary.pop();

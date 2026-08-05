@@ -50,6 +50,8 @@ test('package commands expose only the canonical curriculum and controlled audit
 
   assert.equal(pkg.scripts['content:build'], 'node scripts/generate-runtime-curriculum.mjs');
   assert.equal(pkg.scripts['audio:patois-audition:dry-run'], 'node scripts/generate-patois-audition.js');
+  assert.equal(pkg.scripts['audio:swahili-audition:dry-run'], 'node scripts/prepare-course-audition.js --course swahili');
+  assert.equal(pkg.scripts['audio:swahili-audition:generate'], 'node scripts/generate-patois-audition.js --course swahili --generate --max-credits 250');
   assert.equal(pkg.dependencies?.['firebase-admin'], undefined);
   assert.equal(pkg.devDependencies?.['firebase-admin'], undefined);
 });

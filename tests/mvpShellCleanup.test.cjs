@@ -5,6 +5,10 @@ const path = require('node:path');
 
 const MVP_HOME_PATH = path.join(__dirname, '..', 'src', 'screens', 'MvpHomeScreen.js');
 const source = fs.readFileSync(MVP_HOME_PATH, 'utf8');
+const presentationRegistrySource = fs.readFileSync(
+  path.join(__dirname, '..', 'src', 'data', 'coursePresentationRegistry.js'),
+  'utf8'
+);
 
 test('MVP shell delegates lessons to the production Patois lesson modal', () => {
   assert.match(source, /import PatoisLessonModal from ['"]\.\.\/components\/mvp\/PatoisLessonModal['"]/);
@@ -22,7 +26,8 @@ test('MVP shell retains the approved chapter contract', () => {
 });
 
 test('the chapter uses original Jamaica artwork behind the animated approved guide', () => {
-  assert.match(source, /jamaican-patois-greetings\.png/);
+  assert.match(source, /getCoursePresentation\(storageCourseId\)/);
+  assert.match(presentationRegistrySource, /jamaican-patois-greetings\.png/);
   assert.match(source, /function\s+ChapterHero\s*\(/);
   assert.match(source, /<BreathingGuide\s+name="Kai"/);
   assert.match(source, /<Cloud\b/);

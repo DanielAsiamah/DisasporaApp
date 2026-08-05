@@ -10,7 +10,7 @@ const LESSON_EXERCISE_TYPES = Object.freeze({
 
 const DEFAULT_CONCEPTS = GENERATED_CURRICULUM.concepts;
 const DEFAULT_VOCABULARY = GENERATED_CURRICULUM.courseVocabulary.filter(({ courseId }) => courseId === 'jamaican-patois');
-const DEFAULT_STEPS = GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => courseId === 'jamaican-patois');
+const DEFAULT_STEPS = GENERATED_CURRICULUM.lessonSteps;
 
 function stableHash(value) {
   return String(value).split('').reduce((hash, character) => (
@@ -103,7 +103,7 @@ function createChoiceExercise(step, row, type, prompt = step.prompt) {
   };
 }
 
-function createExercise(step, conceptById, vocabularyById, hasAudio) {
+function createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName = 'Jamaican Patois') {
   if (step.exerciseType === 'match-pairs') return createMatchExercise(step, conceptById, vocabularyById);
 
   const row = vocabularyById.get(step.conceptId);
@@ -122,7 +122,7 @@ function createExercise(step, conceptById, vocabularyById, hasAudio) {
     return {
       ...common,
       type: LESSON_EXERCISE_TYPES.SENTENCE_BUILD,
-      title: 'Build the Patois phrase',
+      title: `Build the ${courseDisplayName} phrase`,
       prompt: step.prompt,
       answer: step.answer,
       answerTokens: tokenizeAnswer(step.answer),
@@ -158,22 +158,118 @@ function createExercise(step, conceptById, vocabularyById, hasAudio) {
   return createChoiceExercise(step, row, LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE);
 }
 
-function buildPatoisTopicExercises(topicId, {
+function localizedDistractors(conceptIds, vocabularyById, excludedId, seed) {
+  return stableShuffle(
+    conceptIds
+      .filter((conceptId) => conceptId !== excludedId)
+      .map((conceptId) => vocabularyById.get(conceptId)?.localized)
+      .filter(Boolean),
+    `${seed}-localized-distractors`
+  ).slice(0, 3);
+}
+
+function meaningDistractors(conceptIds, conceptById, excludedId, seed) {
+  return stableShuffle(
+    conceptIds
+      .filter((conceptId) => conceptId !== excludedId)
+      .map((conceptId) => conceptById.get(conceptId)?.meaning)
+      .filter(Boolean),
+    `${seed}-meaning-distractors`
+  ).slice(0, 3);
+}
+
+function materializeCourseStep(template, {
+  conceptById,
+  courseDisplayName,
+  courseId,
+  topicConceptIds,
+  vocabularyById,
+}) {
+  if (template.courseId === courseId) return template;
+
+  const concept = conceptById.get(template.conceptId);
+  const row = vocabularyById.get(template.conceptId);
+  const meaning = concept?.meaning || template.answer;
+  const localized = row?.localized || '';
+  const usesTargetAnswer = ['sentence-build-target', 'translate-to-target'].includes(template.exerciseType);
+  const distractors = usesTargetAnswer
+    ? localizedDistractors(topicConceptIds, vocabularyById, template.conceptId, template.id)
+    : meaningDistractors(topicConceptIds, conceptById, template.conceptId, template.id);
+  let prompt = template.prompt;
+  if (template.exerciseType === 'translate-to-meaning') prompt = `What does "${localized}" mean?`;
+  if (template.exerciseType === 'sentence-build-target') prompt = `Build the ${courseDisplayName} phrase for "${meaning}".`;
+  if (template.exerciseType === 'match-pairs') prompt = `Match each ${courseDisplayName} phrase to its English meaning.`;
+  if (template.exerciseType === 'word-tray-meaning') prompt = `Build the English meaning of "${localized}".`;
+  if (template.exerciseType === 'translate-to-target') prompt = `Choose the ${courseDisplayName} for "${meaning}".`;
+
+  return {
+    ...template,
+    courseId,
+    id: template.id.replace(/^jamaican-patois-/, `${courseId}-`),
+    prompt,
+    answer: template.exerciseType === 'match-pairs' ? '__matched__' : usesTargetAnswer ? localized : meaning,
+    distractors: template.exerciseType === 'match-pairs' ? [] : distractors,
+    voiceId: '',
+    publicationState: 'unavailable',
+  };
+}
+
+function materializeCourseLessonSteps(courseId, {
   concepts = DEFAULT_CONCEPTS,
-  vocabulary = DEFAULT_VOCABULARY,
+  vocabulary = GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === courseId),
+  lessonSteps = DEFAULT_STEPS,
+} = {}) {
+  const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
+  const vocabularyById = new Map(vocabulary.map((row) => [row.conceptId, row]));
+  const courseDisplayName = GENERATED_CURRICULUM.courses.find((course) => course.id === courseId)?.displayName || courseId;
+  const courseSteps = lessonSteps.filter((step) => step.courseId === courseId);
+  const templateSteps = courseSteps.length
+    ? courseSteps
+    : lessonSteps.filter((step) => step.courseId === 'jamaican-patois');
+  const conceptIdsByTopic = new Map();
+
+  for (const step of templateSteps) {
+    const ids = conceptIdsByTopic.get(step.topicId) || [];
+    conceptIdsByTopic.set(step.topicId, unique([...ids, ...(step.conceptRefs || [])]));
+  }
+
+  return templateSteps.map((step) => materializeCourseStep(step, {
+    conceptById,
+    courseDisplayName,
+    courseId,
+    topicConceptIds: conceptIdsByTopic.get(step.topicId) || [],
+    vocabularyById,
+  }));
+}
+
+function buildCourseTopicExercises(courseId, topicId, {
+  concepts = DEFAULT_CONCEPTS,
+  vocabulary = GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === courseId),
   lessonSteps = DEFAULT_STEPS,
   hasAudio = () => false,
 } = {}) {
   const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
   const vocabularyById = new Map(vocabulary.map((row) => [row.conceptId, row]));
-  return lessonSteps
-    .filter((step) => step.courseId === 'jamaican-patois' && step.topicId === topicId)
+  const courseDisplayName = GENERATED_CURRICULUM.courses.find((course) => course.id === courseId)?.displayName || courseId;
+  return materializeCourseLessonSteps(courseId, { concepts, vocabulary, lessonSteps })
+    .filter((step) => step.topicId === topicId)
     .sort((left, right) => left.order - right.order)
-    .map((step) => createExercise(step, conceptById, vocabularyById, hasAudio));
+    .map((step) => createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName));
+}
+
+function buildPatoisTopicExercises(topicId, options = {}) {
+  return buildCourseTopicExercises('jamaican-patois', topicId, {
+    concepts: options.concepts || DEFAULT_CONCEPTS,
+    vocabulary: options.vocabulary || DEFAULT_VOCABULARY,
+    lessonSteps: options.lessonSteps || DEFAULT_STEPS,
+    hasAudio: options.hasAudio || (() => false),
+  });
 }
 
 module.exports = {
   LESSON_EXERCISE_TYPES,
+  buildCourseTopicExercises,
   buildPatoisTopicExercises,
+  materializeCourseLessonSteps,
   tokenizeAnswer,
 };

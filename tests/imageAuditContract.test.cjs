@@ -112,6 +112,16 @@ test('rejects green chroma-key pixels at the transparency boundary', () => {
   assert.ok(result.failures.find((failure) => failure.code === 'CHROMA_KEY_HALO'));
 });
 
+test('rejects dark purple chroma contamination at a transparent hair edge', () => {
+  const png = makeRgbaPng(8, 8, (x, y) => {
+    if (x === 2 && y >= 2 && y <= 5) return [110, 20, 100, 180];
+    return cleanCutoutPixel(x, y);
+  });
+  const result = auditPngBuffer(png, { label: 'purple-hair-halo.png', expectedWidth: 8, expectedHeight: 8 });
+
+  assert.match(result.failures.map((failure) => failure.code).join('\n'), /CHROMA_KEY_HALO/);
+});
+
 test('allows legitimate pink clothing at a transparent subject edge', () => {
   const png = makeRgbaPng(8, 8, (x, y) => {
     if (x === 2 && y >= 2 && y <= 5) return [235, 30, 145, 180];
