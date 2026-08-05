@@ -19,6 +19,10 @@ const COURSE_PRESENTATIONS = Object.freeze({
     flag: '\u{1F1F8}\u{1F1E9}',
     heroAsset: 'assets/images/chapters/sudanese-arabic-greetings.png',
   }),
+  nobiin: Object.freeze({
+    flag: '\u{1F1F8}\u{1F1E9}',
+    heroAsset: 'assets/images/chapters/nobiin-greetings.png',
+  }),
 });
 
 function getCoursePresentationMetadata(courseId) {

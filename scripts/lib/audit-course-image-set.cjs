@@ -17,6 +17,7 @@ const REGISTRY_PATHS = Object.freeze({
   wolof: 'src/data/wolofImageRegistry.js',
   'haitian-creole': 'src/data/haitianCreoleImageRegistry.js',
   'sudanese-arabic': 'src/data/sudaneseArabicImageRegistry.js',
+  nobiin: 'src/data/nobiinImageRegistry.js',
 });
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
