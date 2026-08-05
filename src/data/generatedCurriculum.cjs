@@ -3,11 +3,11 @@ const GENERATED_CURRICULUM = Object.freeze({
   "meta": {
     "schemaVersion": 1,
     "sourceWorkbook": "patois_learn_database_1.xlsx",
-    "sourceSha256": "ba742825078a6b0b718aabff63010bfe64ce18b11452af98c1a3ae19905d4376",
+    "sourceSha256": "d3b3e4bad1a3951a607f2680083b803cb2a70d27a0b505dd68936003bd0da053",
     "courseContentSha256": {
       "jamaican-patois": "9187b643422db1f3548009e25d76cd43790149276a17b84f4f7ad24ab064cd19",
       "swahili": "e2db5bcd7d2aacfb001ae3fb0dae0063e11b2d89b19beba9f33cb47125bdd42b",
-      "wolof": "c6848541073c5b49ab80f92c4bb443c2413c9133e941ceea8ac4073586e02eb7",
+      "wolof": "3dc1198950a9ee7dac27ab59c79637d1142c4692171b8a6de05ca53c6f1124f7",
       "haitian-creole": "a374614bfb2ffa40ae875978e7e4d851a1e4e855d0713c7037ccccbfe8a7e226",
       "sudanese-arabic": "298f21a20405cc7625768d55f3ebca34dbd969faa70ead68ef93ccd633446922",
       "nobiin": "08fb13725f497495497ca5e20a9236d2cdc2da712742ef0e31495d3663bffd1b",
@@ -1383,507 +1383,507 @@ const GENERATED_CURRICULUM = Object.freeze({
     {
       "courseId": "wolof",
       "conceptId": "yes",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Waaw",
+      "pronunciation": "waaw",
+      "scriptAid": "oui",
       "image": "assets/images/vocab/wolof/yes.png",
-      "audio": "assets/audio/wolof/yes.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 1
     },
     {
       "courseId": "wolof",
       "conceptId": "no",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Déedéet",
+      "pronunciation": "dee-deet",
+      "scriptAid": "non",
       "image": "assets/images/vocab/wolof/no.png",
-      "audio": "assets/audio/wolof/no.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 2
     },
     {
       "courseId": "wolof",
       "conceptId": "maybe",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Amaana",
+      "pronunciation": "a-maa-na",
+      "scriptAid": "peut-etre",
       "image": "assets/images/vocab/wolof/maybe.png",
-      "audio": "assets/audio/wolof/maybe.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 3
     },
     {
       "courseId": "wolof",
       "conceptId": "okay",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Baax na",
+      "pronunciation": "baakh na",
+      "scriptAid": "daccord",
       "image": "assets/images/vocab/wolof/okay.png",
-      "audio": "assets/audio/wolof/okay.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 4
     },
     {
       "courseId": "wolof",
       "conceptId": "again",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Beneen yoon",
+      "pronunciation": "be-neen yoon",
+      "scriptAid": "encore",
       "image": "assets/images/vocab/wolof/again.png",
-      "audio": "assets/audio/wolof/again.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 5
     },
     {
       "courseId": "wolof",
       "conceptId": "good-afternoon",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Jamm nga yendoo",
+      "pronunciation": "jam nga yen-doo",
+      "scriptAid": "bon apres-midi",
       "image": "assets/images/vocab/wolof/good-afternoon.png",
-      "audio": "assets/audio/wolof/good-afternoon.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 6
     },
     {
       "courseId": "wolof",
       "conceptId": "nice-to-meet-you",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Bég naa laa xam",
+      "pronunciation": "beg naa laa kham",
+      "scriptAid": "enchante",
       "image": "assets/images/vocab/wolof/nice-to-meet-you.png",
-      "audio": "assets/audio/wolof/nice-to-meet-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 7
     },
     {
       "courseId": "wolof",
       "conceptId": "long-time-no-see",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Yàgg nañu gisul",
+      "pronunciation": "yaag naa-nyoo gee-sool",
+      "scriptAid": "ca fait longtemps",
       "image": "assets/images/vocab/wolof/long-time-no-see.png",
-      "audio": "assets/audio/wolof/long-time-no-see.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 8
     },
     {
       "courseId": "wolof",
       "conceptId": "how-is-your-day",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Naka sa bés bi?",
+      "pronunciation": "na-ka sa bes bi",
+      "scriptAid": "comment se passe ta journee",
       "image": "assets/images/vocab/wolof/how-is-your-day.png",
-      "audio": "assets/audio/wolof/how-is-your-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 9
     },
     {
       "courseId": "wolof",
       "conceptId": "have-a-good-day",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Yendu ak jamm",
+      "pronunciation": "yen-doo ak jam",
+      "scriptAid": "bonne journee",
       "image": "assets/images/vocab/wolof/have-a-good-day.png",
-      "audio": "assets/audio/wolof/have-a-good-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 10
     },
     {
       "courseId": "wolof",
       "conceptId": "what-is-your-name",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Noo tudd?",
+      "pronunciation": "noo tud",
+      "scriptAid": "comment tu tappelles",
       "image": "assets/images/vocab/wolof/what-is-your-name.png",
-      "audio": "assets/audio/wolof/what-is-your-name.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 11
     },
     {
       "courseId": "wolof",
       "conceptId": "my-name-is",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maa ngi tudd...",
+      "pronunciation": "maa ngi tud",
+      "scriptAid": "je mappelle",
       "image": "assets/images/vocab/wolof/my-name-is.png",
-      "audio": "assets/audio/wolof/my-name-is.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 12
     },
     {
       "courseId": "wolof",
       "conceptId": "i-am-a-student",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Damaa di jàngkat",
+      "pronunciation": "da-maa di jang-kat",
+      "scriptAid": "je suis etudiant",
       "image": "assets/images/vocab/wolof/i-am-a-student.png",
-      "audio": "assets/audio/wolof/i-am-a-student.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 13
     },
     {
       "courseId": "wolof",
       "conceptId": "i-am-learning",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maa ngi jàng...",
+      "pronunciation": "maa ngi jang",
+      "scriptAid": "japprends",
       "image": "assets/images/vocab/wolof/i-am-learning.png",
-      "audio": "assets/audio/wolof/i-am-learning.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 14
     },
     {
       "courseId": "wolof",
       "conceptId": "i-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maa ngi wax...",
+      "pronunciation": "maa ngi wakh",
+      "scriptAid": "je parle",
       "image": "assets/images/vocab/wolof/i-speak.png",
-      "audio": "assets/audio/wolof/i-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 15
     },
     {
       "courseId": "wolof",
       "conceptId": "where-are-you-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Fan nga jógé?",
+      "pronunciation": "fan nga jo-ge",
+      "scriptAid": "tu viens dou",
       "image": "assets/images/vocab/wolof/where-are-you-from.png",
-      "audio": "assets/audio/wolof/where-are-you-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 16
     },
     {
       "courseId": "wolof",
       "conceptId": "i-am-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maa ngi jógé...",
+      "pronunciation": "maa ngi jo-ge",
+      "scriptAid": "je viens de",
       "image": "assets/images/vocab/wolof/i-am-from.png",
-      "audio": "assets/audio/wolof/i-am-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 17
     },
     {
       "courseId": "wolof",
       "conceptId": "where-do-you-live",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Fan nga dëkk?",
+      "pronunciation": "fan nga dekk",
+      "scriptAid": "ou habites-tu",
       "image": "assets/images/vocab/wolof/where-do-you-live.png",
-      "audio": "assets/audio/wolof/where-do-you-live.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 18
     },
     {
       "courseId": "wolof",
       "conceptId": "i-live-in",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maa ngi dëkk...",
+      "pronunciation": "maa ngi dekk",
+      "scriptAid": "jhabite a",
       "image": "assets/images/vocab/wolof/i-live-in.png",
-      "audio": "assets/audio/wolof/i-live-in.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 19
     },
     {
       "courseId": "wolof",
       "conceptId": "which-language-do-you-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Ban làkk nga wax?",
+      "pronunciation": "ban lakk nga wakh",
+      "scriptAid": "quelle langue parles-tu",
       "image": "assets/images/vocab/wolof/which-language-do-you-speak.png",
-      "audio": "assets/audio/wolof/which-language-do-you-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 20
     },
     {
       "courseId": "wolof",
       "conceptId": "family",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Njaboot",
+      "pronunciation": "nja-boot",
+      "scriptAid": "famille",
       "image": "assets/images/vocab/wolof/family.png",
-      "audio": "assets/audio/wolof/family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 21
     },
     {
       "courseId": "wolof",
       "conceptId": "parents",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Waajur yi",
+      "pronunciation": "waa-jur yi",
+      "scriptAid": "parents",
       "image": "assets/images/vocab/wolof/parents.png",
-      "audio": "assets/audio/wolof/parents.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 22
     },
     {
       "courseId": "wolof",
       "conceptId": "husband",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Jekker",
+      "pronunciation": "jek-ker",
+      "scriptAid": "mari",
       "image": "assets/images/vocab/wolof/husband.png",
-      "audio": "assets/audio/wolof/husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 23
     },
     {
       "courseId": "wolof",
       "conceptId": "wife",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Jabar",
+      "pronunciation": "ja-bar",
+      "scriptAid": "femme",
       "image": "assets/images/vocab/wolof/wife.png",
-      "audio": "assets/audio/wolof/wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 24
     },
     {
       "courseId": "wolof",
       "conceptId": "son",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Doom ju góor",
+      "pronunciation": "doom ju goor",
+      "scriptAid": "fils",
       "image": "assets/images/vocab/wolof/son.png",
-      "audio": "assets/audio/wolof/son.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 25
     },
     {
       "courseId": "wolof",
       "conceptId": "daughter",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Doom ju jigéen",
+      "pronunciation": "doom ju ji-geen",
+      "scriptAid": "fille",
       "image": "assets/images/vocab/wolof/daughter.png",
-      "audio": "assets/audio/wolof/daughter.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 26
     },
     {
       "courseId": "wolof",
       "conceptId": "grandfather",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maam ju góor",
+      "pronunciation": "maam ju goor",
+      "scriptAid": "grand-pere",
       "image": "assets/images/vocab/wolof/grandfather.png",
-      "audio": "assets/audio/wolof/grandfather.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 27
     },
     {
       "courseId": "wolof",
       "conceptId": "please",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Bu la neexee",
+      "pronunciation": "bu la neekh-ee",
+      "scriptAid": "sil te plait",
       "image": "assets/images/vocab/wolof/please.png",
-      "audio": "assets/audio/wolof/please.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 28
     },
     {
       "courseId": "wolof",
       "conceptId": "thank-you",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Jërëjëf",
+      "pronunciation": "je-re-jef",
+      "scriptAid": "merci",
       "image": "assets/images/vocab/wolof/thank-you.png",
-      "audio": "assets/audio/wolof/thank-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 29
     },
     {
       "courseId": "wolof",
       "conceptId": "no-problem",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Amul solo",
+      "pronunciation": "a-mul so-lo",
+      "scriptAid": "pas de probleme",
       "image": "assets/images/vocab/wolof/no-problem.png",
-      "audio": "assets/audio/wolof/no-problem.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 30
     },
     {
       "courseId": "wolof",
       "conceptId": "excuse-me",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Baal ma",
+      "pronunciation": "baal ma",
+      "scriptAid": "excuse-moi",
       "image": "assets/images/vocab/wolof/excuse-me.png",
-      "audio": "assets/audio/wolof/excuse-me.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 31
     },
     {
       "courseId": "wolof",
       "conceptId": "sorry",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Maa ngi lay ñaan baal",
+      "pronunciation": "maa ngi lay nyaan baal",
+      "scriptAid": "je suis desole",
       "image": "assets/images/vocab/wolof/sorry.png",
-      "audio": "assets/audio/wolof/sorry.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 32
     },
     {
       "courseId": "wolof",
       "conceptId": "this-is-my-family",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Lii sama njaboot la",
+      "pronunciation": "lee sa-ma nja-boot la",
+      "scriptAid": "voici ma famille",
       "image": "assets/images/vocab/wolof/this-is-my-family.png",
-      "audio": "assets/audio/wolof/this-is-my-family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 33
     },
     {
       "courseId": "wolof",
       "conceptId": "this-is-my-husband",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Kii sama jekker la",
+      "pronunciation": "kee sa-ma jek-ker la",
+      "scriptAid": "voici mon mari",
       "image": "assets/images/vocab/wolof/this-is-my-husband.png",
-      "audio": "assets/audio/wolof/this-is-my-husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 34
     },
     {
       "courseId": "wolof",
       "conceptId": "this-is-my-wife",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Kii sama jabar la",
+      "pronunciation": "kee sa-ma ja-bar la",
+      "scriptAid": "voici ma femme",
       "image": "assets/images/vocab/wolof/this-is-my-wife.png",
-      "audio": "assets/audio/wolof/this-is-my-wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 35
     },
     {
       "courseId": "wolof",
       "conceptId": "he-lives-here",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Kii fii la dekk",
+      "pronunciation": "kee fee la dekk",
+      "scriptAid": "il habite ici",
       "image": "assets/images/vocab/wolof/he-lives-here.png",
-      "audio": "assets/audio/wolof/he-lives-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 36
     },
     {
       "courseId": "wolof",
       "conceptId": "she-works-here",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Kii fii la liggéey",
+      "pronunciation": "kee fee la lig-geey",
+      "scriptAid": "elle travaille ici",
       "image": "assets/images/vocab/wolof/she-works-here.png",
-      "audio": "assets/audio/wolof/she-works-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 37
     },
     {
       "courseId": "wolof",
       "conceptId": "we-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Nun danuy wax...",
+      "pronunciation": "noon da-nuy wakh",
+      "scriptAid": "nous parlons",
       "image": "assets/images/vocab/wolof/we-speak.png",
-      "audio": "assets/audio/wolof/we-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 38
     },
     {
       "courseId": "wolof",
       "conceptId": "they-are-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Ñoom dañu jógé...",
+      "pronunciation": "nyoom da-nyoo jo-ge",
+      "scriptAid": "ils viennent de",
       "image": "assets/images/vocab/wolof/they-are-from.png",
-      "audio": "assets/audio/wolof/they-are-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 39
     },
@@ -8487,6 +8487,1341 @@ const GENERATED_CURRICULUM = Object.freeze({
         "Unaishi wapi?",
         "Habari ya mchana",
         "Hapana"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "getting-started",
+      "id": "wolof-getting-started-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Waaw\" mean in Wolof?",
+      "answer": "yes",
+      "distractors": [
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "getting-started",
+      "id": "wolof-getting-started-02-no",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"no\".",
+      "answer": "Déedéet",
+      "distractors": [
+        "Waaw",
+        "Amaana",
+        "Baax na"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "getting-started",
+      "id": "wolof-getting-started-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "getting-started",
+      "id": "wolof-getting-started-04-okay",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Baax na\".",
+      "answer": "okay",
+      "distractors": [
+        "yes",
+        "no",
+        "maybe"
+      ],
+      "conceptId": "okay",
+      "conceptRefs": [
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "getting-started",
+      "id": "wolof-getting-started-05-again",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"again\".",
+      "answer": "Beneen yoon",
+      "distractors": [
+        "Waaw",
+        "Déedéet",
+        "Amaana"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "getting-started",
+      "id": "wolof-getting-started-06-again",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "again",
+      "distractors": [
+        "yes",
+        "no",
+        "maybe"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "easy-greetings",
+      "id": "wolof-easy-greetings-01-good-afternoon",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Jamm nga yendoo\" mean in Wolof?",
+      "answer": "good afternoon",
+      "distractors": [
+        "nice to meet you",
+        "long time no see",
+        "how is your day"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "easy-greetings",
+      "id": "wolof-easy-greetings-02-nice-to-meet-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"nice to meet you\".",
+      "answer": "Bég naa laa xam",
+      "distractors": [
+        "Jamm nga yendoo",
+        "Yàgg nañu gisul",
+        "Naka sa bés bi?"
+      ],
+      "conceptId": "nice-to-meet-you",
+      "conceptRefs": [
+        "nice-to-meet-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "easy-greetings",
+      "id": "wolof-easy-greetings-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "good-afternoon",
+        "nice-to-meet-you",
+        "long-time-no-see",
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "easy-greetings",
+      "id": "wolof-easy-greetings-04-how-is-your-day",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Naka sa bés bi?\".",
+      "answer": "how is your day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "how-is-your-day",
+      "conceptRefs": [
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "easy-greetings",
+      "id": "wolof-easy-greetings-05-have-a-good-day",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"have a good day\".",
+      "answer": "Yendu ak jamm",
+      "distractors": [
+        "Jamm nga yendoo",
+        "Bég naa laa xam",
+        "Yàgg nañu gisul"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "easy-greetings",
+      "id": "wolof-easy-greetings-06-have-a-good-day",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "have a good day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-yourself",
+      "id": "wolof-introducing-yourself-01-what-is-your-name",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Noo tudd?\" mean in Wolof?",
+      "answer": "what is your name",
+      "distractors": [
+        "my name is",
+        "i am a student",
+        "i am learning"
+      ],
+      "conceptId": "what-is-your-name",
+      "conceptRefs": [
+        "what-is-your-name"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-yourself",
+      "id": "wolof-introducing-yourself-02-my-name-is",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"my name is\".",
+      "answer": "Maa ngi tudd...",
+      "distractors": [
+        "Noo tudd?",
+        "Damaa di jàngkat",
+        "Maa ngi jàng..."
+      ],
+      "conceptId": "my-name-is",
+      "conceptRefs": [
+        "my-name-is"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-yourself",
+      "id": "wolof-introducing-yourself-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "what-is-your-name",
+        "my-name-is",
+        "i-am-a-student",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-yourself",
+      "id": "wolof-introducing-yourself-04-i-am-learning",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Maa ngi jàng...\".",
+      "answer": "i am learning",
+      "distractors": [
+        "what is your name",
+        "my name is",
+        "i am a student"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-yourself",
+      "id": "wolof-introducing-yourself-05-i-speak",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"i speak\".",
+      "answer": "Maa ngi wax...",
+      "distractors": [
+        "Noo tudd?",
+        "Maa ngi tudd...",
+        "Damaa di jàngkat"
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-yourself",
+      "id": "wolof-introducing-yourself-06-i-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "i speak",
+      "distractors": [
+        "what is your name",
+        "my name is",
+        "i am a student"
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "your-background",
+      "id": "wolof-your-background-01-where-are-you-from",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Fan nga jógé?\" mean in Wolof?",
+      "answer": "where are you from",
+      "distractors": [
+        "i am from",
+        "where do you live",
+        "i live in"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "your-background",
+      "id": "wolof-your-background-02-i-am-from",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"i am from\".",
+      "answer": "Maa ngi jógé...",
+      "distractors": [
+        "Fan nga jógé?",
+        "Fan nga dëkk?",
+        "Maa ngi dëkk..."
+      ],
+      "conceptId": "i-am-from",
+      "conceptRefs": [
+        "i-am-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "your-background",
+      "id": "wolof-your-background-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "where-are-you-from",
+        "i-am-from",
+        "where-do-you-live",
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "your-background",
+      "id": "wolof-your-background-04-i-live-in",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Maa ngi dëkk...\".",
+      "answer": "i live in",
+      "distractors": [
+        "where are you from",
+        "i am from",
+        "where do you live"
+      ],
+      "conceptId": "i-live-in",
+      "conceptRefs": [
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "your-background",
+      "id": "wolof-your-background-05-which-language-do-you-speak",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"which language do you speak\".",
+      "answer": "Ban làkk nga wax?",
+      "distractors": [
+        "Fan nga jógé?",
+        "Maa ngi jógé...",
+        "Fan nga dëkk?"
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "your-background",
+      "id": "wolof-your-background-06-which-language-do-you-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "which language do you speak",
+      "distractors": [
+        "where are you from",
+        "i am from",
+        "where do you live"
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-01-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Njaboot\" mean in Wolof?",
+      "answer": "family",
+      "distractors": [
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-02-parents",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"parents\".",
+      "answer": "Waajur yi",
+      "distractors": [
+        "Njaboot",
+        "Jekker",
+        "Jabar"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "family",
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-04-wife",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Jabar\".",
+      "answer": "wife",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "wife",
+      "conceptRefs": [
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-05-son",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"son\".",
+      "answer": "Doom ju góor",
+      "distractors": [
+        "Njaboot",
+        "Waajur yi",
+        "Jekker"
+      ],
+      "conceptId": "son",
+      "conceptRefs": [
+        "son"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-06-daughter",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "daughter",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-07-grandfather",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"grandfather\".",
+      "answer": "Maam ju góor",
+      "distractors": [
+        "Njaboot",
+        "Waajur yi",
+        "Jekker"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "family-members",
+      "id": "wolof-family-members-08-grandfather",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Maam ju góor\" mean in Wolof?",
+      "answer": "grandfather",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "polite-conversation",
+      "id": "wolof-polite-conversation-01-please",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Bu la neexee\" mean in Wolof?",
+      "answer": "please",
+      "distractors": [
+        "thank you",
+        "no problem",
+        "excuse me"
+      ],
+      "conceptId": "please",
+      "conceptRefs": [
+        "please"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "polite-conversation",
+      "id": "wolof-polite-conversation-02-thank-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"thank you\".",
+      "answer": "Jërëjëf",
+      "distractors": [
+        "Bu la neexee",
+        "Amul solo",
+        "Baal ma"
+      ],
+      "conceptId": "thank-you",
+      "conceptRefs": [
+        "thank-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "polite-conversation",
+      "id": "wolof-polite-conversation-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "please",
+        "thank-you",
+        "no-problem",
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "polite-conversation",
+      "id": "wolof-polite-conversation-04-excuse-me",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Baal ma\".",
+      "answer": "excuse me",
+      "distractors": [
+        "please",
+        "thank you",
+        "no problem"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "polite-conversation",
+      "id": "wolof-polite-conversation-05-sorry",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"sorry\".",
+      "answer": "Maa ngi lay ñaan baal",
+      "distractors": [
+        "Bu la neexee",
+        "Jërëjëf",
+        "Amul solo"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "polite-conversation",
+      "id": "wolof-polite-conversation-06-sorry",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "sorry",
+      "distractors": [
+        "please",
+        "thank you",
+        "no problem"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-01-this-is-my-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Lii sama njaboot la\" mean in Wolof?",
+      "answer": "this is my family",
+      "distractors": [
+        "this is my husband",
+        "this is my wife",
+        "he lives here"
+      ],
+      "conceptId": "this-is-my-family",
+      "conceptRefs": [
+        "this-is-my-family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-02-this-is-my-husband",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"this is my husband\".",
+      "answer": "Kii sama jekker la",
+      "distractors": [
+        "Lii sama njaboot la",
+        "Kii sama jabar la",
+        "Kii fii la dekk"
+      ],
+      "conceptId": "this-is-my-husband",
+      "conceptRefs": [
+        "this-is-my-husband"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "this-is-my-family",
+        "this-is-my-husband",
+        "this-is-my-wife",
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-04-he-lives-here",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Kii fii la dekk\".",
+      "answer": "he lives here",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-05-she-works-here",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"she works here\".",
+      "answer": "Kii fii la liggéey",
+      "distractors": [
+        "Lii sama njaboot la",
+        "Kii sama jekker la",
+        "Kii sama jabar la"
+      ],
+      "conceptId": "she-works-here",
+      "conceptRefs": [
+        "she-works-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-06-we-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "we speak",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "we-speak",
+      "conceptRefs": [
+        "we-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-07-they-are-from",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"they are from\".",
+      "answer": "Ñoom dañu jógé...",
+      "distractors": [
+        "Lii sama njaboot la",
+        "Kii sama jekker la",
+        "Kii sama jabar la"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "introducing-others",
+      "id": "wolof-introducing-others-08-they-are-from",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Ñoom dañu jógé...\" mean in Wolof?",
+      "answer": "they are from",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Waaw\" mean in Wolof?",
+      "answer": "yes",
+      "distractors": [
+        "good afternoon",
+        "what is your name",
+        "where are you from"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"good afternoon\".",
+      "answer": "Jamm nga yendoo",
+      "distractors": [
+        "Waaw",
+        "Noo tudd?",
+        "Fan nga jógé?"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "good-afternoon",
+        "what-is-your-name",
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-04-where-are-you-from",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Fan nga jógé?\".",
+      "answer": "where are you from",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-05-family",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"family\".",
+      "answer": "Njaboot",
+      "distractors": [
+        "Waaw",
+        "Jamm nga yendoo",
+        "Noo tudd?"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-06-daughter",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "daughter",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-07-excuse-me",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"excuse me\".",
+      "answer": "Baal ma",
+      "distractors": [
+        "Waaw",
+        "Jamm nga yendoo",
+        "Noo tudd?"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-08-he-lives-here",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Kii fii la dekk\" mean in Wolof?",
+      "answer": "he lives here",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "words-practice",
+      "id": "wolof-words-practice-09-he-lives-here",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"he lives here\".",
+      "answer": "Kii fii la dekk",
+      "distractors": [
+        "Waaw",
+        "Jamm nga yendoo",
+        "Noo tudd?"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-01-no",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Déedéet\" mean in Wolof?",
+      "answer": "no",
+      "distractors": [
+        "good afternoon",
+        "have a good day",
+        "i am learning"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Wolof phrase for \"good afternoon\".",
+      "answer": "Jamm nga yendoo",
+      "distractors": [
+        "Déedéet",
+        "Yendu ak jamm",
+        "Maa ngi jàng..."
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Associe chaque expression wolof a son sens.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "no",
+        "good-afternoon",
+        "have-a-good-day",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-04-i-am-learning",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Maa ngi jàng...\".",
+      "answer": "i am learning",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-05-where-do-you-live",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"where do you live\".",
+      "answer": "Fan nga dëkk?",
+      "distractors": [
+        "Déedéet",
+        "Jamm nga yendoo",
+        "Yendu ak jamm"
+      ],
+      "conceptId": "where-do-you-live",
+      "conceptRefs": [
+        "where-do-you-live"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-06-parents",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "parents",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-07-daughter",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"daughter\".",
+      "answer": "Doom ju jigéen",
+      "distractors": [
+        "Déedéet",
+        "Jamm nga yendoo",
+        "Yendu ak jamm"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-08-no-problem",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Amul solo\" mean in Wolof?",
+      "answer": "no problem",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "wolof",
+      "topicId": "practice-challenge",
+      "id": "wolof-practice-challenge-09-no-problem",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Wolof for \"no problem\".",
+      "answer": "Amul solo",
+      "distractors": [
+        "Déedéet",
+        "Jamm nga yendoo",
+        "Yendu ak jamm"
       ],
       "conceptId": "no-problem",
       "conceptRefs": [

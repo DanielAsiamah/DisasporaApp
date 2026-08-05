@@ -14,6 +14,7 @@ const GENERATED_CURRICULUM_PATH = 'src/data/generatedCurriculum.cjs';
 const REGISTRY_PATHS = Object.freeze({
   'jamaican-patois': 'src/data/jamaicanPatoisImageRegistry.js',
   swahili: 'src/data/swahiliImageRegistry.js',
+  wolof: 'src/data/wolofImageRegistry.js',
 });
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 

@@ -3,6 +3,7 @@ const { getCoursePresentationMetadata } = require('./coursePresentationContract.
 const COURSE_HERO_SOURCES = Object.freeze({
   'jamaican-patois': require('../../assets/images/chapters/jamaican-patois-greetings.png'),
   swahili: require('../../assets/images/chapters/swahili-greetings.png'),
+  wolof: require('../../assets/images/chapters/wolof-greetings.png'),
 });
 
 export function getCoursePresentation(courseId) {

@@ -59,7 +59,7 @@ test('generated runtime curriculum is a byte-hash-matched projection of the work
   assert.equal(GENERATED_CURRICULUM.courses.length, 9);
   assert.equal(GENERATED_CURRICULUM.courseVocabulary.length, 351);
   assert.equal(GENERATED_CURRICULUM.topics.length, 81);
-  assert.equal(GENERATED_CURRICULUM.lessonSteps.length, 128);
+  assert.equal(GENERATED_CURRICULUM.lessonSteps.length, 192);
   assert.equal(
     GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => courseId === 'jamaican-patois').length,
     64
@@ -69,7 +69,11 @@ test('generated runtime curriculum is a byte-hash-matched projection of the work
     64
   );
   assert.equal(
-    GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => !['jamaican-patois', 'swahili'].includes(courseId)).length,
+    GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => courseId === 'wolof').length,
+    64
+  );
+  assert.equal(
+    GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => !['jamaican-patois', 'swahili', 'wolof'].includes(courseId)).length,
     0
   );
 });

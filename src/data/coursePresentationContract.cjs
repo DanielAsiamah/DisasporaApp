@@ -7,6 +7,10 @@ const COURSE_PRESENTATIONS = Object.freeze({
     flag: '\u{1F1F0}\u{1F1EA}',
     heroAsset: 'assets/images/chapters/swahili-greetings.png',
   }),
+  wolof: Object.freeze({
+    flag: '\u{1F1F8}\u{1F1F3}',
+    heroAsset: 'assets/images/chapters/wolof-greetings.png',
+  }),
 });
 
 function getCoursePresentationMetadata(courseId) {
