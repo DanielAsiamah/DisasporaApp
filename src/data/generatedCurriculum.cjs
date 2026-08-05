@@ -3,12 +3,12 @@ const GENERATED_CURRICULUM = Object.freeze({
   "meta": {
     "schemaVersion": 1,
     "sourceWorkbook": "patois_learn_database_1.xlsx",
-    "sourceSha256": "d3b3e4bad1a3951a607f2680083b803cb2a70d27a0b505dd68936003bd0da053",
+    "sourceSha256": "92aeb169900341c2526b68308337a296bff16f8c1d832a354a75fbea732b0d50",
     "courseContentSha256": {
       "jamaican-patois": "9187b643422db1f3548009e25d76cd43790149276a17b84f4f7ad24ab064cd19",
       "swahili": "e2db5bcd7d2aacfb001ae3fb0dae0063e11b2d89b19beba9f33cb47125bdd42b",
       "wolof": "3dc1198950a9ee7dac27ab59c79637d1142c4692171b8a6de05ca53c6f1124f7",
-      "haitian-creole": "a374614bfb2ffa40ae875978e7e4d851a1e4e855d0713c7037ccccbfe8a7e226",
+      "haitian-creole": "48700f02b8435b1184a0e4d4b48c36da10609fd2fe1d687446a06bf73d5c7c3f",
       "sudanese-arabic": "298f21a20405cc7625768d55f3ebca34dbd969faa70ead68ef93ccd633446922",
       "nobiin": "08fb13725f497495497ca5e20a9236d2cdc2da712742ef0e31495d3663bffd1b",
       "igbo": "e210c706d78dc4429c2dcf0c7acddd7de18923a794adead24c8d90b755be68ac",
@@ -1890,507 +1890,507 @@ const GENERATED_CURRICULUM = Object.freeze({
     {
       "courseId": "haitian-creole",
       "conceptId": "yes",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Wi",
+      "pronunciation": "wee",
+      "scriptAid": "oui",
       "image": "assets/images/vocab/haitian-creole/yes.png",
-      "audio": "assets/audio/haitian-creole/yes.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 1
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "no",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Non",
+      "pronunciation": "non",
+      "scriptAid": "non",
       "image": "assets/images/vocab/haitian-creole/no.png",
-      "audio": "assets/audio/haitian-creole/no.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 2
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "maybe",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Petèt",
+      "pronunciation": "peh-tet",
+      "scriptAid": "peut-etre",
       "image": "assets/images/vocab/haitian-creole/maybe.png",
-      "audio": "assets/audio/haitian-creole/maybe.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 3
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "okay",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Dakò",
+      "pronunciation": "da-ko",
+      "scriptAid": "daccord",
       "image": "assets/images/vocab/haitian-creole/okay.png",
-      "audio": "assets/audio/haitian-creole/okay.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 4
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "again",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Ankò",
+      "pronunciation": "an-ko",
+      "scriptAid": "encore",
       "image": "assets/images/vocab/haitian-creole/again.png",
-      "audio": "assets/audio/haitian-creole/again.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 5
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "good-afternoon",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Bon apremidi",
+      "pronunciation": "bon ap-re-mi-di",
+      "scriptAid": "bon apres-midi",
       "image": "assets/images/vocab/haitian-creole/good-afternoon.png",
-      "audio": "assets/audio/haitian-creole/good-afternoon.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 6
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "nice-to-meet-you",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen kontan rankontre ou",
+      "pronunciation": "mwen kon-tan ran-kon-tre ou",
+      "scriptAid": "enchante",
       "image": "assets/images/vocab/haitian-creole/nice-to-meet-you.png",
-      "audio": "assets/audio/haitian-creole/nice-to-meet-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 7
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "long-time-no-see",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Sa fè lontan nou pa wè",
+      "pronunciation": "sa fe lon-tan nou pa we",
+      "scriptAid": "ca fait longtemps",
       "image": "assets/images/vocab/haitian-creole/long-time-no-see.png",
-      "audio": "assets/audio/haitian-creole/long-time-no-see.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 8
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "how-is-your-day",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Kijan jounen ou ye?",
+      "pronunciation": "ki-jan jou-nen ou ye",
+      "scriptAid": "comment se passe ta journee",
       "image": "assets/images/vocab/haitian-creole/how-is-your-day.png",
-      "audio": "assets/audio/haitian-creole/how-is-your-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 9
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "have-a-good-day",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Pase yon bon jounen",
+      "pronunciation": "pa-se yon bon jou-nen",
+      "scriptAid": "bonne journee",
       "image": "assets/images/vocab/haitian-creole/have-a-good-day.png",
-      "audio": "assets/audio/haitian-creole/have-a-good-day.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 10
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "what-is-your-name",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Kijan ou rele?",
+      "pronunciation": "ki-jan ou re-le",
+      "scriptAid": "comment tu tappelles",
       "image": "assets/images/vocab/haitian-creole/what-is-your-name.png",
-      "audio": "assets/audio/haitian-creole/what-is-your-name.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 11
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "my-name-is",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen rele...",
+      "pronunciation": "mwen re-le",
+      "scriptAid": "je mappelle",
       "image": "assets/images/vocab/haitian-creole/my-name-is.png",
-      "audio": "assets/audio/haitian-creole/my-name-is.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 12
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "i-am-a-student",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen se yon etidyan",
+      "pronunciation": "mwen se yon e-ti-dyan",
+      "scriptAid": "je suis etudiant",
       "image": "assets/images/vocab/haitian-creole/i-am-a-student.png",
-      "audio": "assets/audio/haitian-creole/i-am-a-student.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 13
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "i-am-learning",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "M ap aprann...",
+      "pronunciation": "map ap-rann",
+      "scriptAid": "japprends",
       "image": "assets/images/vocab/haitian-creole/i-am-learning.png",
-      "audio": "assets/audio/haitian-creole/i-am-learning.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 14
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "i-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen pale...",
+      "pronunciation": "mwen pa-le",
+      "scriptAid": "je parle",
       "image": "assets/images/vocab/haitian-creole/i-speak.png",
-      "audio": "assets/audio/haitian-creole/i-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 15
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "where-are-you-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Ki kote ou soti?",
+      "pronunciation": "ki ko-te ou so-ti",
+      "scriptAid": "tu viens dou",
       "image": "assets/images/vocab/haitian-creole/where-are-you-from.png",
-      "audio": "assets/audio/haitian-creole/where-are-you-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 16
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "i-am-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen soti...",
+      "pronunciation": "mwen so-ti",
+      "scriptAid": "je viens de",
       "image": "assets/images/vocab/haitian-creole/i-am-from.png",
-      "audio": "assets/audio/haitian-creole/i-am-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 17
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "where-do-you-live",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Ki kote ou rete?",
+      "pronunciation": "ki ko-te ou re-te",
+      "scriptAid": "ou habites-tu",
       "image": "assets/images/vocab/haitian-creole/where-do-you-live.png",
-      "audio": "assets/audio/haitian-creole/where-do-you-live.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 18
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "i-live-in",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen rete...",
+      "pronunciation": "mwen re-te",
+      "scriptAid": "jhabite a",
       "image": "assets/images/vocab/haitian-creole/i-live-in.png",
-      "audio": "assets/audio/haitian-creole/i-live-in.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 19
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "which-language-do-you-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Ki lang ou pale?",
+      "pronunciation": "ki lang ou pa-le",
+      "scriptAid": "quelle langue parles-tu",
       "image": "assets/images/vocab/haitian-creole/which-language-do-you-speak.png",
-      "audio": "assets/audio/haitian-creole/which-language-do-you-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 20
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "family",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Fanmi",
+      "pronunciation": "fan-mi",
+      "scriptAid": "famille",
       "image": "assets/images/vocab/haitian-creole/family.png",
-      "audio": "assets/audio/haitian-creole/family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 21
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "parents",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Paran",
+      "pronunciation": "pa-ran",
+      "scriptAid": "parents",
       "image": "assets/images/vocab/haitian-creole/parents.png",
-      "audio": "assets/audio/haitian-creole/parents.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 22
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "husband",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mari",
+      "pronunciation": "ma-ri",
+      "scriptAid": "mari",
       "image": "assets/images/vocab/haitian-creole/husband.png",
-      "audio": "assets/audio/haitian-creole/husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 23
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "wife",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Madanm",
+      "pronunciation": "ma-danm",
+      "scriptAid": "femme",
       "image": "assets/images/vocab/haitian-creole/wife.png",
-      "audio": "assets/audio/haitian-creole/wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 24
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "son",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Pitit gason",
+      "pronunciation": "pi-tit ga-son",
+      "scriptAid": "fils",
       "image": "assets/images/vocab/haitian-creole/son.png",
-      "audio": "assets/audio/haitian-creole/son.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 25
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "daughter",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Pitit fi",
+      "pronunciation": "pi-tit fi",
+      "scriptAid": "fille",
       "image": "assets/images/vocab/haitian-creole/daughter.png",
-      "audio": "assets/audio/haitian-creole/daughter.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 26
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "grandfather",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Granpapa",
+      "pronunciation": "gran-pa-pa",
+      "scriptAid": "grand-pere",
       "image": "assets/images/vocab/haitian-creole/grandfather.png",
-      "audio": "assets/audio/haitian-creole/grandfather.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 27
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "please",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Tanpri",
+      "pronunciation": "tan-pri",
+      "scriptAid": "sil te plait",
       "image": "assets/images/vocab/haitian-creole/please.png",
-      "audio": "assets/audio/haitian-creole/please.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 28
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "thank-you",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mèsi",
+      "pronunciation": "me-si",
+      "scriptAid": "merci",
       "image": "assets/images/vocab/haitian-creole/thank-you.png",
-      "audio": "assets/audio/haitian-creole/thank-you.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 29
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "no-problem",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Pa gen pwoblèm",
+      "pronunciation": "pa gen pwo-blem",
+      "scriptAid": "pas de probleme",
       "image": "assets/images/vocab/haitian-creole/no-problem.png",
-      "audio": "assets/audio/haitian-creole/no-problem.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 30
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "excuse-me",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Eskize m",
+      "pronunciation": "es-ki-ze m",
+      "scriptAid": "excuse-moi",
       "image": "assets/images/vocab/haitian-creole/excuse-me.png",
-      "audio": "assets/audio/haitian-creole/excuse-me.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 31
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "sorry",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Mwen regrèt",
+      "pronunciation": "mwen re-gret",
+      "scriptAid": "je suis desole",
       "image": "assets/images/vocab/haitian-creole/sorry.png",
-      "audio": "assets/audio/haitian-creole/sorry.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 32
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "this-is-my-family",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Sa a se fanmi mwen",
+      "pronunciation": "sa a se fan-mi mwen",
+      "scriptAid": "voici ma famille",
       "image": "assets/images/vocab/haitian-creole/this-is-my-family.png",
-      "audio": "assets/audio/haitian-creole/this-is-my-family.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 33
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "this-is-my-husband",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Sa a se mari mwen",
+      "pronunciation": "sa a se ma-ri mwen",
+      "scriptAid": "voici mon mari",
       "image": "assets/images/vocab/haitian-creole/this-is-my-husband.png",
-      "audio": "assets/audio/haitian-creole/this-is-my-husband.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 34
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "this-is-my-wife",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Sa a se madanm mwen",
+      "pronunciation": "sa a se ma-danm mwen",
+      "scriptAid": "voici ma femme",
       "image": "assets/images/vocab/haitian-creole/this-is-my-wife.png",
-      "audio": "assets/audio/haitian-creole/this-is-my-wife.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 35
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "he-lives-here",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Li rete isit la",
+      "pronunciation": "li re-te i-sit la",
+      "scriptAid": "il habite ici",
       "image": "assets/images/vocab/haitian-creole/he-lives-here.png",
-      "audio": "assets/audio/haitian-creole/he-lives-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 36
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "she-works-here",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Li travay isit la",
+      "pronunciation": "li tra-vay i-sit la",
+      "scriptAid": "elle travaille ici",
       "image": "assets/images/vocab/haitian-creole/she-works-here.png",
-      "audio": "assets/audio/haitian-creole/she-works-here.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 37
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "we-speak",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Nou pale...",
+      "pronunciation": "nou pa-le",
+      "scriptAid": "nous parlons",
       "image": "assets/images/vocab/haitian-creole/we-speak.png",
-      "audio": "assets/audio/haitian-creole/we-speak.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 38
     },
     {
       "courseId": "haitian-creole",
       "conceptId": "they-are-from",
-      "localized": "",
-      "pronunciation": "",
-      "scriptAid": "",
+      "localized": "Yo soti...",
+      "pronunciation": "yo so-ti",
+      "scriptAid": "ils viennent de",
       "image": "assets/images/vocab/haitian-creole/they-are-from.png",
-      "audio": "assets/audio/haitian-creole/they-are-from.mp3",
+      "audio": "",
       "voiceId": "",
-      "reviewStatus": "backlog",
+      "reviewStatus": "needs-native-review",
       "publicationState": "unavailable",
       "order": 39
     },
@@ -9822,6 +9822,1341 @@ const GENERATED_CURRICULUM = Object.freeze({
         "Déedéet",
         "Jamm nga yendoo",
         "Yendu ak jamm"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "getting-started",
+      "id": "haitian-creole-getting-started-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Wi\" mean in Haitian Creole?",
+      "answer": "yes",
+      "distractors": [
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "getting-started",
+      "id": "haitian-creole-getting-started-02-no",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"no\".",
+      "answer": "Non",
+      "distractors": [
+        "Wi",
+        "Petèt",
+        "Dakò"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "getting-started",
+      "id": "haitian-creole-getting-started-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "no",
+        "maybe",
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "getting-started",
+      "id": "haitian-creole-getting-started-04-okay",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Dakò\".",
+      "answer": "okay",
+      "distractors": [
+        "yes",
+        "no",
+        "maybe"
+      ],
+      "conceptId": "okay",
+      "conceptRefs": [
+        "okay"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "getting-started",
+      "id": "haitian-creole-getting-started-05-again",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"again\".",
+      "answer": "Ankò",
+      "distractors": [
+        "Wi",
+        "Non",
+        "Petèt"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "getting-started",
+      "id": "haitian-creole-getting-started-06-again",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "again",
+      "distractors": [
+        "yes",
+        "no",
+        "maybe"
+      ],
+      "conceptId": "again",
+      "conceptRefs": [
+        "again"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "easy-greetings",
+      "id": "haitian-creole-easy-greetings-01-good-afternoon",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Bon apremidi\" mean in Haitian Creole?",
+      "answer": "good afternoon",
+      "distractors": [
+        "nice to meet you",
+        "long time no see",
+        "how is your day"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "easy-greetings",
+      "id": "haitian-creole-easy-greetings-02-nice-to-meet-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"nice to meet you\".",
+      "answer": "Mwen kontan rankontre ou",
+      "distractors": [
+        "Bon apremidi",
+        "Sa fè lontan nou pa wè",
+        "Kijan jounen ou ye?"
+      ],
+      "conceptId": "nice-to-meet-you",
+      "conceptRefs": [
+        "nice-to-meet-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "easy-greetings",
+      "id": "haitian-creole-easy-greetings-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "good-afternoon",
+        "nice-to-meet-you",
+        "long-time-no-see",
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "easy-greetings",
+      "id": "haitian-creole-easy-greetings-04-how-is-your-day",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Kijan jounen ou ye?\".",
+      "answer": "how is your day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "how-is-your-day",
+      "conceptRefs": [
+        "how-is-your-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "easy-greetings",
+      "id": "haitian-creole-easy-greetings-05-have-a-good-day",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"have a good day\".",
+      "answer": "Pase yon bon jounen",
+      "distractors": [
+        "Bon apremidi",
+        "Mwen kontan rankontre ou",
+        "Sa fè lontan nou pa wè"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "easy-greetings",
+      "id": "haitian-creole-easy-greetings-06-have-a-good-day",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "have a good day",
+      "distractors": [
+        "good afternoon",
+        "nice to meet you",
+        "long time no see"
+      ],
+      "conceptId": "have-a-good-day",
+      "conceptRefs": [
+        "have-a-good-day"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-yourself",
+      "id": "haitian-creole-introducing-yourself-01-what-is-your-name",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Kijan ou rele?\" mean in Haitian Creole?",
+      "answer": "what is your name",
+      "distractors": [
+        "my name is",
+        "i am a student",
+        "i am learning"
+      ],
+      "conceptId": "what-is-your-name",
+      "conceptRefs": [
+        "what-is-your-name"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-yourself",
+      "id": "haitian-creole-introducing-yourself-02-my-name-is",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"my name is\".",
+      "answer": "Mwen rele...",
+      "distractors": [
+        "Kijan ou rele?",
+        "Mwen se yon etidyan",
+        "M ap aprann..."
+      ],
+      "conceptId": "my-name-is",
+      "conceptRefs": [
+        "my-name-is"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-yourself",
+      "id": "haitian-creole-introducing-yourself-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "what-is-your-name",
+        "my-name-is",
+        "i-am-a-student",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-yourself",
+      "id": "haitian-creole-introducing-yourself-04-i-am-learning",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"M ap aprann...\".",
+      "answer": "i am learning",
+      "distractors": [
+        "what is your name",
+        "my name is",
+        "i am a student"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-yourself",
+      "id": "haitian-creole-introducing-yourself-05-i-speak",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"i speak\".",
+      "answer": "Mwen pale...",
+      "distractors": [
+        "Kijan ou rele?",
+        "Mwen rele...",
+        "Mwen se yon etidyan"
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-yourself",
+      "id": "haitian-creole-introducing-yourself-06-i-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "i speak",
+      "distractors": [
+        "what is your name",
+        "my name is",
+        "i am a student"
+      ],
+      "conceptId": "i-speak",
+      "conceptRefs": [
+        "i-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "your-background",
+      "id": "haitian-creole-your-background-01-where-are-you-from",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Ki kote ou soti?\" mean in Haitian Creole?",
+      "answer": "where are you from",
+      "distractors": [
+        "i am from",
+        "where do you live",
+        "i live in"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "your-background",
+      "id": "haitian-creole-your-background-02-i-am-from",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"i am from\".",
+      "answer": "Mwen soti...",
+      "distractors": [
+        "Ki kote ou soti?",
+        "Ki kote ou rete?",
+        "Mwen rete..."
+      ],
+      "conceptId": "i-am-from",
+      "conceptRefs": [
+        "i-am-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "your-background",
+      "id": "haitian-creole-your-background-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "where-are-you-from",
+        "i-am-from",
+        "where-do-you-live",
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "your-background",
+      "id": "haitian-creole-your-background-04-i-live-in",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Mwen rete...\".",
+      "answer": "i live in",
+      "distractors": [
+        "where are you from",
+        "i am from",
+        "where do you live"
+      ],
+      "conceptId": "i-live-in",
+      "conceptRefs": [
+        "i-live-in"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "your-background",
+      "id": "haitian-creole-your-background-05-which-language-do-you-speak",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"which language do you speak\".",
+      "answer": "Ki lang ou pale?",
+      "distractors": [
+        "Ki kote ou soti?",
+        "Mwen soti...",
+        "Ki kote ou rete?"
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "your-background",
+      "id": "haitian-creole-your-background-06-which-language-do-you-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "which language do you speak",
+      "distractors": [
+        "where are you from",
+        "i am from",
+        "where do you live"
+      ],
+      "conceptId": "which-language-do-you-speak",
+      "conceptRefs": [
+        "which-language-do-you-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-01-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Fanmi\" mean in Haitian Creole?",
+      "answer": "family",
+      "distractors": [
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-02-parents",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"parents\".",
+      "answer": "Paran",
+      "distractors": [
+        "Fanmi",
+        "Mari",
+        "Madanm"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "family",
+        "parents",
+        "husband",
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-04-wife",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Madanm\".",
+      "answer": "wife",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "wife",
+      "conceptRefs": [
+        "wife"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-05-son",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"son\".",
+      "answer": "Pitit gason",
+      "distractors": [
+        "Fanmi",
+        "Paran",
+        "Mari"
+      ],
+      "conceptId": "son",
+      "conceptRefs": [
+        "son"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-06-daughter",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "daughter",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-07-grandfather",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"grandfather\".",
+      "answer": "Granpapa",
+      "distractors": [
+        "Fanmi",
+        "Paran",
+        "Mari"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "family-members",
+      "id": "haitian-creole-family-members-08-grandfather",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Granpapa\" mean in Haitian Creole?",
+      "answer": "grandfather",
+      "distractors": [
+        "family",
+        "parents",
+        "husband"
+      ],
+      "conceptId": "grandfather",
+      "conceptRefs": [
+        "grandfather"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "polite-conversation",
+      "id": "haitian-creole-polite-conversation-01-please",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Tanpri\" mean in Haitian Creole?",
+      "answer": "please",
+      "distractors": [
+        "thank you",
+        "no problem",
+        "excuse me"
+      ],
+      "conceptId": "please",
+      "conceptRefs": [
+        "please"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "polite-conversation",
+      "id": "haitian-creole-polite-conversation-02-thank-you",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"thank you\".",
+      "answer": "Mèsi",
+      "distractors": [
+        "Tanpri",
+        "Pa gen pwoblèm",
+        "Eskize m"
+      ],
+      "conceptId": "thank-you",
+      "conceptRefs": [
+        "thank-you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "polite-conversation",
+      "id": "haitian-creole-polite-conversation-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "please",
+        "thank-you",
+        "no-problem",
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "polite-conversation",
+      "id": "haitian-creole-polite-conversation-04-excuse-me",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Eskize m\".",
+      "answer": "excuse me",
+      "distractors": [
+        "please",
+        "thank you",
+        "no problem"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "polite-conversation",
+      "id": "haitian-creole-polite-conversation-05-sorry",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"sorry\".",
+      "answer": "Mwen regrèt",
+      "distractors": [
+        "Tanpri",
+        "Mèsi",
+        "Pa gen pwoblèm"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "polite-conversation",
+      "id": "haitian-creole-polite-conversation-06-sorry",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "sorry",
+      "distractors": [
+        "please",
+        "thank you",
+        "no problem"
+      ],
+      "conceptId": "sorry",
+      "conceptRefs": [
+        "sorry"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-01-this-is-my-family",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Sa a se fanmi mwen\" mean in Haitian Creole?",
+      "answer": "this is my family",
+      "distractors": [
+        "this is my husband",
+        "this is my wife",
+        "he lives here"
+      ],
+      "conceptId": "this-is-my-family",
+      "conceptRefs": [
+        "this-is-my-family"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-02-this-is-my-husband",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"this is my husband\".",
+      "answer": "Sa a se mari mwen",
+      "distractors": [
+        "Sa a se fanmi mwen",
+        "Sa a se madanm mwen",
+        "Li rete isit la"
+      ],
+      "conceptId": "this-is-my-husband",
+      "conceptRefs": [
+        "this-is-my-husband"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "this-is-my-family",
+        "this-is-my-husband",
+        "this-is-my-wife",
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-04-he-lives-here",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Li rete isit la\".",
+      "answer": "he lives here",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-05-she-works-here",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"she works here\".",
+      "answer": "Li travay isit la",
+      "distractors": [
+        "Sa a se fanmi mwen",
+        "Sa a se mari mwen",
+        "Sa a se madanm mwen"
+      ],
+      "conceptId": "she-works-here",
+      "conceptRefs": [
+        "she-works-here"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-06-we-speak",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "we speak",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "we-speak",
+      "conceptRefs": [
+        "we-speak"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-07-they-are-from",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"they are from\".",
+      "answer": "Yo soti...",
+      "distractors": [
+        "Sa a se fanmi mwen",
+        "Sa a se mari mwen",
+        "Sa a se madanm mwen"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "introducing-others",
+      "id": "haitian-creole-introducing-others-08-they-are-from",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Yo soti...\" mean in Haitian Creole?",
+      "answer": "they are from",
+      "distractors": [
+        "this is my family",
+        "this is my husband",
+        "this is my wife"
+      ],
+      "conceptId": "they-are-from",
+      "conceptRefs": [
+        "they-are-from"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-01-yes",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Wi\" mean in Haitian Creole?",
+      "answer": "yes",
+      "distractors": [
+        "good afternoon",
+        "what is your name",
+        "where are you from"
+      ],
+      "conceptId": "yes",
+      "conceptRefs": [
+        "yes"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"good afternoon\".",
+      "answer": "Bon apremidi",
+      "distractors": [
+        "Wi",
+        "Kijan ou rele?",
+        "Ki kote ou soti?"
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "yes",
+        "good-afternoon",
+        "what-is-your-name",
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-04-where-are-you-from",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Ki kote ou soti?\".",
+      "answer": "where are you from",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "where-are-you-from",
+      "conceptRefs": [
+        "where-are-you-from"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-05-family",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"family\".",
+      "answer": "Fanmi",
+      "distractors": [
+        "Wi",
+        "Bon apremidi",
+        "Kijan ou rele?"
+      ],
+      "conceptId": "family",
+      "conceptRefs": [
+        "family"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-06-daughter",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "daughter",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-07-excuse-me",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"excuse me\".",
+      "answer": "Eskize m",
+      "distractors": [
+        "Wi",
+        "Bon apremidi",
+        "Kijan ou rele?"
+      ],
+      "conceptId": "excuse-me",
+      "conceptRefs": [
+        "excuse-me"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-08-he-lives-here",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Li rete isit la\" mean in Haitian Creole?",
+      "answer": "he lives here",
+      "distractors": [
+        "yes",
+        "good afternoon",
+        "what is your name"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "words-practice",
+      "id": "haitian-creole-words-practice-09-he-lives-here",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"he lives here\".",
+      "answer": "Li rete isit la",
+      "distractors": [
+        "Wi",
+        "Bon apremidi",
+        "Kijan ou rele?"
+      ],
+      "conceptId": "he-lives-here",
+      "conceptRefs": [
+        "he-lives-here"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-01-no",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Non\" mean in Haitian Creole?",
+      "answer": "no",
+      "distractors": [
+        "good afternoon",
+        "have a good day",
+        "i am learning"
+      ],
+      "conceptId": "no",
+      "conceptRefs": [
+        "no"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-02-good-afternoon",
+      "order": 2,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Haitian Creole phrase for \"good afternoon\".",
+      "answer": "Bon apremidi",
+      "distractors": [
+        "Non",
+        "Pase yon bon jounen",
+        "M ap aprann..."
+      ],
+      "conceptId": "good-afternoon",
+      "conceptRefs": [
+        "good-afternoon"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-03-match",
+      "order": 3,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Haitian Creole phrase to its meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "no",
+        "good-afternoon",
+        "have-a-good-day",
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-04-i-am-learning",
+      "order": 4,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"M ap aprann...\".",
+      "answer": "i am learning",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "i-am-learning",
+      "conceptRefs": [
+        "i-am-learning"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-05-where-do-you-live",
+      "order": 5,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"where do you live\".",
+      "answer": "Ki kote ou rete?",
+      "distractors": [
+        "Non",
+        "Bon apremidi",
+        "Pase yon bon jounen"
+      ],
+      "conceptId": "where-do-you-live",
+      "conceptRefs": [
+        "where-do-you-live"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-06-parents",
+      "order": 6,
+      "exerciseType": "listen-choice",
+      "prompt": "Listen, then choose the English meaning.",
+      "answer": "parents",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "parents",
+      "conceptRefs": [
+        "parents"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-07-daughter",
+      "order": 7,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"daughter\".",
+      "answer": "Pitit fi",
+      "distractors": [
+        "Non",
+        "Bon apremidi",
+        "Pase yon bon jounen"
+      ],
+      "conceptId": "daughter",
+      "conceptRefs": [
+        "daughter"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-08-no-problem",
+      "order": 8,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Pa gen pwoblèm\" mean in Haitian Creole?",
+      "answer": "no problem",
+      "distractors": [
+        "no",
+        "good afternoon",
+        "have a good day"
+      ],
+      "conceptId": "no-problem",
+      "conceptRefs": [
+        "no-problem"
+      ],
+      "voiceId": "",
+      "primary": false,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "haitian-creole",
+      "topicId": "practice-challenge",
+      "id": "haitian-creole-practice-challenge-09-no-problem",
+      "order": 9,
+      "exerciseType": "translate-to-target",
+      "prompt": "Choose the Haitian Creole for \"no problem\".",
+      "answer": "Pa gen pwoblèm",
+      "distractors": [
+        "Non",
+        "Bon apremidi",
+        "Pase yon bon jounen"
       ],
       "conceptId": "no-problem",
       "conceptRefs": [

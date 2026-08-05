@@ -11,6 +11,10 @@ const COURSE_PRESENTATIONS = Object.freeze({
     flag: '\u{1F1F8}\u{1F1F3}',
     heroAsset: 'assets/images/chapters/wolof-greetings.png',
   }),
+  'haitian-creole': Object.freeze({
+    flag: '\u{1F1ED}\u{1F1F9}',
+    heroAsset: 'assets/images/chapters/haitian-creole-greetings.png',
+  }),
 });
 
 function getCoursePresentationMetadata(courseId) {

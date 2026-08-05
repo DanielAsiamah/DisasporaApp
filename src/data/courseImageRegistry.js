@@ -1,11 +1,13 @@
 import { JAMAICAN_PATOIS_IMAGE_REGISTRY } from './jamaicanPatoisImageRegistry';
 import { SWAHILI_IMAGE_REGISTRY } from './swahiliImageRegistry';
 import { WOLOF_IMAGE_REGISTRY } from './wolofImageRegistry';
+import { HAITIAN_CREOLE_IMAGE_REGISTRY } from './haitianCreoleImageRegistry';
 
 const COURSE_IMAGE_REGISTRIES = Object.freeze({
   'jamaican-patois': JAMAICAN_PATOIS_IMAGE_REGISTRY,
   swahili: SWAHILI_IMAGE_REGISTRY,
   wolof: WOLOF_IMAGE_REGISTRY,
+  'haitian-creole': HAITIAN_CREOLE_IMAGE_REGISTRY,
 });
 
 export function getCourseImageRegistry(courseId) {
