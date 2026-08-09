@@ -47,6 +47,7 @@ test('the development audition script supports two private accounts and requires
   assert.match(source, /ELEVENLABS_API_KEY_SECONDARY/);
   assert.match(source, /--account/);
   assert.match(source, /ELEVENLABS_KEYS_ROTATED/);
+  assert.match(source, /assertSafePrivateElevenLabsKey/);
   assert.match(source, /--course/);
   assert.match(source, /target-swahili-yna/);
   assert.match(source, /if \(!options\.approved\)[\s\S]+before any ElevenLabs request/);
@@ -72,6 +73,7 @@ test('the rebuild test command includes every controlled-audio contract', () => 
     'voiceRoleContract.test.cjs',
     'courseVoicePlan.test.cjs',
     'narratorAudioManifest.test.cjs',
+    'elevenLabsKeySafety.test.cjs',
     'audioSafetyContract.test.cjs',
   ]) {
     assert.match(pkg.scripts['test:rebuild-contracts'], new RegExp(filename.replace('.', '\\.')));
@@ -79,6 +81,7 @@ test('the rebuild test command includes every controlled-audio contract', () => 
 
   assert.match(pkg.scripts['test:lesson-audio'], /courseVoicePlan\.test\.cjs/);
   assert.match(pkg.scripts['test:lesson-audio'], /narratorAudioManifest\.test\.cjs/);
+  assert.match(pkg.scripts['test:lesson-audio'], /elevenLabsKeySafety\.test\.cjs/);
 });
 
 test('unapproved legacy phrase audio is absent from the mobile bundle', () => {

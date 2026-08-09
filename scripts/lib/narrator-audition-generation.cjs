@@ -5,6 +5,7 @@ const path = require('node:path');
 const { buildNarratorAuditionManifest } = require('../../src/audio/narratorAudioManifest.cjs');
 const { VOICE_ROLES } = require('../../src/audio/voiceRoleContract.cjs');
 const { auditMp3Buffer } = require('./audit-mp3.cjs');
+const { assertSafePrivateElevenLabsKey } = require('./elevenlabs-key-safety.cjs');
 
 const HARD_CREDIT_LIMIT = 250;
 const ROLE_IDS = Object.freeze(['narrator-en', 'narrator-fr', 'narrator-ar']);
@@ -182,6 +183,15 @@ function validateNarratorGenerationPreflight({
       `${options.account === 'secondary' ? 'ELEVENLABS_API_KEY_SECONDARY' : 'ELEVENLABS_API_KEY'}`
       + ' is required in the private development environment.'
     );
+  } else {
+    try {
+      assertSafePrivateElevenLabsKey(
+        privateApiKey(environment, options.account),
+        options.account === 'secondary' ? 'ELEVENLABS_API_KEY_SECONDARY' : 'ELEVENLABS_API_KEY'
+      );
+    } catch (error) {
+      errors.push(error.message);
+    }
   }
   if (
     !Number.isInteger(options.maxCredits)

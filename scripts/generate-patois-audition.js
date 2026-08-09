@@ -10,6 +10,7 @@ const {
   validateVocabularyForGeneration,
   validateSpendGate,
 } = require('../src/audio/patoisAudioManifest.cjs');
+const { assertSafePrivateElevenLabsKey } = require('./lib/elevenlabs-key-safety.cjs');
 
 const projectRoot = path.resolve(__dirname, '..');
 const COURSE_CONFIGS = Object.freeze({
@@ -193,6 +194,7 @@ async function main() {
   const apiKeyEnvVar = options.account === 'secondary' ? 'ELEVENLABS_API_KEY_SECONDARY' : 'ELEVENLABS_API_KEY';
   const apiKey = process.env[apiKeyEnvVar];
   if (!apiKey) throw new Error(`${apiKeyEnvVar} is missing from the private development environment.`);
+  assertSafePrivateElevenLabsKey(apiKey, apiKeyEnvVar);
   const cast = await resolveAndValidateCast(audition.entries, apiKey, config.expectedNames);
   const balance = await getLiveBalance(apiKey);
   const spendErrors = validateSpendGate({

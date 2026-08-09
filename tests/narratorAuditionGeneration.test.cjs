@@ -203,6 +203,22 @@ test('paid generation fails closed before network when approval, rotated keys, o
   assert.deepEqual(calls, []);
 });
 
+test('paid narrator generation rejects previously shared keys even when the rotation flag says true', () => {
+  const { options, plan, role, voiceId } = generationFixture('narrator-en');
+  const errors = validateNarratorGenerationPreflight({
+    environment: {
+      ELEVENLABS_API_KEY: '6e855395d81d737092a8e513e99080672afcbb199426b3e9f1180cd5983ab6d9',
+      ELEVENLABS_KEYS_ROTATED: 'true',
+      [role.voiceEnvVar]: voiceId,
+    },
+    estimatedCredits: plan.estimatedCredits,
+    options,
+    plan,
+  });
+
+  assert.match(errors.join(' '), /previously exposed|rotate/i);
+});
+
 test('generation checks live balance before TTS and writes exact provenance with structural MP3 validation', async () => {
   const { environment, options, plan } = generationFixture('narrator-en');
   const order = [];
