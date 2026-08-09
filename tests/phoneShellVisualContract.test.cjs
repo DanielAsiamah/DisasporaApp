@@ -137,3 +137,15 @@ test('the Learn shell surfaces the active topic in a dedicated current-focus car
   assert.match(source, /currentFocusTitle:\s*\{/);
   assert.match(source, /currentFocusBody:\s*\{/);
 });
+
+test('the current-focus card spells out lesson position and a continue cue for the active topic', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const activeTopicIndex = activeLearnTopic \? topicStates\.findIndex\(\(topic\) => topic\.id === activeLearnTopic\.id\) \+ 1 : 1/);
+  assert.match(source, /<View style=\{styles\.currentFocusFooter\}>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{`Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusCta\}>Tap to continue →<\/Text>/);
+  assert.match(source, /currentFocusFooter:\s*\{/);
+  assert.match(source, /currentFocusMeta:\s*\{/);
+  assert.match(source, /currentFocusCta:\s*\{/);
+});
