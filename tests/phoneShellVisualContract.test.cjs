@@ -35,3 +35,11 @@ test('the Learn screen keeps the final topic row clear of the fixed bottom tab b
 
   assert.match(source, /learnContent:\s*\{\s*paddingBottom:\s*(?:12\d|1[3-9]\d|[2-9]\d{2,})\s*\}/s);
 });
+
+test('hero clouds start fully off-canvas so detached white bubbles never peek in from the screen edge', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const CLOUD_OFFSCREEN_START = -(?:2\d{2}|[3-9]\d{2,})/);
+  assert.match(source, /new Animated\.Value\(CLOUD_OFFSCREEN_START\)/);
+  assert.match(source, /Animated\.timing\(drift,\s*\{\s*toValue:\s*CLOUD_OFFSCREEN_START/s);
+});

@@ -31,13 +31,14 @@ const BORDER = '#D8E8F2';
 const MUTED = '#718397';
 const GREEN = '#22B65D';
 const CLOUD_FILL = '#F4FBFF';
+const CLOUD_OFFSCREEN_START = -220;
 const guideArt = {
   Kai: require('../../assets/guides/kai.png'),
   Amara: require('../../assets/guides/amara.png'),
   Sol: require('../../assets/guides/sol.png'),
 };
 function Cloud({ top, size, delay = 0, duration = 17000, reducedMotion }) {
-  const drift = useRef(new Animated.Value(-120)).current;
+  const drift = useRef(new Animated.Value(CLOUD_OFFSCREEN_START)).current;
   useEffect(() => {
     if (reducedMotion) {
       drift.setValue(0);
@@ -46,7 +47,7 @@ function Cloud({ top, size, delay = 0, duration = 17000, reducedMotion }) {
     const loop = Animated.loop(Animated.sequence([
       Animated.delay(delay),
       Animated.timing(drift, { toValue: 430, duration, useNativeDriver: true }),
-      Animated.timing(drift, { toValue: -120, duration: 0, useNativeDriver: true }),
+      Animated.timing(drift, { toValue: CLOUD_OFFSCREEN_START, duration: 0, useNativeDriver: true }),
     ]));
     loop.start();
     return () => loop.stop();
