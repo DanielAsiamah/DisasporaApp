@@ -130,8 +130,8 @@ test('the Learn shell surfaces the active topic in a dedicated current-focus car
   assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| topicStates\[0\] \|\| null/);
   assert.match(source, /<Pressable disabled=\{!activeLearnTopic\} onPress=\{\(\) => activeLearnTopic && setActiveTopic\(activeLearnTopic\)\} style=\{styles\.currentFocusCard\}>/);
   assert.match(source, /<Text style=\{styles\.currentFocusEyebrow\}>CURRENT FOCUS<\/Text>/);
-  assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{activeLearnTopic\?\.title \|\| ['"]Getting Started['"]\}<\/Text>/);
-  assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{getTopicFocusDescription\(activeLearnTopic\)\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
   assert.match(source, /currentFocusCard:\s*\{/);
   assert.match(source, /currentFocusEyebrow:\s*\{/);
   assert.match(source, /currentFocusTitle:\s*\{/);
@@ -143,9 +143,23 @@ test('the current-focus card spells out lesson position and a continue cue for t
 
   assert.match(source, /const activeTopicIndex = activeLearnTopic \? topicStates\.findIndex\(\(topic\) => topic\.id === activeLearnTopic\.id\) \+ 1 : 1/);
   assert.match(source, /<View style=\{styles\.currentFocusFooter\}>/);
-  assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{`Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`\}<\/Text>/);
-  assert.match(source, /<Text style=\{styles\.currentFocusCta\}>Tap to continue →<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{currentFocusMetaLabel\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusCta\}>\{currentFocusCtaLabel\}<\/Text>/);
   assert.match(source, /currentFocusFooter:\s*\{/);
   assert.match(source, /currentFocusMeta:\s*\{/);
   assert.match(source, /currentFocusCta:\s*\{/);
+});
+
+test('the current-focus card switches to a chapter-complete state instead of pretending there is another active lesson', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const chapterComplete = completedTopicCount >= topicStates\.length && topicStates\.length > 0/);
+  assert.match(source, /const currentFocusTitle = chapterComplete \? ['"]Chapter complete['"] : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
+  assert.match(source, /const currentFocusBody = chapterComplete \? ['"]You finished this chapter — replay any topic below whenever you want a refresher\.['"] : getTopicFocusDescription\(activeLearnTopic\)/);
+  assert.match(source, /const currentFocusMetaLabel = chapterComplete \? ['"]9 topics complete['"] : `Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
+  assert.match(source, /const currentFocusCtaLabel = chapterComplete \? ['"]Review chapter ↓['"] : ['"]Tap to continue →['"]/);
+  assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{currentFocusMetaLabel\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusCta\}>\{currentFocusCtaLabel\}<\/Text>/);
 });

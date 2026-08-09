@@ -258,11 +258,16 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   const activeLearnTopic = topicStates.find((topic) => topic.state === 'active') || topicStates[0] || null;
   const activeTopicIndex = activeLearnTopic ? topicStates.findIndex((topic) => topic.id === activeLearnTopic.id) + 1 : 1;
   const completedTopicCount = topicStates.filter((topic) => topic.state === 'complete').length;
+  const chapterComplete = completedTopicCount >= topicStates.length && topicStates.length > 0;
   const nextUpTopic = topicStates.find((topic) => topic.state === 'active') || null;
   const chapterProgressLabel = `${completedTopicCount} of ${topicStates.length} topics complete`;
   const nextUpLabel = completedTopicCount >= topicStates.length
     ? 'Chapter complete'
     : `Next up: ${nextUpTopic?.title || 'Getting Started'}`;
+  const currentFocusTitle = chapterComplete ? 'Chapter complete' : activeLearnTopic?.title || 'Getting Started';
+  const currentFocusBody = chapterComplete ? 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
+  const currentFocusMetaLabel = chapterComplete ? '9 topics complete' : `Lesson ${activeTopicIndex} of ${topicStates.length}`;
+  const currentFocusCtaLabel = chapterComplete ? 'Review chapter ↓' : 'Tap to continue →';
 
   useEffect(() => {
     let cancelled = false;
@@ -339,11 +344,11 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
                       </View>
                       <Pressable disabled={!activeLearnTopic} onPress={() => activeLearnTopic && setActiveTopic(activeLearnTopic)} style={styles.currentFocusCard}>
                         <Text style={styles.currentFocusEyebrow}>CURRENT FOCUS</Text>
-                        <Text style={styles.currentFocusTitle}>{activeLearnTopic?.title || 'Getting Started'}</Text>
-                        <Text style={styles.currentFocusBody}>{getTopicFocusDescription(activeLearnTopic)}</Text>
+                        <Text style={styles.currentFocusTitle}>{currentFocusTitle}</Text>
+                        <Text style={styles.currentFocusBody}>{currentFocusBody}</Text>
                         <View style={styles.currentFocusFooter}>
-                          <Text style={styles.currentFocusMeta}>{`Lesson ${activeTopicIndex} of ${topicStates.length}`}</Text>
-                          <Text style={styles.currentFocusCta}>Tap to continue →</Text>
+                          <Text style={styles.currentFocusMeta}>{currentFocusMetaLabel}</Text>
+                          <Text style={styles.currentFocusCta}>{currentFocusCtaLabel}</Text>
                         </View>
                       </Pressable>
                       {courseReviewPending ? (
