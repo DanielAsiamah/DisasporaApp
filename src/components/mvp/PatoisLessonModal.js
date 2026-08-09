@@ -319,6 +319,11 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
   const audio = useControlledLessonAudio({ phraseRegistry });
   const reducedMotion = useReducedMotion();
   const imageRegistry = useMemo(() => getCourseImageRegistry(runtimeCourseId), [runtimeCourseId]);
+  const courseTopics = useMemo(() => (
+    GENERATED_CURRICULUM.topics
+      .filter((candidate) => candidate.courseId === runtimeCourseId)
+      .sort((left, right) => left.order - right.order)
+  ), [runtimeCourseId]);
   const vocabulary = useMemo(() => (
     GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === runtimeCourseId)
   ), [runtimeCourseId]);
@@ -342,6 +347,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
   const openTopicId = useRef(null);
   const matchAttempt = useRef(0);
   const exercise = exercises[index];
+  const nextTopic = useMemo(() => courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null, [courseTopics, topic?.order]);
 
   useEffect(() => {
     if (!visible) {
@@ -420,6 +426,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
   }
 
   if (!topic) return null;
+  const completeBody = nextTopic ? `You finished ${topic.title}. Next up: ${nextTopic.title}.` : `You finished ${topic.title} and completed this chapter.`;
   const isChoice = [LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE, LESSON_EXERCISE_TYPES.LISTEN_CHOICE].includes(exercise?.type);
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
@@ -444,7 +451,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
             <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
             <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
             <Text style={styles.completeTitle}>Topic complete!</Text>
-            <Text style={styles.completeBody}>You finished {topic.title} and unlocked the next topic.</Text>
+            <Text style={styles.completeBody}>{completeBody}</Text>
+            {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
             <Pressable onPress={closeLesson} style={styles.primaryButton}><Text style={styles.primaryButtonText}>BACK TO CHAPTER</Text></Pressable>
           </View>
         ) : (
@@ -594,5 +602,7 @@ const styles = StyleSheet.create({
   completeGuide: { height: 140, marginBottom: -8, width: 140 },
   completeImage: { height: 250, width: 250 },
   completeTitle: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 31, paddingTop: 8 },
+  completeNextPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginBottom: 18, paddingHorizontal: 14, paddingVertical: 9 },
+  completeNextPillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },
   completeBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 16, lineHeight: 23, paddingBottom: 28, paddingTop: 8, textAlign: 'center' },
 });
