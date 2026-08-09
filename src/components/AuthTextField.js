@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { colors, fonts, radius, spacing } from '../theme';
+import { fonts, radius, spacing } from '../theme';
+import { AUTH_PALETTE } from './AuthScreenFrame';
 
 export default function AuthTextField({
   label,
@@ -35,7 +36,7 @@ export default function AuthTextField({
           onChangeText={onChangeText}
           onFocus={() => setFocused(true)}
           placeholder={placeholder}
-          placeholderTextColor={colors.textLight}
+          placeholderTextColor={AUTH_PALETTE.textSoft}
           returnKeyType={returnKeyType}
           secureTextEntry={isPassword && !passwordVisible}
           style={styles.input}
@@ -65,24 +66,24 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   label: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.brandBlue,
     fontFamily: fonts.bold,
     fontSize: 13,
   },
   inputRow: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
+    backgroundColor: AUTH_PALETTE.white,
+    borderColor: AUTH_PALETTE.border,
     borderRadius: radius.md,
     borderWidth: 1.5,
     flexDirection: 'row',
     minHeight: 52,
   },
   inputFocused: {
-    borderColor: colors.blue,
+    borderColor: AUTH_PALETTE.sky,
   },
   input: {
-    color: colors.textDark,
+    color: AUTH_PALETTE.brandBlue,
     flex: 1,
     fontFamily: fonts.semiBold,
     fontSize: 16,
@@ -90,10 +91,10 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   inputError: {
-    borderColor: colors.error,
+    borderColor: '#FF4B4B',
   },
   errorText: {
-    color: colors.error,
+    color: '#FF4B4B',
     fontFamily: fonts.semiBold,
     fontSize: 12,
   },
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   visibilityText: {
-    color: colors.blue,
+    color: AUTH_PALETTE.sky,
     fontFamily: fonts.extraBold,
     fontSize: 10,
     letterSpacing: 0.5,

@@ -13,9 +13,9 @@ export default function PrimaryButton({
 }) {
   const translateY = useRef(new Animated.Value(0)).current;
   const isPrimary = variant === 'primary';
-  const backgroundColor = isPrimary ? colors.primary : colors.surface;
-  const borderColor = isPrimary ? colors.primaryDark : colors.border;
-  const textColor = isPrimary ? colors.surface : colors.blue;
+  const backgroundColor = isPrimary ? colors.blue : '#FFFFFF';
+  const borderColor = isPrimary ? '#0C8CE9' : '#B7DFF7';
+  const textColor = isPrimary ? '#FFFFFF' : colors.blue;
   const unavailable = disabled || loading;
 
   function handlePressIn() {

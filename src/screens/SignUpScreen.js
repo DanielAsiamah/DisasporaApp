@@ -1,21 +1,12 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import AuthScreenFrame, { AUTH_PALETTE } from '../components/AuthScreenFrame';
 import AuthTextField from '../components/AuthTextField';
 import PrimaryButton from '../components/PrimaryButton';
 import { useAuth } from '../context/AuthContext';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
-import { colors, fonts, spacing } from '../theme';
+import { fonts, spacing } from '../theme';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -80,185 +71,182 @@ export default function SignUpScreen({ onSuccess, onSignIn, onBack, onboardingDa
   }
 
   return (
-    <View style={styles.root}>
-      <LinearGradient colors={[colors.skyTop, colors.skyBottom]} style={StyleSheet.absoluteFill} />
-
-      <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.flex}
-        >
-          <ScrollView
-            contentContainerStyle={styles.content}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.header}>
-              <Pressable onPress={onBack} style={styles.backButton}>
-                <Text style={styles.backText}>←</Text>
-              </Pressable>
+    <AuthScreenFrame
+      headerLabel="Create account"
+      keyboardAware
+      onBack={onBack}
+      subtitle="Create your account to keep your language, goal, and progress safe across devices."
+      title="Save your Diaspora path"
+    >
+      <View style={styles.form}>
+        {hasPersonalizedName ? (
+          <View style={styles.profileNameCard}>
+            <View style={styles.profileInitial}>
+              <Text style={styles.profileInitialText}>{username.trim().charAt(0).toUpperCase()}</Text>
             </View>
-
-            <Text style={styles.title}>Save your Diaspora path</Text>
-            <Text style={styles.subtitle}>
-              Create your account to keep your language, goal, and progress safe across devices.
-            </Text>
-
-            <View style={styles.form}>
-              {hasPersonalizedName ? (
-                <View style={styles.profileNameCard}>
-                  <View style={styles.profileInitial}><Text style={styles.profileInitialText}>{username.trim().charAt(0).toUpperCase()}</Text></View>
-                  <View style={styles.profileNameCopy}>
-                    <Text style={styles.profileNameEyebrow}>CREATING A PATH FOR</Text>
-                    <Text style={styles.profileName}>{username.trim()}</Text>
-                  </View>
-                </View>
-              ) : (
-                <AuthTextField
-                  label="Your name"
-                  value={username}
-                  onChangeText={(value) => {
-                    setUsername(value);
-                    setFieldErrors((current) => ({ ...current, username: '' }));
-                  }}
-                  placeholder="First name or nickname"
-                  autoCapitalize="words"
-                  autoComplete="name"
-                  textContentType="name"
-                  error={fieldErrors.username}
-                />
-              )}
-              <AuthTextField
-                label="Email"
-                value={email}
-                onChangeText={(value) => {
-                  setEmail(value);
-                  setFieldErrors((current) => ({ ...current, email: '' }));
-                }}
-                placeholder="you@example.com"
-                keyboardType="email-address"
-                autoComplete="email"
-                textContentType="emailAddress"
-                error={fieldErrors.email}
-              />
-              <AuthTextField
-                label="Password"
-                value={password}
-                onChangeText={(value) => {
-                  setPassword(value);
-                  setFieldErrors((current) => ({ ...current, password: '' }));
-                }}
-                placeholder="At least 8 characters"
-                secureTextEntry
-                autoComplete="new-password"
-                textContentType="newPassword"
-                error={fieldErrors.password}
-              />
-              <View style={styles.passwordRules}>
-                {passwordRules.map((rule) => (
-                  <View key={rule.label} style={styles.passwordRuleRow}>
-                    <Text style={[styles.passwordRuleIcon, rule.met && styles.passwordRuleMet]}>{rule.met ? '✓' : '○'}</Text>
-                    <Text style={[styles.passwordRuleText, rule.met && styles.passwordRuleMet]}>{rule.label}</Text>
-                  </View>
-                ))}
-              </View>
-              <AuthTextField
-                label="Confirm password"
-                value={confirmPassword}
-                onChangeText={(value) => {
-                  setConfirmPassword(value);
-                  setFieldErrors((current) => ({ ...current, confirmPassword: '' }));
-                }}
-                placeholder="Repeat your password"
-                secureTextEntry
-                autoComplete="new-password"
-                textContentType="newPassword"
-                returnKeyType="done"
-                onSubmitEditing={handleSignUp}
-                error={fieldErrors.confirmPassword}
-              />
-              {formError ? <Text style={styles.formError}>{formError}</Text> : null}
+            <View style={styles.profileNameCopy}>
+              <Text style={styles.profileNameEyebrow}>CREATING A PATH FOR</Text>
+              <Text style={styles.profileName}>{username.trim()}</Text>
             </View>
+          </View>
+        ) : (
+          <AuthTextField
+            autoCapitalize="words"
+            autoComplete="name"
+            error={fieldErrors.username}
+            label="Your name"
+            onChangeText={(value) => {
+              setUsername(value);
+              setFieldErrors((current) => ({ ...current, username: '' }));
+            }}
+            placeholder="First name or nickname"
+            textContentType="name"
+            value={username}
+          />
+        )}
+        <AuthTextField
+          autoComplete="email"
+          error={fieldErrors.email}
+          keyboardType="email-address"
+          label="Email"
+          onChangeText={(value) => {
+            setEmail(value);
+            setFieldErrors((current) => ({ ...current, email: '' }));
+          }}
+          placeholder="you@example.com"
+          textContentType="emailAddress"
+          value={email}
+        />
+        <AuthTextField
+          autoComplete="new-password"
+          error={fieldErrors.password}
+          label="Password"
+          onChangeText={(value) => {
+            setPassword(value);
+            setFieldErrors((current) => ({ ...current, password: '' }));
+          }}
+          placeholder="At least 8 characters"
+          secureTextEntry
+          textContentType="newPassword"
+          value={password}
+        />
+        <View style={styles.passwordRules}>
+          {passwordRules.map((rule) => (
+            <View key={rule.label} style={styles.passwordRuleRow}>
+              <Text style={[styles.passwordRuleIcon, rule.met && styles.passwordRuleMet]}>
+                {rule.met ? '✓' : '○'}
+              </Text>
+              <Text style={[styles.passwordRuleText, rule.met && styles.passwordRuleMet]}>
+                {rule.label}
+              </Text>
+            </View>
+          ))}
+        </View>
+        <AuthTextField
+          autoComplete="new-password"
+          error={fieldErrors.confirmPassword}
+          label="Confirm password"
+          onChangeText={(value) => {
+            setConfirmPassword(value);
+            setFieldErrors((current) => ({ ...current, confirmPassword: '' }));
+          }}
+          onSubmitEditing={handleSignUp}
+          placeholder="Repeat your password"
+          returnKeyType="done"
+          secureTextEntry
+          textContentType="newPassword"
+          value={confirmPassword}
+        />
+        {formError ? <Text style={styles.formError}>{formError}</Text> : null}
+      </View>
 
-            <PrimaryButton label="Create account" loading={loading} onPress={handleSignUp} style={styles.controlWidth} />
+      <PrimaryButton
+        label="Create account"
+        loading={loading}
+        onPress={handleSignUp}
+        style={styles.controlWidth}
+      />
 
-            <Pressable onPress={onSignIn} style={styles.linkButton}>
-              <Text style={styles.linkText}>Already have an account? Sign in</Text>
-            </Pressable>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </View>
+      <Pressable onPress={onSignIn} style={styles.linkButton}>
+        <Text style={styles.linkText}>Already have an account? Sign in</Text>
+      </Pressable>
+    </AuthScreenFrame>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  content: {
-    alignItems: 'center',
-    flexGrow: 1,
-    paddingBottom: spacing.xl,
-  },
-  header: {
-    alignSelf: 'center',
-    marginBottom: spacing.lg,
-    marginTop: spacing.sm,
-    width: '88%',
-  },
-  backButton: {
-    alignItems: 'center',
-    height: 40,
-    justifyContent: 'center',
-    width: 40,
-  },
-  backText: {
-    color: colors.blue,
-    fontFamily: fonts.extraBold,
-    fontSize: 24,
-  },
-  title: {
-    width: '88%',
-    color: colors.textDark,
-    fontFamily: fonts.black,
-    fontSize: 30,
-    lineHeight: 36,
-  },
-  subtitle: {
-    width: '88%',
-    color: colors.textMuted,
-    fontFamily: fonts.semiBold,
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: spacing.lg,
-    marginTop: spacing.sm,
-  },
   form: {
     gap: spacing.md,
     marginBottom: spacing.lg,
-    width: '88%',
+    width: '100%',
   },
-  controlWidth: { width: '88%' },
-  profileNameCard: { alignItems: 'center', backgroundColor: colors.surfaceMuted, borderColor: colors.border, borderRadius: 16, borderWidth: 1.5, flexDirection: 'row', gap: spacing.sm, padding: spacing.sm },
-  profileInitial: { alignItems: 'center', backgroundColor: colors.primary, borderRadius: 22, height: 44, justifyContent: 'center', width: 44 },
-  profileInitialText: { color: colors.surface, fontFamily: fonts.black, fontSize: 18 },
-  profileNameCopy: { flex: 1 },
-  profileNameEyebrow: { color: colors.textLight, fontFamily: fonts.extraBold, fontSize: 9, letterSpacing: 0.7 },
-  profileName: { color: colors.text, fontFamily: fonts.extraBold, fontSize: 17, marginTop: 2 },
-  passwordRules: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  passwordRuleRow: { alignItems: 'center', flexDirection: 'row', gap: 5, minWidth: '46%' },
-  passwordRuleIcon: { color: colors.textLight, fontFamily: fonts.extraBold, fontSize: 13 },
-  passwordRuleText: { color: colors.textLight, fontFamily: fonts.semiBold, fontSize: 11 },
-  passwordRuleMet: { color: colors.primary },
+  controlWidth: {
+    width: '100%',
+  },
+  profileNameCard: {
+    alignItems: 'center',
+    backgroundColor: AUTH_PALETTE.white,
+    borderColor: AUTH_PALETTE.border,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: spacing.sm,
+    padding: spacing.sm,
+  },
+  profileInitial: {
+    alignItems: 'center',
+    backgroundColor: AUTH_PALETTE.sky,
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  profileInitialText: {
+    color: AUTH_PALETTE.white,
+    fontFamily: fonts.black,
+    fontSize: 18,
+  },
+  profileNameCopy: {
+    flex: 1,
+  },
+  profileNameEyebrow: {
+    color: AUTH_PALETTE.textSoft,
+    fontFamily: fonts.extraBold,
+    fontSize: 9,
+    letterSpacing: 0.7,
+  },
+  profileName: {
+    color: AUTH_PALETTE.brandBlue,
+    fontFamily: fonts.extraBold,
+    fontSize: 17,
+    marginTop: 2,
+  },
+  passwordRules: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  passwordRuleRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 5,
+    minWidth: '46%',
+  },
+  passwordRuleIcon: {
+    color: AUTH_PALETTE.textSoft,
+    fontFamily: fonts.extraBold,
+    fontSize: 13,
+  },
+  passwordRuleText: {
+    color: AUTH_PALETTE.textSoft,
+    fontFamily: fonts.semiBold,
+    fontSize: 11,
+  },
+  passwordRuleMet: {
+    color: AUTH_PALETTE.success,
+  },
   formError: {
-    color: colors.error,
+    color: '#FF4B4B',
     fontFamily: fonts.semiBold,
     fontSize: 14,
     lineHeight: 20,
@@ -269,7 +257,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   linkText: {
-    color: colors.blue,
+    color: AUTH_PALETTE.sky,
     fontFamily: fonts.extraBold,
     fontSize: 15,
   },
