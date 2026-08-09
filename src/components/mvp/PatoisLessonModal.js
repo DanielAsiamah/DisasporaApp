@@ -314,7 +314,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClose, onComplete, previewCourseId = null, topic, visible }) {
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onClose, onComplete, previewCourseId = null, topic, visible }) {
   const requestedCourse = getCourseById(courseId);
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
@@ -435,6 +435,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
   const topicModeLabel = getTopicModeLabel(topic);
   const completionTitle = topic.type === 'challenge' ? 'Challenge complete!' : topic.type === 'review' ? 'Review complete!' : 'Topic complete!';
   const completeBody = nextTopic ? `You finished ${topic.title}. Next up: ${nextTopic.title}.` : `You finished ${topic.title} and completed this chapter.`;
+  const completionBackButtonStyle = nextTopic ? styles.secondaryButton : styles.primaryButton;
+  const completionBackButtonTextStyle = nextTopic ? styles.secondaryButtonText : styles.primaryButtonText;
   const isChoice = [LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE, LESSON_EXERCISE_TYPES.LISTEN_CHOICE].includes(exercise?.type);
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
@@ -461,7 +463,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
             <Text style={styles.completeTitle}>{completionTitle}</Text>
             <Text style={styles.completeBody}>{completeBody}</Text>
             {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
-            <Pressable onPress={closeLesson} style={styles.primaryButton}><Text style={styles.primaryButtonText}>BACK TO CHAPTER</Text></Pressable>
+            <View style={styles.completeActions}>
+              {nextTopic ? <Pressable onPress={() => onAdvance?.(nextTopic)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>START NEXT TOPIC</Text></Pressable> : null}
+              <Pressable onPress={closeLesson} style={completionBackButtonStyle}><Text style={completionBackButtonTextStyle}>BACK TO CHAPTER</Text></Pressable>
+            </View>
           </View>
         ) : (
           <>
@@ -610,10 +615,13 @@ const styles = StyleSheet.create({
   primaryButton: { alignItems: 'center', backgroundColor: SKY, borderRadius: 17, justifyContent: 'center', minHeight: 56, paddingHorizontal: 24 },
   primaryButtonDisabled: { backgroundColor: '#D9E5EB' },
   primaryButtonText: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 16 },
+  secondaryButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: SKY, borderRadius: 17, borderWidth: 2, justifyContent: 'center', minHeight: 56, paddingHorizontal: 24 },
+  secondaryButtonText: { color: SKY, fontFamily: fonts.extraBold, fontSize: 16 },
   completeScreen: { alignItems: 'center', flex: 1, justifyContent: 'center', padding: 28 },
   confetti: { color: '#FFB936', fontSize: 36, letterSpacing: 8 },
   completeGuide: { height: 140, marginBottom: -8, width: 140 },
   completeImage: { height: 250, width: 250 },
+  completeActions: { gap: 12, width: '100%' },
   completeTitle: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 31, paddingTop: 8 },
   completeNextPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginBottom: 18, paddingHorizontal: 14, paddingVertical: 9 },
   completeNextPillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },

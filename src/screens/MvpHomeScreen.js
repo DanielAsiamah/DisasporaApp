@@ -374,7 +374,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal courseId={storageCourseId} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic)} />
+      <PatoisLessonModal courseId={storageCourseId} onAdvance={setActiveTopic} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic)} />
     </SafeAreaView>
   );
 }

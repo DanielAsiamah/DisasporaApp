@@ -102,6 +102,22 @@ test('the lesson completion screen names the unlocked next topic instead of usin
   assert.match(source, /completeNextPillText:\s*\{/);
 });
 
+test('the lesson completion screen can launch the next unlocked topic directly from its completion card', () => {
+  const modalSource = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+  const homeSource = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(modalSource, /export default function PatoisLessonModal\(\{[\s\S]*onAdvance[\s\S]*topic,\s*visible\s*\}\)/);
+  assert.match(modalSource, /<View style=\{styles\.completeActions\}>/);
+  assert.match(modalSource, /nextTopic \? <Pressable onPress=\{\(\) => onAdvance\?\.\(nextTopic\)\} style=\{styles\.primaryButton\}><Text style=\{styles\.primaryButtonText\}>START NEXT TOPIC<\/Text><\/Pressable> : null/);
+  assert.match(modalSource, /const completionBackButtonStyle = nextTopic \? styles\.secondaryButton : styles\.primaryButton/);
+  assert.match(modalSource, /const completionBackButtonTextStyle = nextTopic \? styles\.secondaryButtonText : styles\.primaryButtonText/);
+  assert.match(modalSource, /<Pressable onPress=\{closeLesson\} style=\{completionBackButtonStyle\}><Text style=\{completionBackButtonTextStyle\}>BACK TO CHAPTER<\/Text><\/Pressable>/);
+  assert.match(modalSource, /completeActions:\s*\{/);
+  assert.match(modalSource, /secondaryButton:\s*\{/);
+  assert.match(modalSource, /secondaryButtonText:\s*\{/);
+  assert.match(homeSource, /<PatoisLessonModal[\s\S]*onAdvance=\{setActiveTopic\}[\s\S]*visible=\{Boolean\(activeTopic\)\}/);
+});
+
 test('review and challenge lessons carry their own mode label and completion title inside the modal', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
