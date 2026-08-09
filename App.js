@@ -25,6 +25,7 @@ import GuidedOnboardingScreen from './src/screens/GuidedOnboardingScreen';
 import AccountChoiceScreen from './src/screens/AccountChoiceScreen';
 import EmailVerificationScreen from './src/screens/EmailVerificationScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
+import { AUTH_PALETTE } from './src/components/AuthScreenFrame';
 import {
   cancelDailyReminder,
   configureNotificationHandler,
@@ -259,7 +260,7 @@ function AppContent() {
   if (initializing || !routeReady || !screen) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={AUTH_PALETTE.sky} size="large" />
       </View>
     );
   }
@@ -477,7 +478,7 @@ export default function App() {
   if (!fontsLoaded) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={AUTH_PALETTE.sky} size="large" />
       </View>
     );
   }
@@ -495,27 +496,27 @@ export default function App() {
 const styles = StyleSheet.create({
   loading: {
     alignItems: 'center',
-    backgroundColor: colors.splash,
+    backgroundColor: AUTH_PALETTE.backgroundBottom,
     flex: 1,
     justifyContent: 'center',
   },
   profileErrorRoot: {
     alignItems: 'center',
-    backgroundColor: colors.splash,
+    backgroundColor: AUTH_PALETTE.backgroundBottom,
     flex: 1,
     gap: 16,
     justifyContent: 'center',
     paddingHorizontal: 32,
   },
   profileErrorTitle: {
-    color: colors.text,
+    color: AUTH_PALETTE.brandBlue,
     fontFamily: 'PlusJakartaSans_800ExtraBold',
     fontSize: 26,
     lineHeight: 34,
     textAlign: 'center',
   },
   profileErrorBody: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.textMuted,
     fontFamily: 'PlusJakartaSans_500Medium',
     fontSize: 15,
     lineHeight: 23,
@@ -524,7 +525,7 @@ const styles = StyleSheet.create({
   },
   profileErrorButton: {
     alignItems: 'center',
-    backgroundColor: colors.primary,
+    backgroundColor: AUTH_PALETTE.sky,
     borderRadius: 16,
     justifyContent: 'center',
     marginTop: 8,

@@ -2,40 +2,33 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
-import { colors, fonts } from '../theme';
+import { AUTH_PALETTE } from '../components/AuthScreenFrame';
+import { fonts } from '../theme';
 
 const PHASES = [
   {
     key: 'welcome',
-    line: 'Welcome to Diaspora...',
-    subline: 'Learn the languages of the people',
-    accent: colors.textOnDark,
-    gradient: [colors.splash, '#101E33', colors.splash],
-    duration: 1800,
+    line: 'Diaspora',
+    subline: 'Languages carry us home',
+    accent: AUTH_PALETTE.brandBlue,
+    gradient: [AUTH_PALETTE.backgroundTop, '#F7FDFF', AUTH_PALETTE.backgroundBottom],
+    duration: 1600,
   },
   {
-    key: 'africa',
-    line: 'Africa',
-    subline: 'Swahili · Igbo · Wolof · more coming soon',
-    accent: colors.africaGold,
-    gradient: [colors.splashWarm, '#2A1808', colors.splashWarm],
-    duration: 1400,
+    key: 'courses',
+    line: 'Six live MVP courses',
+    subline: 'Jamaican Patois · Swahili · Wolof · Haitian Creole · Sudanese Arabic · Nobiin',
+    accent: AUTH_PALETTE.sky,
+    gradient: ['#EEF9FF', '#FFFFFF', '#F3FBFF'],
+    duration: 1600,
   },
   {
-    key: 'caribbean',
-    line: 'Caribbean',
-    subline: 'Jamaican Patois · Haitian Creole',
-    accent: colors.caribbeanBright,
-    gradient: [colors.splashGreen, '#0D2618', colors.splashGreen],
-    duration: 1400,
-  },
-  {
-    key: 'americas',
-    line: 'The Americas',
-    subline: 'Belizean Kriol · Black American English · living roots',
-    accent: colors.coral,
-    gradient: ['#1A0A05', '#2B1510', '#1A0A05'],
-    duration: 1400,
+    key: 'promise',
+    line: 'Learn • Review • Leaderboard',
+    subline: 'Built for diaspora language journeys with real lessons and clear progress.',
+    accent: AUTH_PALETTE.success,
+    gradient: ['#F6FCFF', '#FFFFFF', '#EAF8FF'],
+    duration: 1500,
   },
 ];
 
@@ -96,8 +89,10 @@ export default function SplashScreen({ onFinish }) {
     }
 
     runSequence();
-    return () => { cancelled = true; };
-  }, [bgProgress, exitOpacity, onFinish, textOpacity, textScale, sublineOpacity]);
+    return () => {
+      cancelled = true;
+    };
+  }, [bgProgress, exitOpacity, onFinish, sublineOpacity, textOpacity, textScale]);
 
   function animateIn() {
     return new Promise((resolve) => {
@@ -138,17 +133,20 @@ export default function SplashScreen({ onFinish }) {
   }
 
   const phase = PHASES[phaseIndex];
-  const phaseCount = PHASES.length - 1;
-  const inputRange = Array.from({ length: PHASES.length }, (_, i) => i / phaseCount);
-  const bgColors = PHASES.map((p) => p.gradient[1]);
+  const inputRange = Array.from({ length: PHASES.length }, (_, i) =>
+    PHASES.length === 1 ? 0 : i / (PHASES.length - 1)
+  );
+  const bgColors = PHASES.map((entry) => entry.gradient[1]);
   const backgroundColor = bgProgress.interpolate({ inputRange, outputRange: bgColors });
 
   return (
     <Animated.View style={[styles.root, { opacity: exitOpacity }]}>
       <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor }]} />
       <LinearGradient colors={phase.gradient} style={StyleSheet.absoluteFill} />
+      <View style={styles.glow} />
 
       <View style={styles.content}>
+        <Text style={styles.brandPill}>Diaspora</Text>
         <Animated.Text
           style={[
             phase.key === 'welcome' ? styles.welcomeText : styles.phaseText,
@@ -175,31 +173,58 @@ function wait(ms) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: {
+    flex: 1,
+  },
+  glow: {
+    backgroundColor: 'rgba(28,176,246,0.08)',
+    borderRadius: 999,
+    height: 240,
+    position: 'absolute',
+    right: -90,
+    top: 120,
+    width: 240,
+  },
   content: {
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 32,
   },
+  brandPill: {
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderColor: AUTH_PALETTE.border,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    color: AUTH_PALETTE.sky,
+    fontFamily: fonts.extraBold,
+    fontSize: 12,
+    letterSpacing: 0.8,
+    marginBottom: 18,
+    overflow: 'hidden',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    textTransform: 'uppercase',
+  },
   welcomeText: {
-    fontFamily: fonts.semiBold,
-    fontSize: 22,
-    letterSpacing: 0.3,
+    fontFamily: fonts.black,
+    fontSize: 38,
+    letterSpacing: 0.4,
     textAlign: 'center',
   },
   phaseText: {
-    fontFamily: fonts.extraBold,
-    fontSize: 48,
-    letterSpacing: 1,
+    fontFamily: fonts.black,
+    fontSize: 34,
+    letterSpacing: 0.2,
     textAlign: 'center',
   },
   subline: {
-    color: colors.textOnDark,
-    fontFamily: fonts.medium,
+    color: AUTH_PALETTE.textMuted,
+    fontFamily: fonts.semiBold,
     fontSize: 16,
+    lineHeight: 24,
     marginTop: 14,
-    opacity: 0.82,
+    opacity: 0.92,
     textAlign: 'center',
   },
 });

@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
+import { AUTH_PALETTE } from '../components/AuthScreenFrame';
 import PrimaryButton from '../components/PrimaryButton';
 import { colors, fonts, radius, spacing } from '../theme';
 
@@ -46,8 +47,8 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
   return (
     <View style={styles.root}>
       <AnimatedAtmosphere
-        accent={colors.caribbeanGreen}
-        colors={[colors.splashGreen, colors.skyTop, colors.skyBottom]}
+        accent={AUTH_PALETTE.sky}
+        colors={[AUTH_PALETTE.backgroundTop, AUTH_PALETTE.backgroundBottom]}
       />
 
       <SafeAreaView style={styles.safeArea}>
@@ -140,7 +141,7 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 }
 
 const styles = StyleSheet.create({
-  root: { backgroundColor: colors.skyBottom, flex: 1 },
+  root: { backgroundColor: AUTH_PALETTE.backgroundBottom, flex: 1 },
   safeArea: { flex: 1 },
   header: {
     alignItems: 'center',
@@ -149,25 +150,25 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
-  backText: { color: colors.textMuted, fontFamily: fonts.black, fontSize: 34, lineHeight: 38 },
+  backText: { color: AUTH_PALETTE.brandBlue, fontFamily: fonts.black, fontSize: 34, lineHeight: 38 },
   progressContainer: {
-    backgroundColor: colors.border,
+    backgroundColor: AUTH_PALETTE.border,
     borderRadius: radius.pill,
     flex: 1,
     height: 10,
     marginLeft: spacing.sm,
     overflow: 'hidden',
   },
-  progressBar: { backgroundColor: colors.primary, height: '100%', width: '66%' },
+  progressBar: { backgroundColor: AUTH_PALETTE.sky, height: '100%', width: '66%' },
   content: { flex: 1, paddingHorizontal: spacing.lg },
   title: {
-    color: colors.textDark,
+    color: AUTH_PALETTE.brandBlue,
     fontFamily: fonts.black,
     fontSize: 26,
     lineHeight: 32,
   },
   subtitle: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.textMuted,
     fontFamily: fonts.semiBold,
     fontSize: 14,
     lineHeight: 21,
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1, marginTop: spacing.md },
   list: { gap: spacing.sm, paddingBottom: spacing.xl },
   sectionLabel: {
-    color: colors.textLight,
+    color: AUTH_PALETTE.textSoft,
     fontFamily: fonts.black,
     fontSize: 13,
     letterSpacing: 0.7,
@@ -185,23 +186,23 @@ const styles = StyleSheet.create({
   },
   card: {
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderBottomColor: colors.border,
+    backgroundColor: AUTH_PALETTE.white,
+    borderBottomColor: AUTH_PALETTE.border,
     borderBottomWidth: 4,
-    borderColor: colors.border,
+    borderColor: AUTH_PALETTE.border,
     borderRadius: radius.lg,
     borderWidth: 2,
     flexDirection: 'row',
     gap: spacing.md,
     padding: spacing.md,
   },
-  cardSelected: { backgroundColor: colors.surfaceMuted, borderColor: colors.primary },
+  cardSelected: { backgroundColor: AUTH_PALETTE.skySoft, borderColor: AUTH_PALETTE.sky },
   cardDisabled: { opacity: 0.58 },
   cardPressed: { opacity: 0.85, transform: [{ translateY: 1 }] },
   flagCircle: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
+    backgroundColor: AUTH_PALETTE.skySoft,
+    borderColor: AUTH_PALETTE.border,
     borderRadius: radius.pill,
     borderWidth: 1,
     height: 48,
@@ -211,16 +212,16 @@ const styles = StyleSheet.create({
   flagEmoji: { fontSize: 26 },
   cardInfo: { flex: 1, gap: 4 },
   labelRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  cardLabel: { color: colors.textDark, fontFamily: fonts.black, fontSize: 17 },
+  cardLabel: { color: AUTH_PALETTE.brandBlue, fontFamily: fonts.black, fontSize: 17 },
   badge: {
     backgroundColor: colors.africaGold,
     borderRadius: radius.sm,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  badgeText: { color: colors.skyBottom, fontFamily: fonts.black, fontSize: 9 },
+  badgeText: { color: AUTH_PALETTE.brandBlue, fontFamily: fonts.black, fontSize: 9 },
   cardSubtitle: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.textMuted,
     fontFamily: fonts.medium,
     fontSize: 13,
     lineHeight: 18,
@@ -228,18 +229,18 @@ const styles = StyleSheet.create({
   categoryText: { color: colors.africaGold, fontFamily: fonts.bold, fontSize: 11 },
   radioCircle: {
     alignItems: 'center',
-    borderColor: colors.border,
+    borderColor: AUTH_PALETTE.border,
     borderRadius: 999,
     borderWidth: 2,
     height: 22,
     justifyContent: 'center',
     width: 22,
   },
-  radioCircleActive: { borderColor: colors.primary },
-  radioInner: { backgroundColor: colors.primary, borderRadius: 999, height: 12, width: 12 },
+  radioCircleActive: { borderColor: AUTH_PALETTE.sky },
+  radioInner: { backgroundColor: AUTH_PALETTE.sky, borderRadius: 999, height: 12, width: 12 },
   footer: {
-    backgroundColor: colors.skyBottom,
-    borderTopColor: colors.border,
+    backgroundColor: AUTH_PALETTE.backgroundBottom,
+    borderTopColor: AUTH_PALETTE.border,
     borderTopWidth: 1.5,
     paddingBottom: spacing.lg,
     paddingTop: spacing.md,

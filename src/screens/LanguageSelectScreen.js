@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
+import { AUTH_PALETTE } from '../components/AuthScreenFrame';
 import { colors, fonts, radius, spacing } from '../theme';
 
 const NATIVE_LANGUAGES = [
@@ -32,7 +33,6 @@ const NATIVE_LANGUAGES = [
     subtitle: 'تعلم من اللغة العربية',
     flag: '🇸🇦',
     accentColor: colors.africaGold,
-    disabled: true,
   },
 ];
 
@@ -59,8 +59,8 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
   return (
     <View style={styles.root}>
       <AnimatedAtmosphere
-        colors={[colors.splashGreen, colors.skyTop, colors.skyBottom]}
-        accent={colors.blue}
+        colors={[AUTH_PALETTE.backgroundTop, AUTH_PALETTE.backgroundBottom]}
+        accent={AUTH_PALETTE.sky}
       />
 
       <SafeAreaView style={styles.safeArea}>
@@ -79,9 +79,9 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
           ]}
         >
-          <Text style={styles.title}>What language do you speak?</Text>
+          <Text style={styles.title}>What language do you speak best?</Text>
           <Text style={styles.subtitle}>
-            Select your native language. We will customize your courses based on this.
+            Choose your base language and we’ll open the matching Diaspora course lane.
           </Text>
 
           <View style={styles.list}>
@@ -118,7 +118,7 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.skyBottom,
+    backgroundColor: AUTH_PALETTE.backgroundBottom,
   },
   safeArea: {
     flex: 1,
@@ -136,12 +136,12 @@ const styles = StyleSheet.create({
     width: 40,
   },
   backText: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.brandBlue,
     fontFamily: fonts.black,
     fontSize: 24,
   },
   progressContainer: {
-    backgroundColor: colors.border,
+    backgroundColor: AUTH_PALETTE.border,
     borderRadius: radius.pill,
     flex: 1,
     height: 10,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   progressBar: {
-    backgroundColor: colors.primary,
+    backgroundColor: AUTH_PALETTE.sky,
     height: '100%',
     width: '33%',
   },
@@ -159,14 +159,14 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
   },
   title: {
-    color: colors.textDark,
+    color: AUTH_PALETTE.brandBlue,
     fontFamily: fonts.black,
     fontSize: 28,
     lineHeight: 34,
     textAlign: 'left',
   },
   subtitle: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.textMuted,
     fontFamily: fonts.semiBold,
     fontSize: 15,
     lineHeight: 22,
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
   },
   card: {
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    backgroundColor: AUTH_PALETTE.white,
+    borderColor: AUTH_PALETTE.border,
     borderBottomWidth: 4,
     borderRadius: radius.lg,
     borderWidth: 2,
@@ -209,18 +209,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardLabel: {
-    color: colors.textDark,
+    color: AUTH_PALETTE.brandBlue,
     fontFamily: fonts.black,
     fontSize: 18,
   },
   cardSubtitle: {
-    color: colors.textMuted,
+    color: AUTH_PALETTE.textMuted,
     fontFamily: fonts.bold,
     fontSize: 12,
     marginTop: 2,
   },
   arrow: {
-    color: colors.border,
+    color: AUTH_PALETTE.textSoft,
     fontFamily: fonts.black,
     fontSize: 18,
     marginRight: spacing.xs,
