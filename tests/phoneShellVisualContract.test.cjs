@@ -122,3 +122,18 @@ test('the lesson modal keeps the current topic title visible above every exercis
   assert.match(source, /<Text style=\{styles\.topicTitle\}>\{topic\.title\}<\/Text>/);
   assert.match(source, /topicTitle:\s*\{/);
 });
+
+test('the Learn shell surfaces the active topic in a dedicated current-focus card above the grid', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /function getTopicFocusDescription\(topic\)/);
+  assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| topicStates\[0\] \|\| null/);
+  assert.match(source, /<Pressable disabled=\{!activeLearnTopic\} onPress=\{\(\) => activeLearnTopic && setActiveTopic\(activeLearnTopic\)\} style=\{styles\.currentFocusCard\}>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusEyebrow\}>CURRENT FOCUS<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{activeLearnTopic\?\.title \|\| ['"]Getting Started['"]\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{getTopicFocusDescription\(activeLearnTopic\)\}<\/Text>/);
+  assert.match(source, /currentFocusCard:\s*\{/);
+  assert.match(source, /currentFocusEyebrow:\s*\{/);
+  assert.match(source, /currentFocusTitle:\s*\{/);
+  assert.match(source, /currentFocusBody:\s*\{/);
+});
