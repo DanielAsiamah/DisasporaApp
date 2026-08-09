@@ -33,3 +33,11 @@ test('lesson motion and modal transitions respect reduced motion', () => {
   assert.match(source, /if \(correct && !reducedMotion\)/);
   assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{topic\.guide \|\| ['"]Kai['"]\}/s);
 });
+
+test('correct lesson feedback uses an explicit celebration treatment instead of plain text only', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /feedback === ['"]correct['"] &&/);
+  assert.match(source, /<Text style=\{styles\.feedbackConfetti\}>/);
+  assert.match(source, /<BreathingGuidePortrait[^>]+style=\{styles\.feedbackGuide\}/s);
+});

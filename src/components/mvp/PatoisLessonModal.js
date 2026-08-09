@@ -486,6 +486,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
                   feedback === 'correct' ? styles.feedbackCorrect : styles.feedbackWrong,
                   feedback === 'correct' && { transform: [{ scale: celebration.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) }] },
                 ]}>
+                  {feedback === 'correct' && (
+                    <>
+                      <Text style={styles.feedbackConfetti}>✦  ✧  ✦</Text>
+                      <BreathingGuidePortrait
+                        guideName={topic.guide || 'Kai'}
+                        reducedMotion={reducedMotion}
+                        style={styles.feedbackGuide}
+                      />
+                    </>
+                  )}
                   <Text style={styles.feedbackTitle}>{feedback === 'correct' ? 'Correct! +10 XP' : 'Almost — try again'}</Text>
                   <Text style={styles.feedbackAnswer}>{exercise.answer}</Text>
                 </Animated.View>
@@ -557,6 +567,8 @@ const styles = StyleSheet.create({
   feedbackCard: { borderRadius: 18, marginTop: 18, padding: 16 },
   feedbackCorrect: { backgroundColor: '#E7F9EE' },
   feedbackWrong: { backgroundColor: '#FFF0F0' },
+  feedbackConfetti: { color: '#FFB936', fontSize: 18, letterSpacing: 6, marginBottom: 4, textAlign: 'center' },
+  feedbackGuide: { alignSelf: 'center', height: 82, marginBottom: 6, width: 82 },
   feedbackTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 18 },
   feedbackAnswer: { color: MUTED, fontFamily: fonts.bold, paddingTop: 4 },
   footer: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, bottom: 0, left: 0, padding: 18, position: 'absolute', right: 0 },
