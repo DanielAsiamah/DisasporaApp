@@ -76,3 +76,16 @@ test('review and challenge topics get their own Learn-grid treatment instead of 
   assert.match(source, /topicBadgeLabel \? <Text style=\{styles\.topicBadge\}>\{topicBadgeLabel\}<\/Text> : null/);
   assert.match(source, /topicBadge:\s*\{/);
 });
+
+test('the Learn chapter header summarizes real progress and the next topic above the grid', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const completedTopicCount = topicStates\.filter\(\(topic\) => topic\.state === ['"]complete['"]\)\.length/);
+  assert.match(source, /const nextUpTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| null/);
+  assert.match(source, /const chapterProgressLabel = `\$\{completedTopicCount\} of \$\{topicStates\.length\} topics complete`/);
+  assert.match(source, /const nextUpLabel = completedTopicCount >= topicStates\.length[\s\S]*?['"]Chapter complete['"][\s\S]*?`Next up: \$\{nextUpTopic\?\.title \|\| ['"]Getting Started['"]\}`/);
+  assert.match(source, /<View style=\{styles\.chapterSummaryRow\}>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{chapterProgressLabel\}<\/Text>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{nextUpLabel\}<\/Text>/s);
+  assert.match(source, /chapterSummaryRow:\s*\{/);
+  assert.match(source, /chapterSummaryPill:\s*\{/);
+  assert.match(source, /chapterSummaryText:\s*\{/);
+});

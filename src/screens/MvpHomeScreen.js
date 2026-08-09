@@ -248,6 +248,12 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   const featuredGuide = topicStates.find((topic) => topic.state === 'active')?.guide
     || topics[0]?.guide
     || 'Kai';
+  const completedTopicCount = topicStates.filter((topic) => topic.state === 'complete').length;
+  const nextUpTopic = topicStates.find((topic) => topic.state === 'active') || null;
+  const chapterProgressLabel = `${completedTopicCount} of ${topicStates.length} topics complete`;
+  const nextUpLabel = completedTopicCount >= topicStates.length
+    ? 'Chapter complete'
+    : `Next up: ${nextUpTopic?.title || 'Getting Started'}`;
 
   useEffect(() => {
     let cancelled = false;
@@ -318,6 +324,10 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
                 <View style={styles.chapterHeader}>
                   <Text style={styles.chapterTitle}>{courseChapter?.title || 'Greetings & basic conversations'}</Text>
                   <Text style={styles.chapterMeta}>{`${courseChapter?.topicCount ?? 9} topics • ${courseChapter?.wordCount ?? 39} words`}</Text>
+                  <View style={styles.chapterSummaryRow}>
+                    <View style={styles.chapterSummaryPill}><Text style={styles.chapterSummaryText}>{chapterProgressLabel}</Text></View>
+                    <View style={styles.chapterSummaryPill}><Text style={styles.chapterSummaryText}>{nextUpLabel}</Text></View>
+                  </View>
                   {courseReviewPending ? (
                     <View style={styles.reviewBanner}>
                       <Text style={styles.reviewBannerTitle}>Native review pending</Text>
@@ -356,6 +366,7 @@ const styles = StyleSheet.create({
   hero: { backgroundColor: '#BFEAFF', height: 208, overflow: 'hidden' }, heroBackground: { bottom: -8, left: -8, position: 'absolute', right: -8, top: -8 }, heroWash: { backgroundColor: 'rgba(222,247,255,0.16)', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }, heroGuide: { bottom: -24, height: 230, left: 22, position: 'absolute', width: 230, zIndex: 3 },
   cloud: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute', zIndex: 2 }, cloudBubble: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute' },
   chapterHeader: { alignItems: 'center', backgroundColor: '#FFFFFF', marginTop: -1, paddingHorizontal: 20, paddingTop: 24 }, chapterTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23, textAlign: 'center' }, chapterMeta: { color: MUTED, fontFamily: fonts.bold, fontSize: 15, marginTop: 6 },
+  chapterSummaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 12 }, chapterSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 8 }, chapterSummaryText: { color: NAVY, fontFamily: fonts.bold, fontSize: 12 },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
   topicGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 25, width: '33.333%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 25 }, topicIconLocked: { color: '#91A1AC', fontSize: 21 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelActive: { color: SKY }, topicLabelLocked: { color: '#95A4AE' }, topicBadge: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, marginTop: 4, textAlign: 'center' },
   tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center' }, tabIcon: { color: '#8294A2', fontSize: 24 }, tabLabel: { color: '#8294A2', fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY },
