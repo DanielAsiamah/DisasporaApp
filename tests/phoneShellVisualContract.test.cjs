@@ -115,3 +115,10 @@ test('review and challenge lessons carry their own mode label and completion tit
   assert.match(source, /topicModePill:\s*\{/);
   assert.match(source, /topicModePillText:\s*\{/);
 });
+
+test('the lesson modal keeps the current topic title visible above every exercise prompt', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /<Text style=\{styles\.topicTitle\}>\{topic\.title\}<\/Text>/);
+  assert.match(source, /topicTitle:\s*\{/);
+});

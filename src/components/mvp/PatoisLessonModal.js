@@ -468,6 +468,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
               <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
               <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>
+              <Text style={styles.topicTitle}>{topic.title}</Text>
               {courseReviewPending ? (
                 <View style={styles.reviewBanner}>
                   <Text style={styles.reviewBannerTitle}>Native review pending</Text>
@@ -557,6 +558,7 @@ const styles = StyleSheet.create({
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
   topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 7 },
   topicModePillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.6 },
+  topicTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 24, lineHeight: 31, marginTop: 14, textAlign: 'center' },
   promptCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderWidth: 2, marginBottom: 18, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 2 },
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 25, lineHeight: 32, textAlign: 'center' },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
