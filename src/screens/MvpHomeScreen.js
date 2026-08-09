@@ -201,6 +201,8 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   const storageCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
     : 'jamaican-patois';
+  const runtimeCourse = getCourseById(storageCourseId);
+  const courseReviewPending = runtimeCourse?.published !== true;
   const courseConfig = getCoursePresentation(storageCourseId);
   const topics = useMemo(() => (
     GENERATED_CURRICULUM.topics
@@ -279,11 +281,19 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
               <Text style={styles.bigFlame}>🔥</Text>
             </View>
             <ChapterHero guideName={featuredGuide} heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
-            <View style={styles.chapterHeader}>
-              <Text style={styles.chapterTitle}>Greetings & basic conversations</Text>
-              <Text style={styles.chapterMeta}>9 topics • 39 words</Text>
-            </View>
-            <View style={styles.topicGrid}>
+                <View style={styles.chapterHeader}>
+                  <Text style={styles.chapterTitle}>Greetings & basic conversations</Text>
+                  <Text style={styles.chapterMeta}>9 topics • 39 words</Text>
+                  {courseReviewPending ? (
+                    <View style={styles.reviewBanner}>
+                      <Text style={styles.reviewBannerTitle}>Native review pending</Text>
+                      <Text style={styles.reviewBannerBody}>
+                        This preview content is still awaiting native-speaker approval.
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+                <View style={styles.topicGrid}>
               {topicStates.map((topic) => <TopicButton key={topic.id} onPress={setActiveTopic} reducedMotion={reducedMotion} topic={topic} />)}
             </View>
           </ScrollView>
@@ -312,6 +322,7 @@ const styles = StyleSheet.create({
   hero: { backgroundColor: '#BFEAFF', height: 208, overflow: 'hidden' }, heroBackground: { bottom: -8, left: -8, position: 'absolute', right: -8, top: -8 }, heroWash: { backgroundColor: 'rgba(222,247,255,0.16)', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }, heroGuide: { bottom: -24, height: 230, left: 22, position: 'absolute', width: 230, zIndex: 3 },
   cloud: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute', zIndex: 2 }, cloudBubble: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute' },
   chapterHeader: { alignItems: 'center', backgroundColor: '#FFFFFF', marginTop: -1, paddingHorizontal: 20, paddingTop: 24 }, chapterTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23, textAlign: 'center' }, chapterMeta: { color: MUTED, fontFamily: fonts.bold, fontSize: 15, marginTop: 6 },
+  reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
   topicGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 25, width: '33.333%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 25 }, topicIconLocked: { color: '#91A1AC', fontSize: 21 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelActive: { color: SKY }, topicLabelLocked: { color: '#95A4AE' },
   tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center' }, tabIcon: { color: '#8294A2', fontSize: 24 }, tabLabel: { color: '#8294A2', fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY },
   leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 27, marginTop: 8 }, pageSubtitle: { color: MUTED, fontFamily: fonts.medium, fontSize: 14, marginBottom: 20, marginTop: 4 }, podiumCard: { alignItems: 'flex-end', borderRadius: 24, flexDirection: 'row', justifyContent: 'space-around', minHeight: 230, padding: 14 }, podiumPerson: { alignItems: 'center', width: '31%' }, podiumFirst: { alignSelf: 'flex-start' }, podiumAvatar: { height: 85, width: 85 }, podiumRank: { backgroundColor: '#FFD34D', borderRadius: 15, color: NAVY, fontFamily: fonts.extraBold, marginTop: -8, paddingHorizontal: 9, paddingVertical: 4 }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 5 }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },

@@ -5,6 +5,10 @@ const path = require('node:path');
 
 const MVP_HOME_PATH = path.join(__dirname, '..', 'src', 'screens', 'MvpHomeScreen.js');
 const source = fs.readFileSync(MVP_HOME_PATH, 'utf8');
+const lessonSource = fs.readFileSync(
+  path.join(__dirname, '..', 'src', 'components', 'mvp', 'PatoisLessonModal.js'),
+  'utf8'
+);
 const presentationRegistrySource = fs.readFileSync(
   path.join(__dirname, '..', 'src', 'data', 'coursePresentationRegistry.js'),
   'utf8'
@@ -54,6 +58,15 @@ test('legacy product destinations and exercises are absent from visible MVP copy
     const visibleLiteral = new RegExp("(?:>|['\"])\\s*" + escaped + "\\s*(?:<|['\"])", 'i');
     assert.doesNotMatch(source, visibleLiteral, `${label} must not appear as MVP navigation or lesson copy`);
   }
+});
+
+test('preview courses disclose that native review is still pending in the shell and active lessons', () => {
+  assert.match(source, /const courseReviewPending = runtimeCourse\?\.published !== true/);
+  assert.match(source, /Native review pending/);
+  assert.match(source, /awaiting native-speaker approval/i);
+  assert.match(lessonSource, /const courseReviewPending = runtimeCourse\?\.published !== true/);
+  assert.match(lessonSource, /Native review pending/);
+  assert.match(lessonSource, /preview content is still awaiting native-speaker approval/i);
 });
 
 test('the retired brown-path lesson implementation is physically removed', () => {

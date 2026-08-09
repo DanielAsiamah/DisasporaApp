@@ -304,6 +304,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
     : null;
+  const runtimeCourse = getCourseById(runtimeCourseId || 'jamaican-patois');
+  const courseReviewPending = runtimeCourse?.published !== true;
   const phraseRegistry = getCourseProductionAudioRegistry(runtimeCourseId);
   const audio = useControlledLessonAudio({ phraseRegistry });
   const reducedMotion = useReducedMotion();
@@ -441,6 +443,14 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
               <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
               <Text style={styles.prompt}>{exercise?.prompt}</Text>
+              {courseReviewPending ? (
+                <View style={styles.reviewBanner}>
+                  <Text style={styles.reviewBannerTitle}>Native review pending</Text>
+                  <Text style={styles.reviewBannerBody}>
+                    This preview content is still awaiting native-speaker approval.
+                  </Text>
+                </View>
+              ) : null}
               {!isMatch ? (
                 <View style={styles.scene}>
                   <LessonClouds reducedMotion={reducedMotion} />
@@ -507,6 +517,9 @@ const styles = StyleSheet.create({
   content: { padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 36, paddingTop: 10, textAlign: 'center' },
+  reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 18, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
+  reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' },
+  reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
   scene: { backgroundColor: PALE, borderRadius: 28, height: 225, marginVertical: 18, overflow: 'hidden' },
   vocabularyImage: { alignSelf: 'center', height: 220, marginTop: 5, width: '86%', zIndex: 2 },
   lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
