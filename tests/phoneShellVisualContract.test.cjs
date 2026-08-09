@@ -47,3 +47,12 @@ test('hero clouds start fully off-canvas so detached white bubbles never peek in
   assert.match(source, /new Animated\.Value\(CLOUD_OFFSCREEN_START\)/);
   assert.match(source, /Animated\.timing\(drift,\s*\{\s*toValue:\s*CLOUD_OFFSCREEN_START/s);
 });
+
+test('lesson prompts render inside a dedicated learning card with helper copy and inline audio controls', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /function getExerciseHelperText\(exercise\)/);
+  assert.match(source, /<View style=\{styles\.promptCard\}>[\s\S]*?<Text style=\{styles\.prompt\}>\{exercise\?\.prompt\}<\/Text>[\s\S]*?<Text style=\{styles\.promptHelper\}>\{getExerciseHelperText\(exercise\)\}<\/Text>[\s\S]*?<AudioControls/s);
+  assert.match(source, /promptCard:\s*\{/);
+  assert.match(source, /promptHelper:\s*\{/);
+});

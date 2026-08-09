@@ -146,6 +146,15 @@ function LessonClouds({ reducedMotion }) {
   );
 }
 
+function getExerciseHelperText(exercise) {
+  if (!exercise) return '';
+  if (exercise.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS) return 'Tap one phrase and then tap its matching meaning.';
+  if (exercise.type === LESSON_EXERCISE_TYPES.SENTENCE_BUILD) return 'Build the target-language phrase from the word bank below.';
+  if (exercise.type === LESSON_EXERCISE_TYPES.WORD_TRAY) return 'Tap the words below to build the English answer in the tray.';
+  if (exercise.type === LESSON_EXERCISE_TYPES.LISTEN_CHOICE) return 'Listen carefully, then choose the meaning that matches what you heard.';
+  return 'Choose the answer that best matches the prompt before you continue.';
+}
+
 function ChoiceExercise({ exercise, feedback, response, setResponse }) {
   return (
     <View style={styles.choiceList}>
@@ -442,7 +451,6 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
           <>
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
               <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
-              <Text style={styles.prompt}>{exercise?.prompt}</Text>
               {courseReviewPending ? (
                 <View style={styles.reviewBanner}>
                   <Text style={styles.reviewBannerTitle}>Native review pending</Text>
@@ -458,7 +466,11 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
                   <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.lessonGuide} />
                 </View>
               ) : null}
-              <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
+              <View style={styles.promptCard}>
+                <Text style={styles.prompt}>{exercise?.prompt}</Text>
+                <Text style={styles.promptHelper}>{getExerciseHelperText(exercise)}</Text>
+                <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
+              </View>
               {isChoice ? <ChoiceExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
               {isMatch ? (
                 <MatchExercise
@@ -526,7 +538,9 @@ const styles = StyleSheet.create({
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
   content: { padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
-  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 36, paddingTop: 10, textAlign: 'center' },
+  promptCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderWidth: 2, marginBottom: 18, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 2 },
+  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 25, lineHeight: 32, textAlign: 'center' },
+  promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 18, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
   reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' },
   reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
