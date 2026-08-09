@@ -164,6 +164,8 @@ function Leaderboard({ profile, reducedMotion }) {
       <Text style={styles.pageTitle}>Weekly League</Text>
       <Text style={styles.pageSubtitle}>Keep learning to climb before Sunday.</Text>
       <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
+        <Cloud top={26} size={82} duration={16000} reducedMotion={reducedMotion} />
+        <Cloud top={76} size={60} delay={2400} duration={19000} reducedMotion={reducedMotion} />
         <View style={styles.podiumGlow} />
         <View style={styles.podiumStage}>
           {podiumRows.map(([name, xp, guide], index) => (

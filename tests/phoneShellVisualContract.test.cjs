@@ -56,3 +56,9 @@ test('lesson prompts render inside a dedicated learning card with helper copy an
   assert.match(source, /promptCard:\s*\{/);
   assert.match(source, /promptHelper:\s*\{/);
 });
+
+test('leaderboard podium card reuses the drifting cloud treatment with reduced-motion support', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /<LinearGradient[\s\S]*?<Cloud top=\{26\} size=\{82\} duration=\{16000\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<Cloud top=\{76\} size=\{60\} delay=\{2400\} duration=\{19000\} reducedMotion=\{reducedMotion\} \/>/s);
+});
