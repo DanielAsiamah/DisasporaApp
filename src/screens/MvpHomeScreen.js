@@ -82,7 +82,7 @@ function BreathingGuide({ name = 'Kai', style, reducedMotion }) {
   );
 }
 
-function ChapterHero({ heroSource, reducedMotion }) {
+function ChapterHero({ guideName = 'Kai', heroSource, reducedMotion }) {
   const drift = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (reducedMotion) {
@@ -115,7 +115,7 @@ function ChapterHero({ heroSource, reducedMotion }) {
       <View style={styles.heroWash} />
       <Cloud top={42} size={100} duration={15000} reducedMotion={reducedMotion} />
       <Cloud top={90} size={76} delay={2800} duration={19000} reducedMotion={reducedMotion} />
-      <BreathingGuide name="Kai" reducedMotion={reducedMotion} style={styles.heroGuide} />
+      <BreathingGuide name={guideName} reducedMotion={reducedMotion} style={styles.heroGuide} />
     </View>
   );
 }
@@ -208,6 +208,9 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   ), [storageCourseId]);
   const storageKey = buildCourseProgressStorageKey(user?.uid, storageCourseId);
   const topicStates = useMemo(() => buildTopicStates(topics, completedTopicIds), [completedTopicIds, topics]);
+  const featuredGuide = topicStates.find((topic) => topic.state === 'active')?.guide
+    || topics[0]?.guide
+    || 'Kai';
 
   useEffect(() => {
     let cancelled = false;
@@ -274,7 +277,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
               <View><Text style={styles.streakTitle}>Start your streak!</Text><Text style={styles.streakSubtitle}>Do a lesson to start your day.</Text></View>
               <Text style={styles.bigFlame}>🔥</Text>
             </View>
-            <ChapterHero heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
+            <ChapterHero guideName={featuredGuide} heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
             <View style={styles.chapterHeader}>
               <Text style={styles.chapterTitle}>Greetings & basic conversations</Text>
               <Text style={styles.chapterMeta}>9 topics • 39 words</Text>

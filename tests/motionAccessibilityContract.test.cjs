@@ -27,7 +27,9 @@ test('lesson motion and modal transitions respect reduced motion', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
   assert.match(source, /useReducedMotion/);
   assert.match(source, /function BreathingVocabularyImage\([^)]*reducedMotion/);
+  assert.match(source, /function BreathingGuidePortrait\([^)]*reducedMotion/);
   assert.match(source, /function LessonClouds\([^)]*reducedMotion/);
   assert.match(source, /animationType=\{reducedMotion \? ['"]none['"] : ['"]slide['"]\}/);
   assert.match(source, /if \(correct && !reducedMotion\)/);
+  assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{topic\.guide \|\| ['"]Kai['"]\}/s);
 });

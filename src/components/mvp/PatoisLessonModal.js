@@ -45,6 +45,11 @@ const BORDER = '#D8E8F2';
 const MUTED = '#718397';
 const GREEN = '#22B65D';
 const RED = '#FF5D66';
+const guideArt = {
+  Kai: require('../../../assets/guides/kai.png'),
+  Amara: require('../../../assets/guides/amara.png'),
+  Sol: require('../../../assets/guides/sol.png'),
+};
 
 function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
   const breathe = useRef(new Animated.Value(0)).current;
@@ -74,6 +79,39 @@ function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
           transform: [
             { translateY: breathe.interpolate({ inputRange: [0, 1], outputRange: [2, -3] }) },
             { scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 1.015] }) },
+          ],
+        },
+      ]}
+    />
+  );
+}
+
+function BreathingGuidePortrait({ guideName = 'Kai', reducedMotion, style }) {
+  const breathe = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reducedMotion) {
+      breathe.setValue(0);
+      return undefined;
+    }
+    const animation = Animated.loop(Animated.sequence([
+      Animated.timing(breathe, { toValue: 1, duration: 1800, useNativeDriver: true }),
+      Animated.timing(breathe, { toValue: 0, duration: 1800, useNativeDriver: true }),
+    ]));
+    animation.start();
+    return () => animation.stop();
+  }, [breathe, reducedMotion]);
+
+  return (
+    <Animated.Image
+      accessibilityLabel={`${guideName} guide`}
+      resizeMode="contain"
+      source={guideArt[guideName] || guideArt.Kai}
+      style={[
+        style,
+        {
+          transform: [
+            { translateY: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, -4] }) },
+            { scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 1.012] }) },
           ],
         },
       ]}
@@ -392,6 +430,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
         {finished ? (
           <View style={styles.completeScreen}>
             <Text style={styles.confetti}>✦  ✧  ✦</Text>
+            <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
             <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
             <Text style={styles.completeTitle}>Topic complete!</Text>
             <Text style={styles.completeBody}>You finished {topic.title} and unlocked the next topic.</Text>
@@ -406,6 +445,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
                 <View style={styles.scene}>
                   <LessonClouds reducedMotion={reducedMotion} />
                   <BreathingVocabularyImage conceptId={exercise?.imageConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
+                  <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.lessonGuide} />
                 </View>
               ) : null}
               <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
@@ -469,6 +509,7 @@ const styles = StyleSheet.create({
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 36, paddingTop: 10, textAlign: 'center' },
   scene: { backgroundColor: PALE, borderRadius: 28, height: 225, marginVertical: 18, overflow: 'hidden' },
   vocabularyImage: { alignSelf: 'center', height: 220, marginTop: 5, width: '86%', zIndex: 2 },
+  lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
   cloudOne: { backgroundColor: 'rgba(255,255,255,0.72)', borderRadius: 80, height: 34, left: 20, position: 'absolute', top: 34, width: 110 },
   cloudTwo: { backgroundColor: 'rgba(255,255,255,0.62)', borderRadius: 80, height: 28, position: 'absolute', right: 18, top: 78, width: 92 },
   choiceList: { gap: 10 },
@@ -511,6 +552,7 @@ const styles = StyleSheet.create({
   primaryButtonText: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 16 },
   completeScreen: { alignItems: 'center', flex: 1, justifyContent: 'center', padding: 28 },
   confetti: { color: '#FFB936', fontSize: 36, letterSpacing: 8 },
+  completeGuide: { height: 140, marginBottom: -8, width: 140 },
   completeImage: { height: 250, width: 250 },
   completeTitle: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 31, paddingTop: 8 },
   completeBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 16, lineHeight: 23, paddingBottom: 28, paddingTop: 8, textAlign: 'center' },

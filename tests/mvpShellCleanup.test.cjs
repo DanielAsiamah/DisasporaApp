@@ -25,11 +25,14 @@ test('MVP shell retains the approved chapter contract', () => {
   assert.match(source, /\[['"]learn['"],\s*[^,]+,\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*[^,]+,\s*['"]Leaderboard['"]\]/);
 });
 
-test('the chapter uses original Jamaica artwork behind the animated approved guide', () => {
+test('the chapter uses original Jamaica artwork behind the active topic guide instead of a hardcoded mascot', () => {
   assert.match(source, /getCoursePresentation\(storageCourseId\)/);
   assert.match(presentationRegistrySource, /jamaican-patois-greetings\.png/);
   assert.match(source, /function\s+ChapterHero\s*\(/);
-  assert.match(source, /<BreathingGuide\s+name="Kai"/);
+  assert.match(source, /const\s+featuredGuide\s*=\s*topicStates\.find\(\(topic\)\s*=>\s*topic\.state\s*===\s*['"]active['"]\)\?\.guide/);
+  assert.match(source, /<ChapterHero[^>]+guideName=\{featuredGuide\}/s);
+  assert.match(source, /<BreathingGuide[^>]+name=\{guideName\}/s);
+  assert.doesNotMatch(source, /<BreathingGuide\s+name="Kai"/);
   assert.match(source, /<Cloud\b/);
   assert.match(source, /courseId\s*=\s*['"]jamaican-patois['"]/);
 });
