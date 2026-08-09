@@ -29,3 +29,9 @@ test('leaderboard character artwork always uses contained static PNG rendering',
   assert.match(source, /<Image\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[guide\]\}\s+style=\{styles\.podiumAvatar\}\s*\/>/s);
   assert.match(source, /<Image\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[guide\]\}\s+style=\{styles\.rankAvatar\}\s*\/>/s);
 });
+
+test('the Learn screen keeps the final topic row clear of the fixed bottom tab bar on phone screens', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /learnContent:\s*\{\s*paddingBottom:\s*(?:12\d|1[3-9]\d|[2-9]\d{2,})\s*\}/s);
+});
