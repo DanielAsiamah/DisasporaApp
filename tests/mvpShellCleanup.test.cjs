@@ -24,9 +24,18 @@ test('MVP shell delegates lessons to the production Patois lesson modal', () => 
 });
 
 test('MVP shell retains the approved chapter contract', () => {
-  assert.match(source, />Greetings & basic conversations</);
-  assert.match(source, />9 topics • 39 words</);
+  assert.match(source, /courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]/);
+  assert.match(source, /courseChapter\?\.topicCount \?\? 9/);
+  assert.match(source, /courseChapter\?\.wordCount \?\? 39/);
   assert.match(source, /\[['"]learn['"],\s*[^,]+,\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*[^,]+,\s*['"]Leaderboard['"]\]/);
+});
+
+test('the Learn shell derives chapter title and meta from the rebuilt curriculum chapter row', () => {
+  assert.match(source, /const courseChapter = useMemo\(\(\) => \(/);
+  assert.match(source, /GENERATED_CURRICULUM\.chapters/);
+  assert.match(source, /chapter\.courseId === storageCourseId/);
+  assert.match(source, /<Text style=\{styles\.chapterTitle\}>\{courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.chapterMeta\}>\{`\$\{courseChapter\?\.topicCount \?\? 9\} topics .* \$\{courseChapter\?\.wordCount \?\? 39\} words`\}<\/Text>/);
 });
 
 test('the chapter uses original Jamaica artwork behind the active topic guide instead of a hardcoded mascot', () => {

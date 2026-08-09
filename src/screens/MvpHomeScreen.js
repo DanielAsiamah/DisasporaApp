@@ -220,6 +220,9 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   const runtimeCourse = getCourseById(storageCourseId);
   const courseReviewPending = runtimeCourse?.published !== true;
   const courseConfig = getCoursePresentation(storageCourseId);
+  const courseChapter = useMemo(() => (
+    GENERATED_CURRICULUM.chapters.find((chapter) => chapter.courseId === storageCourseId) || null
+  ), [storageCourseId]);
   const topics = useMemo(() => (
     GENERATED_CURRICULUM.topics
       .filter((topic) => topic.courseId === storageCourseId)
@@ -298,8 +301,8 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
             </View>
             <ChapterHero guideName={featuredGuide} heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
                 <View style={styles.chapterHeader}>
-                  <Text style={styles.chapterTitle}>Greetings & basic conversations</Text>
-                  <Text style={styles.chapterMeta}>9 topics • 39 words</Text>
+                  <Text style={styles.chapterTitle}>{courseChapter?.title || 'Greetings & basic conversations'}</Text>
+                  <Text style={styles.chapterMeta}>{`${courseChapter?.topicCount ?? 9} topics • ${courseChapter?.wordCount ?? 39} words`}</Text>
                   {courseReviewPending ? (
                     <View style={styles.reviewBanner}>
                       <Text style={styles.reviewBannerTitle}>Native review pending</Text>
