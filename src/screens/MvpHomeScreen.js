@@ -121,6 +121,18 @@ function ChapterHero({ guideName = 'Kai', heroSource, reducedMotion }) {
   );
 }
 
+function getTopicDisplayGlyph(topic) {
+  if (topic.type === 'review') return 'Aa';
+  if (topic.type === 'challenge') return '★';
+  return topic.order;
+}
+
+function getTopicBadgeLabel(topic) {
+  if (topic.type === 'review') return 'REVIEW';
+  if (topic.type === 'challenge') return 'CHALLENGE';
+  return '';
+}
+
 function TopicButton({ topic, onPress, reducedMotion }) {
   const pulse = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -137,6 +149,8 @@ function TopicButton({ topic, onPress, reducedMotion }) {
   }, [pulse, reducedMotion, topic.state]);
   const isLocked = topic.state === 'locked';
   const isComplete = topic.state === 'complete';
+  const topicGlyph = getTopicDisplayGlyph(topic);
+  const topicBadgeLabel = getTopicBadgeLabel(topic);
   return (
     <Pressable disabled={isLocked} onPress={() => onPress(topic)} style={styles.topicWrap}>
       <Animated.View style={[
@@ -146,9 +160,10 @@ function TopicButton({ topic, onPress, reducedMotion }) {
         isLocked && styles.topicCircleLocked,
         topic.state === 'active' && { transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] }) }] },
       ]}>
-        <Text style={[styles.topicIcon, isLocked && styles.topicIconLocked]}>{isLocked ? '🔒' : isComplete ? '✓' : topic.order}</Text>
+        <Text style={[styles.topicIcon, isLocked && styles.topicIconLocked]}>{isLocked ? '🔒' : isComplete ? '✓' : topicGlyph}</Text>
       </Animated.View>
       <Text numberOfLines={2} style={[styles.topicLabel, topic.state === 'active' && styles.topicLabelActive, isLocked && styles.topicLabelLocked]}>{topic.title}</Text>
+      {topicBadgeLabel ? <Text style={styles.topicBadge}>{topicBadgeLabel}</Text> : null}
     </Pressable>
   );
 }
@@ -342,7 +357,7 @@ const styles = StyleSheet.create({
   cloud: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute', zIndex: 2 }, cloudBubble: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute' },
   chapterHeader: { alignItems: 'center', backgroundColor: '#FFFFFF', marginTop: -1, paddingHorizontal: 20, paddingTop: 24 }, chapterTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23, textAlign: 'center' }, chapterMeta: { color: MUTED, fontFamily: fonts.bold, fontSize: 15, marginTop: 6 },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
-  topicGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 25, width: '33.333%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 25 }, topicIconLocked: { color: '#91A1AC', fontSize: 21 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelActive: { color: SKY }, topicLabelLocked: { color: '#95A4AE' },
+  topicGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 25, width: '33.333%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 25 }, topicIconLocked: { color: '#91A1AC', fontSize: 21 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelActive: { color: SKY }, topicLabelLocked: { color: '#95A4AE' }, topicBadge: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, marginTop: 4, textAlign: 'center' },
   tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center' }, tabIcon: { color: '#8294A2', fontSize: 24 }, tabLabel: { color: '#8294A2', fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY },
   leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 27, marginTop: 8 }, pageSubtitle: { color: MUTED, fontFamily: fonts.medium, fontSize: 14, marginBottom: 20, marginTop: 4 }, podiumCard: { borderRadius: 24, minHeight: 260, overflow: 'hidden', paddingHorizontal: 14, paddingTop: 18 }, podiumGlow: { backgroundColor: 'rgba(255,255,255,0.55)', borderRadius: 130, height: 130, position: 'absolute', right: -14, top: -28, width: 130 }, podiumStage: { alignItems: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'space-between' }, podiumColumn: { alignItems: 'center', width: '31%' }, podiumGuide: { height: 96, marginBottom: -4, width: 96, zIndex: 3 }, podiumRank: { backgroundColor: '#FFD34D', borderRadius: 15, color: NAVY, fontFamily: fonts.extraBold, marginBottom: 8, paddingHorizontal: 9, paddingVertical: 4, zIndex: 4 }, podiumCopy: { alignItems: 'center', marginBottom: 10 }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 3 }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, podiumTier: { backgroundColor: '#FFFFFF', borderColor: '#D4EAF5', borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, width: '100%' }, podiumTierFirst: { height: 108 }, podiumTierSecond: { height: 76 }, podiumTierThird: { height: 60 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },
 });

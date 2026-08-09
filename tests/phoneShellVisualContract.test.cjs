@@ -62,3 +62,17 @@ test('leaderboard podium card reuses the drifting cloud treatment with reduced-m
 
   assert.match(source, /<LinearGradient[\s\S]*?<Cloud top=\{26\} size=\{82\} duration=\{16000\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<Cloud top=\{76\} size=\{60\} delay=\{2400\} duration=\{19000\} reducedMotion=\{reducedMotion\} \/>/s);
 });
+
+test('review and challenge topics get their own Learn-grid treatment instead of looking like generic numbered lessons', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /function getTopicDisplayGlyph\(topic\)/);
+  assert.match(source, /function getTopicBadgeLabel\(topic\)/);
+  assert.match(source, /topic\.type === ['"]review['"]/);
+  assert.match(source, /topic\.type === ['"]challenge['"]/);
+  assert.match(source, /const topicGlyph = getTopicDisplayGlyph\(topic\)/);
+  assert.match(source, /const topicBadgeLabel = getTopicBadgeLabel\(topic\)/);
+  assert.match(source, /\{isLocked \? ['"]🔒['"] : isComplete \? ['"]✓['"] : topicGlyph\}/);
+  assert.match(source, /topicBadgeLabel \? <Text style=\{styles\.topicBadge\}>\{topicBadgeLabel\}<\/Text> : null/);
+  assert.match(source, /topicBadge:\s*\{/);
+});
