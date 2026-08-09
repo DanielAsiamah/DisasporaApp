@@ -101,3 +101,17 @@ test('the lesson completion screen names the unlocked next topic instead of usin
   assert.match(source, /completeNextPill:\s*\{/);
   assert.match(source, /completeNextPillText:\s*\{/);
 });
+
+test('review and challenge lessons carry their own mode label and completion title inside the modal', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /function getTopicModeLabel\(topic\)/);
+  assert.match(source, /topic\.type === ['"]review['"]/);
+  assert.match(source, /topic\.type === ['"]challenge['"]/);
+  assert.match(source, /const topicModeLabel = getTopicModeLabel\(topic\)/);
+  assert.match(source, /const completionTitle = topic\.type === ['"]challenge['"] \? ['"]Challenge complete!['"] : topic\.type === ['"]review['"] \? ['"]Review complete!['"] : ['"]Topic complete!['"]/);
+  assert.match(source, /<View style=\{styles\.topicModePill\}><Text style=\{styles\.topicModePillText\}>\{topicModeLabel\}<\/Text><\/View>/);
+  assert.match(source, /<Text style=\{styles\.completeTitle\}>\{completionTitle\}<\/Text>/);
+  assert.match(source, /topicModePill:\s*\{/);
+  assert.match(source, /topicModePillText:\s*\{/);
+});

@@ -155,6 +155,12 @@ function getExerciseHelperText(exercise) {
   return 'Choose the answer that best matches the prompt before you continue.';
 }
 
+function getTopicModeLabel(topic) {
+  if (topic.type === 'review') return 'WORDS REVIEW';
+  if (topic.type === 'challenge') return 'FINAL CHALLENGE';
+  return 'CORE LESSON';
+}
+
 function ChoiceExercise({ exercise, feedback, response, setResponse }) {
   return (
     <View style={styles.choiceList}>
@@ -426,6 +432,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
   }
 
   if (!topic) return null;
+  const topicModeLabel = getTopicModeLabel(topic);
+  const completionTitle = topic.type === 'challenge' ? 'Challenge complete!' : topic.type === 'review' ? 'Review complete!' : 'Topic complete!';
   const completeBody = nextTopic ? `You finished ${topic.title}. Next up: ${nextTopic.title}.` : `You finished ${topic.title} and completed this chapter.`;
   const isChoice = [LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE, LESSON_EXERCISE_TYPES.LISTEN_CHOICE].includes(exercise?.type);
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
@@ -450,7 +458,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
             <Text style={styles.confetti}>✦  ✧  ✦</Text>
             <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
             <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
-            <Text style={styles.completeTitle}>Topic complete!</Text>
+            <Text style={styles.completeTitle}>{completionTitle}</Text>
             <Text style={styles.completeBody}>{completeBody}</Text>
             {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
             <Pressable onPress={closeLesson} style={styles.primaryButton}><Text style={styles.primaryButtonText}>BACK TO CHAPTER</Text></Pressable>
@@ -459,6 +467,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onClos
           <>
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
               <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
+              <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>
               {courseReviewPending ? (
                 <View style={styles.reviewBanner}>
                   <Text style={styles.reviewBannerTitle}>Native review pending</Text>
@@ -546,6 +555,8 @@ const styles = StyleSheet.create({
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
   content: { padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
+  topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 7 },
+  topicModePillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.6 },
   promptCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderWidth: 2, marginBottom: 18, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 2 },
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 25, lineHeight: 32, textAlign: 'center' },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
