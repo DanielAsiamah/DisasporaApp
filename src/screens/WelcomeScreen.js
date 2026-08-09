@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Animated,
+  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -10,52 +11,68 @@ import {
 } from 'react-native';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
-import PrimaryButton from '../components/PrimaryButton';
-import SpeechBubble from '../components/SpeechBubble';
-import RegionalGuide from '../components/RegionalGuide';
-import { colors, fonts, radius, spacing } from '../theme';
+import { fonts, radius, spacing } from '../theme';
 
-const GREETINGS = [
-  { region: 'caribbean', text: 'Wah gwaan!', translation: 'Hello from the Caribbean' },
-  { region: 'africa', text: 'Hujambo!', translation: 'Hello from East Africa' },
-  { region: 'caribbean', text: 'Sak pase!', translation: 'Hello from Haiti' },
-  { region: 'africa', text: 'Nangaadef!', translation: 'Hello from West Africa' },
-  { region: 'americas', text: 'Welcome home!', translation: 'Language connects the diaspora' },
+const palette = {
+  backgroundTop: '#DDF4FF',
+  backgroundBottom: '#FFFFFF',
+  brandBlue: '#0B245B',
+  sky: '#1CB0F6',
+  skySoft: '#EAF8FF',
+  textMuted: '#6E8194',
+  textSoft: '#7F94A7',
+  border: '#D7E8F4',
+  white: '#FFFFFF',
+};
+
+const GUIDE_STRIP = [
+  {
+    id: 'amara',
+    label: 'Amara',
+    note: 'Heritage-first lessons',
+    source: require('../../assets/guides/amara.png'),
+  },
+  {
+    id: 'kai',
+    label: 'Kai',
+    note: 'Everyday conversation',
+    source: require('../../assets/guides/kai.png'),
+  },
+  {
+    id: 'sol',
+    label: 'Sol',
+    note: 'Practice and progress',
+    source: require('../../assets/guides/sol.png'),
+  },
 ];
 
-const REGIONS = [
+const COURSE_LANES = [
   {
-    id: 'africa',
-    title: 'Africa',
-    caption: 'Swahili · Igbo · Wolof',
-    color: colors.africaGold,
+    id: 'english',
+    title: 'English speakers',
+    caption: 'Jamaican Patois · Swahili',
+    detail: 'Start with live MVP lessons rooted in culture and conversation.',
+    color: '#22B65D',
   },
   {
-    id: 'caribbean',
-    title: 'Caribbean',
-    caption: 'Patois · Haitian Creole',
-    color: colors.caribbeanGreen,
+    id: 'french',
+    title: 'French speakers',
+    caption: 'Wolof · Haitian Creole',
+    detail: 'Build from familiar French into diaspora languages step by step.',
+    color: '#F4B942',
   },
   {
-    id: 'americas',
-    title: 'South America',
-    caption: 'Heritage languages · regional speech · coming soon',
-    color: colors.coral,
-    comingSoon: true,
+    id: 'arabic',
+    title: 'Arabic speakers',
+    caption: 'Sudanese Arabic · Nobiin',
+    detail: 'Move through greetings, family words, and confidence-building practice.',
+    color: palette.sky,
   },
 ];
 
 export default function WelcomeScreen({ onGetStarted, onSignIn }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(22)).current;
-  const [greetingIndex, setGreetingIndex] = useState(0);
-  const bubbleFade = useRef(new Animated.Value(1)).current;
-  const activeGreeting = GREETINGS[greetingIndex];
-
-  function selectRegion(regionId) {
-    const nextIndex = GREETINGS.findIndex((item) => item.region === regionId);
-    if (nextIndex >= 0) setGreetingIndex(nextIndex);
-  }
 
   useEffect(() => {
     Animated.parallel([
@@ -71,30 +88,13 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
         useNativeDriver: true,
       }),
     ]).start();
-
-    const interval = setInterval(() => {
-      Animated.timing(bubbleFade, {
-        toValue: 0,
-        duration: 220,
-        useNativeDriver: true,
-      }).start(() => {
-        setGreetingIndex((prev) => (prev + 1) % GREETINGS.length);
-        Animated.timing(bubbleFade, {
-          toValue: 1,
-          duration: 320,
-          useNativeDriver: true,
-        }).start();
-      });
-    }, 2600);
-
-    return () => clearInterval(interval);
-  }, [bubbleFade, fadeAnim, slideAnim]);
+  }, [fadeAnim, slideAnim]);
 
   return (
     <View style={styles.root}>
       <AnimatedAtmosphere
-        colors={[colors.splashGreen, colors.skyTop, colors.skyBottom]}
-        accent={colors.caribbeanGreen}
+        colors={[palette.backgroundTop, palette.backgroundBottom]}
+        accent={palette.sky}
       />
 
       <SafeAreaView style={styles.safeArea}>
@@ -115,44 +115,43 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
               <Text style={styles.brandName}>Diaspora</Text>
             </View>
 
-            <View style={styles.guideRow}>
-              <RegionalGuide animated active={activeGreeting.region === 'africa'} region="africa" size="small" showLabel />
-              <RegionalGuide animated active={activeGreeting.region === 'caribbean'} region="caribbean" size="small" showLabel />
-              <RegionalGuide animated active={activeGreeting.region === 'americas'} region="americas" size="small" showLabel />
-            </View>
-
             <View style={styles.heroCopy}>
-              <Animated.View style={{ opacity: bubbleFade }}>
-                <SpeechBubble text={activeGreeting.text} />
-              </Animated.View>
-              <Text style={styles.greetingTranslation}>{activeGreeting.translation}</Text>
-              <Text style={styles.title}>Learn the languages{'\n'}of the diaspora</Text>
+              <View style={styles.heroPill}>
+                <Text style={styles.heroPillText}>Six live MVP courses</Text>
+              </View>
+              <Text style={styles.title}>Languages carry us home</Text>
               <Text style={styles.subtitle}>
-                Fun, bite-sized lessons for mother tongues, creoles, and dialects that carry culture.
+                Start with six live MVP courses: Jamaican Patois, Swahili, Wolof, Haitian Creole, Sudanese Arabic, and Nobiin.
               </Text>
             </View>
 
-            <View style={styles.regionsSection}>
-              <Text style={styles.sectionHeader}>MEET THE DIASPORA</Text>
-              <View style={styles.regionsGrid}>
-                {REGIONS.map((region) => (
+            <View style={styles.guideRow}>
+              {GUIDE_STRIP.map((guide) => (
+                <View key={guide.id} style={styles.guideCard}>
+                  <Image resizeMode="contain" source={guide.source} style={styles.guideImage} />
+                  <Text style={styles.guideName}>{guide.label}</Text>
+                  <Text style={styles.guideNote}>{guide.note}</Text>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.lanesSection}>
+              <Text style={styles.sectionHeader}>Choose your lane in onboarding</Text>
+              <View style={styles.lanesGrid}>
+                {COURSE_LANES.map((lane) => (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityState={{ selected: activeGreeting.region === region.id }}
-                    key={region.id}
-                    onPress={() => selectRegion(region.id)}
+                    key={lane.id}
+                    onPress={onGetStarted}
                     style={({ pressed }) => [
-                      styles.regionCard,
-                      { borderColor: region.color + '66' },
-                      activeGreeting.region === region.id && { backgroundColor: region.color + '18', borderColor: region.color },
-                      pressed && styles.regionCardPressed,
+                      styles.laneCard,
+                      { borderColor: `${lane.color}55` },
+                      pressed && styles.laneCardPressed,
                     ]}
                   >
-                    <Text style={[styles.regionTitle, { color: region.color }]}>{region.title}</Text>
-                    <Text style={styles.regionCaption}>{region.caption}</Text>
-                    <Text style={[styles.meetGuide, { color: region.color }]}>
-                      {region.comingSoon ? 'COMING SOON · MEET SOL' : 'MEET YOUR GUIDE'}
-                    </Text>
+                    <Text style={[styles.laneTitle, { color: lane.color }]}>{lane.title}</Text>
+                    <Text style={styles.laneCaption}>{lane.caption}</Text>
+                    <Text style={styles.laneDetail}>{lane.detail}</Text>
                   </Pressable>
                 ))}
               </View>
@@ -161,11 +160,13 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
         </ScrollView>
 
         <View style={styles.footer}>
-          <PrimaryButton label="GET STARTED" onPress={onGetStarted} />
+          <Pressable onPress={onGetStarted} style={styles.ctaButton}>
+            <Text style={styles.ctaText}>START YOUR PATH</Text>
+          </Pressable>
           <Pressable onPress={onSignIn} style={styles.signInButton}>
             <Text style={styles.signInText}>I already have an account</Text>
           </Pressable>
-          <Text style={styles.footerNote}>Free to start · learn in bite-sized lessons</Text>
+          <Text style={styles.footerNote}>Lessons, review, and leaderboard — free to start.</Text>
         </View>
       </SafeAreaView>
     </View>
@@ -174,7 +175,7 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: colors.skyBottom,
+    backgroundColor: palette.backgroundBottom,
     flex: 1,
   },
   safeArea: {
@@ -193,19 +194,19 @@ const styles = StyleSheet.create({
   },
   logoBadge: {
     alignItems: 'center',
-    backgroundColor: colors.accent,
+    backgroundColor: palette.sky,
     borderRadius: radius.pill,
     height: 42,
     justifyContent: 'center',
     width: 42,
   },
   logoText: {
-    color: colors.splash,
+    color: palette.white,
     fontFamily: fonts.black,
     fontSize: 18,
   },
   brandName: {
-    color: colors.textDark,
+    color: palette.brandBlue,
     fontFamily: fonts.black,
     fontSize: 22,
   },
@@ -213,99 +214,143 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: spacing.md,
   },
-  guideRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: spacing.lg,
-    marginTop: spacing.sm,
+  heroPill: {
+    backgroundColor: palette.white,
+    borderColor: palette.border,
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  heroPillText: {
+    color: palette.sky,
+    fontFamily: fonts.extraBold,
+    fontSize: 12,
+    letterSpacing: 0.4,
   },
   title: {
-    color: colors.textDark,
+    color: palette.brandBlue,
     fontFamily: fonts.black,
-    fontSize: 30,
-    lineHeight: 36,
-    marginTop: spacing.sm,
+    fontSize: 32,
+    lineHeight: 38,
+    marginTop: spacing.md,
     textAlign: 'center',
   },
   subtitle: {
-    color: colors.textMuted,
+    color: palette.textMuted,
     fontFamily: fonts.semiBold,
     fontSize: 15,
     lineHeight: 22,
     marginTop: spacing.sm,
     textAlign: 'center',
   },
-  greetingTranslation: {
-    color: colors.textLight,
-    fontFamily: fonts.bold,
-    fontSize: 11,
-    marginTop: 5,
+  guideRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginTop: spacing.lg,
+  },
+  guideCard: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.78)',
+    borderColor: palette.border,
+    borderRadius: radius.lg,
+    borderWidth: 1.5,
+    flex: 1,
+    minHeight: 148,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.sm,
+  },
+  guideImage: {
+    height: 78,
+    width: 78,
+  },
+  guideName: {
+    color: palette.brandBlue,
+    fontFamily: fonts.extraBold,
+    fontSize: 14,
+    marginTop: 2,
+  },
+  guideNote: {
+    color: palette.textMuted,
+    fontFamily: fonts.semiBold,
+    fontSize: 10,
+    lineHeight: 14,
+    marginTop: 2,
     textAlign: 'center',
   },
-  regionsSection: {
+  lanesSection: {
     marginTop: spacing.lg,
   },
   sectionHeader: {
-    color: colors.textLight,
+    color: palette.textSoft,
     fontFamily: fonts.black,
     fontSize: 12,
     letterSpacing: 0.8,
     marginBottom: spacing.md,
     textTransform: 'uppercase',
   },
-  regionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  lanesGrid: {
     gap: spacing.sm,
   },
-  regionCard: {
-    backgroundColor: colors.surface,
+  laneCard: {
+    backgroundColor: palette.white,
     borderRadius: radius.md,
     borderWidth: 1.5,
-    flexGrow: 1,
-    minWidth: '47%',
     padding: spacing.sm,
   },
-  regionCardPressed: {
+  laneCardPressed: {
     transform: [{ translateY: 2 }],
   },
-  regionTitle: {
+  laneTitle: {
     fontFamily: fonts.black,
     fontSize: 15,
   },
-  regionCaption: {
-    color: colors.textMuted,
+  laneCaption: {
+    color: palette.textMuted,
     fontFamily: fonts.medium,
     fontSize: 12,
     lineHeight: 17,
     marginTop: 4,
   },
-  meetGuide: {
-    fontFamily: fonts.black,
-    fontSize: 9,
-    letterSpacing: 0.5,
+  laneDetail: {
+    color: palette.brandBlue,
+    fontFamily: fonts.semiBold,
+    fontSize: 11,
+    lineHeight: 16,
     marginTop: 8,
   },
   footer: {
-    backgroundColor: colors.skyBottom,
-    borderTopColor: colors.border,
+    backgroundColor: palette.backgroundBottom,
+    borderTopColor: palette.border,
     borderTopWidth: 1.5,
     gap: spacing.sm,
     paddingBottom: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
   },
+  ctaButton: {
+    alignItems: 'center',
+    backgroundColor: palette.sky,
+    borderRadius: radius.md,
+    justifyContent: 'center',
+    minHeight: 54,
+  },
+  ctaText: {
+    color: palette.white,
+    fontFamily: fonts.extraBold,
+    fontSize: 16,
+  },
   signInButton: {
     alignItems: 'center',
     paddingVertical: spacing.sm,
   },
   signInText: {
-    color: colors.blue,
+    color: palette.sky,
     fontFamily: fonts.extraBold,
     fontSize: 15,
   },
   footerNote: {
-    color: colors.textLight,
+    color: palette.textSoft,
     fontFamily: fonts.semiBold,
     fontSize: 12,
     textAlign: 'center',
