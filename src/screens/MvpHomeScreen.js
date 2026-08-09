@@ -153,24 +153,38 @@ function TopicButton({ topic, onPress, reducedMotion }) {
   );
 }
 
-function Leaderboard({ profile }) {
+function Leaderboard({ profile, reducedMotion }) {
   const learner = profile?.preferredName || profile?.username || 'You';
   const rows = [
     ['Aisha', 1250, 'Amara'], ['Kwame', 1050, 'Kai'], ['Maya', 950, 'Sol'], ['Dina', 800, 'Amara'], ['Malik', 650, 'Kai'], [learner, 600, 'Sol'], ['Zuri', 450, 'Amara'],
   ];
+  const podiumRows = rows.slice(0, 3);
   return (
     <ScrollView contentContainerStyle={styles.leaderboardContent}>
       <Text style={styles.pageTitle}>Weekly League</Text>
       <Text style={styles.pageSubtitle}>Keep learning to climb before Sunday.</Text>
       <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
-        {rows.slice(0, 3).map(([name, xp, guide], index) => (
-          <View key={name} style={[styles.podiumPerson, index === 0 && styles.podiumFirst]}>
-            <Image resizeMode="contain" source={guideArt[guide]} style={styles.podiumAvatar} />
-            <Text style={styles.podiumRank}>{index + 1}</Text>
-            <Text style={styles.podiumName}>{name}</Text>
-            <Text style={styles.podiumXp}>{xp} XP</Text>
-          </View>
-        ))}
+        <View style={styles.podiumGlow} />
+        <View style={styles.podiumStage}>
+          {podiumRows.map(([name, xp, guide], index) => (
+            <View key={name} style={styles.podiumColumn}>
+              <BreathingGuide name={guide} reducedMotion={reducedMotion} style={styles.podiumGuide} />
+              <Text style={styles.podiumRank}>{index + 1}</Text>
+              <View style={styles.podiumCopy}>
+                <Text style={styles.podiumName}>{name}</Text>
+                <Text style={styles.podiumXp}>{xp} XP</Text>
+              </View>
+              <View
+                style={[
+                  styles.podiumTier,
+                  index === 0 && styles.podiumTierFirst,
+                  index === 1 && styles.podiumTierSecond,
+                  index === 2 && styles.podiumTierThird,
+                ]}
+              />
+            </View>
+          ))}
+        </View>
       </LinearGradient>
       <View style={styles.rankList}>
         {rows.slice(3).map(([name, xp, guide], index) => {
@@ -297,7 +311,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
               {topicStates.map((topic) => <TopicButton key={topic.id} onPress={setActiveTopic} reducedMotion={reducedMotion} topic={topic} />)}
             </View>
           </ScrollView>
-        ) : <Leaderboard profile={profile} />}
+        ) : <Leaderboard profile={profile} reducedMotion={reducedMotion} />}
       </View>
       <View style={styles.tabBar}>
         {[['learn', '▣', 'Learn'], ['leaderboard', '♜', 'Leaderboard']].map(([id, icon, label]) => (
@@ -325,5 +339,5 @@ const styles = StyleSheet.create({
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
   topicGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 25, width: '33.333%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 25 }, topicIconLocked: { color: '#91A1AC', fontSize: 21 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelActive: { color: SKY }, topicLabelLocked: { color: '#95A4AE' },
   tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center' }, tabIcon: { color: '#8294A2', fontSize: 24 }, tabLabel: { color: '#8294A2', fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY },
-  leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 27, marginTop: 8 }, pageSubtitle: { color: MUTED, fontFamily: fonts.medium, fontSize: 14, marginBottom: 20, marginTop: 4 }, podiumCard: { alignItems: 'flex-end', borderRadius: 24, flexDirection: 'row', justifyContent: 'space-around', minHeight: 230, padding: 14 }, podiumPerson: { alignItems: 'center', width: '31%' }, podiumFirst: { alignSelf: 'flex-start' }, podiumAvatar: { height: 85, width: 85 }, podiumRank: { backgroundColor: '#FFD34D', borderRadius: 15, color: NAVY, fontFamily: fonts.extraBold, marginTop: -8, paddingHorizontal: 9, paddingVertical: 4 }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 5 }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },
+  leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 27, marginTop: 8 }, pageSubtitle: { color: MUTED, fontFamily: fonts.medium, fontSize: 14, marginBottom: 20, marginTop: 4 }, podiumCard: { borderRadius: 24, minHeight: 260, overflow: 'hidden', paddingHorizontal: 14, paddingTop: 18 }, podiumGlow: { backgroundColor: 'rgba(255,255,255,0.55)', borderRadius: 130, height: 130, position: 'absolute', right: -14, top: -28, width: 130 }, podiumStage: { alignItems: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'space-between' }, podiumColumn: { alignItems: 'center', width: '31%' }, podiumGuide: { height: 96, marginBottom: -4, width: 96, zIndex: 3 }, podiumRank: { backgroundColor: '#FFD34D', borderRadius: 15, color: NAVY, fontFamily: fonts.extraBold, marginBottom: 8, paddingHorizontal: 9, paddingVertical: 4, zIndex: 4 }, podiumCopy: { alignItems: 'center', marginBottom: 10 }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 3 }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, podiumTier: { backgroundColor: '#FFFFFF', borderColor: '#D4EAF5', borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, width: '100%' }, podiumTierFirst: { height: 108 }, podiumTierSecond: { height: 76 }, podiumTierThird: { height: 60 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },
 });

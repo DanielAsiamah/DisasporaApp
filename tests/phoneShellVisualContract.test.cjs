@@ -23,10 +23,14 @@ test('the drifting hero cloud uses one opaque fill so overlapping lobes have no 
   assert.doesNotMatch(source, /cloud(?:Bubble)?:\s*\{[^}]*rgba\(/s);
 });
 
-test('leaderboard character artwork always uses contained static PNG rendering', () => {
+test('leaderboard podium uses animated guide characters on tiered podium blocks while rank rows keep contained PNG avatars', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /<Image\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[guide\]\}\s+style=\{styles\.podiumAvatar\}\s*\/>/s);
+  assert.match(source, /function Leaderboard\(\{\s*profile,\s*reducedMotion\s*\}\)/);
+  assert.match(source, /<BreathingGuide[^>]+name=\{guide\}[^>]+reducedMotion=\{reducedMotion\}[^>]+style=\{styles\.podiumGuide\}/s);
+  assert.match(source, /styles\.podiumTierFirst/);
+  assert.match(source, /styles\.podiumTierSecond/);
+  assert.match(source, /styles\.podiumTierThird/);
   assert.match(source, /<Image\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[guide\]\}\s+style=\{styles\.rankAvatar\}\s*\/>/s);
 });
 
