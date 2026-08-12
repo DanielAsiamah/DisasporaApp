@@ -32,18 +32,23 @@ const MUTED = '#718397';
 const GREEN = '#22B65D';
 const CLOUD_FILL = '#F4FBFF';
 const CLOUD_OFFSCREEN_START = -220;
+const CLOUD_HERO_RESTING_X = 34;
+const CLOUD_HERO_SECONDARY_RESTING_X = 228;
+const CLOUD_PODIUM_RESTING_X = 28;
+const CLOUD_PODIUM_SECONDARY_RESTING_X = 214;
 const guideArt = {
   Kai: require('../../assets/guides/kai.png'),
   Amara: require('../../assets/guides/amara.png'),
   Sol: require('../../assets/guides/sol.png'),
 };
-function Cloud({ top, size, delay = 0, duration = 17000, reducedMotion }) {
+function Cloud({ top, size, delay = 0, duration = 17000, restingX = 0, reducedMotion }) {
   const drift = useRef(new Animated.Value(CLOUD_OFFSCREEN_START)).current;
   useEffect(() => {
     if (reducedMotion) {
-      drift.setValue(0);
+      drift.setValue(restingX);
       return undefined;
     }
+    drift.setValue(CLOUD_OFFSCREEN_START);
     const loop = Animated.loop(Animated.sequence([
       Animated.delay(delay),
       Animated.timing(drift, { toValue: 430, duration, useNativeDriver: true }),
@@ -51,7 +56,7 @@ function Cloud({ top, size, delay = 0, duration = 17000, reducedMotion }) {
     ]));
     loop.start();
     return () => loop.stop();
-  }, [delay, drift, duration, reducedMotion]);
+  }, [delay, drift, duration, reducedMotion, restingX]);
   return (
     <Animated.View style={[styles.cloud, { top, width: size, height: size * 0.38, transform: [{ translateX: drift }] }]}>
       <View style={[styles.cloudBubble, { width: size * 0.46, height: size * 0.46, left: size * 0.12, top: -size * 0.2 }]} />
@@ -114,8 +119,8 @@ function ChapterHero({ guideName = 'Kai', heroSource, reducedMotion }) {
         ]}
       />
       <View style={styles.heroWash} />
-      <Cloud top={42} size={100} duration={15000} reducedMotion={reducedMotion} />
-      <Cloud top={90} size={76} delay={2800} duration={19000} reducedMotion={reducedMotion} />
+      <Cloud top={42} size={100} duration={15000} restingX={CLOUD_HERO_RESTING_X} reducedMotion={reducedMotion} />
+      <Cloud top={90} size={76} delay={2800} duration={19000} restingX={CLOUD_HERO_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
       <BreathingGuide name={guideName} reducedMotion={reducedMotion} style={styles.heroGuide} />
     </View>
   );
@@ -186,8 +191,8 @@ function Leaderboard({ profile, reducedMotion }) {
       <Text style={styles.pageTitle}>Weekly League</Text>
       <Text style={styles.pageSubtitle}>Keep learning to climb before Sunday.</Text>
       <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
-        <Cloud top={26} size={82} duration={16000} reducedMotion={reducedMotion} />
-        <Cloud top={76} size={60} delay={2400} duration={19000} reducedMotion={reducedMotion} />
+        <Cloud top={26} size={82} duration={16000} restingX={CLOUD_PODIUM_RESTING_X} reducedMotion={reducedMotion} />
+        <Cloud top={76} size={60} delay={2400} duration={19000} restingX={CLOUD_PODIUM_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
         <View style={styles.podiumGlow} />
         <View style={styles.podiumStage}>
           {podiumRows.map(([name, xp, guide], index) => (

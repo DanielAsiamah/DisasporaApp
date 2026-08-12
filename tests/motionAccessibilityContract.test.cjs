@@ -15,10 +15,11 @@ test('motion preference follows the operating-system accessibility setting', () 
 test('home clouds, guide breathing, and active-topic pulse respect reduced motion', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
   assert.match(source, /useReducedMotion/);
-  assert.match(source, /function Cloud\([^)]*reducedMotion/);
+  assert.match(source, /function Cloud\([^)]*restingX[^)]*reducedMotion/);
   assert.match(source, /function BreathingGuide\([^)]*reducedMotion/);
   assert.match(source, /function TopicButton\([^)]*reducedMotion/);
-  assert.match(source, /<Cloud[^>]+reducedMotion=/s);
+  assert.match(source, /if \(reducedMotion\) \{\s*drift\.setValue\(restingX\)/s);
+  assert.match(source, /<Cloud[^>]+restingX=\{/s);
   assert.match(source, /<BreathingGuide[^>]+reducedMotion=/s);
   assert.match(source, /<TopicButton[^>]+reducedMotion=/s);
 });

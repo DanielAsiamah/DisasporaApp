@@ -60,7 +60,7 @@ test('lesson prompts render inside a dedicated learning card with helper copy an
 test('leaderboard podium card reuses the drifting cloud treatment with reduced-motion support', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /<LinearGradient[\s\S]*?<Cloud top=\{26\} size=\{82\} duration=\{16000\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<Cloud top=\{76\} size=\{60\} delay=\{2400\} duration=\{19000\} reducedMotion=\{reducedMotion\} \/>/s);
+  assert.match(source, /<LinearGradient[\s\S]*?<Cloud top=\{26\} size=\{82\} duration=\{16000\} restingX=\{CLOUD_PODIUM_RESTING_X\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<Cloud top=\{76\} size=\{60\} delay=\{2400\} duration=\{19000\} restingX=\{CLOUD_PODIUM_SECONDARY_RESTING_X\} reducedMotion=\{reducedMotion\} \/>/s);
 });
 
 test('review and challenge topics get their own Learn-grid treatment instead of looking like generic numbered lessons', () => {
