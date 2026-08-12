@@ -45,6 +45,9 @@ const BORDER = '#D8E8F2';
 const MUTED = '#718397';
 const GREEN = '#22B65D';
 const RED = '#FF5D66';
+const LESSON_CLOUD_FILL = '#F6FCFF';
+const LESSON_CLOUD_PRIMARY_RESTING_X = 6;
+const LESSON_CLOUD_SECONDARY_RESTING_X = -4;
 const guideArt = {
   Kai: require('../../../assets/guides/kai.png'),
   Amara: require('../../../assets/guides/amara.png'),
@@ -119,13 +122,18 @@ function BreathingGuidePortrait({ guideName = 'Kai', reducedMotion, style }) {
   );
 }
 
-function LessonClouds({ reducedMotion }) {
-  const drift = useRef(new Animated.Value(0)).current;
+function LessonClouds({
+  primaryRestingX = 0,
+  secondaryRestingX = 0,
+  reducedMotion,
+}) {
+  const drift = useRef(new Animated.Value(primaryRestingX)).current;
   useEffect(() => {
     if (reducedMotion) {
-      drift.setValue(0);
+      drift.setValue(primaryRestingX);
       return undefined;
     }
+    drift.setValue(primaryRestingX);
     const animation = Animated.loop(Animated.sequence([
       Animated.timing(drift, { duration: 9000, toValue: 1, useNativeDriver: true }),
       Animated.timing(drift, { duration: 9000, toValue: -1, useNativeDriver: true }),
@@ -133,14 +141,14 @@ function LessonClouds({ reducedMotion }) {
     ]));
     animation.start();
     return () => animation.stop();
-  }, [drift, reducedMotion]);
+  }, [drift, primaryRestingX, reducedMotion]);
   return (
     <>
       <Animated.View style={[styles.cloudOne, {
-        transform: [{ translateX: drift.interpolate({ inputRange: [-1, 1], outputRange: [-10, 12] }) }],
+        transform: [{ translateX: drift.interpolate({ inputRange: [-1, 1], outputRange: [primaryRestingX - 10, primaryRestingX + 12] }) }],
       }]} />
       <Animated.View style={[styles.cloudTwo, {
-        transform: [{ translateX: drift.interpolate({ inputRange: [-1, 1], outputRange: [11, -9] }) }],
+        transform: [{ translateX: drift.interpolate({ inputRange: [-1, 1], outputRange: [secondaryRestingX + 11, secondaryRestingX - 9] }) }],
       }]} />
     </>
   );
@@ -488,7 +496,11 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                 </View>
               ) : null}
               <View style={styles.scene}>
-                <LessonClouds reducedMotion={reducedMotion} />
+                <LessonClouds
+                  primaryRestingX={LESSON_CLOUD_PRIMARY_RESTING_X}
+                  secondaryRestingX={LESSON_CLOUD_SECONDARY_RESTING_X}
+                  reducedMotion={reducedMotion}
+                />
                 <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
                 <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.lessonGuide} />
               </View>
@@ -576,8 +588,8 @@ const styles = StyleSheet.create({
   scene: { backgroundColor: PALE, borderRadius: 28, height: 225, marginVertical: 18, overflow: 'hidden' },
   vocabularyImage: { alignSelf: 'center', height: 220, marginTop: 5, width: '86%', zIndex: 2 },
   lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
-  cloudOne: { backgroundColor: 'rgba(255,255,255,0.72)', borderRadius: 80, height: 34, left: 20, position: 'absolute', top: 34, width: 110 },
-  cloudTwo: { backgroundColor: 'rgba(255,255,255,0.62)', borderRadius: 80, height: 28, position: 'absolute', right: 18, top: 78, width: 92 },
+  cloudOne: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, height: 34, left: 20, position: 'absolute', top: 34, width: 110 },
+  cloudTwo: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, position: 'absolute', right: 18, top: 78, height: 28, width: 92 },
   choiceList: { gap: 10 },
   audioControls: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center', marginBottom: 16 },
   speakerButton: { alignItems: 'center', backgroundColor: SKY, borderRadius: 28, height: 54, justifyContent: 'center', width: 54 },

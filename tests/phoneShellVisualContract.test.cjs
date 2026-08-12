@@ -145,7 +145,7 @@ test('every lesson type keeps the animated stage alive by deriving a stable visu
   assert.match(source, /function getExerciseVisualConceptId\(exercise\)/);
   assert.match(source, /exercise\?\.imageConceptId \|\| exercise\?\.conceptId \|\| exercise\?\.pairs\?\.\[0\]\?\.conceptId \|\| null/);
   assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
-  assert.match(source, /<View style=\{styles\.scene\}>[\s\S]*?<LessonClouds reducedMotion=\{reducedMotion\} \/>[\s\S]*?<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\} imageRegistry=\{imageRegistry\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<BreathingGuidePortrait guideName=\{topic\.guide \|\| ['"]Kai['"]\} reducedMotion=\{reducedMotion\} style=\{styles\.lessonGuide\} \/>[\s\S]*?<\/View>/s);
+  assert.match(source, /<View style=\{styles\.scene\}>[\s\S]*?<LessonClouds[\s\S]*?primaryRestingX=\{LESSON_CLOUD_PRIMARY_RESTING_X\}[\s\S]*?secondaryRestingX=\{LESSON_CLOUD_SECONDARY_RESTING_X\}[\s\S]*?reducedMotion=\{reducedMotion\}[\s\S]*?\/>[\s\S]*?<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\} imageRegistry=\{imageRegistry\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<BreathingGuidePortrait guideName=\{topic\.guide \|\| ['"]Kai['"]\} reducedMotion=\{reducedMotion\} style=\{styles\.lessonGuide\} \/>[\s\S]*?<\/View>/s);
   assert.doesNotMatch(source, /\{!isMatch \?/);
 });
 

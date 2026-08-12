@@ -29,7 +29,9 @@ test('lesson motion and modal transitions respect reduced motion', () => {
   assert.match(source, /useReducedMotion/);
   assert.match(source, /function BreathingVocabularyImage\([^)]*reducedMotion/);
   assert.match(source, /function BreathingGuidePortrait\([^)]*reducedMotion/);
-  assert.match(source, /function LessonClouds\([^)]*reducedMotion/);
+  assert.match(source, /function LessonClouds\([^)]*primaryRestingX[^)]*secondaryRestingX[^)]*reducedMotion/);
+  assert.match(source, /if \(reducedMotion\) \{\s*drift\.setValue\(primaryRestingX\)/s);
+  assert.match(source, /LESSON_CLOUD_FILL/);
   assert.match(source, /animationType=\{reducedMotion \? ['"]none['"] : ['"]slide['"]\}/);
   assert.match(source, /if \(correct && !reducedMotion\)/);
   assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{topic\.guide \|\| ['"]Kai['"]\}/s);
