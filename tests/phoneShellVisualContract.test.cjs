@@ -208,6 +208,16 @@ test('the lesson modal structures feedback into an outcome header and dedicated 
   assert.match(source, /feedbackAnswerLabel:\s*\{/);
 });
 
+test('word-tray lessons add compact headers so learners can track progress and understand how to use the bank', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /const answerProgressLabel = `\$\{response\.builtWords\.length\} \/ \$\{exercise\.wordBank\.length\} words placed`/);
+  assert.match(source, /<View style=\{styles\.sectionHeader\}>[\s\S]*?<Text style=\{styles\.sectionLabel\}>YOUR ANSWER<\/Text>[\s\S]*?<Text style=\{styles\.sectionMeta\}>\{answerProgressLabel\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /<View style=\{styles\.sectionHeader\}>[\s\S]*?<Text style=\{styles\.sectionLabel\}>WORD BANK<\/Text>[\s\S]*?<Text style=\{styles\.sectionMeta\}>Tap a word to add it below<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /sectionHeader:\s*\{/);
+  assert.match(source, /sectionMeta:\s*\{/);
+});
+
 test('every lesson type keeps the animated stage alive by deriving a stable visual concept for the scene', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 

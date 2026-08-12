@@ -288,9 +288,13 @@ function AudioControls({ conceptId, controller, hasAudio }) {
 
 function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   const usedIndexes = new Set(response.builtWords.map(({ index }) => index));
+  const answerProgressLabel = `${response.builtWords.length} / ${exercise.wordBank.length} words placed`;
   return (
     <View style={styles.buildArea}>
-      <Text style={styles.sectionLabel}>YOUR ANSWER</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionLabel}>YOUR ANSWER</Text>
+        <Text style={styles.sectionMeta}>{answerProgressLabel}</Text>
+      </View>
       <View style={styles.answerTray}>
         {response.builtWords.length ? response.builtWords.map((word) => (
           <Pressable
@@ -303,7 +307,10 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
           </Pressable>
         )) : <Text style={styles.answerPlaceholder}>Tap words below to build your answer</Text>}
       </View>
-      <Text style={styles.sectionLabel}>WORD BANK</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionLabel}>WORD BANK</Text>
+        <Text style={styles.sectionMeta}>Tap a word to add it below</Text>
+      </View>
       <View style={styles.wordBank}>
         {exercise.wordBank.map((value, index) => {
           const used = usedIndexes.has(index);
@@ -629,7 +636,9 @@ const styles = StyleSheet.create({
   matchCheck: { color: GREEN, fontFamily: fonts.extraBold, paddingTop: 3 },
   matchMessage: { color: MUTED, fontFamily: fonts.semiBold, paddingTop: 14, textAlign: 'center' },
   buildArea: { paddingTop: 4 },
-  sectionLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8, paddingBottom: 7, paddingTop: 14 },
+  sectionHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 7, paddingTop: 14 },
+  sectionLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8 },
+  sectionMeta: { color: '#9AAAB4', fontFamily: fonts.semiBold, fontSize: 11 },
   answerTray: { alignContent: 'flex-start', backgroundColor: '#F7FBFD', borderColor: BORDER, borderRadius: 18, borderStyle: 'dashed', borderWidth: 2, flexDirection: 'row', flexWrap: 'wrap', gap: 8, minHeight: 92, padding: 12 },
   answerPlaceholder: { color: '#9AAAB4', fontFamily: fonts.medium, padding: 8 },
   selectedWord: { backgroundColor: SKY, borderRadius: 12, paddingHorizontal: 13, paddingVertical: 10 },
