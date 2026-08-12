@@ -197,6 +197,17 @@ test('the lesson modal adds a compact summary row so learners can see the curren
   assert.match(source, /lessonSummaryValue:\s*\{/);
 });
 
+test('the lesson modal structures feedback into an outcome header and dedicated answer reveal card', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /<View style=\{styles\.feedbackHeader\}>[\s\S]*?<Text style=\{styles\.feedbackEyebrow\}>\{feedback === ['"]correct['"] \? ['"]NICE WORK['"] : ['"]KEEP GOING['"]\}<\/Text>[\s\S]*?<Text style=\{styles\.feedbackTitle\}>\{feedback === ['"]correct['"] \? ['"]Correct! \+10 XP['"] : ['"]Almost — try again['"]\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /<View style=\{styles\.feedbackAnswerCard\}>[\s\S]*?<Text style=\{styles\.feedbackAnswerLabel\}>ANSWER<\/Text>[\s\S]*?<Text style=\{styles\.feedbackAnswer\}>\{exercise\.answer\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /feedbackHeader:\s*\{/);
+  assert.match(source, /feedbackEyebrow:\s*\{/);
+  assert.match(source, /feedbackAnswerCard:\s*\{/);
+  assert.match(source, /feedbackAnswerLabel:\s*\{/);
+});
+
 test('every lesson type keeps the animated stage alive by deriving a stable visual concept for the scene', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 

@@ -556,8 +556,14 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                       />
                     </>
                   )}
-                  <Text style={styles.feedbackTitle}>{feedback === 'correct' ? 'Correct! +10 XP' : 'Almost — try again'}</Text>
-                  <Text style={styles.feedbackAnswer}>{exercise.answer}</Text>
+                  <View style={styles.feedbackHeader}>
+                    <Text style={styles.feedbackEyebrow}>{feedback === 'correct' ? 'NICE WORK' : 'KEEP GOING'}</Text>
+                    <Text style={styles.feedbackTitle}>{feedback === 'correct' ? 'Correct! +10 XP' : 'Almost — try again'}</Text>
+                  </View>
+                  <View style={styles.feedbackAnswerCard}>
+                    <Text style={styles.feedbackAnswerLabel}>ANSWER</Text>
+                    <Text style={styles.feedbackAnswer}>{exercise.answer}</Text>
+                  </View>
                 </Animated.View>
               ) : null}
             </ScrollView>
@@ -633,13 +639,17 @@ const styles = StyleSheet.create({
   wordChipUsed: { backgroundColor: '#F3F6F8', borderColor: '#EDF2F5' },
   wordChipText: { color: NAVY, fontFamily: fonts.bold, fontSize: 15 },
   wordChipTextUsed: { color: '#C1CBD1' },
-  feedbackCard: { borderRadius: 18, marginTop: 18, padding: 16 },
+  feedbackCard: { borderRadius: 22, borderWidth: 2, marginTop: 18, overflow: 'hidden', padding: 16 },
   feedbackCorrect: { backgroundColor: '#E7F9EE' },
   feedbackWrong: { backgroundColor: '#FFF0F0' },
   feedbackConfetti: { color: '#FFB936', fontSize: 18, letterSpacing: 6, marginBottom: 4, textAlign: 'center' },
   feedbackGuide: { alignSelf: 'center', height: 82, marginBottom: 6, width: 82 },
-  feedbackTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 18 },
-  feedbackAnswer: { color: MUTED, fontFamily: fonts.bold, paddingTop: 4 },
+  feedbackHeader: { alignItems: 'center', gap: 4 },
+  feedbackEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8, textAlign: 'center' },
+  feedbackTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 21, lineHeight: 27, textAlign: 'center' },
+  feedbackAnswerCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 18, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
+  feedbackAnswerLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, textAlign: 'center' },
+  feedbackAnswer: { color: NAVY, fontFamily: fonts.bold, fontSize: 18, lineHeight: 24, paddingTop: 6, textAlign: 'center' },
   footer: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, bottom: 0, left: 0, padding: 18, position: 'absolute', right: 0 },
   primaryButton: { alignItems: 'center', backgroundColor: SKY, borderRadius: 17, justifyContent: 'center', minHeight: 56, paddingHorizontal: 24 },
   primaryButtonDisabled: { backgroundColor: '#D9E5EB' },
