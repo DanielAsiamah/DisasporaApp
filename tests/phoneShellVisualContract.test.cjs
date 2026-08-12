@@ -218,6 +218,24 @@ test('word-tray lessons add compact headers so learners can track progress and u
   assert.match(source, /sectionMeta:\s*\{/);
 });
 
+test('matching lessons explain both columns, surface pair progress, and announce interaction state accessibly', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /const matchedPairCount = response\.matchedPairIds\.length/);
+  assert.match(source, /const matchProgressLabel = `\$\{matchedPairCount\} \/ \$\{exercise\.pairs\.length\} pairs matched`/);
+  assert.match(source, /<View style=\{styles\.matchHeader\}>[\s\S]*?<Text style=\{styles\.sectionLabel\}>MATCH THE PAIRS<\/Text>[\s\S]*?<Text style=\{styles\.sectionMeta\}>\{matchProgressLabel\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /<Text style=\{styles\.matchColumnLabel\}>PHRASE<\/Text>[\s\S]*?\{column\(exercise\.leftItems, ['"]left['"]\)\}/s);
+  assert.match(source, /<Text style=\{styles\.matchColumnLabel\}>MEANING<\/Text>[\s\S]*?\{column\(exercise\.rightItems, ['"]right['"]\)\}/s);
+  assert.match(source, /const matchStateLabel = matched \? ['"]matched['"] : selected \? ['"]selected['"] : ['"]not selected['"]/);
+  assert.match(source, /accessibilityLabel=\{`\$\{side === ['"]left['"] \? ['"]Phrase['"] : ['"]Meaning['"]\}: \$\{item\.value\}, \$\{matchStateLabel\}`\}/);
+  assert.match(source, /accessibilityRole=['"]button['"]/);
+  assert.match(source, /accessibilityState=\{\{ disabled: Boolean\(feedback\) \|\| matched, selected, checked: matched \}\}/);
+  assert.match(source, /AccessibilityInfo\.announceForAccessibility\(matchMessage\)/);
+  assert.match(source, /accessibilityLiveRegion=['"]polite['"][\s\S]*?style=\{styles\.matchMessage\}/s);
+  assert.match(source, /matchHeader:\s*\{/);
+  assert.match(source, /matchColumnLabel:\s*\{/);
+});
+
 test('every lesson type keeps the animated stage alive by deriving a stable visual concept for the scene', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 

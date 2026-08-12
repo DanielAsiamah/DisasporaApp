@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
+  AccessibilityInfo,
   Image,
   Modal,
   Pressable,
@@ -215,6 +216,9 @@ function MatchExercise({
   setResponse,
   setMatchMessage,
 }) {
+  const matchedPairCount = response.matchedPairIds.length;
+  const matchProgressLabel = `${matchedPairCount} / ${exercise.pairs.length} pairs matched`;
+
   function choose(side, item) {
     const result = selectMatchItem(response, { ...item, side });
     setResponse(result.response);
@@ -236,8 +240,12 @@ function MatchExercise({
         {items.map((item) => {
           const matched = response.matchedPairIds.includes(item.pairId);
           const selected = response.selectedMatch?.id === item.id;
+          const matchStateLabel = matched ? 'matched' : selected ? 'selected' : 'not selected';
           return (
             <Pressable
+              accessibilityLabel={`${side === 'left' ? 'Phrase' : 'Meaning'}: ${item.value}, ${matchStateLabel}`}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: Boolean(feedback) || matched, selected, checked: matched }}
               disabled={Boolean(feedback) || matched}
               key={item.id}
               onPress={() => choose(side, item)}
@@ -254,9 +262,19 @@ function MatchExercise({
 
   return (
     <View>
+      <View style={styles.matchHeader}>
+        <Text style={styles.sectionLabel}>MATCH THE PAIRS</Text>
+        <Text style={styles.sectionMeta}>{matchProgressLabel}</Text>
+      </View>
       <View style={styles.matchGrid}>
-        {column(exercise.leftItems, 'left')}
-        {column(exercise.rightItems, 'right')}
+        <View style={styles.matchColumnGroup}>
+          <Text style={styles.matchColumnLabel}>PHRASE</Text>
+          {column(exercise.leftItems, 'left')}
+        </View>
+        <View style={styles.matchColumnGroup}>
+          <Text style={styles.matchColumnLabel}>MEANING</Text>
+          {column(exercise.rightItems, 'right')}
+        </View>
       </View>
     </View>
   );
@@ -407,6 +425,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     }
   }, [audio, audioEventGate, exercise, visible]);
 
+  useEffect(() => {
+    if (visible && matchMessage) AccessibilityInfo.announceForAccessibility(matchMessage);
+  }, [matchMessage, visible]);
+
   function closeLesson() {
     audio.dispatch({ event: 'lesson-exit' });
     onClose();
@@ -546,7 +568,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                 />
               ) : null}
               {isBuild ? <WordTrayExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
-              {isMatch && matchMessage ? <Text style={styles.matchMessage}>{matchMessage}</Text> : null}
+              {isMatch && matchMessage ? <Text accessibilityLiveRegion="polite" style={styles.matchMessage}>{matchMessage}</Text> : null}
               {feedback ? (
                 <Animated.View style={[
                   styles.feedbackCard,
@@ -629,12 +651,15 @@ const styles = StyleSheet.create({
   wrongCard: { backgroundColor: '#FFF0F0', borderColor: RED },
   pressedCard: { opacity: 0.82, transform: [{ scale: 0.99 }] },
   choiceText: { color: NAVY, fontFamily: fonts.bold, fontSize: 16, textAlign: 'center' },
-  matchGrid: { flexDirection: 'row', gap: 10, paddingTop: 20 },
+  matchHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 8, paddingTop: 4 },
+  matchGrid: { flexDirection: 'row', gap: 10 },
+  matchColumnGroup: { flex: 1, gap: 7 },
+  matchColumnLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, textAlign: 'center' },
   matchColumn: { flex: 1, gap: 10 },
   matchCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 15, borderWidth: 2, justifyContent: 'center', minHeight: 67, padding: 10 },
   matchText: { color: NAVY, fontFamily: fonts.bold, fontSize: 14, textAlign: 'center' },
   matchCheck: { color: GREEN, fontFamily: fonts.extraBold, paddingTop: 3 },
-  matchMessage: { color: MUTED, fontFamily: fonts.semiBold, paddingTop: 14, textAlign: 'center' },
+  matchMessage: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, color: NAVY, fontFamily: fonts.semiBold, marginTop: 14, overflow: 'hidden', paddingHorizontal: 14, paddingVertical: 9, textAlign: 'center' },
   buildArea: { paddingTop: 4 },
   sectionHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 7, paddingTop: 14 },
   sectionLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8 },
