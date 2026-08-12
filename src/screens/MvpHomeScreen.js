@@ -32,6 +32,7 @@ const MUTED = '#718397';
 const GREEN = '#22B65D';
 const CLOUD_FILL = '#F4FBFF';
 const CLOUD_OFFSCREEN_START = -220;
+const CLOUD_DRIFT_DELTA = 14;
 const CLOUD_HERO_RESTING_X = 34;
 const CLOUD_HERO_SECONDARY_RESTING_X = 228;
 const CLOUD_PODIUM_RESTING_X = 28;
@@ -51,8 +52,10 @@ function Cloud({ top, size, delay = 0, duration = 17000, restingX = 0, reducedMo
     drift.setValue(CLOUD_OFFSCREEN_START);
     const loop = Animated.loop(Animated.sequence([
       Animated.delay(delay),
-      Animated.timing(drift, { toValue: 430, duration, useNativeDriver: true }),
-      Animated.timing(drift, { toValue: CLOUD_OFFSCREEN_START, duration: 0, useNativeDriver: true }),
+      Animated.timing(drift, { toValue: restingX, duration: 2200, useNativeDriver: true }),
+      Animated.timing(drift, { toValue: restingX + CLOUD_DRIFT_DELTA, duration, useNativeDriver: true }),
+      Animated.timing(drift, { toValue: restingX - CLOUD_DRIFT_DELTA, duration, useNativeDriver: true }),
+      Animated.timing(drift, { toValue: restingX, duration, useNativeDriver: true }),
     ]));
     loop.start();
     return () => loop.stop();
