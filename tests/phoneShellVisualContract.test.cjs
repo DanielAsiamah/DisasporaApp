@@ -164,6 +164,15 @@ test('the lesson completion screen can launch the next unlocked topic directly f
   assert.match(homeSource, /<PatoisLessonModal[\s\S]*onAdvance=\{setActiveTopic\}[\s\S]*visible=\{Boolean\(activeTopic\)\}/);
 });
 
+test('the lesson completion screen scrolls safely on short phones while preserving a centered celebration card', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /<ScrollView contentContainerStyle=\{styles\.completeScrollContent\} showsVerticalScrollIndicator=\{false\} style=\{styles\.completeScroll\}>[\s\S]*?<View style=\{styles\.completeScreen\}>[\s\S]*?<Text style=\{styles\.completeTitle\}>\{completionTitle\}<\/Text>[\s\S]*?<View style=\{styles\.completeActions\}>/s);
+  assert.match(source, /completeScroll:\s*\{[^}]*flex:\s*1/s);
+  assert.match(source, /completeScrollContent:\s*\{[^}]*flexGrow:\s*1[^}]*justifyContent:\s*['"]center['"]/s);
+  assert.match(source, /completeScreen:\s*\{[^}]*paddingBottom:\s*(?:2[4-9]|[3-9]\d)/s);
+});
+
 test('review and challenge lessons carry their own mode label and completion title inside the modal', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 

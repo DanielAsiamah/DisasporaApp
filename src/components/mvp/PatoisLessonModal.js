@@ -500,18 +500,20 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
         </View>
 
         {finished ? (
-          <View style={styles.completeScreen}>
-            <Text style={styles.confetti}>✦  ✧  ✦</Text>
-            <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
-            <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
-            <Text style={styles.completeTitle}>{completionTitle}</Text>
-            <Text style={styles.completeBody}>{completeBody}</Text>
-            {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
-            <View style={styles.completeActions}>
-              {nextTopic ? <Pressable onPress={() => onAdvance?.(nextTopic)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>START NEXT TOPIC</Text></Pressable> : null}
-              <Pressable onPress={closeLesson} style={completionBackButtonStyle}><Text style={completionBackButtonTextStyle}>BACK TO CHAPTER</Text></Pressable>
+          <ScrollView contentContainerStyle={styles.completeScrollContent} showsVerticalScrollIndicator={false} style={styles.completeScroll}>
+            <View style={styles.completeScreen}>
+              <Text style={styles.confetti}>✦  ✧  ✦</Text>
+              <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
+              <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
+              <Text style={styles.completeTitle}>{completionTitle}</Text>
+              <Text style={styles.completeBody}>{completeBody}</Text>
+              {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
+              <View style={styles.completeActions}>
+                {nextTopic ? <Pressable onPress={() => onAdvance?.(nextTopic)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>START NEXT TOPIC</Text></Pressable> : null}
+                <Pressable onPress={closeLesson} style={completionBackButtonStyle}><Text style={completionBackButtonTextStyle}>BACK TO CHAPTER</Text></Pressable>
+              </View>
             </View>
-          </View>
+          </ScrollView>
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -690,7 +692,9 @@ const styles = StyleSheet.create({
   primaryButtonText: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 16 },
   secondaryButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: SKY, borderRadius: 17, borderWidth: 2, justifyContent: 'center', minHeight: 56, paddingHorizontal: 24 },
   secondaryButtonText: { color: SKY, fontFamily: fonts.extraBold, fontSize: 16 },
-  completeScreen: { alignItems: 'center', flex: 1, justifyContent: 'center', padding: 28 },
+  completeScroll: { flex: 1 },
+  completeScrollContent: { flexGrow: 1, justifyContent: 'center' },
+  completeScreen: { alignItems: 'center', paddingBottom: 32, paddingHorizontal: 28, paddingTop: 20 },
   confetti: { color: '#FFB936', fontSize: 36, letterSpacing: 8 },
   completeGuide: { height: 140, marginBottom: -8, width: 140 },
   completeImage: { height: 250, width: 250 },
