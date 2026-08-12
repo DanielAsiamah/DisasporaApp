@@ -93,6 +93,18 @@ test('the Learn chapter header summarizes real progress and the next topic above
   assert.match(source, /chapterSummaryText:\s*\{/);
 });
 
+test('the Learn chapter section sits in a floating white card that overlaps the hero instead of merging flatly into the page', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /<View style=\{styles\.chapterCard\}>[\s\S]*?<View style=\{styles\.chapterHeader\}>/s);
+  assert.match(source, /chapterCard:\s*\{[^}]*backgroundColor:\s*['"]#FFFFFF['"]/s);
+  assert.match(source, /chapterCard:\s*\{[^}]*borderTopLeftRadius:\s*3\d/s);
+  assert.match(source, /chapterCard:\s*\{[^}]*borderTopRightRadius:\s*3\d/s);
+  assert.match(source, /chapterCard:\s*\{[^}]*marginTop:\s*-?[2-9]\d/s);
+  assert.match(source, /chapterCard:\s*\{[^}]*paddingTop:\s*2\d/s);
+  assert.match(source, /chapterHeader:\s*\{[^}]*paddingHorizontal:\s*20/s);
+});
+
 test('the lesson completion screen names the unlocked next topic instead of using only generic copy', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
