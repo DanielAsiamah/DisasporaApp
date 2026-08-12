@@ -80,6 +80,15 @@ test('review and challenge topics get their own Learn-grid treatment instead of 
   assert.match(source, /topicBadge:\s*\{/);
 });
 
+test('the Learn topic grid uses centered spacing with enough width and bottom padding for tidy phone rows', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /topicGrid:\s*\{[^}]*justifyContent:\s*['"]space-evenly['"]/s);
+  assert.match(source, /topicGrid:\s*\{[^}]*paddingBottom:\s*2\d/s);
+  assert.match(source, /topicWrap:\s*\{[^}]*width:\s*['"]30%['"]/s);
+  assert.match(source, /topicWrap:\s*\{[^}]*marginBottom:\s*2\d/s);
+});
+
 test('the Learn chapter header summarizes real progress and the next topic above the grid', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
