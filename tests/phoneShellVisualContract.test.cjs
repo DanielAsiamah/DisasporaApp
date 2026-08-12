@@ -185,6 +185,18 @@ test('the lesson modal keeps the current topic title visible above every exercis
   assert.match(source, /topicTitle:\s*\{/);
 });
 
+test('the lesson modal adds a compact summary row so learners can see the current step and exercise mode at a glance', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /const currentStepLabel = `STEP \$\{Math\.min\(index \+ 1, exercises\.length\)\} OF \$\{exercises\.length\}`/);
+  assert.match(source, /const currentExerciseLabel = exercise\?\.title \|\| ['"]Lesson step['"]/);
+  assert.match(source, /<View style=\{styles\.lessonSummaryRow\}>[\s\S]*?<View style=\{styles\.lessonSummaryPill\}>[\s\S]*?<Text style=\{styles\.lessonSummaryLabel\}>\{currentStepLabel\}<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.lessonSummaryPill\}>[\s\S]*?<Text style=\{styles\.lessonSummaryValue\}>\{currentExerciseLabel\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /lessonSummaryRow:\s*\{/);
+  assert.match(source, /lessonSummaryPill:\s*\{/);
+  assert.match(source, /lessonSummaryLabel:\s*\{/);
+  assert.match(source, /lessonSummaryValue:\s*\{/);
+});
+
 test('every lesson type keeps the animated stage alive by deriving a stable visual concept for the scene', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 

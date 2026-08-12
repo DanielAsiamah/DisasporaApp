@@ -454,6 +454,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
   const ready = isResponseReady(exercise, response);
   const exerciseVisualConceptId = getExerciseVisualConceptId(exercise);
+  const currentStepLabel = `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
+  const currentExerciseLabel = exercise?.title || 'Lesson step';
 
   return (
     <Modal animationType={reducedMotion ? 'none' : 'slide'} onRequestClose={closeLesson} visible={visible}>
@@ -484,12 +486,20 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
         ) : (
           <>
             <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-              <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
-              <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>
-              <Text style={styles.topicTitle}>{topic.title}</Text>
-              {courseReviewPending ? (
-                <View style={styles.reviewBanner}>
-                  <Text style={styles.reviewBannerTitle}>Native review pending</Text>
+                <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
+                <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>
+                <Text style={styles.topicTitle}>{topic.title}</Text>
+                <View style={styles.lessonSummaryRow}>
+                  <View style={styles.lessonSummaryPill}>
+                    <Text style={styles.lessonSummaryLabel}>{currentStepLabel}</Text>
+                  </View>
+                  <View style={styles.lessonSummaryPill}>
+                    <Text style={styles.lessonSummaryValue}>{currentExerciseLabel}</Text>
+                  </View>
+                </View>
+                {courseReviewPending ? (
+                  <View style={styles.reviewBanner}>
+                    <Text style={styles.reviewBannerTitle}>Native review pending</Text>
                   <Text style={styles.reviewBannerBody}>
                     This preview content is still awaiting native-speaker approval.
                   </Text>
@@ -579,6 +589,10 @@ const styles = StyleSheet.create({
   topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 7 },
   topicModePillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.6 },
   topicTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 24, lineHeight: 31, marginTop: 14, textAlign: 'center' },
+  lessonSummaryRow: { flexDirection: 'row', gap: 8, justifyContent: 'center', marginTop: 12 },
+  lessonSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 8 },
+  lessonSummaryLabel: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.7 },
+  lessonSummaryValue: { color: NAVY, fontFamily: fonts.bold, fontSize: 12 },
   promptCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderWidth: 2, marginBottom: 18, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 2 },
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 25, lineHeight: 32, textAlign: 'center' },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
