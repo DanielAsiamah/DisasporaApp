@@ -45,6 +45,17 @@ test('leaderboard rankings below the podium live in their own card with a sectio
   assert.match(source, /rankCardBody:\s*\{/);
 });
 
+test('leaderboard adds a quick-glance summary row for the current league and the learner rank', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const learnerRank = rows\.findIndex\(\(\[name\]\) => name === learner\) \+ 1/);
+  assert.match(source, /<View style=\{styles\.leaderboardSummaryRow\}>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>THIS WEEK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>Diamond League<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>YOUR RANK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>#\{learnerRank\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /leaderboardSummaryRow:\s*\{/);
+  assert.match(source, /leaderboardSummaryPill:\s*\{/);
+  assert.match(source, /leaderboardSummaryLabel:\s*\{/);
+  assert.match(source, /leaderboardSummaryValue:\s*\{/);
+});
+
 test('the Learn screen keeps the final topic row clear of the fixed bottom tab bar on phone screens', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
