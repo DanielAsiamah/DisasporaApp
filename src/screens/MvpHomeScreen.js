@@ -166,8 +166,16 @@ function TopicButton({ topic, onPress, reducedMotion }) {
   const isComplete = topic.state === 'complete';
   const topicGlyph = getTopicDisplayGlyph(topic);
   const topicBadgeLabel = getTopicBadgeLabel(topic);
+  const topicStateLabel = isLocked ? 'locked' : isComplete ? 'completed' : 'ready to learn';
   return (
-    <Pressable disabled={isLocked} onPress={() => onPress(topic)} style={styles.topicWrap}>
+    <Pressable
+      accessibilityLabel={`${topic.title}, ${topicStateLabel}`}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isLocked, selected: topic.state === 'active' }}
+      disabled={isLocked}
+      onPress={() => onPress(topic)}
+      style={styles.topicWrap}
+    >
       <Animated.View style={[
         styles.topicCircle,
         topic.state === 'active' && styles.topicCircleActive,
@@ -291,7 +299,12 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   const currentFocusTitle = chapterComplete ? 'Chapter complete' : activeLearnTopic?.title || 'Getting Started';
   const currentFocusBody = chapterComplete ? 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
   const currentFocusMetaLabel = chapterComplete ? '9 topics complete' : `Lesson ${activeTopicIndex} of ${topicStates.length}`;
-  const currentFocusCtaLabel = chapterComplete ? 'Review chapter ↓' : 'Tap to continue →';
+  const currentFocusHint = chapterComplete
+    ? `Opens ${activeLearnTopic?.title || 'the first topic'} for review`
+    : 'Opens your current lesson';
+  const currentFocusCtaLabel = chapterComplete
+    ? `Review ${activeLearnTopic?.title || 'first topic'} →`
+    : 'Tap to continue →';
 
   useEffect(() => {
     let cancelled = false;
@@ -367,7 +380,15 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
                         <View style={styles.chapterSummaryPill}><Text style={styles.chapterSummaryText}>{chapterProgressLabel}</Text></View>
                         <View style={styles.chapterSummaryPill}><Text style={styles.chapterSummaryText}>{nextUpLabel}</Text></View>
                       </View>
-                      <Pressable disabled={!activeLearnTopic} onPress={() => activeLearnTopic && setActiveTopic(activeLearnTopic)} style={styles.currentFocusCard}>
+                      <Pressable
+                        accessibilityHint={currentFocusHint}
+                        accessibilityLabel={`${currentFocusTitle}. ${currentFocusMetaLabel}`}
+                        accessibilityRole="button"
+                        accessibilityState={{ disabled: !activeLearnTopic }}
+                        disabled={!activeLearnTopic}
+                        onPress={() => activeLearnTopic && setActiveTopic(activeLearnTopic)}
+                        style={styles.currentFocusCard}
+                      >
                         <Text style={styles.currentFocusEyebrow}>CURRENT FOCUS</Text>
                         <Text style={styles.currentFocusTitle}>{currentFocusTitle}</Text>
                         <Text style={styles.currentFocusBody}>{currentFocusBody}</Text>
@@ -393,8 +414,15 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
         ) : <Leaderboard profile={profile} reducedMotion={reducedMotion} />}
       </View>
       <View style={styles.tabBar}>
-        {[['learn', '▣', 'Learn'], ['leaderboard', '♜', 'Leaderboard']].map(([id, icon, label]) => (
-          <Pressable key={id} onPress={() => setActiveTab(id)} style={styles.tabButton}>
+        {[['learn', '▣', 'Learn'], ['leaderboard', '♜', 'Leaderboard']].map(([id, icon, label], index) => (
+          <Pressable
+            accessibilityLabel={`${label}, ${index + 1} of 2, main navigation`}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: activeTab === id }}
+            key={id}
+            onPress={() => setActiveTab(id)}
+            style={styles.tabButton}
+          >
             <Text style={[styles.tabIcon, activeTab === id && styles.tabActive]}>{icon}</Text>
             <Text style={[styles.tabLabel, activeTab === id && styles.tabActive]}>{label}</Text>
           </Pressable>
@@ -420,6 +448,6 @@ const styles = StyleSheet.create({
   currentFocusCard: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 22, borderWidth: 1, marginTop: 16, paddingHorizontal: 18, paddingVertical: 16, width: '100%' }, currentFocusEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8 }, currentFocusTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 22, marginTop: 6 }, currentFocusBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 6 }, currentFocusFooter: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 }, currentFocusMeta: { color: NAVY, fontFamily: fonts.bold, fontSize: 12 }, currentFocusCta: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12 },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
   topicGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', paddingBottom: 24, paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 28, width: '30%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 25 }, topicIconLocked: { color: '#91A1AC', fontSize: 21 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelActive: { color: SKY }, topicLabelLocked: { color: '#95A4AE' }, topicBadge: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, marginTop: 4, textAlign: 'center' },
-  tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center' }, tabIcon: { color: '#8294A2', fontSize: 24 }, tabLabel: { color: '#8294A2', fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY },
+  tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center', minHeight: 52 }, tabIcon: { color: '#8294A2', fontSize: 24 }, tabLabel: { color: '#8294A2', fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY },
   leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 27, marginTop: 8 }, pageSubtitle: { color: MUTED, fontFamily: fonts.medium, fontSize: 14, marginBottom: 20, marginTop: 4 }, leaderboardSummaryRow: { flexDirection: 'row', gap: 10, marginBottom: 16 }, leaderboardSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 18, borderWidth: 1, flex: 1, paddingHorizontal: 14, paddingVertical: 12 }, leaderboardSummaryLabel: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8 }, leaderboardSummaryValue: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 17, marginTop: 4 }, podiumCard: { borderRadius: 24, minHeight: 260, overflow: 'hidden', paddingHorizontal: 14, paddingTop: 18 }, podiumGlow: { backgroundColor: 'rgba(255,255,255,0.55)', borderRadius: 130, height: 130, position: 'absolute', right: -14, top: -28, width: 130 }, podiumStage: { alignItems: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'space-between' }, podiumColumn: { alignItems: 'center', width: '31%' }, podiumGuide: { height: 96, marginBottom: -4, width: 96, zIndex: 3 }, podiumRank: { backgroundColor: '#FFD34D', borderRadius: 15, color: NAVY, fontFamily: fonts.extraBold, marginBottom: 8, paddingHorizontal: 9, paddingVertical: 4, zIndex: 4 }, podiumCopy: { alignItems: 'center', marginBottom: 10 }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 3 }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, podiumTier: { backgroundColor: '#FFFFFF', borderColor: '#D4EAF5', borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, width: '100%' }, podiumTierFirst: { height: 108 }, podiumTierSecond: { height: 76 }, podiumTierThird: { height: 60 }, rankCard: { backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 24, borderWidth: 1, marginTop: 18, padding: 18 }, rankCardTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 20 }, rankCardBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 18, marginTop: 4 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },
 });

@@ -260,7 +260,7 @@ test('the Learn shell surfaces the active topic in a dedicated current-focus car
 
   assert.match(source, /function getTopicFocusDescription\(topic\)/);
   assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| topicStates\[0\] \|\| null/);
-  assert.match(source, /<Pressable disabled=\{!activeLearnTopic\} onPress=\{\(\) => activeLearnTopic && setActiveTopic\(activeLearnTopic\)\} style=\{styles\.currentFocusCard\}>/);
+  assert.match(source, /<Pressable\s+accessibilityHint=\{currentFocusHint\}[\s\S]*?disabled=\{!activeLearnTopic\}[\s\S]*?onPress=\{\(\) => activeLearnTopic && setActiveTopic\(activeLearnTopic\)\}[\s\S]*?style=\{styles\.currentFocusCard\}\s*>/s);
   assert.match(source, /<Text style=\{styles\.currentFocusEyebrow\}>CURRENT FOCUS<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
@@ -289,9 +289,24 @@ test('the current-focus card switches to a chapter-complete state instead of pre
   assert.match(source, /const currentFocusTitle = chapterComplete \? ['"]Chapter complete['"] : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
   assert.match(source, /const currentFocusBody = chapterComplete \? ['"]You finished this chapter — replay any topic below whenever you want a refresher\.['"] : getTopicFocusDescription\(activeLearnTopic\)/);
   assert.match(source, /const currentFocusMetaLabel = chapterComplete \? ['"]9 topics complete['"] : `Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
-  assert.match(source, /const currentFocusCtaLabel = chapterComplete \? ['"]Review chapter ↓['"] : ['"]Tap to continue →['"]/);
+  assert.match(source, /const currentFocusHint = chapterComplete[\s\S]*?`Opens \$\{activeLearnTopic\?\.title \|\| ['"]the first topic['"]\} for review`[\s\S]*?: ['"]Opens your current lesson['"]/s);
+  assert.match(source, /const currentFocusCtaLabel = chapterComplete[\s\S]*?`Review \$\{activeLearnTopic\?\.title \|\| ['"]first topic['"]\} →`[\s\S]*?: ['"]Tap to continue →['"]/s);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{currentFocusMetaLabel\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusCta\}>\{currentFocusCtaLabel\}<\/Text>/);
+});
+
+test('Learn topics, current focus, and bottom tabs expose clear accessible roles and states', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const topicStateLabel = isLocked \? ['"]locked['"] : isComplete \? ['"]completed['"] : ['"]ready to learn['"]/);
+  assert.match(source, /accessibilityLabel=\{`\$\{topic\.title\}, \$\{topicStateLabel\}`\}/);
+  assert.match(source, /accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: isLocked, selected: topic\.state === ['"]active['"] \}\}/s);
+  assert.match(source, /accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}/);
+  assert.match(source, /accessibilityHint=\{currentFocusHint\}[\s\S]*?accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !activeLearnTopic \}\}/s);
+  assert.match(source, /\.map\(\(\[id, icon, label\], index\) => \(/);
+  assert.match(source, /accessibilityLabel=\{`\$\{label\}, \$\{index \+ 1\} of 2, main navigation`\}/);
+  assert.match(source, /accessibilityRole=['"]tab['"][\s\S]*?accessibilityState=\{\{ selected: activeTab === id \}\}/s);
+  assert.match(source, /tabButton:\s*\{[^}]*minHeight:\s*(?:4[8-9]|[5-9]\d)/s);
 });
