@@ -139,6 +139,16 @@ test('the lesson modal keeps the current topic title visible above every exercis
   assert.match(source, /topicTitle:\s*\{/);
 });
 
+test('every lesson type keeps the animated stage alive by deriving a stable visual concept for the scene', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /function getExerciseVisualConceptId\(exercise\)/);
+  assert.match(source, /exercise\?\.imageConceptId \|\| exercise\?\.conceptId \|\| exercise\?\.pairs\?\.\[0\]\?\.conceptId \|\| null/);
+  assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
+  assert.match(source, /<View style=\{styles\.scene\}>[\s\S]*?<LessonClouds reducedMotion=\{reducedMotion\} \/>[\s\S]*?<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\} imageRegistry=\{imageRegistry\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<BreathingGuidePortrait guideName=\{topic\.guide \|\| ['"]Kai['"]\} reducedMotion=\{reducedMotion\} style=\{styles\.lessonGuide\} \/>[\s\S]*?<\/View>/s);
+  assert.doesNotMatch(source, /\{!isMatch \?/);
+});
+
 test('the Learn shell surfaces the active topic in a dedicated current-focus card above the grid', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 

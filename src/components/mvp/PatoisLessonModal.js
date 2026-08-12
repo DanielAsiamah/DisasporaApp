@@ -146,6 +146,10 @@ function LessonClouds({ reducedMotion }) {
   );
 }
 
+function getExerciseVisualConceptId(exercise) {
+  return exercise?.imageConceptId || exercise?.conceptId || exercise?.pairs?.[0]?.conceptId || null;
+}
+
 function getExerciseHelperText(exercise) {
   if (!exercise) return '';
   if (exercise.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS) return 'Tap one phrase and then tap its matching meaning.';
@@ -441,6 +445,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
   const ready = isResponseReady(exercise, response);
+  const exerciseVisualConceptId = getExerciseVisualConceptId(exercise);
 
   return (
     <Modal animationType={reducedMotion ? 'none' : 'slide'} onRequestClose={closeLesson} visible={visible}>
@@ -482,13 +487,11 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   </Text>
                 </View>
               ) : null}
-              {!isMatch ? (
-                <View style={styles.scene}>
-                  <LessonClouds reducedMotion={reducedMotion} />
-                  <BreathingVocabularyImage conceptId={exercise?.imageConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
-                  <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.lessonGuide} />
-                </View>
-              ) : null}
+              <View style={styles.scene}>
+                <LessonClouds reducedMotion={reducedMotion} />
+                <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
+                <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.lessonGuide} />
+              </View>
               <View style={styles.promptCard}>
                 <Text style={styles.prompt}>{exercise?.prompt}</Text>
                 <Text style={styles.promptHelper}>{getExerciseHelperText(exercise)}</Text>
