@@ -34,6 +34,17 @@ test('leaderboard podium uses animated guide characters on tiered podium blocks 
   assert.match(source, /<Image\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[guide\]\}\s+style=\{styles\.rankAvatar\}\s*\/>/s);
 });
 
+test('leaderboard rankings below the podium live in their own card with a section title and supportive copy', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /<View style=\{styles\.rankCard\}>[\s\S]*?<Text style=\{styles\.rankCardTitle\}>Your position<\/Text>[\s\S]*?<Text style=\{styles\.rankCardBody\}>Keep one more lesson streak going to move up this week\.<\/Text>[\s\S]*?<View style=\{styles\.rankList\}>/s);
+  assert.match(source, /rankCard:\s*\{[^}]*backgroundColor:\s*['"]#FFFFFF['"]/s);
+  assert.match(source, /rankCard:\s*\{[^}]*borderRadius:\s*2\d/s);
+  assert.match(source, /rankCard:\s*\{[^}]*padding:\s*1\d/s);
+  assert.match(source, /rankCardTitle:\s*\{/);
+  assert.match(source, /rankCardBody:\s*\{/);
+});
+
 test('the Learn screen keeps the final topic row clear of the fixed bottom tab bar on phone screens', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
