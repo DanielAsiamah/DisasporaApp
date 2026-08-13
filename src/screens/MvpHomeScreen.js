@@ -22,6 +22,7 @@ const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
 const { getCourseById } = require('../data/courseCatalog.cjs');
 const { canAccessRuntimeCourse } = require('../data/courseAccessPolicy.cjs');
 const { buildCourseProgressStorageKey } = require('../lessonEngine/courseProgressKey.cjs');
+const { buildLeaderboard } = require('../lessonEngine/leaderboardRanking.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 
 const SKY = '#1CB0F6';
@@ -68,7 +69,7 @@ function Cloud({ top, size, delay = 0, duration = 17000, restingX = 0, reducedMo
   );
 }
 
-function BreathingGuide({ name = 'Kai', style, reducedMotion }) {
+function BreathingGuide({ accessible = false, name = 'Kai', style, reducedMotion }) {
   const breathe = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (reducedMotion) {
@@ -84,6 +85,7 @@ function BreathingGuide({ name = 'Kai', style, reducedMotion }) {
   }, [breathe, reducedMotion]);
   return (
     <Animated.Image
+      accessible={accessible}
       resizeMode="contain"
       source={guideArt[name] || guideArt.Kai}
       style={[style, { transform: [{ translateY: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, -4] }) }, { scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 1.012] }) }] }]}
@@ -191,26 +193,26 @@ function TopicButton({ topic, onPress, reducedMotion }) {
   );
 }
 
+function formatLeaderboardEntryAccessibilityLabel(entry) {
+  return `Rank ${entry.rank}, ${entry.name}, ${entry.xp} XP${entry.isCurrentUser ? ', your position' : ''}`;
+}
+
 function Leaderboard({ profile, reducedMotion }) {
-  const learner = profile?.preferredName || profile?.username || 'You';
-  const rows = [
-    ['Aisha', 1250, 'Amara'], ['Kwame', 1050, 'Kai'], ['Maya', 950, 'Sol'], ['Dina', 800, 'Amara'], ['Malik', 650, 'Kai'], [learner, 600, 'Sol'], ['Zuri', 450, 'Amara'],
-  ];
+  const { learner, progressCopy, rows } = buildLeaderboard(profile);
   const podiumRows = rows.slice(0, 3);
   const rankRows = rows.slice(3);
-  const learnerRank = rows.findIndex(([name]) => name === learner) + 1;
   return (
-    <ScrollView contentContainerStyle={styles.leaderboardContent}>
-      <Text style={styles.pageTitle}>Weekly League</Text>
-      <Text style={styles.pageSubtitle}>Keep learning to climb before Sunday.</Text>
+    <ScrollView contentContainerStyle={styles.leaderboardContent} showsVerticalScrollIndicator={false}>
+      <Text style={styles.pageTitle}>Practice League</Text>
+      <Text style={styles.pageSubtitle}>See how your saved XP compares on this practice ladder.</Text>
       <View style={styles.leaderboardSummaryRow}>
         <View style={styles.leaderboardSummaryPill}>
-          <Text style={styles.leaderboardSummaryLabel}>THIS WEEK</Text>
-          <Text style={styles.leaderboardSummaryValue}>Diamond League</Text>
+          <Text style={styles.leaderboardSummaryLabel}>LEAGUE</Text>
+          <Text style={styles.leaderboardSummaryValue}>Diaspora Practice</Text>
         </View>
         <View style={styles.leaderboardSummaryPill}>
           <Text style={styles.leaderboardSummaryLabel}>YOUR RANK</Text>
-          <Text style={styles.leaderboardSummaryValue}>#{learnerRank}</Text>
+          <Text style={styles.leaderboardSummaryValue}>#{learner.rank}</Text>
         </View>
       </View>
       <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
@@ -218,20 +220,25 @@ function Leaderboard({ profile, reducedMotion }) {
         <Cloud top={76} size={60} delay={2400} duration={19000} restingX={CLOUD_PODIUM_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
         <View style={styles.podiumGlow} />
         <View style={styles.podiumStage}>
-          {podiumRows.map(([name, xp, guide], index) => (
-            <View key={name} style={styles.podiumColumn}>
-              <BreathingGuide name={guide} reducedMotion={reducedMotion} style={styles.podiumGuide} />
-              <Text style={styles.podiumRank}>{index + 1}</Text>
+          {podiumRows.map((entry) => (
+            <View
+              accessible
+              accessibilityLabel={formatLeaderboardEntryAccessibilityLabel(entry)}
+              key={entry.id}
+              style={styles.podiumColumn}
+            >
+              <BreathingGuide accessible={false} name={entry.guide} reducedMotion={reducedMotion} style={styles.podiumGuide} />
+              <Text style={styles.podiumRank}>{entry.rank}</Text>
               <View style={styles.podiumCopy}>
-                <Text style={styles.podiumName}>{name}</Text>
-                <Text style={styles.podiumXp}>{xp} XP</Text>
+                <Text style={styles.podiumName}>{entry.name}</Text>
+                <Text style={styles.podiumXp}>{entry.xp} XP</Text>
               </View>
               <View
                 style={[
                   styles.podiumTier,
-                  index === 0 && styles.podiumTierFirst,
-                  index === 1 && styles.podiumTierSecond,
-                  index === 2 && styles.podiumTierThird,
+                  entry.rank === 1 && styles.podiumTierFirst,
+                  entry.rank === 2 && styles.podiumTierSecond,
+                  entry.rank === 3 && styles.podiumTierThird,
                 ]}
               />
             </View>
@@ -240,19 +247,21 @@ function Leaderboard({ profile, reducedMotion }) {
       </LinearGradient>
       <View style={styles.rankCard}>
         <Text style={styles.rankCardTitle}>Your position</Text>
-        <Text style={styles.rankCardBody}>Keep one more lesson streak going to move up this week.</Text>
+        <Text style={styles.rankCardBody}>{progressCopy}</Text>
         <View style={styles.rankList}>
-          {rankRows.map(([name, xp, guide], index) => {
-            const isYou = name === learner;
-            return (
-              <View key={`${name}-${index}`} style={[styles.rankRow, isYou && styles.rankRowYou]}>
-                <Text style={styles.rankNumber}>{index + 4}</Text>
-                <Image resizeMode="contain" source={guideArt[guide]} style={styles.rankAvatar} />
-                <Text style={styles.rankName}>{name}</Text>
-                <Text style={styles.rankXp}>{xp} XP</Text>
-              </View>
-            );
-          })}
+          {rankRows.map((entry) => (
+            <View
+              accessible
+              accessibilityLabel={formatLeaderboardEntryAccessibilityLabel(entry)}
+              key={entry.id}
+              style={[styles.rankRow, entry.isCurrentUser && styles.rankRowYou]}
+            >
+              <Text style={styles.rankNumber}>{entry.rank}</Text>
+              <Image accessible={false} resizeMode="contain" source={guideArt[entry.guide]} style={styles.rankAvatar} />
+              <Text style={styles.rankName}>{entry.name}</Text>
+              <Text style={styles.rankXp}>{entry.xp} XP</Text>
+            </View>
+          ))}
         </View>
       </View>
     </ScrollView>

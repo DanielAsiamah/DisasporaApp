@@ -27,17 +27,17 @@ test('leaderboard podium uses animated guide characters on tiered podium blocks 
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /function Leaderboard\(\{\s*profile,\s*reducedMotion\s*\}\)/);
-  assert.match(source, /<BreathingGuide[^>]+name=\{guide\}[^>]+reducedMotion=\{reducedMotion\}[^>]+style=\{styles\.podiumGuide\}/s);
+  assert.match(source, /<BreathingGuide[^>]+accessible=\{false\}[^>]+name=\{entry\.guide\}[^>]+reducedMotion=\{reducedMotion\}[^>]+style=\{styles\.podiumGuide\}/s);
   assert.match(source, /styles\.podiumTierFirst/);
   assert.match(source, /styles\.podiumTierSecond/);
   assert.match(source, /styles\.podiumTierThird/);
-  assert.match(source, /<Image\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[guide\]\}\s+style=\{styles\.rankAvatar\}\s*\/>/s);
+  assert.match(source, /<Image\s+accessible=\{false\}\s+resizeMode=['"]contain['"]\s+source=\{guideArt\[entry\.guide\]\}\s+style=\{styles\.rankAvatar\}\s*\/>/s);
 });
 
 test('leaderboard rankings below the podium live in their own card with a section title and supportive copy', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /<View style=\{styles\.rankCard\}>[\s\S]*?<Text style=\{styles\.rankCardTitle\}>Your position<\/Text>[\s\S]*?<Text style=\{styles\.rankCardBody\}>Keep one more lesson streak going to move up this week\.<\/Text>[\s\S]*?<View style=\{styles\.rankList\}>/s);
+  assert.match(source, /<View style=\{styles\.rankCard\}>[\s\S]*?<Text style=\{styles\.rankCardTitle\}>Your position<\/Text>[\s\S]*?<Text style=\{styles\.rankCardBody\}>\{progressCopy\}<\/Text>[\s\S]*?<View style=\{styles\.rankList\}>/s);
   assert.match(source, /rankCard:\s*\{[^}]*backgroundColor:\s*['"]#FFFFFF['"]/s);
   assert.match(source, /rankCard:\s*\{[^}]*borderRadius:\s*2\d/s);
   assert.match(source, /rankCard:\s*\{[^}]*padding:\s*1\d/s);
@@ -45,15 +45,27 @@ test('leaderboard rankings below the podium live in their own card with a sectio
   assert.match(source, /rankCardBody:\s*\{/);
 });
 
-test('leaderboard adds a quick-glance summary row for the current league and the learner rank', () => {
+test('leaderboard derives a truthful practice rank from saved profile XP and stable identity', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const learnerRank = rows\.findIndex\(\(\[name\]\) => name === learner\) \+ 1/);
-  assert.match(source, /<View style=\{styles\.leaderboardSummaryRow\}>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>THIS WEEK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>Diamond League<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>YOUR RANK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>#\{learnerRank\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /const \{ learner, progressCopy, rows \} = buildLeaderboard\(profile\)/);
+  assert.doesNotMatch(source, /\[learner,\s*600/);
+  assert.doesNotMatch(source, /name === learner/);
+  assert.match(source, /<Text style=\{styles\.pageTitle\}>Practice League<\/Text>/);
+  assert.match(source, /<View style=\{styles\.leaderboardSummaryRow\}>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>LEAGUE<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>Diaspora Practice<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>YOUR RANK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>#\{learner\.rank\}<\/Text>[\s\S]*?<\/View>/s);
   assert.match(source, /leaderboardSummaryRow:\s*\{/);
   assert.match(source, /leaderboardSummaryPill:\s*\{/);
   assert.match(source, /leaderboardSummaryLabel:\s*\{/);
   assert.match(source, /leaderboardSummaryValue:\s*\{/);
+});
+
+test('leaderboard entries expose rank, name, XP, and current-user context as one accessible item', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /key=\{entry\.id\}/);
+  assert.match(source, /accessible\s+accessibilityLabel=\{formatLeaderboardEntryAccessibilityLabel\(entry\)\}/);
+  assert.match(source, /entry\.isCurrentUser && styles\.rankRowYou/);
+  assert.match(source, /showsVerticalScrollIndicator=\{false\}/);
 });
 
 test('the Learn screen keeps the final topic row clear of the fixed bottom tab bar on phone screens', () => {

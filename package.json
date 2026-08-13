@@ -32,6 +32,7 @@
   "scripts": {
     "test:onboarding": "node --test tests/onboardingFlow.test.cjs tests/onboardingRouting.test.cjs",
     "test:verification": "node --test tests/emailVerificationFlow.test.cjs",
+    "test:leaderboard": "node --test tests/leaderboardRanking.test.cjs tests/phoneShellVisualContract.test.cjs",
     "test:lesson-audio": "node --test tests/lessonAudioAvailability.test.cjs tests/lessonAudioPolicy.test.cjs tests/lessonAudioController.test.cjs tests/lessonAudioEventGate.test.cjs tests/controlledLessonAudioRuntime.test.cjs tests/courseProductionAudioRegistry.test.cjs tests/audioManifestContract.test.cjs tests/voiceRoleContract.test.cjs tests/courseVoicePlan.test.cjs tests/narratorAudioManifest.test.cjs tests/audioSafetyContract.test.cjs tests/elevenLabsKeySafety.test.cjs",
     "test:guides": "node --test tests/regionalGuideModel.test.cjs",
     "test:image-audit": "node --test tests/imageAuditContract.test.cjs tests/imageNormalization.test.cjs",
