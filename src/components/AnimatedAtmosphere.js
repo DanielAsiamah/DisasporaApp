@@ -2,25 +2,35 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import { colors } from '../theme';
 
 export default function AnimatedAtmosphere({
   colors: gradientColors = [colors.skyTop, colors.skyBottom],
   accent = colors.primary,
 }) {
-  const drift = useRef(new Animated.Value(0)).current;
+  const reducedMotion = useReducedMotion(null);
+  const drift = useRef(new Animated.Value(0.5)).current;
   const float = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.loop(
+    if (reducedMotion !== false) {
+      drift.setValue(0.5);
+      float.setValue(0);
+      return undefined;
+    }
+
+    drift.setValue(0);
+    float.setValue(0);
+    const driftLoop = Animated.loop(
       Animated.timing(drift, {
         toValue: 1,
         duration: 60000,
         useNativeDriver: true,
       })
-    ).start();
+    );
 
-    Animated.loop(
+    const floatLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(float, {
           toValue: 1,
@@ -33,8 +43,14 @@ export default function AnimatedAtmosphere({
           useNativeDriver: true,
         }),
       ])
-    ).start();
-  }, [drift, float]);
+    );
+    driftLoop.start();
+    floatLoop.start();
+    return () => {
+      driftLoop.stop();
+      floatLoop.stop();
+    };
+  }, [drift, float, reducedMotion]);
 
   const cloudTranslate = drift.interpolate({
     inputRange: [0, 1],

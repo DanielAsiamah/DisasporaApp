@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import { fonts, radius, spacing } from '../theme';
 
 const palette = {
@@ -71,11 +72,24 @@ const COURSE_LANES = [
 ];
 
 export default function WelcomeScreen({ onGetStarted, onSignIn }) {
+  const reducedMotion = useReducedMotion(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(22)).current;
 
   useEffect(() => {
-    Animated.parallel([
+    if (reducedMotion == null) return undefined;
+
+    if (reducedMotion) {
+      fadeAnim.stopAnimation();
+      slideAnim.stopAnimation();
+      fadeAnim.setValue(1);
+      slideAnim.setValue(0);
+      return undefined;
+    }
+
+    fadeAnim.setValue(0);
+    slideAnim.setValue(22);
+    const entrance = Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 650,
@@ -87,8 +101,10 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
         bounciness: 5,
         useNativeDriver: true,
       }),
-    ]).start();
-  }, [fadeAnim, slideAnim]);
+    ]);
+    entrance.start();
+    return () => entrance.stop();
+  }, [fadeAnim, reducedMotion, slideAnim]);
 
   return (
     <View style={styles.root}>

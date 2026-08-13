@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { AUTH_PALETTE } from '../components/AuthScreenFrame';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import { fonts } from '../theme';
 
 const PHASES = [
@@ -33,7 +34,11 @@ const PHASES = [
 ];
 
 export default function SplashScreen({ onFinish }) {
+  const reducedMotion = useReducedMotion(null);
   const [phaseIndex, setPhaseIndex] = useState(0);
+  const hasFinished = useRef(false);
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
   const textOpacity = useRef(new Animated.Value(0)).current;
   const textScale = useRef(new Animated.Value(0.96)).current;
   const sublineOpacity = useRef(new Animated.Value(0)).current;
@@ -42,6 +47,27 @@ export default function SplashScreen({ onFinish }) {
 
   useEffect(() => {
     let cancelled = false;
+
+    function finishSplash() {
+      if (cancelled || hasFinished.current) return;
+      hasFinished.current = true;
+      onFinishRef.current();
+    }
+
+    if (reducedMotion == null) return undefined;
+
+    if (reducedMotion) {
+      textOpacity.setValue(1);
+      textScale.setValue(1);
+      sublineOpacity.setValue(1);
+      bgProgress.setValue(0);
+      exitOpacity.setValue(1);
+      const finishFrame = requestAnimationFrame(finishSplash);
+      return () => {
+        cancelled = true;
+        cancelAnimationFrame(finishFrame);
+      };
+    }
 
     async function runSequence() {
       for (let index = 0; index < PHASES.length; index += 1) {
@@ -84,15 +110,20 @@ export default function SplashScreen({ onFinish }) {
         easing: Easing.inOut(Easing.cubic),
         useNativeDriver: true,
       }).start(({ finished }) => {
-        if (finished && !cancelled) onFinish();
+        if (finished) finishSplash();
       });
     }
 
     runSequence();
     return () => {
       cancelled = true;
+      textOpacity.stopAnimation();
+      textScale.stopAnimation();
+      sublineOpacity.stopAnimation();
+      bgProgress.stopAnimation();
+      exitOpacity.stopAnimation();
     };
-  }, [bgProgress, exitOpacity, onFinish, sublineOpacity, textOpacity, textScale]);
+  }, [bgProgress, exitOpacity, reducedMotion, sublineOpacity, textOpacity, textScale]);
 
   function animateIn() {
     return new Promise((resolve) => {
