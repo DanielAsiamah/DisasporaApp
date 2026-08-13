@@ -154,10 +154,10 @@ test('the lesson completion screen can launch the next unlocked topic directly f
 
   assert.match(modalSource, /export default function PatoisLessonModal\(\{[\s\S]*onAdvance[\s\S]*topic,\s*visible\s*\}\)/);
   assert.match(modalSource, /<View style=\{styles\.completeActions\}>/);
-  assert.match(modalSource, /nextTopic \? <Pressable onPress=\{\(\) => onAdvance\?\.\(nextTopic\)\} style=\{styles\.primaryButton\}><Text style=\{styles\.primaryButtonText\}>START NEXT TOPIC<\/Text><\/Pressable> : null/);
+  assert.match(modalSource, /nextTopic \? \([\s\S]*?<Pressable[\s\S]*?accessibilityLabel=\{`Start next topic: \$\{nextTopic\.title\}`\}[\s\S]*?onPress=\{\(\) => onAdvance\?\.\(nextTopic\)\}[\s\S]*?style=\{styles\.primaryButton\}[\s\S]*?<Text style=\{styles\.primaryButtonText\}>START NEXT TOPIC<\/Text>[\s\S]*?<\/Pressable>[\s\S]*?\) : null/s);
   assert.match(modalSource, /const completionBackButtonStyle = nextTopic \? styles\.secondaryButton : styles\.primaryButton/);
   assert.match(modalSource, /const completionBackButtonTextStyle = nextTopic \? styles\.secondaryButtonText : styles\.primaryButtonText/);
-  assert.match(modalSource, /<Pressable onPress=\{closeLesson\} style=\{completionBackButtonStyle\}><Text style=\{completionBackButtonTextStyle\}>BACK TO CHAPTER<\/Text><\/Pressable>/);
+  assert.match(modalSource, /<Pressable[\s\S]*?accessibilityLabel=['"]Back to chapter['"][\s\S]*?onPress=\{closeLesson\}[\s\S]*?style=\{completionBackButtonStyle\}[\s\S]*?<Text style=\{completionBackButtonTextStyle\}>BACK TO CHAPTER<\/Text>[\s\S]*?<\/Pressable>/s);
   assert.match(modalSource, /completeActions:\s*\{/);
   assert.match(modalSource, /secondaryButton:\s*\{/);
   assert.match(modalSource, /secondaryButtonText:\s*\{/);
@@ -210,7 +210,8 @@ test('the lesson modal structures feedback into an outcome header and dedicated 
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
   assert.match(source, /<View style=\{styles\.feedbackHeader\}>[\s\S]*?<Text style=\{styles\.feedbackEyebrow\}>\{feedback === ['"]correct['"] \? ['"]NICE WORK['"] : ['"]KEEP GOING['"]\}<\/Text>[\s\S]*?<Text style=\{styles\.feedbackTitle\}>\{feedback === ['"]correct['"] \? ['"]Correct! \+10 XP['"] : ['"]Almost — try again['"]\}<\/Text>[\s\S]*?<\/View>/s);
-  assert.match(source, /<View style=\{styles\.feedbackAnswerCard\}>[\s\S]*?<Text style=\{styles\.feedbackAnswerLabel\}>ANSWER<\/Text>[\s\S]*?<Text style=\{styles\.feedbackAnswer\}>\{exercise\.answer\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /const exerciseAnswerLabel = getExerciseAnswerLabel\(exercise\)/);
+  assert.match(source, /<View style=\{styles\.feedbackAnswerCard\}>[\s\S]*?<Text style=\{styles\.feedbackAnswerLabel\}>ANSWER<\/Text>[\s\S]*?<Text style=\{styles\.feedbackAnswer\}>\{exerciseAnswerLabel\}<\/Text>[\s\S]*?<\/View>/s);
   assert.match(source, /feedbackHeader:\s*\{/);
   assert.match(source, /feedbackEyebrow:\s*\{/);
   assert.match(source, /feedbackAnswerCard:\s*\{/);

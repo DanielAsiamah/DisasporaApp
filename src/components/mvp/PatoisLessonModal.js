@@ -174,16 +174,43 @@ function getTopicModeLabel(topic) {
   return 'CORE LESSON';
 }
 
+function getExerciseAnswerLabel(exercise) {
+  if (exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS) return 'All pairs matched';
+  return exercise?.answer || 'Unknown';
+}
+
+function getFeedbackAnnouncement(correct, exercise) {
+  const answerCopy = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS
+    ? 'All pairs matched.'
+    : `Answer: ${exercise?.answer || 'unknown'}.`;
+  const incorrectCopy = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS
+    ? 'Match every phrase with its meaning.'
+    : `Correct answer: ${exercise?.answer || 'unknown'}.`;
+  return correct
+    ? `Correct. +10 XP. ${answerCopy}`
+    : `Incorrect. ${incorrectCopy}`;
+}
+
 function ChoiceExercise({ exercise, feedback, response, setResponse }) {
   return (
-    <View style={styles.choiceList}>
-      {exercise.choices.map((choice) => {
+    <View accessibilityLabel="Answer choices" accessibilityRole="radiogroup" style={styles.choiceList}>
+      {exercise.choices.map((choice, index) => {
         const selected = response.selectedChoice === choice;
         const correct = Boolean(feedback) && choice === exercise.answer;
         const wrong = feedback === 'incorrect' && selected;
+        const choiceStateLabel = feedback
+          ? correct
+            ? ', correct answer'
+            : wrong
+              ? ', incorrect selection'
+              : ''
+          : '';
+        const choiceLabel = `${choice}, answer ${index + 1} of ${exercise.choices.length}${choiceStateLabel}`;
         return (
           <Pressable
-            accessibilityRole="button"
+            accessibilityLabel={choiceLabel}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selected, disabled: Boolean(feedback) }}
             disabled={Boolean(feedback)}
             key={choice}
             onPress={() => {
@@ -314,8 +341,12 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
         <Text style={styles.sectionMeta}>{answerProgressLabel}</Text>
       </View>
       <View style={styles.answerTray}>
-        {response.builtWords.length ? response.builtWords.map((word) => (
+        {response.builtWords.length ? response.builtWords.map((word, position) => (
           <Pressable
+            accessibilityHint="Removes this word from your answer"
+            accessibilityLabel={`Remove word: ${word.value}, position ${position + 1} of ${response.builtWords.length}`}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: Boolean(feedback) }}
             disabled={Boolean(feedback)}
             key={`built-${word.index}`}
             onPress={() => setResponse(toggleWordBankItem(response, word))}
@@ -332,8 +363,15 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
       <View style={styles.wordBank}>
         {exercise.wordBank.map((value, index) => {
           const used = usedIndexes.has(index);
+          const duplicateCount = exercise.wordBank.filter((word) => word === value).length;
+          const duplicateLabel = duplicateCount > 1 ? `, option ${index + 1}` : '';
+          const bankWordLabel = `Add word: ${value}${duplicateLabel}`;
           return (
             <Pressable
+              accessibilityHint={used ? 'Already placed in your answer' : 'Adds this word to your answer'}
+              accessibilityLabel={used ? `${bankWordLabel}, already used` : bankWordLabel}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: Boolean(feedback) || used, selected: used }}
               disabled={Boolean(feedback) || used}
               key={`${value}-${index}`}
               onPress={() => {
@@ -440,6 +478,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     if (!audioEventGate.claim('answer', answerKey)) return;
     const correct = evaluateExerciseResponse(exercise, response);
     setFeedback(correct ? 'correct' : 'incorrect');
+    AccessibilityInfo.announceForAccessibility(getFeedbackAnnouncement(correct, exercise));
     audio.dispatch({ event: 'answer-accepted', correct, phraseId: exercise.conceptId });
     Haptics.notificationAsync(correct
       ? Haptics.NotificationFeedbackType.Success
@@ -483,17 +522,40 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
   const ready = isResponseReady(exercise, response);
   const exerciseVisualConceptId = getExerciseVisualConceptId(exercise);
+  const exerciseAnswerLabel = getExerciseAnswerLabel(exercise);
   const currentStepLabel = `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
   const currentExerciseLabel = exercise?.title || 'Lesson step';
+  const footerActionLabel = feedback === 'incorrect'
+    ? 'Try again'
+    : feedback
+      ? 'Continue lesson'
+      : 'Check answer';
 
   return (
     <Modal animationType={reducedMotion ? 'none' : 'slide'} onRequestClose={closeLesson} visible={visible}>
       <SafeAreaView edges={['top', 'bottom']} style={styles.root}>
         <View style={styles.topBar}>
-          <Pressable accessibilityLabel="Close lesson" hitSlop={12} onPress={closeLesson}>
+          <Pressable
+            accessibilityHint="Closes this lesson and returns to the chapter"
+            accessibilityLabel="Close lesson"
+            accessibilityRole="button"
+            hitSlop={12}
+            onPress={closeLesson}
+          >
             <Text style={styles.closeText}>×</Text>
           </Pressable>
-          <View style={styles.progressTrack}>
+          <View
+            accessible
+            accessibilityLabel="Lesson progress"
+            accessibilityRole="progressbar"
+            accessibilityValue={{
+              max: Math.max(exercises.length, 1),
+              min: 0,
+              now: finished ? exercises.length : index + 1,
+              text: `${finished ? exercises.length : index + 1} of ${exercises.length}`,
+            }}
+            style={styles.progressTrack}
+          >
             <View style={[styles.progressFill, { width: `${finished ? 100 : ((index + 1) / Math.max(exercises.length, 1)) * 100}%` }]} />
           </View>
           <Text style={styles.count}>{finished ? exercises.length : index + 1}/{exercises.length}</Text>
@@ -504,13 +566,29 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
             <View style={styles.completeScreen}>
               <Text style={styles.confetti}>✦  ✧  ✦</Text>
               <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
-              <Image resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
+              <Image accessible={false} resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
               <Text style={styles.completeTitle}>{completionTitle}</Text>
               <Text style={styles.completeBody}>{completeBody}</Text>
               {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
               <View style={styles.completeActions}>
-                {nextTopic ? <Pressable onPress={() => onAdvance?.(nextTopic)} style={styles.primaryButton}><Text style={styles.primaryButtonText}>START NEXT TOPIC</Text></Pressable> : null}
-                <Pressable onPress={closeLesson} style={completionBackButtonStyle}><Text style={completionBackButtonTextStyle}>BACK TO CHAPTER</Text></Pressable>
+                {nextTopic ? (
+                  <Pressable
+                    accessibilityLabel={`Start next topic: ${nextTopic.title}`}
+                    accessibilityRole="button"
+                    onPress={() => onAdvance?.(nextTopic)}
+                    style={styles.primaryButton}
+                  >
+                    <Text style={styles.primaryButtonText}>START NEXT TOPIC</Text>
+                  </Pressable>
+                ) : null}
+                <Pressable
+                  accessibilityLabel="Back to chapter"
+                  accessibilityRole="button"
+                  onPress={closeLesson}
+                  style={completionBackButtonStyle}
+                >
+                  <Text style={completionBackButtonTextStyle}>BACK TO CHAPTER</Text>
+                </Pressable>
               </View>
             </View>
           </ScrollView>
@@ -593,13 +671,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   </View>
                   <View style={styles.feedbackAnswerCard}>
                     <Text style={styles.feedbackAnswerLabel}>ANSWER</Text>
-                    <Text style={styles.feedbackAnswer}>{exercise.answer}</Text>
+                    <Text style={styles.feedbackAnswer}>{exerciseAnswerLabel}</Text>
                   </View>
                 </Animated.View>
               ) : null}
             </ScrollView>
             <View style={styles.footer}>
               <Pressable
+                accessibilityLabel={footerActionLabel}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: !ready }}
                 disabled={!ready}
                 onPress={feedback ? continueLesson : checkAnswer}
                 style={[styles.primaryButton, !ready && styles.primaryButtonDisabled]}
