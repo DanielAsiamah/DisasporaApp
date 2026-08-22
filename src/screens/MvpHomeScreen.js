@@ -269,7 +269,7 @@ function Leaderboard({ profile, reducedMotion }) {
 }
 
 export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCourseId = null }) {
-  const { loadLanguageProgress, profile, syncLanguageProgress, user } = useAuth();
+  const { awardCorrectAnswerXp, loadLanguageProgress, profile, syncLanguageProgress, user } = useAuth();
   const reducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState('learn');
   const [completedTopicIds, setCompletedTopicIds] = useState([]);
@@ -314,6 +314,10 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
   const currentFocusCtaLabel = chapterComplete
     ? `Review ${activeLearnTopic?.title || 'first topic'} →`
     : 'Tap to continue →';
+
+  useEffect(() => {
+    setActiveTopic(null);
+  }, [user?.uid]);
 
   useEffect(() => {
     let cancelled = false;
@@ -437,7 +441,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal courseId={storageCourseId} onAdvance={setActiveTopic} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic)} />
+      <PatoisLessonModal courseId={storageCourseId} key={user?.uid || 'signed-out'} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic)} />
     </SafeAreaView>
   );
 }

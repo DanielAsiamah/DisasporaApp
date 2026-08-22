@@ -4,7 +4,7 @@ import {
   addDoc,
   arrayUnion,
   getDoc,
-  increment,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -17,6 +17,13 @@ const {
   filterCompletedProfileMergeFields,
   getEnsurePreferredName,
 } = require('../../onboarding/authHandoff');
+const {
+  buildCorrectAnswerRewardId,
+  buildCorrectAnswerRewardRecord,
+  normalizeXp,
+  planCorrectAnswerXpMutation,
+} = require('../../lessonEngine/lessonXpReward.cjs');
+const { filterUserProgressFields } = require('../../lessonEngine/userProgressPolicy.cjs');
 
 export const DEFAULT_USER_PROFILE = {
   xp: 0,
@@ -31,6 +38,7 @@ function userDocRef(uid) {
 }
 
 export async function createUserDocument(uid, { username, email, ...profileFields }) {
+  const safeProfileFields = filterUserProgressFields(profileFields);
   const payload = removeUndefined({
     username,
     email,
@@ -40,7 +48,8 @@ export async function createUserDocument(uid, { username, email, ...profileField
     hearts: DEFAULT_USER_PROFILE.hearts,
     currentCourse: DEFAULT_USER_PROFILE.currentCourse,
     currentLesson: DEFAULT_USER_PROFILE.currentLesson,
-    ...profileFields,
+    ...safeProfileFields,
+    xp: DEFAULT_USER_PROFILE.xp,
     joinedAt: serverTimestamp(),
   });
 
@@ -58,9 +67,8 @@ export async function ensureUserDocument(uid, { username, email, ...profileField
       onboardingCompleted: profileFields.onboardingCompleted ?? false,
     });
   }
-  const safeProfileFields = filterCompletedProfileMergeFields(
-    existing,
-    profileFields
+  const safeProfileFields = filterUserProgressFields(
+    filterCompletedProfileMergeFields(existing, profileFields)
   );
   const payload = removeUndefined({
     ...safeProfileFields,
@@ -85,40 +93,8 @@ export async function getUserDocument(uid) {
   return { id: snapshot.id, ...snapshot.data() };
 }
 
-export async function updateUserDocument(uid, fields) {
-  await updateDoc(userDocRef(uid), fields);
-}
-
 export async function updateUserProgress(uid, fields) {
-  const allowed = [
-    'xp',
-    'streak',
-    'hearts',
-    'nextHeartAt',
-    'heartsUpdatedAt',
-    'gems',
-    'currentCourse',
-    'currentLesson',
-    'purchasedItems',
-    'onboardingCompleted',
-    'baseLanguage',
-    'baseLanguageLevels',
-    'selectedStartUnit',
-    'recommendedStartUnit',
-    'lastActiveAt',
-    'preferredName',
-    'guideRegion',
-    'motivation',
-    'dailyGoalMinutes',
-    'proficiencyLevel',
-    'reminderEnabled',
-    'reminderTime',
-    'soundEffectsEnabled',
-    'emailVerified',
-  ];
-  const payload = Object.fromEntries(
-    Object.entries(fields).filter(([key]) => allowed.includes(key))
-  );
+  const payload = filterUserProgressFields(fields);
 
   if (Object.keys(payload).length === 0) {
     return;
@@ -133,6 +109,10 @@ function languageProgressDocRef(uid, languageId) {
 
 function lessonSessionsCollectionRef(uid) {
   return collection(firebaseDb, COLLECTIONS.USERS, uid, 'lessonSessions');
+}
+
+function xpRewardDocRef(uid, rewardId) {
+  return doc(firebaseDb, COLLECTIONS.USERS, uid, 'xpRewards', rewardId);
 }
 
 function removeUndefined(value) {
@@ -210,12 +190,42 @@ export async function completeLessonSession(uid, sessionId, fields) {
   });
 }
 
-export async function incrementUserXp(uid, xp) {
-  if (!xp) return;
+export async function awardCorrectAnswerXpOnce(uid, rewardFields) {
+  if (!uid) throw new Error('A signed-in learner is required to save XP.');
 
-  await updateDoc(userDocRef(uid), {
-    xp: increment(xp),
-    lastActiveAt: serverTimestamp(),
+  const rewardId = buildCorrectAnswerRewardId(rewardFields);
+  const rewardRecord = buildCorrectAnswerRewardRecord(rewardFields);
+  const userRef = userDocRef(uid);
+  const rewardRef = xpRewardDocRef(uid, rewardId);
+
+  return runTransaction(firebaseDb, async (transaction) => {
+    const [rewardSnapshot, userSnapshot] = await Promise.all([
+      transaction.get(rewardRef),
+      transaction.get(userRef),
+    ]);
+    if (!userSnapshot.exists()) {
+      throw new Error('Your learner profile could not be found.');
+    }
+
+    const currentXp = normalizeXp(userSnapshot.data()?.xp);
+    const rewardPlan = planCorrectAnswerXpMutation({
+      currentXp,
+      rewardExists: rewardSnapshot.exists(),
+    });
+    if (!rewardPlan.awarded) {
+      return { ...rewardPlan, rewardId };
+    }
+
+    transaction.set(rewardRef, {
+      ...rewardRecord,
+      createdAt: serverTimestamp(),
+      rewardId,
+    });
+    transaction.update(userRef, {
+      lastActiveAt: serverTimestamp(),
+      xp: rewardPlan.xp,
+    });
+    return { ...rewardPlan, rewardId };
   });
 }
 

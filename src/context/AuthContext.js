@@ -13,6 +13,7 @@ import {
 } from '../services/auth/authService';
 import {
   addAnswerToLessonSession,
+  awardCorrectAnswerXpOnce,
   completeLessonSession,
   createLessonSession,
   createUserDocument,
@@ -24,9 +25,16 @@ import {
   updateUserProgress,
 } from '../services/firestore/userService';
 const {
+  applyLoadedProfileWithoutXpRegression,
+  runAuthBoundXpAward,
+} = require('../lessonEngine/lessonXpReward.cjs');
+const { filterUserProgressFields } = require('../lessonEngine/userProgressPolicy.cjs');
+const {
+  assertCurrentAuthHandoff,
   beginAuthenticatedProfileHandoff,
   createProfileLoadGate,
   planSocialProfileHandoff,
+  runAuthBoundProfileTask,
 } = require('../onboarding/authHandoff');
 
 const AuthContext = createContext(null);
@@ -37,10 +45,15 @@ export function AuthProvider({ children }) {
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [profileError, setProfileError] = useState(null);
   const [initializing, setInitializing] = useState(true);
+  const authenticatedUserRef = useRef(null);
   const profileLoadGateRef = useRef(null);
   if (!profileLoadGateRef.current) {
     profileLoadGateRef.current = createProfileLoadGate();
   }
+  const publishAuthenticatedUser = useCallback((nextUser) => {
+    authenticatedUserRef.current = nextUser;
+    setUser(nextUser);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -51,12 +64,13 @@ export function AuthProvider({ children }) {
     const unsubscribe = subscribeToAuthState(async (firebaseUser) => {
       if (!active) return;
 
-      const requestId = profileLoadGateRef.current.beginBackground();
+      publishAuthenticatedUser(firebaseUser);
+
+      const requestId = profileLoadGateRef.current.beginBackground(firebaseUser?.uid || null);
       if (requestId === null) return;
 
       setProfileLoaded(false);
       setProfileError(null);
-      setUser(firebaseUser);
 
       try {
         if (firebaseUser) {
@@ -66,7 +80,7 @@ export function AuthProvider({ children }) {
             await touchUserLastActive(firebaseUser.uid).catch(() => {});
           }
           if (active && profileLoadGateRef.current.isCurrent(requestId)) {
-            setProfile(document);
+            setProfile((current) => applyLoadedProfileWithoutXpRegression(current, document));
           }
         } else {
           if (active && profileLoadGateRef.current.isCurrent(requestId)) {
@@ -92,7 +106,7 @@ export function AuthProvider({ children }) {
       clearTimeout(startupFallback);
       unsubscribe();
     };
-  }, []);
+  }, [publishAuthenticatedUser]);
 
   const refreshProfile = useCallback(async () => {
     if (!user) {
@@ -102,13 +116,19 @@ export function AuthProvider({ children }) {
       return null;
     }
 
-    const requestId = profileLoadGateRef.current.beginExclusive();
+    const requestId = profileLoadGateRef.current.beginExclusive(user.uid);
     setProfileLoaded(false);
     setProfileError(null);
     try {
       const document = await getUserDocument(user.uid);
+      assertCurrentAuthHandoff({
+        gate: profileLoadGateRef.current,
+        getCurrentUserId: () => authenticatedUserRef.current?.uid || null,
+        requestId,
+        userId: user.uid,
+      });
       if (profileLoadGateRef.current.isCurrent(requestId)) {
-        setProfile(document);
+        setProfile((current) => applyLoadedProfileWithoutXpRegression(current, document));
       }
       return document;
     } catch (error) {
@@ -139,7 +159,7 @@ export function AuthProvider({ children }) {
       );
       setProfileLoaded(false);
       setProfileError(null);
-      setUser(firebaseUser);
+      publishAuthenticatedUser(firebaseUser);
       const verificationSent = await sendVerificationEmail(firebaseUser)
         .then(() => true)
         .catch(() => false);
@@ -152,6 +172,12 @@ export function AuthProvider({ children }) {
       });
 
       const document = { id: firebaseUser.uid, ...createdProfile };
+      assertCurrentAuthHandoff({
+        gate: profileLoadGateRef.current,
+        getCurrentUserId: () => authenticatedUserRef.current?.uid || null,
+        requestId,
+        userId: firebaseUser.uid,
+      });
       if (profileLoadGateRef.current.isCurrent(requestId)) {
         setProfile(document);
       }
@@ -177,7 +203,7 @@ export function AuthProvider({ children }) {
       }
       profileLoadGateRef.current.endExclusive(requestId);
     }
-  }, []);
+  }, [publishAuthenticatedUser]);
 
   const signIn = useCallback(async ({ email, password }) => {
     const trimmedEmail = email.trim().toLowerCase();
@@ -191,8 +217,14 @@ export function AuthProvider({ children }) {
       );
       setProfileLoaded(false);
       setProfileError(null);
-      setUser(firebaseUser);
+      publishAuthenticatedUser(firebaseUser);
       const document = await getUserDocument(firebaseUser.uid);
+      assertCurrentAuthHandoff({
+        gate: profileLoadGateRef.current,
+        getCurrentUserId: () => authenticatedUserRef.current?.uid || null,
+        requestId,
+        userId: firebaseUser.uid,
+      });
       if (profileLoadGateRef.current.isCurrent(requestId)) {
         setProfile(document);
       }
@@ -210,10 +242,10 @@ export function AuthProvider({ children }) {
       }
       profileLoadGateRef.current.endExclusive(requestId);
     }
-  }, []);
+  }, [publishAuthenticatedUser]);
 
   const finishSocialSignIn = useCallback(async ({ firebaseUser, preferredName, profileData, requestId }) => {
-    setUser(firebaseUser);
+    publishAuthenticatedUser(firebaseUser);
 
     try {
       const existingProfile = await getUserDocument(firebaseUser.uid);
@@ -234,6 +266,13 @@ export function AuthProvider({ children }) {
           })
         : plan.profile;
 
+      assertCurrentAuthHandoff({
+        gate: profileLoadGateRef.current,
+        getCurrentUserId: () => authenticatedUserRef.current?.uid || null,
+        requestId,
+        userId: firebaseUser.uid,
+      });
+
       if (profileLoadGateRef.current.isCurrent(requestId)) {
         setProfile(document);
       }
@@ -252,7 +291,7 @@ export function AuthProvider({ children }) {
       }
       throw error;
     }
-  }, []);
+  }, [publishAuthenticatedUser]);
 
   const signInWithGoogle = useCallback(async (profileData = {}) => {
     let requestId = null;
@@ -306,11 +345,11 @@ export function AuthProvider({ children }) {
   }, [finishSocialSignIn]);
 
   const signOut = useCallback(async () => {
-    const requestId = profileLoadGateRef.current.beginExclusive();
+    const requestId = profileLoadGateRef.current.beginExclusive(null);
     try {
       await signOutUser();
       if (profileLoadGateRef.current.isCurrent(requestId)) {
-        setUser(null);
+        publishAuthenticatedUser(null);
         setProfile(null);
         setProfileError(null);
         setProfileLoaded(true);
@@ -318,7 +357,7 @@ export function AuthProvider({ children }) {
     } finally {
       profileLoadGateRef.current.endExclusive(requestId);
     }
-  }, []);
+  }, [publishAuthenticatedUser]);
 
   const requestPasswordReset = useCallback(async (email) => {
     await sendPasswordReset(email);
@@ -329,10 +368,23 @@ export function AuthProvider({ children }) {
   }, [user]);
 
   const checkEmailVerification = useCallback(async () => {
-    const verified = await refreshEmailVerification(user);
-    if (verified && user) {
-      await updateUserProgress(user.uid, { emailVerified: true });
-      setProfile((current) => (current ? { ...current, emailVerified: true } : current));
+    const userId = user?.uid;
+    if (!userId) return false;
+    const getCurrentUserId = () => authenticatedUserRef.current?.uid || null;
+    const verified = await runAuthBoundProfileTask({
+      getCurrentUserId,
+      task: () => refreshEmailVerification(user),
+      userId,
+    });
+    if (verified) {
+      await runAuthBoundProfileTask({
+        getCurrentUserId,
+        onCurrentResult: () => {
+          setProfile((current) => (current ? { ...current, emailVerified: true } : current));
+        },
+        task: () => updateUserProgress(userId, { emailVerified: true }),
+        userId,
+      });
     }
     return verified;
   }, [user]);
@@ -351,30 +403,43 @@ export function AuthProvider({ children }) {
         throw new Error('Your saved profile could not be verified. Retry before saving progress.');
       }
 
+      const safeFields = filterUserProgressFields(fields);
+      const userId = user.uid;
+      const getCurrentUserId = () => authenticatedUserRef.current?.uid || null;
+
       if (
         profile?.onboardingCompleted === true &&
-        fields?.onboardingCompleted === true
+        safeFields.onboardingCompleted === true
       ) {
         throw new Error('Onboarding is already complete for this account.');
       }
 
       if (profile) {
-        await updateUserProgress(user.uid, fields);
-        setProfile((current) => (current ? { ...current, ...fields } : current));
-        return;
+        return runAuthBoundProfileTask({
+          getCurrentUserId,
+          onCurrentResult: () => {
+            setProfile((current) => (current ? { ...current, ...safeFields } : current));
+          },
+          task: () => updateUserProgress(userId, safeFields),
+          userId,
+        });
       }
 
-      const document = await ensureUserDocument(user.uid, {
-        username:
-          fields.preferredName ||
-          user.displayName ||
-          user.email?.split('@')[0] ||
-          'Learner',
-        email: user.email || '',
-        emailVerified: user.emailVerified,
-        ...fields,
+      return runAuthBoundProfileTask({
+        getCurrentUserId,
+        onCurrentResult: (document) => setProfile(document),
+        task: () => ensureUserDocument(userId, {
+          username:
+            safeFields.preferredName ||
+            user.displayName ||
+            user.email?.split('@')[0] ||
+            'Learner',
+          email: user.email || '',
+          emailVerified: user.emailVerified,
+          ...safeFields,
+        }),
+        userId,
       });
-      setProfile(document);
     },
     [profile, profileError, profileLoaded, user]
   );
@@ -434,6 +499,30 @@ export function AuthProvider({ children }) {
     [user]
   );
 
+  const awardCorrectAnswerXp = useCallback(
+    async (rewardFields) => {
+      if (!user) {
+        throw Object.assign(new Error('Sign in before earning saved XP.'), {
+          code: 'unauthenticated',
+        });
+      }
+      if (!profileLoaded || profileError || !profile) {
+        throw Object.assign(new Error('Your saved profile is not ready yet.'), {
+          code: 'profile-not-ready',
+        });
+      }
+
+      return runAuthBoundXpAward({
+        award: awardCorrectAnswerXpOnce,
+        getCurrentUserId: () => authenticatedUserRef.current?.uid || null,
+        rewardFields,
+        setProfile,
+        userId: user.uid,
+      });
+    },
+    [profile, profileError, profileLoaded, user]
+  );
+
   const value = useMemo(
     () => ({
       user,
@@ -457,6 +546,7 @@ export function AuthProvider({ children }) {
       recordLessonSession,
       recordLessonAnswer,
       finishLessonSession,
+      awardCorrectAnswerXp,
     }),
     [
       user,
@@ -479,6 +569,7 @@ export function AuthProvider({ children }) {
       recordLessonSession,
       recordLessonAnswer,
       finishLessonSession,
+      awardCorrectAnswerXp,
     ]
   );
 

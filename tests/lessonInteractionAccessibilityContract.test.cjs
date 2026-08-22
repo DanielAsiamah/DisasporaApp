@@ -13,7 +13,7 @@ test('lesson feedback uses the cross-platform announcement API with the revealed
   assert.match(lessonSource, /function getFeedbackAnnouncement\(correct, exercise\)/);
   assert.match(lessonSource, /const answerCopy = exercise\?\.type === LESSON_EXERCISE_TYPES\.MATCH_PAIRS[\s\S]*?['"]All pairs matched\.['"][\s\S]*?`Answer: \$\{exercise\?\.answer \|\| ['"]unknown['"]\}\.`/s);
   assert.match(lessonSource, /const incorrectCopy = exercise\?\.type === LESSON_EXERCISE_TYPES\.MATCH_PAIRS[\s\S]*?['"]Match every phrase with its meaning\.['"][\s\S]*?`Correct answer: \$\{exercise\?\.answer \|\| ['"]unknown['"]\}\.`/s);
-  assert.match(lessonSource, /return correct[\s\S]*?`Correct\. \+10 XP\. \$\{answerCopy\}`[\s\S]*?`Incorrect\. \$\{incorrectCopy\}`/s);
+  assert.match(lessonSource, /return correct[\s\S]*?`Correct\. \$\{answerCopy\}`[\s\S]*?`Incorrect\. \$\{incorrectCopy\}`/s);
   assert.match(lessonSource, /AccessibilityInfo\.announceForAccessibility\(getFeedbackAnnouncement\(correct, exercise\)\)/);
   assert.match(lessonSource, /function getExerciseAnswerLabel\(exercise\)[\s\S]*?MATCH_PAIRS\) return ['"]All pairs matched['"]/s);
   assert.match(lessonSource, /<Text style=\{styles\.feedbackAnswer\}>\{exerciseAnswerLabel\}<\/Text>/);
@@ -41,6 +41,6 @@ test('lesson navigation, progress, footer, and completion actions expose explici
   assert.match(lessonSource, /accessible[\s\S]*?accessibilityLabel=['"]Lesson progress['"][\s\S]*?accessibilityRole=['"]progressbar['"][\s\S]*?accessibilityValue=\{\{[\s\S]*?max: Math\.max\(exercises\.length, 1\)[\s\S]*?now: finished \? exercises\.length : index \+ 1/s);
   assert.match(lessonSource, /accessibilityLabel=\{`Start next topic: \$\{nextTopic\.title\}`\}[\s\S]*?accessibilityRole=['"]button['"]/s);
   assert.match(lessonSource, /accessibilityLabel=['"]Back to chapter['"][\s\S]*?accessibilityRole=['"]button['"]/s);
-  assert.match(lessonSource, /const footerActionLabel = feedback === ['"]incorrect['"][\s\S]*?['"]Try again['"][\s\S]*?['"]Continue lesson['"][\s\S]*?['"]Check answer['"]/s);
-  assert.match(lessonSource, /accessibilityLabel=\{footerActionLabel\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !ready \}\}/s);
+  assert.match(lessonSource, /const footerActionLabel = xpAwardFailed[\s\S]*?['"]Retry saving XP['"][\s\S]*?feedback === ['"]incorrect['"][\s\S]*?['"]Try again['"][\s\S]*?['"]Continue lesson['"][\s\S]*?['"]Check answer['"]/s);
+  assert.match(lessonSource, /accessibilityLabel=\{footerActionLabel\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !footerReady \}\}/s);
 });

@@ -37,6 +37,10 @@ const filterCompletedProfileMergeFields =
   authHandoff.filterCompletedProfileMergeFields || (() => undefined);
 const getEnsurePreferredName =
   authHandoff.getEnsurePreferredName || (() => undefined);
+const runAuthBoundProfileTask =
+  authHandoff.runAuthBoundProfileTask || (() => undefined);
+const assertCurrentAuthHandoff =
+  authHandoff.assertCurrentAuthHandoff || (() => undefined);
 const { AVAILABLE_COURSE_IDS, COURSE_CATALOG } = require('../src/data/courseCatalog.cjs');
 const knownCourseIds = new Set(AVAILABLE_COURSE_IDS);
 
@@ -271,6 +275,53 @@ test('prevents stale auth-listener profile reads from overwriting an explicit au
   const nextListenerRequest = gate.beginBackground();
   assert.notEqual(nextListenerRequest, null);
   assert.equal(gate.isCurrent(nextListenerRequest), true);
+});
+
+test('an external account change supersedes an exclusive read for the previous account', () => {
+  const gate = createProfileLoadGate();
+  const accountARefresh = gate.beginExclusive('account-a');
+
+  assert.equal(gate.beginBackground('account-a'), null);
+
+  const accountBListener = gate.beginBackground('account-b');
+  assert.notEqual(accountBListener, null);
+  assert.equal(gate.isCurrent(accountARefresh), false);
+  assert.equal(gate.isCurrent(accountBListener), true);
+});
+
+test('a delayed profile mutation cannot publish account A data after account B takes over', async () => {
+  let currentUserId = 'account-a';
+  let resolveTask;
+  let published = null;
+  const task = new Promise((resolve) => { resolveTask = resolve; });
+
+  const pending = runAuthBoundProfileTask({
+    getCurrentUserId: () => currentUserId,
+    onCurrentResult: (result) => { published = result; },
+    task: () => task,
+    userId: 'account-a',
+  });
+  currentUserId = 'account-b';
+  resolveTask({ preferredName: 'Account A' });
+
+  await assert.rejects(pending, (error) => error?.code === 'account-changed');
+  assert.equal(published, null);
+});
+
+test('a superseded explicit auth handoff cannot return its stale account profile', () => {
+  const gate = createProfileLoadGate();
+  const accountARequest = gate.beginExclusive('account-a');
+  gate.beginBackground('account-b');
+
+  assert.throws(
+    () => assertCurrentAuthHandoff({
+      gate,
+      getCurrentUserId: () => 'account-b',
+      requestId: accountARequest,
+      userId: 'account-a',
+    }),
+    (error) => error?.code === 'account-changed'
+  );
 });
 
 test('does not invalidate profile loading until credential or provider auth succeeds', () => {

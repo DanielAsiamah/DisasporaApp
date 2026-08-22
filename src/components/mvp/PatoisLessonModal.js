@@ -1,4 +1,5 @@
 import * as Haptics from 'expo-haptics';
+import * as Crypto from 'expo-crypto';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -38,6 +39,11 @@ const {
   toggleWordBankItem,
 } = require('../../lessonEngine/patoisLessonSession.cjs');
 const { createLessonAudioEventGate } = require('../../audio/lessonAudioEventGate.cjs');
+const {
+  buildCorrectAnswerRewardId,
+  buildCorrectAnswerRewardRecord,
+  isRetryableXpAwardError,
+} = require('../../lessonEngine/lessonXpReward.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -187,8 +193,21 @@ function getFeedbackAnnouncement(correct, exercise) {
     ? 'Match every phrase with its meaning.'
     : `Correct answer: ${exercise?.answer || 'unknown'}.`;
   return correct
-    ? `Correct. +10 XP. ${answerCopy}`
+    ? `Correct. ${answerCopy}`
     : `Incorrect. ${incorrectCopy}`;
+}
+
+function getCorrectFeedbackTitle(xpAwardStatus) {
+  if (xpAwardStatus === 'awarded') return 'Correct! +10 XP';
+  if (xpAwardStatus === 'already-awarded') return 'Correct! XP saved';
+  return 'Correct!';
+}
+
+function getXpAwardMessage(xpAwardStatus) {
+  if (xpAwardStatus === 'pending') return 'Saving 10 XP…';
+  if (xpAwardStatus === 'error') return 'XP could not be saved. Check your connection and retry.';
+  if (xpAwardStatus === 'unavailable') return 'Your answer is correct, but saved XP is unavailable.';
+  return '';
 }
 
 function ChoiceExercise({ exercise, feedback, response, setResponse }) {
@@ -389,7 +408,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onClose, onComplete, previewCourseId = null, topic, visible }) {
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onAwardCorrectAnswerXp, onClose, onComplete, previewCourseId = null, topic, visible }) {
   const requestedCourse = getCourseById(courseId);
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
@@ -422,24 +441,32 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const [feedback, setFeedback] = useState(null);
   const [finished, setFinished] = useState(false);
   const [matchMessage, setMatchMessage] = useState('');
+  const [xpAwardStatus, setXpAwardStatus] = useState(null);
   const celebration = useRef(new Animated.Value(0)).current;
   const audioEventGate = useRef(createLessonAudioEventGate()).current;
   const audioSessionId = useRef(0);
   const openTopicId = useRef(null);
   const matchAttempt = useRef(0);
+  const lessonAttemptId = useRef(null);
+  const pendingXpReward = useRef(null);
+  const xpRequestGeneration = useRef(0);
   const exercise = exercises[index];
   const nextTopic = useMemo(() => courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null, [courseTopics, topic?.order]);
 
   useEffect(() => {
     if (!visible) {
       openTopicId.current = null;
+      xpRequestGeneration.current += 1;
+      pendingXpReward.current = null;
       audioEventGate.clear();
       audio.dispatch({ event: 'lesson-exit' });
       return;
     }
     if (openTopicId.current === topic?.id) return;
     openTopicId.current = topic?.id || null;
+    lessonAttemptId.current = Crypto.randomUUID();
     audioSessionId.current += 1;
+    xpRequestGeneration.current += 1;
     matchAttempt.current = 0;
     audioEventGate.clear();
     audio.dispatch({ event: 'lesson-restart' });
@@ -449,6 +476,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     setFeedback(null);
     setFinished(false);
     setMatchMessage('');
+    setXpAwardStatus(null);
     celebration.setValue(0);
   }, [audio, audioEventGate, celebration, exercises, topic?.id, visible]);
 
@@ -468,8 +496,56 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   }, [matchMessage, visible]);
 
   function closeLesson() {
+    xpRequestGeneration.current += 1;
     audio.dispatch({ event: 'lesson-exit' });
     onClose();
+  }
+
+  function saveCorrectAnswerXp(rewardFields) {
+    if (!onAwardCorrectAnswerXp) {
+      setXpAwardStatus('unavailable');
+      return;
+    }
+
+    const requestGeneration = xpRequestGeneration.current;
+    setXpAwardStatus('pending');
+    Promise.resolve()
+      .then(() => onAwardCorrectAnswerXp(rewardFields))
+      .then((result) => {
+        if (xpRequestGeneration.current !== requestGeneration) return;
+        if (result?.currentAccount === false) {
+          setXpAwardStatus('unavailable');
+          AccessibilityInfo.announceForAccessibility(
+            'Your account changed. This lesson answer did not add XP to the current account.'
+          );
+          return;
+        }
+        const nextStatus = result?.awarded ? 'awarded' : 'already-awarded';
+        setXpAwardStatus(nextStatus);
+        AccessibilityInfo.announceForAccessibility(
+          result?.awarded ? '10 XP added.' : 'This answer’s XP was already saved.'
+        );
+      })
+      .catch((error) => {
+        if (xpRequestGeneration.current !== requestGeneration) return;
+        const retryable = isRetryableXpAwardError(error);
+        setXpAwardStatus(retryable ? 'error' : 'unavailable');
+        AccessibilityInfo.announceForAccessibility(
+          retryable
+            ? 'XP could not be saved. Retry when you are connected.'
+            : 'XP is unavailable for this answer. You can continue the lesson.'
+        );
+      });
+  }
+
+  useEffect(() => () => {
+    xpRequestGeneration.current += 1;
+    pendingXpReward.current = null;
+  }, []);
+
+  function retryXpAward() {
+    if (!pendingXpReward.current || xpAwardStatus === 'pending') return;
+    saveCorrectAnswerXp(pendingXpReward.current);
   }
 
   function checkAnswer() {
@@ -479,6 +555,23 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     const correct = evaluateExerciseResponse(exercise, response);
     setFeedback(correct ? 'correct' : 'incorrect');
     AccessibilityInfo.announceForAccessibility(getFeedbackAnnouncement(correct, exercise));
+    if (correct) {
+      const rewardFields = {
+        ...buildCorrectAnswerRewardRecord({
+          attemptId: lessonAttemptId.current,
+          conceptId: exercise.conceptId,
+          courseId: runtimeCourseId,
+          exerciseId: exercise.id,
+          topicId: topic.id,
+        }),
+        rewardId: buildCorrectAnswerRewardId({
+          attemptId: lessonAttemptId.current,
+          exerciseId: exercise.id,
+        }),
+      };
+      pendingXpReward.current = rewardFields;
+      saveCorrectAnswerXp(rewardFields);
+    }
     audio.dispatch({ event: 'answer-accepted', correct, phraseId: exercise.conceptId });
     Haptics.notificationAsync(correct
       ? Haptics.NotificationFeedbackType.Success
@@ -494,6 +587,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
       setResponse(createExerciseResponse(exercise));
       setFeedback(null);
       setMatchMessage('');
+      setXpAwardStatus(null);
       return;
     }
     audio.dispatch({ event: 'step-change' });
@@ -503,11 +597,14 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
       return;
     }
     const nextIndex = index + 1;
+    xpRequestGeneration.current += 1;
+    pendingXpReward.current = null;
     matchAttempt.current = 0;
     setIndex(nextIndex);
     setResponse(createExerciseResponse(exercises[nextIndex]));
     setFeedback(null);
     setMatchMessage('');
+    setXpAwardStatus(null);
     celebration.setValue(0);
   }
 
@@ -521,11 +618,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
   const ready = isResponseReady(exercise, response);
+  const xpAwardPending = feedback === 'correct' && xpAwardStatus === 'pending';
+  const xpAwardFailed = feedback === 'correct' && xpAwardStatus === 'error';
+  const footerReady = ready && !xpAwardPending;
   const exerciseVisualConceptId = getExerciseVisualConceptId(exercise);
   const exerciseAnswerLabel = getExerciseAnswerLabel(exercise);
   const currentStepLabel = `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
   const currentExerciseLabel = exercise?.title || 'Lesson step';
-  const footerActionLabel = feedback === 'incorrect'
+  const footerActionLabel = xpAwardFailed
+    ? 'Retry saving XP'
+    : feedback === 'incorrect'
     ? 'Try again'
     : feedback
       ? 'Continue lesson'
@@ -667,8 +769,11 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   )}
                   <View style={styles.feedbackHeader}>
                     <Text style={styles.feedbackEyebrow}>{feedback === 'correct' ? 'NICE WORK' : 'KEEP GOING'}</Text>
-                    <Text style={styles.feedbackTitle}>{feedback === 'correct' ? 'Correct! +10 XP' : 'Almost — try again'}</Text>
+                    <Text style={styles.feedbackTitle}>{feedback === 'correct' ? getCorrectFeedbackTitle(xpAwardStatus) : 'Almost — try again'}</Text>
                   </View>
+                  {feedback === 'correct' && getXpAwardMessage(xpAwardStatus) ? (
+                    <Text style={styles.feedbackStatus}>{getXpAwardMessage(xpAwardStatus)}</Text>
+                  ) : null}
                   <View style={styles.feedbackAnswerCard}>
                     <Text style={styles.feedbackAnswerLabel}>ANSWER</Text>
                     <Text style={styles.feedbackAnswer}>{exerciseAnswerLabel}</Text>
@@ -680,12 +785,12 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
               <Pressable
                 accessibilityLabel={footerActionLabel}
                 accessibilityRole="button"
-                accessibilityState={{ disabled: !ready }}
-                disabled={!ready}
-                onPress={feedback ? continueLesson : checkAnswer}
-                style={[styles.primaryButton, !ready && styles.primaryButtonDisabled]}
+                accessibilityState={{ disabled: !footerReady }}
+                disabled={!footerReady}
+                onPress={xpAwardFailed ? retryXpAward : feedback ? continueLesson : checkAnswer}
+                style={[styles.primaryButton, !footerReady && styles.primaryButtonDisabled]}
               >
-                <Text style={styles.primaryButtonText}>{feedback === 'incorrect' ? 'TRY AGAIN' : feedback ? 'CONTINUE' : 'CHECK'}</Text>
+                <Text style={styles.primaryButtonText}>{xpAwardFailed ? 'RETRY XP' : feedback === 'incorrect' ? 'TRY AGAIN' : feedback ? 'CONTINUE' : 'CHECK'}</Text>
               </Pressable>
             </View>
           </>
@@ -764,6 +869,7 @@ const styles = StyleSheet.create({
   feedbackHeader: { alignItems: 'center', gap: 4 },
   feedbackEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8, textAlign: 'center' },
   feedbackTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 21, lineHeight: 27, textAlign: 'center' },
+  feedbackStatus: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 12, lineHeight: 18, marginTop: 8, textAlign: 'center' },
   feedbackAnswerCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 18, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
   feedbackAnswerLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, textAlign: 'center' },
   feedbackAnswer: { color: NAVY, fontFamily: fonts.bold, fontSize: 18, lineHeight: 24, paddingTop: 6, textAlign: 'center' },

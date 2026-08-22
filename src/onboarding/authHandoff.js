@@ -33,21 +33,29 @@ function getStartingLevelLabel(levelId) {
 function createProfileLoadGate() {
   let latestRequest = 0;
   let exclusiveRequest = null;
+  let exclusiveIdentity;
 
   return {
-    beginBackground() {
-      if (exclusiveRequest !== null) return null;
+    beginBackground(identity) {
+      if (exclusiveRequest !== null) {
+        const identityWasProvided = arguments.length > 0;
+        if (!identityWasProvided || identity === exclusiveIdentity) return null;
+        exclusiveRequest = null;
+        exclusiveIdentity = undefined;
+      }
       latestRequest += 1;
       return latestRequest;
     },
-    beginExclusive() {
+    beginExclusive(identity) {
       latestRequest += 1;
       exclusiveRequest = latestRequest;
+      exclusiveIdentity = arguments.length > 0 ? identity : undefined;
       return exclusiveRequest;
     },
     endExclusive(requestId) {
       if (exclusiveRequest === requestId) {
         exclusiveRequest = null;
+        exclusiveIdentity = undefined;
       }
     },
     isCurrent(requestId) {
@@ -58,7 +66,39 @@ function createProfileLoadGate() {
 
 function beginAuthenticatedProfileHandoff(gate, firebaseUser) {
   if (!firebaseUser?.uid) return null;
-  return gate.beginExclusive();
+  return gate.beginExclusive(firebaseUser.uid);
+}
+
+function createAccountChangedError() {
+  const error = new Error('The authenticated account changed while this request was running.');
+  error.code = 'account-changed';
+  return error;
+}
+
+function assertCurrentAuthIdentity({ getCurrentUserId, userId } = {}) {
+  if (typeof getCurrentUserId !== 'function' || getCurrentUserId() !== userId) {
+    throw createAccountChangedError();
+  }
+}
+
+function assertCurrentAuthHandoff({ gate, getCurrentUserId, requestId, userId } = {}) {
+  assertCurrentAuthIdentity({ getCurrentUserId, userId });
+  if (!gate?.isCurrent(requestId)) {
+    throw createAccountChangedError();
+  }
+}
+
+async function runAuthBoundProfileTask({
+  getCurrentUserId,
+  onCurrentResult,
+  task,
+  userId,
+} = {}) {
+  if (typeof task !== 'function') throw new Error('An authenticated profile task is required.');
+  const result = await task();
+  assertCurrentAuthIdentity({ getCurrentUserId, userId });
+  if (typeof onCurrentResult === 'function') onCurrentResult(result);
+  return result;
 }
 
 function getOnboardingCompletionAction({
@@ -145,6 +185,7 @@ function shouldClearStoredOnboardingDraft(profile) {
 }
 
 module.exports = {
+  assertCurrentAuthHandoff,
   beginAuthenticatedProfileHandoff,
   createProfileLoadGate,
   filterCompletedProfileMergeFields,
@@ -153,6 +194,7 @@ module.exports = {
   getOnboardingCompletionAction,
   getStartingLevelLabel,
   planSocialProfileHandoff,
+  runAuthBoundProfileTask,
   shouldClearStoredOnboardingDraft,
   unpackAuthResult,
 };
