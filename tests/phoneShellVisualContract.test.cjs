@@ -37,7 +37,7 @@ test('leaderboard podium uses animated guide characters on tiered podium blocks 
 test('leaderboard rankings below the podium live in their own card with a section title and supportive copy', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /<View style=\{styles\.rankCard\}>[\s\S]*?<Text style=\{styles\.rankCardTitle\}>Your position<\/Text>[\s\S]*?<Text style=\{styles\.rankCardBody\}>\{progressCopy\}<\/Text>[\s\S]*?<View style=\{styles\.rankList\}>/s);
+  assert.match(source, /<View style=\{styles\.rankCard\}>[\s\S]*?<Text accessibilityRole=['"]header['"] style=\{styles\.rankCardTitle\}>Your position<\/Text>[\s\S]*?<Text style=\{styles\.rankCardBody\}>\{progressCopy\}<\/Text>[\s\S]*?<View style=\{styles\.rankList\}>/s);
   assert.match(source, /rankCard:\s*\{[^}]*backgroundColor:\s*['"]#FFFFFF['"]/s);
   assert.match(source, /rankCard:\s*\{[^}]*borderRadius:\s*2\d/s);
   assert.match(source, /rankCard:\s*\{[^}]*padding:\s*1\d/s);
@@ -51,7 +51,8 @@ test('leaderboard derives a truthful practice rank from saved profile XP and sta
   assert.match(source, /const \{ learner, progressCopy, rows \} = buildLeaderboard\(profile\)/);
   assert.doesNotMatch(source, /\[learner,\s*600/);
   assert.doesNotMatch(source, /name === learner/);
-  assert.match(source, /<Text style=\{styles\.pageTitle\}>Practice League<\/Text>/);
+  assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.pageTitle\}>Practice League<\/Text>/);
+  assert.match(source, /Compare your saved XP with example practice opponents\./);
   assert.match(source, /<View style=\{styles\.leaderboardSummaryRow\}>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>LEAGUE<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>Diaspora Practice<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>YOUR RANK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>#\{learner\.rank\}<\/Text>[\s\S]*?<\/View>/s);
   assert.match(source, /leaderboardSummaryRow:\s*\{/);
   assert.match(source, /leaderboardSummaryPill:\s*\{/);
@@ -109,7 +110,7 @@ test('review and challenge topics get their own Learn-grid treatment instead of 
   assert.match(source, /topic\.type === ['"]challenge['"]/);
   assert.match(source, /const topicGlyph = getTopicDisplayGlyph\(topic\)/);
   assert.match(source, /const topicBadgeLabel = getTopicBadgeLabel\(topic\)/);
-  assert.match(source, /\{isLocked \? ['"]🔒['"] : isComplete \? ['"]✓['"] : topicGlyph\}/);
+  assert.match(source, /isLocked \? \(<Ionicons accessible=\{false\} color=['"]#91A1AC['"] name=['"]lock-closed['"] size=\{21\} \/>\) : \(<Text style=\{styles\.topicIcon\}>\{isComplete \? ['"]✓['"] : topicGlyph\}<\/Text>\)/);
   assert.match(source, /topicBadgeLabel \? <Text style=\{styles\.topicBadge\}>\{topicBadgeLabel\}<\/Text> : null/);
   assert.match(source, /topicBadge:\s*\{/);
 });
@@ -128,8 +129,8 @@ test('the Learn chapter header summarizes real progress and the next topic above
 
   assert.match(source, /const completedTopicCount = topicStates\.filter\(\(topic\) => topic\.state === ['"]complete['"]\)\.length/);
   assert.match(source, /const nextUpTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| null/);
-  assert.match(source, /const chapterProgressLabel = `\$\{completedTopicCount\} of \$\{topicStates\.length\} topics complete`/);
-  assert.match(source, /const nextUpLabel = completedTopicCount >= topicStates\.length[\s\S]*?['"]Chapter complete['"][\s\S]*?`Next up: \$\{nextUpTopic\?\.title \|\| ['"]Getting Started['"]\}`/);
+  assert.match(source, /const chapterProgressLabel = !progressReady[\s\S]*?`\$\{completedTopicCount\} of \$\{topicStates\.length\} topics complete`/);
+  assert.match(source, /const nextUpLabel = !progressReady[\s\S]*?completedTopicCount >= topicStates\.length[\s\S]*?['"]Chapter complete['"][\s\S]*?`Next up: \$\{nextUpTopic\?\.title \|\| ['"]Getting Started['"]\}`/);
   assert.match(source, /<View style=\{styles\.chapterSummaryRow\}>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{chapterProgressLabel\}<\/Text>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{nextUpLabel\}<\/Text>/s);
   assert.match(source, /chapterSummaryRow:\s*\{/);
   assert.match(source, /chapterSummaryPill:\s*\{/);
@@ -173,7 +174,7 @@ test('the lesson completion screen can launch the next unlocked topic directly f
   assert.match(modalSource, /completeActions:\s*\{/);
   assert.match(modalSource, /secondaryButton:\s*\{/);
   assert.match(modalSource, /secondaryButtonText:\s*\{/);
-  assert.match(homeSource, /<PatoisLessonModal[\s\S]*onAdvance=\{setActiveTopic\}[\s\S]*visible=\{Boolean\(activeTopic\)\}/);
+  assert.match(homeSource, /<PatoisLessonModal[\s\S]*onAdvance=\{setActiveTopic\}[\s\S]*visible=\{Boolean\(activeTopic\) && progressReady\}/);
 });
 
 test('the lesson completion screen scrolls safely on short phones while preserving a centered celebration card', () => {
@@ -275,7 +276,7 @@ test('the Learn shell surfaces the active topic in a dedicated current-focus car
 
   assert.match(source, /function getTopicFocusDescription\(topic\)/);
   assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| topicStates\[0\] \|\| null/);
-  assert.match(source, /<Pressable\s+accessibilityHint=\{currentFocusHint\}[\s\S]*?disabled=\{!activeLearnTopic\}[\s\S]*?onPress=\{\(\) => activeLearnTopic && setActiveTopic\(activeLearnTopic\)\}[\s\S]*?style=\{styles\.currentFocusCard\}\s*>/s);
+  assert.match(source, /<Pressable\s+accessibilityHint=\{currentFocusHint\}[\s\S]*?disabled=\{!progressReady \|\| !activeLearnTopic\}[\s\S]*?onPress=\{\(\) => progressReady && activeLearnTopic && setActiveTopic\(activeLearnTopic\)\}[\s\S]*?style=\{styles\.currentFocusCard\}\s*>/s);
   assert.match(source, /<Text style=\{styles\.currentFocusEyebrow\}>CURRENT FOCUS<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
@@ -301,11 +302,11 @@ test('the current-focus card switches to a chapter-complete state instead of pre
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /const chapterComplete = completedTopicCount >= topicStates\.length && topicStates\.length > 0/);
-  assert.match(source, /const currentFocusTitle = chapterComplete \? ['"]Chapter complete['"] : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
-  assert.match(source, /const currentFocusBody = chapterComplete \? ['"]You finished this chapter — replay any topic below whenever you want a refresher\.['"] : getTopicFocusDescription\(activeLearnTopic\)/);
-  assert.match(source, /const currentFocusMetaLabel = chapterComplete \? ['"]9 topics complete['"] : `Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
-  assert.match(source, /const currentFocusHint = chapterComplete[\s\S]*?`Opens \$\{activeLearnTopic\?\.title \|\| ['"]the first topic['"]\} for review`[\s\S]*?: ['"]Opens your current lesson['"]/s);
-  assert.match(source, /const currentFocusCtaLabel = chapterComplete[\s\S]*?`Review \$\{activeLearnTopic\?\.title \|\| ['"]first topic['"]\} →`[\s\S]*?: ['"]Tap to continue →['"]/s);
+  assert.match(source, /const currentFocusTitle = !progressReady[\s\S]*?chapterComplete \? ['"]Chapter complete['"] : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
+  assert.match(source, /const currentFocusBody = !progressReady[\s\S]*?chapterComplete \? ['"]You finished this chapter — replay any topic below whenever you want a refresher\.['"] : getTopicFocusDescription\(activeLearnTopic\)/);
+  assert.match(source, /const currentFocusMetaLabel = !progressReady[\s\S]*?chapterComplete \? ['"]9 topics complete['"] : `Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
+  assert.match(source, /const currentFocusHint = !progressReady[\s\S]*?chapterComplete[\s\S]*?`Opens \$\{activeLearnTopic\?\.title \|\| ['"]the first topic['"]\} for review`[\s\S]*?: ['"]Opens your current lesson['"]/s);
+  assert.match(source, /const currentFocusCtaLabel = !progressReady[\s\S]*?chapterComplete[\s\S]*?`Review \$\{activeLearnTopic\?\.title \|\| ['"]first topic['"]\} →`[\s\S]*?: ['"]Tap to continue →['"]/s);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{currentFocusMetaLabel\}<\/Text>/);
@@ -315,13 +316,63 @@ test('the current-focus card switches to a chapter-complete state instead of pre
 test('Learn topics, current focus, and bottom tabs expose clear accessible roles and states', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const topicStateLabel = isLocked \? ['"]locked['"] : isComplete \? ['"]completed['"] : ['"]ready to learn['"]/);
+  assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.chapterTitle\}>/);
+  assert.match(source, /const topicStateLabel = !progressReady \? ['"]progress loading['"] : isLocked \? ['"]locked['"] : isComplete \? ['"]completed['"] : ['"]ready to learn['"]/);
   assert.match(source, /accessibilityLabel=\{`\$\{topic\.title\}, \$\{topicStateLabel\}`\}/);
-  assert.match(source, /accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: isLocked, selected: topic\.state === ['"]active['"] \}\}/s);
+  assert.match(source, /accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: interactionDisabled, selected: isActive \}\}/s);
   assert.match(source, /accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}/);
-  assert.match(source, /accessibilityHint=\{currentFocusHint\}[\s\S]*?accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !activeLearnTopic \}\}/s);
-  assert.match(source, /\.map\(\(\[id, icon, label\], index\) => \(/);
+  assert.match(source, /accessibilityHint=\{currentFocusHint\}[\s\S]*?accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !progressReady \|\| !activeLearnTopic \}\}/s);
+  assert.match(source, /\.map\(\(\[id, icon, activeIcon, label\], index\) => \(/);
   assert.match(source, /accessibilityLabel=\{`\$\{label\}, \$\{index \+ 1\} of 2, main navigation`\}/);
   assert.match(source, /accessibilityRole=['"]tab['"][\s\S]*?accessibilityState=\{\{ selected: activeTab === id \}\}/s);
   assert.match(source, /tabButton:\s*\{[^}]*minHeight:\s*(?:4[8-9]|[5-9]\d)/s);
+});
+
+test('Learn and Leaderboard use responsive vector icons and compact-phone podium sizing', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /import\s+Ionicons\s+from\s+['"]@expo\/vector-icons\/Ionicons['"]/);
+  assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.streak \|\| 0\} day streak`\}/);
+  assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.xp \|\| 0\} experience points`\}/);
+  assert.match(source, /name=\{activeTab === id \? activeIcon : icon\}/);
+  assert.match(source, /<Text numberOfLines=\{1\} style=\{styles\.podiumName\}>\{entry\.name\}<\/Text>/);
+  assert.match(source, /podiumGuide:\s*\{[^}]*aspectRatio:\s*1[^}]*maxWidth:\s*96[^}]*width:\s*['"]100%['"]/s);
+});
+
+test('loading progress stays visually neutral and small labels use accessible text tokens', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /const SKY_TEXT = ['"]#0076B5['"]/);
+  assert.match(source, /const MUTED = ['"]#586B7B['"]/);
+  assert.match(source, /const INACTIVE_TEXT = ['"]#586B7B['"]/);
+  assert.match(source, /const isActive = progressReady && topic\.state === ['"]active['"]/);
+  assert.match(source, /const isLoading = !progressReady/);
+  assert.match(source, /if \(!isActive \|\| reducedMotion\)/);
+  assert.match(source, /isActive && styles\.topicCircleActive/);
+  assert.match(source, /isLoading && styles\.topicCircleLoading/);
+  assert.match(source, /isLoading \? \(<Ionicons[^>]*name=['"]ellipsis-horizontal['"]/s);
+  assert.match(source, /const chapterProgressLabel = !progressReady\s*\? ['"]Loading saved progress['"]/s);
+  assert.match(source, /const currentFocusTitle = !progressReady\s*\? ['"]Loading your learning path['"]/s);
+  assert.match(source, /topicLabelActive:\s*\{\s*color:\s*SKY_TEXT/);
+  assert.match(source, /topicIcon:\s*\{\s*color:\s*NAVY/);
+  assert.match(source, /tabActive:\s*\{\s*color:\s*SKY_TEXT/);
+  assert.match(source, /leaderboardSummaryLabel:\s*\{\s*color:\s*SKY_TEXT/);
+  assert.doesNotMatch(source, /color=\{activeTab === id \? SKY_TEXT : ['"]#8294A2['"]\}/);
+  assert.match(source, /color=\{activeTab === id \? SKY_TEXT : INACTIVE_TEXT\}/);
+});
+
+test('current-focus footer wraps and shrinks on compact phones', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+
+  assert.match(source, /currentFocusFooter:\s*\{[^}]*flexWrap:\s*['"]wrap['"][^}]*gap:\s*8/s);
+  assert.match(source, /currentFocusMeta:\s*\{[^}]*flexShrink:\s*1/s);
+  assert.match(source, /currentFocusCta:\s*\{[^}]*flexShrink:\s*1/s);
+});
+
+test('lesson summary pills wrap instead of overflowing compact phones', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /lessonSummaryRow:\s*\{[^}]*flexWrap:\s*['"]wrap['"]/s);
+  assert.match(source, /lessonSummaryPill:\s*\{[^}]*flexShrink:\s*1/s);
+  assert.match(source, /lessonSummaryValue:\s*\{[^}]*flexShrink:\s*1/s);
 });

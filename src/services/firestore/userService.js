@@ -147,10 +147,14 @@ export async function getLanguageProgress(uid, languageId) {
 }
 
 export async function setLanguageProgress(uid, languageId, fields) {
+  const { completedTopicIds, ...otherFields } = fields;
+  const safeFields = Array.isArray(completedTopicIds) && completedTopicIds.length > 0
+    ? { ...otherFields, completedTopicIds: arrayUnion(...completedTopicIds) }
+    : otherFields;
   await setDoc(
     languageProgressDocRef(uid, languageId),
     {
-      ...fields,
+      ...safeFields,
       languageId,
       updatedAt: serverTimestamp(),
     },

@@ -27,14 +27,14 @@ test('MVP shell retains the approved chapter contract', () => {
   assert.match(source, /courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]/);
   assert.match(source, /courseChapter\?\.topicCount \?\? 9/);
   assert.match(source, /courseChapter\?\.wordCount \?\? 39/);
-  assert.match(source, /\[['"]learn['"],\s*[^,]+,\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*[^,]+,\s*['"]Leaderboard['"]\]/);
+  assert.match(source, /\[['"]learn['"],\s*['"]book-outline['"],\s*['"]book['"],\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*['"]trophy-outline['"],\s*['"]trophy['"],\s*['"]Leaderboard['"]\]/);
 });
 
 test('the Learn shell derives chapter title and meta from the rebuilt curriculum chapter row', () => {
   assert.match(source, /const courseChapter = useMemo\(\(\) => \(/);
   assert.match(source, /GENERATED_CURRICULUM\.chapters/);
   assert.match(source, /chapter\.courseId === storageCourseId/);
-  assert.match(source, /<Text style=\{styles\.chapterTitle\}>\{courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]\}<\/Text>/);
+  assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.chapterTitle\}>\{courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.chapterMeta\}>\{`\$\{courseChapter\?\.topicCount \?\? 9\} topics .* \$\{courseChapter\?\.wordCount \?\? 39\} words`\}<\/Text>/);
 });
 
