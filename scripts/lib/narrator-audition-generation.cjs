@@ -147,6 +147,7 @@ function validateExactPlan(plan) {
 }
 
 function validateNarratorGenerationPreflight({
+  compromisedKeyFingerprints,
   environment = {},
   estimatedCredits,
   options = {},
@@ -187,7 +188,8 @@ function validateNarratorGenerationPreflight({
     try {
       assertSafePrivateElevenLabsKey(
         privateApiKey(environment, options.account),
-        options.account === 'secondary' ? 'ELEVENLABS_API_KEY_SECONDARY' : 'ELEVENLABS_API_KEY'
+        options.account === 'secondary' ? 'ELEVENLABS_API_KEY_SECONDARY' : 'ELEVENLABS_API_KEY',
+        compromisedKeyFingerprints
       );
     } catch (error) {
       errors.push(error.message);

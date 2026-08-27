@@ -7,25 +7,19 @@ const {
   hashPrivateElevenLabsKey,
 } = require('../scripts/lib/elevenlabs-key-safety.cjs');
 
-test('the shared-key denylist is stored as fingerprints instead of raw secret values', () => {
-  assert.equal(COMPROMISED_ELEVENLABS_KEY_FINGERPRINTS.length >= 2, true);
-  for (const fingerprint of COMPROMISED_ELEVENLABS_KEY_FINGERPRINTS) {
-    assert.match(fingerprint, /^[a-f0-9]{64}$/);
-    assert.equal(fingerprint.includes('6e855395'), false);
-    assert.equal(fingerprint.includes('564a1619'), false);
-  }
+test('the disclosed-key denylist retains only the two non-reversible fingerprints', () => {
+  assert.deepEqual(COMPROMISED_ELEVENLABS_KEY_FINGERPRINTS, [
+    '2ed45779c16b1338beabcc571eeac6c9664f9a79d151575d108b7ecb5e8050bb',
+    '4634a3c88e0cd25d229c26f8bd48ffbba7b58bcce9e05b25cb8323bf05922c9c',
+  ]);
 });
 
-test('known exposed ElevenLabs development keys are rejected before any network request', () => {
+test('a caller-supplied disclosed-key fingerprint is rejected before any network request', () => {
   assert.throws(
     () => assertSafePrivateElevenLabsKey(
-      '6e855395d81d737092a8e513e99080672afcbb199426b3e9f1180cd5983ab6d9'
-    ),
-    /rotate/i
-  );
-  assert.throws(
-    () => assertSafePrivateElevenLabsKey(
-      '564a161941de431821a7efe0a7ae573fe1b14930d8be0f3d34dc414b2f1eccac'
+      'fixture-disclosed-elevenlabs-key',
+      'Fixture ElevenLabs API key',
+      ['3af57e6699a4d2d3ebb208125ec90c12d44e5d5a2cbf5bcaf3d9d3454a8dff1e']
     ),
     /rotate/i
   );

@@ -203,14 +203,17 @@ test('paid generation fails closed before network when approval, rotated keys, o
   assert.deepEqual(calls, []);
 });
 
-test('paid narrator generation rejects previously shared keys even when the rotation flag says true', () => {
+test('paid narrator generation rejects a key on the supplied disclosed-key fingerprint list', () => {
   const { options, plan, role, voiceId } = generationFixture('narrator-en');
   const errors = validateNarratorGenerationPreflight({
     environment: {
-      ELEVENLABS_API_KEY: '6e855395d81d737092a8e513e99080672afcbb199426b3e9f1180cd5983ab6d9',
+      ELEVENLABS_API_KEY: 'fixture-disclosed-elevenlabs-key',
       ELEVENLABS_KEYS_ROTATED: 'true',
       [role.voiceEnvVar]: voiceId,
     },
+    compromisedKeyFingerprints: [
+      '3af57e6699a4d2d3ebb208125ec90c12d44e5d5a2cbf5bcaf3d9d3454a8dff1e',
+    ],
     estimatedCredits: plan.estimatedCredits,
     options,
     plan,

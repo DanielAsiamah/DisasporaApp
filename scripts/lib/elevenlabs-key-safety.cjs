@@ -15,13 +15,17 @@ function hashPrivateElevenLabsKey(value) {
   return crypto.createHash('sha256').update(clean(value), 'utf8').digest('hex');
 }
 
-function assertSafePrivateElevenLabsKey(value, label = 'ElevenLabs API key') {
+function assertSafePrivateElevenLabsKey(
+  value,
+  label = 'ElevenLabs API key',
+  compromisedFingerprints = COMPROMISED_ELEVENLABS_KEY_FINGERPRINTS
+) {
   const normalized = clean(value);
   if (!normalized) {
     throw new Error(`${label} is missing from the private development environment.`);
   }
   const fingerprint = hashPrivateElevenLabsKey(normalized);
-  if (COMPROMISED_ELEVENLABS_KEY_FINGERPRINTS.includes(fingerprint)) {
+  if (compromisedFingerprints.includes(fingerprint)) {
     throw new Error(
       `${label} matches a previously exposed development key. Rotate it before any ElevenLabs request.`
     );
