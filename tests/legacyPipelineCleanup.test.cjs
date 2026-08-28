@@ -1,5 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -62,4 +63,18 @@ test('generated previews and workbook inspection output are excluded from Git', 
   assert.match(gitignore, /^\/tmp\/$/m);
   assert.match(gitignore, /^\/remotion-preview\/$/m);
   assert.match(gitignore, /^\*\.inspect\.ndjson$/m);
+});
+
+test('ignored build and preview outputs are not tracked by Git', () => {
+  const trackedOutputs = execFileSync(
+    'git',
+    ['ls-files', '--cached', '--', 'outputs/**'],
+    { cwd: root, encoding: 'utf8' }
+  ).trim().split(/\r?\n/).filter(Boolean);
+
+  assert.equal(
+    trackedOutputs.length,
+    0,
+    `${trackedOutputs.length} generated output files are still tracked`
+  );
 });
