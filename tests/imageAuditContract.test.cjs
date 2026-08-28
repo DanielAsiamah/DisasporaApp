@@ -1,5 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -193,4 +194,30 @@ test('current Patois asset tree contains only the approved canonical cutouts and
   const report = formatAuditReport(result);
   assert.match(report, /PASSED/);
   assert.match(report, /Failures: 0/);
+});
+
+test('the visually inspected 39-image Patois contact sheet is retained as release evidence', () => {
+  const evidencePath = path.resolve(
+    __dirname,
+    '..',
+    'content',
+    'release-evidence',
+    'art',
+    'jamaican-patois',
+    'contact-sheet.png'
+  );
+  assert.equal(
+    fs.existsSync(evidencePath),
+    true,
+    'The complete Patois contact sheet must be tracked with the art review evidence.'
+  );
+  const bytes = fs.readFileSync(evidencePath);
+
+  assert.equal(bytes.subarray(0, PNG_SIGNATURE.length).equals(PNG_SIGNATURE), true);
+  assert.equal(bytes.readUInt32BE(16), 1320);
+  assert.equal(bytes.readUInt32BE(20), 1778);
+  assert.equal(
+    crypto.createHash('sha256').update(bytes).digest('hex'),
+    '152bc5dbc651d38e3104271331a0c7305d80b204c6158ea007ccc7ca656d3c40'
+  );
 });
