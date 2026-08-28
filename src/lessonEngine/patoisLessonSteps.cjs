@@ -223,17 +223,14 @@ function materializeCourseLessonSteps(courseId, {
   const vocabularyById = new Map(vocabulary.map((row) => [row.conceptId, row]));
   const courseDisplayName = GENERATED_CURRICULUM.courses.find((course) => course.id === courseId)?.displayName || courseId;
   const courseSteps = lessonSteps.filter((step) => step.courseId === courseId);
-  const templateSteps = courseSteps.length
-    ? courseSteps
-    : lessonSteps.filter((step) => step.courseId === 'jamaican-patois');
   const conceptIdsByTopic = new Map();
 
-  for (const step of templateSteps) {
+  for (const step of courseSteps) {
     const ids = conceptIdsByTopic.get(step.topicId) || [];
     conceptIdsByTopic.set(step.topicId, unique([...ids, ...(step.conceptRefs || [])]));
   }
 
-  return templateSteps.map((step) => materializeCourseStep(step, {
+  return courseSteps.map((step) => materializeCourseStep(step, {
     conceptById,
     courseDisplayName,
     courseId,

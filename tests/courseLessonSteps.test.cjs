@@ -11,6 +11,8 @@ const {
 
 const swahiliVocabulary = GENERATED_CURRICULUM.courseVocabulary
   .filter(({ courseId }) => courseId === 'swahili');
+const igboVocabulary = GENERATED_CURRICULUM.courseVocabulary
+  .filter(({ courseId }) => courseId === 'igbo');
 
 test('Swahili derives the complete silent interaction flow from the verified course vocabulary', () => {
   const exercises = buildCourseTopicExercises('swahili', 'getting-started', {
@@ -62,5 +64,16 @@ test('the Patois compatibility builder keeps its existing behaviour', () => {
   assert.deepEqual(
     buildPatoisTopicExercises('easy-greetings'),
     buildCourseTopicExercises('jamaican-patois', 'easy-greetings')
+  );
+});
+
+test('a course without workbook lesson steps fails closed instead of inheriting Patois templates', () => {
+  assert.deepEqual(
+    materializeCourseLessonSteps('igbo', { vocabulary: igboVocabulary }),
+    []
+  );
+  assert.deepEqual(
+    buildCourseTopicExercises('igbo', 'getting-started', { vocabulary: igboVocabulary }),
+    []
   );
 });
