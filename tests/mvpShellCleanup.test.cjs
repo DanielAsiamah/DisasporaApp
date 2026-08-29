@@ -107,3 +107,18 @@ test('the retired brown-path lesson implementation is physically removed', () =>
     );
   }
 });
+
+test('retired legacy mascot components are physically removed from the shipped source tree', () => {
+  const retiredPaths = [
+    'src/components/MascotHero.js',
+    'src/components/SpeechBubble.js',
+  ];
+
+  for (const relativePath of retiredPaths) {
+    assert.equal(
+      fs.existsSync(path.join(__dirname, '..', relativePath)),
+      false,
+      `${relativePath} must not remain in the shipped source tree`
+    );
+  }
+});
