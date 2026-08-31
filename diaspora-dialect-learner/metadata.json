@@ -1,0 +1,6 @@
+{
+  "name": "Diaspora Dialect Learner",
+  "description": "An interactive Duolingo-style learning app for Diaspora, African, Caribbean, and Black dialects, dialects, and languages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

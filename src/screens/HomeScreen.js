@@ -11,6 +11,7 @@ import {
   Text,
   Vibration,
   View,
+  useWindowDimensions,
 } from 'react-native';
 
 import HeartsBar from '../components/HeartsBar';
@@ -329,11 +330,14 @@ function LessonPlayer({
   onAnswer,
 }) {
   const lessonSteps = useMemo(() => {
+    // lesson.steps is [] (empty) for xlsx-compiled lessons — fall through to engine
     if (Array.isArray(lesson?.steps) && lesson.steps.length > 0) {
       return lesson.steps;
     }
 
-    return createLessonSteps(lesson, phrasePool, courseId);
+    // Prefer the lesson's own phrasePool (vocab batch from xlsx), else fall back to unit pool
+    const pool = (lesson?.phrasePool?.length > 0) ? lesson.phrasePool : phrasePool;
+    return createLessonSteps(lesson, pool, courseId);
   }, [lesson, phrasePool, courseId]);
   const practiceSteps = useMemo(() => getPracticeSteps(lessonSteps), [lessonSteps]);
   const introStep = lessonSteps.find((item) => item.id === 'lesson-intro');
@@ -397,12 +401,13 @@ function LessonPlayer({
 
   function selectedAnswer() {
     if (exercise?.type === 'match_pairs') return selectedChoice;
-    if (exercise?.choices) return selectedChoice;
+    if (exercise?.choices || exercise?.imageChoices) return selectedChoice;
     return builtWords.join(' ');
   }
 
   function canCheck() {
     if (exercise?.type === 'match_pairs') return selectedChoice === '__matched__';
+    if (exercise?.imageChoices) return Boolean(selectedChoice); // IMAGE_CHOICE fix
     return exercise?.choices ? Boolean(selectedChoice) : builtWords.length > 0;
   }
 
@@ -723,6 +728,7 @@ function LessonPlayer({
 }
 
 export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }) {
+  const { width } = useWindowDimensions();
   const {
     profile,
     syncProgress,
@@ -756,6 +762,8 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
   const [isProgressReady, setIsProgressReady] = useState(false);
   const [course, setCourse] = useState(() => getCourseById(courseId));
   const [notice, setNotice] = useState(null);
+  const showLudolangFrame = width >= 820;
+  const useLudolangSkin = true;
 
   function showNotice(title, body, tone = 'info') {
     setNotice({ title, body, tone });
@@ -1033,7 +1041,7 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
-      <View style={styles.topBar}>
+      {!showLudolangFrame ? <View style={styles.topBar}>
         <Pressable onPress={onBack} style={styles.courseSelectButton}>
           <Text style={styles.courseFlag}>D</Text>
           <Text style={styles.courseChevron}>v</Text>
@@ -1049,11 +1057,18 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
           </View>
           <HeartsBar hearts={hearts} maxHearts={maxHearts} />
         </View>
-      </View>
+      </View> : null}
 
-      <View style={styles.mainContainer}>
+      <View style={[styles.mainContainer, showLudolangFrame && styles.ludoMainContainer]}>
+        {showLudolangFrame ? (
+          <LudolangSideNav activeTab={activeTab} onBack={onBack} onTab={setActiveTab} />
+        ) : null}
+        <View style={showLudolangFrame ? styles.ludoCenterPanel : styles.mobilePanel}>
         {activeTab === 'path' ? (
-          <ScrollView contentContainerStyle={styles.pathContent} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            contentContainerStyle={[styles.pathContent, useLudolangSkin && styles.ludoPathContent]}
+            showsVerticalScrollIndicator={false}
+          >
             {course.units.map((unit) => {
               const unitColor = unit.themeColor || course.themeColor;
               const firstGlobalIndex = lessons.findIndex((lesson) => lesson.id === unit.lessons[0]?.id);
@@ -1063,24 +1078,24 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
               const containsActiveLesson = unit.lessons.some((lesson) => lesson.id === activeNodeId);
 
               return (
-                <View key={unit.id} style={styles.unitSection}>
+                <View key={unit.id} style={[styles.unitSection, useLudolangSkin && styles.ludoUnitSection]}>
                   <LinearGradient
-                    colors={[unitColor, colors.splashWarm]}
+                    colors={useLudolangSkin ? ['#43D600', '#37B900'] : [unitColor, colors.splashWarm]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={styles.unitHeaderCard}
+                    style={[styles.unitHeaderCard, useLudolangSkin && styles.ludoUnitHeaderCard]}
                   >
                     <View style={styles.unitCopy}>
                       <Text style={styles.unitEyebrow}>{unit.title}</Text>
                       <Text style={styles.unitTitle}>{unit.description}</Text>
-                      <Text style={styles.unitSubcopy}>{unit.goal}</Text>
+                      {!useLudolangSkin ? <Text style={styles.unitSubcopy}>{unit.goal}</Text> : null}
                     </View>
-                    <View style={styles.unitBook}>
-                      <Text style={styles.unitBookIcon}>D</Text>
+                    <View style={[styles.unitBook, useLudolangSkin && styles.ludoUnitBook]}>
+                      <Text style={styles.unitBookIcon}>{useLudolangSkin ? 'III' : 'D'}</Text>
                     </View>
                   </LinearGradient>
 
-                  <View style={styles.progressCard}>
+                  {!useLudolangSkin ? <View style={styles.progressCard}>
                     <Text style={styles.progressLabel}>Unit progress</Text>
                     <Text style={styles.progressValue}>{Math.round(unitProgress * 100)}%</Text>
                     <View style={styles.progressTrack}>
@@ -1094,9 +1109,9 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
                         ]}
                       />
                     </View>
-                  </View>
+                  </View> : null}
 
-                  <View style={styles.pathMapContainer}>
+                  <View style={[styles.pathMapContainer, useLudolangSkin && styles.ludoPathMapContainer]}>
                     {unit.lessons.map((node, unitIndex) => {
                       const globalIndex = firstGlobalIndex + unitIndex;
                       const isCompleted = completed.includes(node.id);
@@ -1118,8 +1133,13 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
                       );
                     })}
                     {containsActiveLesson ? (
-                      <View style={styles.mascotContainer}>
+                      <View style={[styles.mascotContainer, useLudolangSkin && styles.ludoMascotContainer]}>
                         <MascotHero />
+                        {useLudolangSkin ? (
+                          <View style={styles.ludoStartBubble}>
+                            <Text style={styles.ludoStartBubbleText}>START</Text>
+                          </View>
+                        ) : null}
                       </View>
                     ) : null}
                   </View>
@@ -1199,6 +1219,20 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
             <SettingRow label="Dark theme" active />
           </ScrollView>
         ) : null}
+        </View>
+
+        {showLudolangFrame ? (
+          <LudolangRightPanel
+            completed={completed}
+            course={course}
+            gems={gems}
+            hearts={hearts}
+            maxHearts={maxHearts}
+            playableLessons={playableLessons}
+            streak={streak}
+            xp={xp}
+          />
+        ) : null}
       </View>
 
       <LessonPreview node={selectedNode} course={course} onClose={() => setSelectedNode(null)} onStart={startLesson} />
@@ -1212,14 +1246,112 @@ export default function HomeScreen({ courseId = 'patois', userLanguage, onBack }
         timeUntilNextHeartMs={timeUntilNextHeartMs}
       />
 
-      <View style={styles.bottomTabBar}>
-        <TabButton icon="🏠" label="Path" active={activeTab === 'path'} color={course.themeColor} onPress={() => setActiveTab('path')} />
-        <TabButton icon="🛍️" label="Shop" active={activeTab === 'shop'} color={course.themeColor} onPress={() => setActiveTab('shop')} />
-        <TabButton icon="🏆" label="Leagues" active={activeTab === 'leaderboard'} color={course.themeColor} onPress={() => setActiveTab('leaderboard')} />
-        <TabButton icon="👤" label="Profile" active={activeTab === 'profile'} color={course.themeColor} onPress={() => setActiveTab('profile')} />
-        <TabButton icon="⚙️" label="Settings" active={activeTab === 'settings'} color={course.themeColor} onPress={() => setActiveTab('settings')} />
-      </View>
+      {!showLudolangFrame ? (
+        <View style={styles.bottomTabBar}>
+          <TabButton icon="🏠" label="Path" active={activeTab === 'path'} color={course.themeColor} onPress={() => setActiveTab('path')} />
+          <TabButton icon="🛍️" label="Shop" active={activeTab === 'shop'} color={course.themeColor} onPress={() => setActiveTab('shop')} />
+          <TabButton icon="🏆" label="Leagues" active={activeTab === 'leaderboard'} color={course.themeColor} onPress={() => setActiveTab('leaderboard')} />
+          <TabButton icon="👤" label="Profile" active={activeTab === 'profile'} color={course.themeColor} onPress={() => setActiveTab('profile')} />
+          <TabButton icon="⚙️" label="Settings" active={activeTab === 'settings'} color={course.themeColor} onPress={() => setActiveTab('settings')} />
+        </View>
+      ) : null}
     </SafeAreaView>
+  );
+}
+
+function LudolangSideNav({ activeTab, onBack, onTab }) {
+  const items = [
+    ['path', 'Learn', 'D'],
+    ['leaderboard', 'Leaderboard', 'T'],
+    ['shop', 'Shop', 'S'],
+    ['profile', 'Profile', 'P'],
+    ['settings', 'Settings', 'C'],
+  ];
+
+  return (
+    <View style={styles.ludoSideNav}>
+      <Pressable onPress={onBack} style={styles.ludoBrand}>
+        <Text style={styles.ludoBrandIcon}>D</Text>
+        <Text style={styles.ludoBrandText}>Diaspora</Text>
+      </Pressable>
+      <View style={styles.ludoNavItems}>
+        {items.map(([key, label, icon]) => {
+          const active = activeTab === key;
+          return (
+            <Pressable
+              key={key}
+              onPress={() => onTab(key)}
+              style={[styles.ludoNavItem, active && styles.ludoNavItemActive]}
+            >
+              <Text style={styles.ludoNavIcon}>{icon}</Text>
+              <Text style={[styles.ludoNavText, active && styles.ludoNavTextActive]}>{label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+function LudolangRightPanel({
+  completed,
+  course,
+  gems,
+  hearts,
+  maxHearts,
+  playableLessons,
+  streak,
+  xp,
+}) {
+  const completedPlayable = completed.filter((id) => playableLessons.some((lesson) => lesson.id === id)).length;
+  const lessonGoal = Math.max(playableLessons.length, 1);
+  const accuracyProgress = Math.min(completedPlayable / 2, 1);
+  const completionProgress = Math.min(completedPlayable / lessonGoal, 1);
+
+  return (
+    <View style={styles.ludoRightPanel}>
+      <View style={styles.ludoStatsRow}>
+        <Text style={styles.ludoFlag}>D</Text>
+        <Text style={styles.ludoStatMini}>L {completedPlayable}</Text>
+        <Text style={styles.ludoStatMini}>F {streak}</Text>
+        <Text style={styles.ludoStatMini}>G {gems}</Text>
+        <Text style={styles.ludoStatMini}>H {hearts}/{maxHearts}</Text>
+      </View>
+
+      <View style={styles.ludoCourseCard}>
+        <Text style={styles.ludoCourseEyebrow}>Current course</Text>
+        <Text style={styles.ludoCourseTitle}>{course.title}</Text>
+        <Text style={styles.ludoCourseMeta}>{xp} XP earned</Text>
+      </View>
+
+      <Text style={styles.ludoPanelTitle}>Daily Quests</Text>
+      <QuestRow icon="F" title="Extend your streak." progress={streak > 0 ? 1 : 0} value={streak > 0 ? '1 / 1' : '0 / 1'} />
+      <QuestRow icon="A" title="Score 90% or higher in 2 lessons." progress={accuracyProgress} value={`${Math.min(completedPlayable, 2)} / 2`} tone="blue" />
+      <QuestRow icon="O" title="Complete today's path." progress={completionProgress} value={`${completedPlayable} / ${lessonGoal}`} />
+    </View>
+  );
+}
+
+function QuestRow({ icon, title, progress, value, tone = 'gold' }) {
+  return (
+    <View style={styles.ludoQuestRow}>
+      <View style={[styles.ludoQuestIcon, tone === 'blue' && styles.ludoQuestIconBlue]}>
+        <Text style={styles.ludoQuestIconText}>{icon}</Text>
+      </View>
+      <View style={styles.ludoQuestCopy}>
+        <Text style={styles.ludoQuestTitle}>{title}</Text>
+        <View style={styles.ludoQuestTrack}>
+          <View
+            style={[
+              styles.ludoQuestFill,
+              tone === 'blue' && styles.ludoQuestFillBlue,
+              { width: `${Math.round(progress * 100)}%` },
+            ]}
+          />
+          <Text style={styles.ludoQuestValue}>{value}</Text>
+        </View>
+      </View>
+    </View>
   );
 }
 
@@ -1414,12 +1546,229 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBottom: ui.bottomTabHeight,
   },
+  mobilePanel: {
+    flex: 1,
+  },
+  ludoMainContainer: {
+    backgroundColor: '#0D1117',
+    flexDirection: 'row',
+    paddingBottom: 0,
+  },
+  ludoSideNav: {
+    backgroundColor: '#10151D',
+    borderRightColor: '#243041',
+    borderRightWidth: 1,
+    paddingHorizontal: 18,
+    paddingTop: 22,
+    width: 228,
+  },
+  ludoBrand: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 28,
+    minHeight: 48,
+  },
+  ludoBrandIcon: {
+    backgroundColor: '#58CC02',
+    borderBottomColor: '#3DA600',
+    borderBottomWidth: 4,
+    borderRadius: 16,
+    color: '#07110A',
+    fontFamily: fonts.black,
+    fontSize: 22,
+    height: 42,
+    lineHeight: 38,
+    overflow: 'hidden',
+    textAlign: 'center',
+    width: 42,
+  },
+  ludoBrandText: {
+    color: '#F4F7FB',
+    fontFamily: fonts.black,
+    fontSize: 24,
+  },
+  ludoNavItems: {
+    gap: 8,
+  },
+  ludoNavItem: {
+    alignItems: 'center',
+    borderColor: 'transparent',
+    borderRadius: 16,
+    borderWidth: 2,
+    flexDirection: 'row',
+    gap: 12,
+    minHeight: 54,
+    paddingHorizontal: 14,
+  },
+  ludoNavItemActive: {
+    backgroundColor: '#172235',
+    borderColor: '#2B70C9',
+  },
+  ludoNavIcon: {
+    color: '#67B7FF',
+    fontFamily: fonts.black,
+    fontSize: 18,
+    textAlign: 'center',
+    width: 22,
+  },
+  ludoNavText: {
+    color: '#AAB7C8',
+    fontFamily: fonts.black,
+    fontSize: 16,
+  },
+  ludoNavTextActive: {
+    color: '#F4F7FB',
+  },
+  ludoCenterPanel: {
+    flex: 1,
+    maxWidth: 680,
+  },
+  ludoRightPanel: {
+    backgroundColor: '#0D1117',
+    borderLeftColor: '#243041',
+    borderLeftWidth: 1,
+    paddingHorizontal: 24,
+    paddingTop: 22,
+    width: 340,
+  },
+  ludoStatsRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 18,
+  },
+  ludoFlag: {
+    backgroundColor: '#172235',
+    borderColor: '#2A3850',
+    borderRadius: 12,
+    borderWidth: 1,
+    color: '#58CC02',
+    fontFamily: fonts.black,
+    fontSize: 18,
+    height: 38,
+    lineHeight: 36,
+    overflow: 'hidden',
+    textAlign: 'center',
+    width: 38,
+  },
+  ludoStatMini: {
+    color: '#F4F7FB',
+    fontFamily: fonts.black,
+    fontSize: 15,
+  },
+  ludoCourseCard: {
+    backgroundColor: '#141B26',
+    borderColor: '#283548',
+    borderRadius: 18,
+    borderWidth: 1,
+    marginBottom: 24,
+    padding: 18,
+  },
+  ludoCourseEyebrow: {
+    color: '#7E8EA3',
+    fontFamily: fonts.black,
+    fontSize: 12,
+    textTransform: 'uppercase',
+  },
+  ludoCourseTitle: {
+    color: '#F4F7FB',
+    fontFamily: fonts.black,
+    fontSize: 22,
+    marginTop: 6,
+  },
+  ludoCourseMeta: {
+    color: '#AAB7C8',
+    fontFamily: fonts.bold,
+    fontSize: 14,
+    marginTop: 8,
+  },
+  ludoPanelTitle: {
+    color: '#F4F7FB',
+    fontFamily: fonts.black,
+    fontSize: 22,
+    marginBottom: 12,
+  },
+  ludoQuestRow: {
+    alignItems: 'center',
+    backgroundColor: '#141B26',
+    borderColor: '#283548',
+    borderRadius: 18,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 14,
+    marginBottom: 12,
+    padding: 14,
+  },
+  ludoQuestIcon: {
+    alignItems: 'center',
+    backgroundColor: '#FFC800',
+    borderBottomColor: '#D89B00',
+    borderBottomWidth: 4,
+    borderRadius: 15,
+    height: 46,
+    justifyContent: 'center',
+    width: 46,
+  },
+  ludoQuestIconBlue: {
+    backgroundColor: '#1CB0F6',
+    borderBottomColor: '#1688BD',
+  },
+  ludoQuestIconText: {
+    color: '#111827',
+    fontFamily: fonts.black,
+    fontSize: 18,
+  },
+  ludoQuestCopy: {
+    flex: 1,
+  },
+  ludoQuestTitle: {
+    color: '#F4F7FB',
+    fontFamily: fonts.black,
+    fontSize: 14,
+    lineHeight: 19,
+    marginBottom: 8,
+  },
+  ludoQuestTrack: {
+    backgroundColor: '#283548',
+    borderRadius: 999,
+    height: 16,
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  ludoQuestFill: {
+    backgroundColor: '#FFC800',
+    borderRadius: 999,
+    height: '100%',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+  },
+  ludoQuestFillBlue: {
+    backgroundColor: '#1CB0F6',
+  },
+  ludoQuestValue: {
+    color: '#F4F7FB',
+    fontFamily: fonts.black,
+    fontSize: 10,
+    textAlign: 'center',
+  },
   pathContent: {
     padding: ui.screenPadding,
     paddingBottom: 140,
   },
+  ludoPathContent: {
+    alignItems: 'center',
+    paddingHorizontal: 42,
+    paddingTop: 22,
+  },
   unitSection: {
     marginBottom: spacing.xl,
+  },
+  ludoUnitSection: {
+    alignSelf: 'stretch',
+    marginBottom: 34,
   },
   unitHeaderCard: {
     ...shadows.card,
@@ -1429,6 +1778,15 @@ const styles = StyleSheet.create({
     minHeight: 118,
     overflow: 'hidden',
     padding: spacing.md,
+  },
+  ludoUnitHeaderCard: {
+    borderBottomColor: '#2DA000',
+    borderBottomWidth: 5,
+    borderRadius: 14,
+    minHeight: 92,
+    paddingHorizontal: 22,
+    paddingVertical: 18,
+    shadowColor: 'transparent',
   },
   unitCopy: {
     flex: 1,
@@ -1460,6 +1818,12 @@ const styles = StyleSheet.create({
     height: 58,
     justifyContent: 'center',
     width: 58,
+  },
+  ludoUnitBook: {
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    borderRadius: 12,
+    height: 52,
+    width: 52,
   },
   unitBookIcon: {
     color: colors.text,
@@ -1497,6 +1861,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 520,
     paddingTop: spacing.lg,
+  },
+  ludoPathMapContainer: {
+    minHeight: 720,
+    paddingTop: 38,
   },
   nodeRow: {
     alignItems: 'center',
@@ -1570,6 +1938,26 @@ const styles = StyleSheet.create({
     right: 6,
     top: 260,
     transform: [{ scale: 0.82 }],
+  },
+  ludoMascotContainer: {
+    alignItems: 'center',
+    right: 18,
+    top: 236,
+    transform: [{ scale: 0.76 }],
+  },
+  ludoStartBubble: {
+    backgroundColor: '#FFFFFF',
+    borderBottomColor: '#D2D8E0',
+    borderBottomWidth: 4,
+    borderRadius: 999,
+    marginTop: -6,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+  },
+  ludoStartBubbleText: {
+    color: '#58A700',
+    fontFamily: fonts.black,
+    fontSize: 13,
   },
   tabContent: {
     padding: ui.screenPadding,

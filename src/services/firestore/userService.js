@@ -26,15 +26,17 @@ function userDocRef(uid) {
   return doc(firebaseDb, COLLECTIONS.USERS, uid);
 }
 
-export async function createUserDocument(uid, { username, email }) {
+export async function createUserDocument(uid, { username, email, displayName }) {
   const payload = {
     username,
     email,
+    displayName: displayName || username,
     xp: DEFAULT_USER_PROFILE.xp,
     streak: DEFAULT_USER_PROFILE.streak,
     hearts: DEFAULT_USER_PROFILE.hearts,
     currentCourse: DEFAULT_USER_PROFILE.currentCourse,
     currentLesson: DEFAULT_USER_PROFILE.currentLesson,
+    isPremium: false,
     joinedAt: serverTimestamp(),
   };
 
@@ -71,6 +73,8 @@ export async function updateUserProgress(uid, fields) {
     'selectedStartUnit',
     'recommendedStartUnit',
     'lastActiveAt',
+    'displayName',
+    'isPremium',
   ];
   const payload = Object.fromEntries(
     Object.entries(fields).filter(([key]) => allowed.includes(key))

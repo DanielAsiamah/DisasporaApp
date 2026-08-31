@@ -1,49 +1,56 @@
 export const MAX_HEARTS = 5;
 
 export const colors = {
-  splash: '#140F0C', // Cozy dark espresso
-  splashWarm: '#1E1612', // Cocoa brown
-  splashGreen: '#0B1E14', // Forest deep green
+  // Core dark blue palette (consistent dark mode)
+  splash: '#131F24', // Deep dark blue
+  splashWarm: '#1A2C35', // Slightly lighter dark blue
+  splashGreen: '#0F1E26', // Forest dark blue-green
   
   // Theme highlights
   africaGold: '#F4B942', // Radiant gold
   africaWarm: '#E76F51', // Terracotta clay orange
-  caribbeanGreen: '#1FBE56', // Emerald green
-  caribbeanBright: '#2ECF6C', // Bright lime/green
+  caribbeanGreen: '#58CC02', // Duolingo-style bright green
+  caribbeanBright: '#58CC02', // Bright green
   
-  // Interface Surfaces (Cozy Theme)
-  skyTop: '#1E1612', // Cocoa night sky top gradient
-  skyBottom: '#140F0C', // Dark espresso night sky bottom gradient
-  grass: '#1FBE56',
-  grassDark: '#0B8A3C',
+  // Interface Surfaces (Dark Blue Mode)
+  skyTop: '#131F24', // Dark blue top gradient
+  skyBottom: '#0D161A', // Deepest dark blue bottom
+  grass: '#58CC02',
+  grassDark: '#4CAD02',
   
-  primary: '#1FBE56', // Emerald green
-  primaryDark: '#0B8A3C',
-  primaryLight: 'rgba(31, 190, 86, 0.15)', // transparent green tint
+  primary: '#58CC02', // Bright green (Duolingo-style)
+  primaryDark: '#4CAD02',
+  primaryLight: 'rgba(88, 204, 2, 0.15)', // transparent green tint
   accent: '#F4B942', // Gold
   accentDark: '#CFA034',
-  coral: '#E76F51', // Terracotta
+  coral: '#FF4B4B', // Bright red for errors/hearts
   purple: '#CE82FF',
   blue: '#1CB0F6',
   
-  // Dark Cozy Typography & Elements
-  surface: '#1E1612', // Rich chocolate cocoa surface
-  surfaceMuted: '#291F19', // Slightly lighter cocoa surface
-  text: '#FDF8F5', // Soft cozy cream text
-  textDark: '#FDF8F5', // Soft cozy cream text for dark backgrounds
-  textOnDark: '#FDF8F5', 
-  textMuted: '#C5B4A9', // Warm beige muted text
-  textLight: '#9A887D', // Dimmer brown-grey text
-  border: '#2E221B', // Dark warm brown border
-  locked: '#2B231F', // Disabled button brown
+  // Dark Blue Typography & Elements
+  surface: '#1A2C35', // Dark blue card surface
+  surfaceLight: '#213A45', // Lighter blue surface for cards
+  surfaceMuted: '#1E3340', // Mid dark blue surface
+  text: '#FFFFFF', // Pure white text
+  textDark: '#FFFFFF', // White text on dark backgrounds
+  textOnDark: '#FFFFFF', 
+  textMuted: '#89A6B5', // Muted blue-grey text
+  textLight: '#5E8090', // Dimmer blue-grey text
+  border: '#2A4050', // Dark blue border
+  borderLight: '#3A5565', // Lighter border for cards
+  locked: '#1E3340', // Disabled button dark blue
   
-  success: '#1FBE56',
-  successBg: 'rgba(31, 190, 86, 0.12)',
+  success: '#58CC02',
+  successBg: 'rgba(88, 204, 2, 0.12)',
   error: '#FF4B4B',
   errorBg: 'rgba(255, 75, 75, 0.15)',
   heart: '#FF4B81',
-  heartEmpty: '#3E312B',
-  shadow: 'rgba(0, 0, 0, 0.4)',
+  heartEmpty: '#2A4050',
+  shadow: 'rgba(0, 0, 0, 0.5)',
+  
+  // Monetization/Premium
+  premium: '#CE82FF',
+  premiumBg: 'rgba(206, 130, 255, 0.12)',
 };
 
 export const spacing = {

@@ -11,22 +11,26 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { isDevAccount } from './src/config/devConfig';
 import { GameProvider } from './src/context/GameContext';
 import CourseSelectScreen from './src/screens/CourseSelectScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import LanguageSelectScreen from './src/screens/LanguageSelectScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import NameInputScreen from './src/screens/NameInputScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import { colors } from './src/theme';
 
 function AppContent() {
-  const { initializing, profile, syncProgress, isAuthenticated } = useAuth();
+  const { initializing, profile, user, syncProgress, isAuthenticated } = useAuth();
+  const isDev = isDevAccount(user?.email);
   const [screen, setScreen] = useState(null);
   const [userLanguage, setUserLanguage] = useState('english');
   const [selectedCourse, setSelectedCourse] = useState('patois');
   const [routeReady, setRouteReady] = useState(false);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -40,6 +44,7 @@ function AppContent() {
         const course = profile?.currentCourse || 'patois';
         if (!cancelled) {
           setSelectedCourse(course);
+          setUserName(profile?.displayName || profile?.username || '');
           setScreen('home');
           setRouteReady(true);
         }
@@ -88,10 +93,18 @@ function AppContent() {
   function goToPostAuthFlow() {
     if (profile?.currentCourse) {
       setSelectedCourse(profile.currentCourse);
+      setUserName(profile?.displayName || profile?.username || '');
       setScreen('home');
       return;
     }
 
+    // New users go to name input first
+    if (!profile?.displayName) {
+      setScreen('name-input');
+      return;
+    }
+
+    setUserName(profile?.displayName || '');
     setScreen('language-select');
   }
 
@@ -104,12 +117,12 @@ function AppContent() {
   }
 
   return (
-    <GameProvider profileHearts={profile?.hearts} onHeartsSync={handleHeartsSync}>
+    <GameProvider profileHearts={profile?.hearts} onHeartsSync={handleHeartsSync} devMode={isDev}>
       {screen === 'splash' ? <SplashScreen onFinish={finishSplash} /> : null}
 
       {screen === 'welcome' ? (
         <WelcomeScreen
-          onGetStarted={() => setScreen('language-select')}
+          onGetStarted={() => setScreen('signup')}
           onSignIn={() => setScreen('login')}
         />
       ) : null}
@@ -124,9 +137,22 @@ function AppContent() {
 
       {screen === 'signup' ? (
         <SignUpScreen
-          onBack={() => setScreen('login')}
+          onBack={() => setScreen('welcome')}
           onSuccess={goToPostAuthFlow}
           onSignIn={() => setScreen('login')}
+        />
+      ) : null}
+
+      {screen === 'name-input' ? (
+        <NameInputScreen
+          onSubmitName={(name) => {
+            setUserName(name);
+            if (isAuthenticated) {
+              syncProgress({ displayName: name });
+            }
+            setScreen('language-select');
+          }}
+          onBack={() => setScreen('welcome')}
         />
       ) : null}
 
@@ -143,6 +169,7 @@ function AppContent() {
       {screen === 'course-select' ? (
         <CourseSelectScreen
           userLanguage={userLanguage}
+          userName={userName}
           onSelectCourse={(courseId) => {
             setSelectedCourse(courseId);
             if (isAuthenticated) {

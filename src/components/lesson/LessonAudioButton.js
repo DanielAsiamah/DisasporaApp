@@ -13,8 +13,18 @@ export default function LessonAudioButton({
   onAudioPlay,
   autoPlay = false,
 }) {
-  const player = useAudioPlayer(source);
+  // Always initialize with a valid fallback sound to prevent expo-audio crash on null
+  const player = useAudioPlayer(source || require('../../../assets/sounds/correct.mp3'));
   const [showFallback, setShowFallback] = useState(false);
+
+  // Dynamically swap the audio source when the prop changes
+  useEffect(() => {
+    if (source && typeof player.replace === 'function') {
+      try {
+        player.replace(source);
+      } catch (e) {}
+    }
+  }, [source]);
 
   if (!source) return null;
 
@@ -34,8 +44,10 @@ export default function LessonAudioButton({
   }
 
   useEffect(() => {
-    if (autoPlay) {
-      play();
+    if (autoPlay && source) {
+      // Small timeout to allow replace() to finish loading
+      const timer = setTimeout(() => play(), 100);
+      return () => clearTimeout(timer);
     }
   }, [autoPlay, source]);
 

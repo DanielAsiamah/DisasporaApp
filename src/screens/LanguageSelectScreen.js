@@ -7,30 +7,29 @@ import {
   Text,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
-import MascotHero from '../components/MascotHero';
-import { colors, fonts, radius, shadows, spacing } from '../theme';
+import { colors, fonts, radius, spacing } from '../theme';
 
 const NATIVE_LANGUAGES = [
   {
     id: 'english',
     label: 'English',
-    subtitle: 'Learn from English',
+    subtitle: 'I speak English',
     flag: '🇺🇸',
     accentColor: colors.blue,
   },
   {
     id: 'french',
     label: 'Français',
-    subtitle: 'Apprendre depuis le français',
+    subtitle: 'Je parle français',
     flag: '🇫🇷',
     accentColor: colors.coral,
   },
   {
     id: 'arabic',
     label: 'العربية',
-    subtitle: 'تعلم من اللغة العربية',
+    subtitle: 'أتحدث العربية',
     flag: '🇸🇦',
     accentColor: colors.africaGold,
   },
@@ -38,13 +37,13 @@ const NATIVE_LANGUAGES = [
 
 export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(18)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 480,
+        duration: 500,
         useNativeDriver: true,
       }),
       Animated.spring(slideAnim, {
@@ -58,7 +57,10 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
 
   return (
     <View style={styles.root}>
-      <AnimatedAtmosphere colors={['#F7FCF9', '#EEF8F4']} accent={colors.blue} />
+      <LinearGradient
+        colors={[colors.skyTop, colors.splash, colors.skyBottom]}
+        style={StyleSheet.absoluteFill}
+      />
 
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
@@ -76,11 +78,9 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
           ]}
         >
-          <MascotHero compact mood="thinking" />
-          <Text style={styles.eyebrow}>Personalize your lessons</Text>
-          <Text style={styles.title}>What language do you speak?</Text>
+          <Text style={styles.title}>What language{"\n"}do you speak?</Text>
           <Text style={styles.subtitle}>
-            Choose the language you want explanations and support in.
+            This is the language we'll explain things in.
           </Text>
 
           <View style={styles.list}>
@@ -91,17 +91,16 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
                 style={({ pressed }) => [
                   styles.card,
                   pressed && styles.cardPressed,
-                  { borderLeftColor: lang.accentColor },
                 ]}
               >
-                <View style={[styles.flagBadge, { backgroundColor: lang.accentColor + '18' }]}>
+                <View style={[styles.flagBadge, { backgroundColor: lang.accentColor + '20' }]}>
                   <Text style={styles.flagEmoji}>{lang.flag}</Text>
                 </View>
                 <View style={styles.cardInfo}>
                   <Text style={styles.cardLabel}>{lang.label}</Text>
                   <Text style={styles.cardSubtitle}>{lang.subtitle}</Text>
                 </View>
-                <Text style={styles.arrow}>→</Text>
+                <Text style={styles.arrow}>›</Text>
               </Pressable>
             ))}
           </View>
@@ -113,7 +112,7 @@ export default function LanguageSelectScreen({ onSelectLanguage, onBack }) {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: '#F7FCF9',
+    backgroundColor: colors.splash,
     flex: 1,
   },
   safeArea: {
@@ -127,74 +126,65 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignItems: 'center',
-    height: 40,
+    height: 44,
     justifyContent: 'center',
-    width: 40,
+    width: 44,
   },
   backText: {
-    color: '#66756C',
-    fontFamily: fonts.black,
+    color: colors.textMuted,
+    fontFamily: fonts.extraBold,
     fontSize: 24,
   },
   progressContainer: {
-    backgroundColor: '#DCEAE4',
+    backgroundColor: colors.border,
     borderRadius: radius.pill,
     flex: 1,
-    height: 10,
+    height: 8,
     marginLeft: spacing.sm,
     overflow: 'hidden',
   },
   progressBar: {
     backgroundColor: colors.primary,
+    borderRadius: radius.pill,
     height: '100%',
-    width: '33%',
+    width: '25%',
   },
   content: {
     flex: 1,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-  },
-  eyebrow: {
-    color: colors.primaryDark,
-    fontFamily: fonts.black,
-    fontSize: 12,
-    letterSpacing: 1,
-    marginTop: spacing.lg,
-    textTransform: 'uppercase',
+    paddingTop: spacing.xl,
   },
   title: {
-    color: '#102018',
-    fontFamily: fonts.black,
-    fontSize: 30,
+    color: colors.text,
+    fontFamily: fonts.extraBold,
+    fontSize: 28,
+    letterSpacing: -0.3,
     lineHeight: 36,
-    marginTop: spacing.xs,
   },
   subtitle: {
-    color: '#66756C',
-    fontFamily: fonts.semiBold,
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
     fontSize: 15,
     lineHeight: 22,
     marginTop: spacing.sm,
   },
   list: {
-    gap: spacing.md,
+    gap: spacing.sm,
     marginTop: spacing.xl,
   },
   card: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E1EEE8',
-    borderLeftWidth: 5,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: 'row',
     gap: spacing.md,
     padding: spacing.md,
-    ...shadows.soft,
   },
   cardPressed: {
-    opacity: 0.78,
-    transform: [{ translateY: 2 }],
+    backgroundColor: colors.surfaceMuted,
+    transform: [{ scale: 0.98 }],
   },
   flagBadge: {
     alignItems: 'center',
@@ -210,19 +200,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardLabel: {
-    color: '#102018',
-    fontFamily: fonts.black,
+    color: colors.text,
+    fontFamily: fonts.bold,
     fontSize: 18,
   },
   cardSubtitle: {
-    color: '#66756C',
-    fontFamily: fonts.bold,
-    fontSize: 12,
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
+    fontSize: 13,
     marginTop: 2,
   },
   arrow: {
-    color: '#9AA9A1',
-    fontFamily: fonts.black,
-    fontSize: 20,
+    color: colors.textLight,
+    fontFamily: fonts.extraBold,
+    fontSize: 28,
   },
 });

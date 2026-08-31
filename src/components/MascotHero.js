@@ -1,14 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, fonts, radius, shadows } from '../theme';
+import { colors, fonts, radius } from '../theme';
 import MascotAvatar from './mascot/MascotAvatar';
 
 export default function MascotHero({ languageId = 'patois', mood = 'happy', compact = false }) {
   return (
     <View style={[styles.wrapper, compact && styles.wrapperCompact]}>
       <View style={styles.heroCard}>
-        <View style={styles.orbitOne} />
-        <View style={styles.orbitTwo} />
         <MascotAvatar languageId={languageId} mood={mood} size={compact ? 0.72 : 1.05} />
         {!compact ? (
           <View style={styles.captionPill}>
@@ -31,34 +29,12 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E9F3EF',
     borderRadius: 42,
-    borderWidth: 1,
-    minHeight: 218,
+    minHeight: 180,
     justifyContent: 'center',
     overflow: 'hidden',
-    paddingTop: 22,
+    paddingTop: 8,
     width: '100%',
-    ...shadows.card,
-  },
-  orbitOne: {
-    backgroundColor: 'rgba(53, 208, 197, 0.12)',
-    borderRadius: radius.pill,
-    height: 190,
-    position: 'absolute',
-    right: -72,
-    top: -58,
-    width: 190,
-  },
-  orbitTwo: {
-    backgroundColor: 'rgba(244, 185, 66, 0.14)',
-    borderRadius: radius.pill,
-    bottom: -65,
-    height: 160,
-    left: -54,
-    position: 'absolute',
-    width: 160,
   },
   captionPill: {
     backgroundColor: colors.primaryLight,

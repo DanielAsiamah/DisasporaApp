@@ -8,24 +8,21 @@ import {
   Text,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
-import MascotHero from '../components/MascotHero';
-import PrimaryButton from '../components/PrimaryButton';
-import SpeechBubble from '../components/SpeechBubble';
-import { colors, fonts, radius, shadows, spacing } from '../theme';
+import { colors, fonts, radius, spacing } from '../theme';
 
-const GREETINGS = ['Wah gwaan!', 'Hujambo!', 'Sak pase!', 'Nanga def!'];
+const GREETINGS = ['Wah gwaan!', 'Hujambo!', 'Sak pase!', 'Nanga def!', 'Kedu!'];
 
-const LESSON_PROMISES = [
-  { label: 'Listen', detail: 'Hear real phrases first.' },
-  { label: 'Practice', detail: 'Build answers step by step.' },
-  { label: 'Culture', detail: 'Learn the meaning behind words.' },
+const FEATURES = [
+  { icon: '🎧', label: 'Listen & Speak', detail: 'Hear real native audio' },
+  { icon: '🧠', label: 'Practice', detail: 'Build sentences step by step' },
+  { icon: '🌍', label: 'Culture', detail: 'Learn the people behind the words' },
 ];
 
 export default function WelcomeScreen({ onGetStarted, onSignIn }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(18)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
   const [greetingIndex, setGreetingIndex] = useState(0);
   const bubbleFade = useRef(new Animated.Value(1)).current;
 
@@ -33,13 +30,13 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 580,
+        duration: 700,
         useNativeDriver: true,
       }),
       Animated.spring(slideAnim, {
         toValue: 0,
-        speed: 12,
-        bounciness: 5,
+        speed: 10,
+        bounciness: 4,
         useNativeDriver: true,
       }),
     ]).start();
@@ -53,20 +50,20 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
         setGreetingIndex((prev) => (prev + 1) % GREETINGS.length);
         Animated.timing(bubbleFade, {
           toValue: 1,
-          duration: 260,
+          duration: 300,
           useNativeDriver: true,
         }).start();
       });
-    }, 2600);
+    }, 2800);
 
     return () => clearInterval(interval);
   }, [bubbleFade, fadeAnim, slideAnim]);
 
   return (
     <View style={styles.root}>
-      <AnimatedAtmosphere
-        colors={['#F7FCF9', '#EEF8F4']}
-        accent={colors.primary}
+      <LinearGradient
+        colors={[colors.skyTop, colors.splash, colors.skyBottom]}
+        style={StyleSheet.absoluteFill}
       />
 
       <SafeAreaView style={styles.safeArea}>
@@ -77,6 +74,7 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
               transform: [{ translateY: slideAnim }],
             }}
           >
+            {/* Brand */}
             <View style={styles.brandRow}>
               <View style={styles.logoBadge}>
                 <Text style={styles.logoText}>D</Text>
@@ -84,33 +82,40 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
               <Text style={styles.brandName}>Diaspora</Text>
             </View>
 
-            <MascotHero />
-
-            <View style={styles.heroCopy}>
-              <Animated.View style={{ opacity: bubbleFade }}>
-                <SpeechBubble text={GREETINGS[greetingIndex]} tone="light" />
+            {/* Hero section */}
+            <View style={styles.heroSection}>
+              <Animated.View style={[styles.greetingBubble, { opacity: bubbleFade }]}>
+                <Text style={styles.greetingText}>{GREETINGS[greetingIndex]}</Text>
               </Animated.View>
-              <Text style={styles.title}>Learn the languages{'\n'}of the diaspora</Text>
+
+              <Text style={styles.title}>Learn the languages{"\n"}of your people</Text>
               <Text style={styles.subtitle}>
-                Bite-sized lessons in creoles, mother tongues, and cultural speech.
+                Master creoles, mother tongues, and cultural speech with bite-sized daily lessons.
               </Text>
             </View>
 
-            <View style={styles.promiseGrid}>
-              {LESSON_PROMISES.map((item) => (
-                <View key={item.label} style={styles.promiseCard}>
-                  <Text style={styles.promiseLabel}>{item.label}</Text>
-                  <Text style={styles.promiseDetail}>{item.detail}</Text>
+            {/* Feature cards */}
+            <View style={styles.featureGrid}>
+              {FEATURES.map((item) => (
+                <View key={item.label} style={styles.featureCard}>
+                  <Text style={styles.featureIcon}>{item.icon}</Text>
+                  <View style={styles.featureInfo}>
+                    <Text style={styles.featureLabel}>{item.label}</Text>
+                    <Text style={styles.featureDetail}>{item.detail}</Text>
+                  </View>
                 </View>
               ))}
             </View>
           </Animated.View>
         </ScrollView>
 
+        {/* Footer CTA */}
         <View style={styles.footer}>
-          <PrimaryButton label="GET STARTED" onPress={onGetStarted} />
+          <Pressable style={styles.getStartedButton} onPress={onGetStarted}>
+            <Text style={styles.getStartedText}>GET STARTED</Text>
+          </Pressable>
           <Pressable onPress={onSignIn} style={styles.signInButton}>
-            <Text style={styles.signInText}>I already have an account</Text>
+            <Text style={styles.signInText}>I ALREADY HAVE AN ACCOUNT</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -120,7 +125,7 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: '#F7FCF9',
+    backgroundColor: colors.splash,
     flex: 1,
   },
   safeArea: {
@@ -129,93 +134,127 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: spacing.xxl,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.lg,
   },
   brandRow: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 10,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xl,
   },
   logoBadge: {
     alignItems: 'center',
     backgroundColor: colors.primary,
     borderRadius: radius.pill,
-    height: 42,
+    height: 44,
     justifyContent: 'center',
-    width: 42,
+    width: 44,
   },
   logoText: {
     color: '#FFFFFF',
-    fontFamily: fonts.black,
-    fontSize: 18,
+    fontFamily: fonts.extraBold,
+    fontSize: 20,
   },
   brandName: {
-    color: '#102018',
-    fontFamily: fonts.black,
-    fontSize: 23,
+    color: colors.text,
+    fontFamily: fonts.extraBold,
+    fontSize: 24,
   },
-  heroCopy: {
+  heroSection: {
     alignItems: 'center',
-    marginTop: spacing.md,
+    marginBottom: spacing.xl,
+    paddingTop: spacing.lg,
+  },
+  greetingBubble: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.pill,
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm + 2,
+  },
+  greetingText: {
+    color: '#FFFFFF',
+    fontFamily: fonts.extraBold,
+    fontSize: 18,
   },
   title: {
-    color: '#102018',
-    fontFamily: fonts.black,
-    fontSize: 31,
-    lineHeight: 38,
-    marginTop: spacing.sm,
+    color: colors.text,
+    fontFamily: fonts.extraBold,
+    fontSize: 32,
+    letterSpacing: -0.5,
+    lineHeight: 40,
     textAlign: 'center',
   },
   subtitle: {
-    color: '#66756C',
-    fontFamily: fonts.semiBold,
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
     fontSize: 16,
     lineHeight: 24,
-    marginTop: spacing.sm,
+    marginTop: spacing.md,
     maxWidth: 320,
     textAlign: 'center',
   },
-  promiseGrid: {
+  featureGrid: {
     gap: spacing.sm,
-    marginTop: spacing.xl,
   },
-  promiseCard: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E1EEE8',
+  featureCard: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     borderRadius: radius.lg,
     borderWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.md,
     padding: spacing.md,
-    ...shadows.soft,
   },
-  promiseLabel: {
-    color: colors.primaryDark,
-    fontFamily: fonts.black,
+  featureIcon: {
+    fontSize: 28,
+  },
+  featureInfo: {
+    flex: 1,
+  },
+  featureLabel: {
+    color: colors.text,
+    fontFamily: fonts.bold,
     fontSize: 16,
   },
-  promiseDetail: {
-    color: '#66756C',
-    fontFamily: fonts.semiBold,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 4,
+  featureDetail: {
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    marginTop: 2,
   },
   footer: {
-    backgroundColor: 'rgba(247,252,249,0.96)',
-    borderTopColor: '#E1EEE8',
+    borderTopColor: colors.border,
     borderTopWidth: 1,
     gap: spacing.sm,
     paddingBottom: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
   },
+  getStartedButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+  },
+  getStartedText: {
+    color: '#FFFFFF',
+    fontFamily: fonts.extraBold,
+    fontSize: 15,
+    letterSpacing: 1,
+  },
   signInButton: {
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    paddingVertical: spacing.md - 2,
   },
   signInText: {
     color: colors.blue,
     fontFamily: fonts.extraBold,
-    fontSize: 15,
+    fontSize: 14,
+    letterSpacing: 0.5,
   },
 });

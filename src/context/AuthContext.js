@@ -7,16 +7,20 @@ import {
   subscribeToAuthState,
 } from '../services/auth/authService';
 import {
-  addAnswerToLessonSession,
-  completeLessonSession,
-  createLessonSession,
   createUserDocument,
-  getLanguageProgress,
-  getUserDocument,
-  setLanguageProgress,
-  touchUserLastActive,
-  updateUserProgress,
 } from '../services/firestore/userService';
+import {
+  getUserProfile,
+  loadLanguageProgress as loadStoredLanguageProgress,
+  touchLastActive,
+  updateLanguageProgress,
+  updateProfileProgress,
+} from '../services/progress/progressRepository';
+import {
+  createSession,
+  finishSession,
+  recordAnswer,
+} from '../services/progress/sessionRepository';
 
 const AuthContext = createContext(null);
 
@@ -30,8 +34,8 @@ export function AuthProvider({ children }) {
       setUser(firebaseUser);
 
       if (firebaseUser) {
-        const document = await getUserDocument(firebaseUser.uid);
-        await touchUserLastActive(firebaseUser.uid).catch(() => {});
+        const document = await getUserProfile(firebaseUser.uid);
+        await touchLastActive(firebaseUser.uid).catch(() => {});
         setProfile(document);
       } else {
         setProfile(null);
@@ -49,12 +53,12 @@ export function AuthProvider({ children }) {
       return null;
     }
 
-    const document = await getUserDocument(user.uid);
+    const document = await getUserProfile(user.uid);
     setProfile(document);
     return document;
   }, [user]);
 
-  const signUp = useCallback(async ({ username, email, password }) => {
+  const signUp = useCallback(async ({ username, email, password, displayName }) => {
     const trimmedUsername = username.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
@@ -62,9 +66,10 @@ export function AuthProvider({ children }) {
     await createUserDocument(firebaseUser.uid, {
       username: trimmedUsername,
       email: trimmedEmail,
+      displayName: displayName || trimmedUsername,
     });
 
-    const document = await getUserDocument(firebaseUser.uid);
+    const document = await getUserProfile(firebaseUser.uid);
     setUser(firebaseUser);
     setProfile(document);
     return firebaseUser;
@@ -73,7 +78,7 @@ export function AuthProvider({ children }) {
   const signIn = useCallback(async ({ email, password }) => {
     const trimmedEmail = email.trim().toLowerCase();
     const firebaseUser = await signInWithEmail(trimmedEmail, password);
-    const document = await getUserDocument(firebaseUser.uid);
+    const document = await getUserProfile(firebaseUser.uid);
     setUser(firebaseUser);
     setProfile(document);
     return firebaseUser;
@@ -91,7 +96,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      await updateUserProgress(user.uid, fields);
+      await updateProfileProgress(user.uid, fields);
       setProfile((current) => (current ? { ...current, ...fields } : current));
     },
     [user]
@@ -103,7 +108,7 @@ export function AuthProvider({ children }) {
         return null;
       }
 
-      return getLanguageProgress(user.uid, languageId);
+      return loadStoredLanguageProgress(user.uid, languageId);
     },
     [user]
   );
@@ -114,7 +119,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      await setLanguageProgress(user.uid, languageId, fields);
+      await updateLanguageProgress(user.uid, languageId, fields);
     },
     [user]
   );
@@ -125,7 +130,7 @@ export function AuthProvider({ children }) {
         return null;
       }
 
-      return createLessonSession(user.uid, fields);
+      return createSession(user.uid, fields);
     },
     [user]
   );
@@ -136,7 +141,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      await addAnswerToLessonSession(user.uid, sessionId, answer);
+      await recordAnswer(user.uid, sessionId, answer);
     },
     [user]
   );
@@ -147,7 +152,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      await completeLessonSession(user.uid, sessionId, fields);
+      await finishSession(user.uid, sessionId, fields);
     },
     [user]
   );

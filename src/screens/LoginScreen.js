@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import AuthTextField from '../components/AuthTextField';
-import PrimaryButton from '../components/PrimaryButton';
 import { useAuth } from '../context/AuthContext';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { colors, fonts, radius, spacing } from '../theme';
@@ -47,7 +46,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
 
   return (
     <View style={styles.root}>
-      <LinearGradient colors={[colors.skyTop, colors.skyBottom]} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={[colors.skyTop, colors.splash, colors.skyBottom]} style={StyleSheet.absoluteFill} />
 
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
@@ -66,7 +65,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
             </View>
 
             <Text style={styles.title}>Welcome back</Text>
-            <Text style={styles.subtitle}>Sign in to save your hearts, XP, and lesson progress.</Text>
+            <Text style={styles.subtitle}>Sign in to continue your learning streak.</Text>
 
             <View style={styles.form}>
               <AuthTextField
@@ -89,7 +88,9 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
             {loading ? (
               <ActivityIndicator color={colors.primary} style={styles.loader} />
             ) : (
-              <PrimaryButton label="Sign in" onPress={handleSignIn} />
+              <Pressable style={styles.signInButton} onPress={handleSignIn}>
+                <Text style={styles.signInButtonText}>SIGN IN</Text>
+              </Pressable>
             )}
 
             <Pressable onPress={onSignUp} style={styles.linkButton}>
@@ -104,6 +105,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack }) {
 
 const styles = StyleSheet.create({
   root: {
+    backgroundColor: colors.splash,
     flex: 1,
   },
   safeArea: {
@@ -123,24 +125,24 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignItems: 'center',
-    height: 40,
+    height: 44,
     justifyContent: 'center',
-    width: 40,
+    width: 44,
   },
   backText: {
-    color: colors.blue,
+    color: colors.textMuted,
     fontFamily: fonts.extraBold,
     fontSize: 24,
   },
   title: {
-    color: colors.textDark,
-    fontFamily: fonts.black,
+    color: colors.text,
+    fontFamily: fonts.extraBold,
     fontSize: 30,
     lineHeight: 36,
   },
   subtitle: {
     color: colors.textMuted,
-    fontFamily: fonts.semiBold,
+    fontFamily: fonts.medium,
     fontSize: 15,
     lineHeight: 22,
     marginBottom: spacing.lg,
@@ -158,6 +160,18 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginVertical: spacing.md,
+  },
+  signInButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+  },
+  signInButtonText: {
+    color: '#FFFFFF',
+    fontFamily: fonts.extraBold,
+    fontSize: 15,
+    letterSpacing: 1,
   },
   linkButton: {
     alignItems: 'center',

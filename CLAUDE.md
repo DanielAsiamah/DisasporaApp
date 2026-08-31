@@ -6,11 +6,12 @@ Diaspora is a warm, modern language-learning app inspired by Duolingo and Airlea
 
 ## Visual direction
 
-- Use a hybrid theme.
-- Onboarding and teaching screens can use clean light backgrounds.
-- Focused lesson/exercise screens may keep premium dark panels where useful.
-- Dark/brown mode can return later as a settings option.
-- Do not reintroduce a dark-only rule.
+- Use a consistent dark blue theme everywhere (dark mode always).
+- The app should feel premium and modern like Duolingo/Airlearn.
+- All backgrounds use the dark blue palette (#131F24 family).
+- Cards, inputs, and surfaces use slightly lighter dark blue (#1A2C35).
+- Accent colors: bright green (#58CC02) for primary, gold for accents, blue for links.
+- Do not use light/white backgrounds anywhere in the app.
 
 ## Mascot direction
 

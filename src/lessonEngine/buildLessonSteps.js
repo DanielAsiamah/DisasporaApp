@@ -1,5 +1,54 @@
 import { LESSON_STEP_TYPES } from './lessonStepTypes';
-import { hasVocabImageSource } from '../data/generatedImageRegistry';
+
+// ── Emoji lookup for image-choice steps ─────────────────────────────────────
+const EMOJI_BY_KEYWORD = {
+  // Greetings
+  hello: '👋', goodbye: '🙋', morning: '🌅', evening: '🌆', night: '🌙',
+  welcome: '🤗', thanks: '🙏', 'thank you': '🙏', please: '🙏',
+  // Family
+  mother: '👩', father: '👨', brother: '🧑', sister: '👧', child: '👶',
+  grandmother: '👵', grandfather: '👴', friend: '🤝', family: '👨‍👩‍👧',
+  // Food
+  food: '🍽️', eat: '😋', water: '💧', rice: '🍚', bread: '🍞',
+  plantain: '🍌', fruit: '🍎', chicken: '🍗', fish: '🐟', hungry: '😩',
+  cook: '👩‍🍳', drink: '🥤',
+  // Work
+  work: '💼', money: '💰', shop: '🛒', buy: '🛍️', sell: '🏷️',
+  // Travel
+  journey: '✈️', safari: '🦁', travel: '🗺️', road: '🛣️', home: '🏠',
+  // Emotions
+  happy: '😊', sad: '😢', angry: '😠', love: '❤️', laugh: '😂',
+  // Numbers/Time
+  time: '⏰', day: '📅', night2: '🌙', week: '📆', year: '📅',
+  // Culture/Misc
+  music: '🎵', dance: '💃', king: '👑', river: '🌊', ancient: '🏛️',
+  book: '📖', story: '📖', fire: '🔥', cool: '😎', style: '✨',
+  // AAVE slang
+  'no cap': '🚫', bussin: '😋', lowkey: '🤫', slay: '💅', drip: '👑',
+  // Greetings by language
+  'wah gwaan': '👋', 'mi deh yah': '✌️', 'sak pase': '👋', 'nap boule': '🔥',
+  'jambo': '👋', 'shikamoo': '🙏', 'habari': '📰', 'asante': '🙏',
+  'kedu': '👋', 'daalu': '🙏', 'nanga def': '👋', 'jerejef': '🙏',
+  // Default fallbacks by category
+  greetings: '👋', family: '👨‍👩‍👧', food: '🍽️', slang: '😎',
+  basics: '📝', phrases: '💬', culture: '🎭', travel: '✈️',
+  grammar: '📚', work: '💼', time: '⏰', emotions: '😊',
+  numbers: '🔢', places: '📍', health: '🏥', weather: '☀️',
+  hobbies: '🎨', general: '💡',
+};
+
+function getEmoji(text, category) {
+  if (!text) return EMOJI_BY_KEYWORD[category] || '💡';
+  const lower = text.toLowerCase();
+  // Try exact match first
+  if (EMOJI_BY_KEYWORD[lower]) return EMOJI_BY_KEYWORD[lower];
+  // Try partial keyword match
+  for (const [key, emoji] of Object.entries(EMOJI_BY_KEYWORD)) {
+    if (lower.includes(key) || key.includes(lower.split(' ')[0])) return emoji;
+  }
+  // Fall back to category
+  return EMOJI_BY_KEYWORD[category] || '💡';
+}
 
 const shuffle = (items) => [...items].sort(() => Math.random() - 0.5);
 
@@ -41,35 +90,29 @@ function getSourcePool(lesson, phrasePool = []) {
   return usablePool.length ? usablePool : [lesson].filter(Boolean);
 }
 
-function createImageChoiceStep(target, sourcePool = []) {
-  if (!target?.imageKey || !hasVocabImageSource(target.imageKey, target.category)) {
-    return null;
-  }
+function createEmojiChoiceStep(target, sourcePool = []) {
+  if (!target?.meaning || !target?.phrase) return null;
 
-  const candidates = sourcePool
-    .filter((item) => item?.meaning && item?.imageKey && hasVocabImageSource(item.imageKey, item.category));
-  const sameCategory = candidates.filter((item) => item.category === target.category);
-  const choicePool = sameCategory.length >= 4 ? sameCategory : candidates;
-  const otherChoices = choicePool.filter((item) => item.id !== target.id);
+  // Need at least 2 other items for distractor choices
+  const others = sourcePool.filter((item) => item?.meaning && item.id !== target.id);
+  if (others.length < 2) return null;
 
-  if (otherChoices.length < 3) {
-    return null;
-  }
+  const distractors = shuffle(others).slice(0, 3);
+  const allChoices = shuffle([target, ...distractors]);
 
-  const choices = shuffle([target, ...shuffle(otherChoices).slice(0, 3)])
-    .map((item) => ({
-      value: item.meaning,
-      imageKey: item.imageKey,
-      category: item.category,
-    }));
+  const imageChoices = allChoices.map((item) => ({
+    value: item.meaning,
+    emoji: getEmoji(item.meaning, item.category),
+    category: item.category,
+  }));
 
   return {
     id: 'image-choice',
     type: LESSON_STEP_TYPES.IMAGE_CHOICE,
-    title: 'Select the correct image',
+    title: 'Pick the right meaning',
     prompt: target.phrase,
     answer: target.meaning,
-    imageChoices: choices,
+    imageChoices,
     audioKey: target.audioKey,
     note: target.note,
   };
@@ -78,7 +121,7 @@ function createImageChoiceStep(target, sourcePool = []) {
 function createFirstAvailableImageChoiceStep(sourcePool = [], startIndex = 0) {
   for (let offset = 0; offset < sourcePool.length; offset += 1) {
     const item = sourcePool[(startIndex + offset) % sourcePool.length];
-    const step = createImageChoiceStep(item, sourcePool);
+    const step = createEmojiChoiceStep(item, sourcePool);
     if (step) return step;
   }
 
@@ -258,7 +301,7 @@ export function createLessonSteps(lesson, phrasePool = [], languageId = 'patois'
   const second = pick(1);
   const third = pick(2);
   const fourth = pick(3);
-  const imageChoiceStep = createFirstAvailableImageChoiceStep(sourcePool, startIndex);
+  const imageChoiceStep = createEmojiChoiceStep(first, sourcePool);
   const matchPairsStep = createMatchPairsStep(sourcePool, startIndex);
   const practiceCandidates = [
     {

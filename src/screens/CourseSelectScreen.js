@@ -8,104 +8,131 @@ import {
   Text,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
-import PrimaryButton from '../components/PrimaryButton';
-import MascotAvatar from '../components/mascot/MascotAvatar';
-import { colors, fonts, radius, shadows, spacing } from '../theme';
+import { colors, fonts, radius, spacing } from '../theme';
+
+// First course per language group is FREE, rest require premium
+const FREE_COURSE_COUNT = 1;
 
 const COURSES_BY_LANG = {
   english: [
     {
       id: 'patois',
       label: 'Jamaican Patois',
-      subtitle: 'Greetings, respect, daily talk, food, family, and culture.',
+      subtitle: 'Greetings, food, family, and culture.',
       flag: '🇯🇲',
-      category: 'Caribbean Creole',
-      isNew: false,
+      category: 'Caribbean',
     },
     {
-      id: 'swahili',
-      label: 'Swahili',
-      subtitle: 'Kiswahili greetings, basics, numbers, and travel phrases.',
-      flag: '🇰🇪',
-      category: 'East African Bantu',
-      isNew: false,
-    },
-    {
-      id: 'igbo',
-      label: 'Igbo',
-      subtitle: 'Igbo greetings, family words, and everyday expressions.',
-      flag: '🇳🇬',
-      category: 'West African Language',
-      isNew: true,
-    },
-    {
-      id: 'belize',
+      id: 'belizean',
       label: 'Belizean Creole',
       subtitle: 'Central American Kriol from Belize.',
       flag: '🇧🇿',
-      category: 'Central American Kriol',
-      isNew: true,
+      category: 'Caribbean',
     },
     {
       id: 'aave',
       label: 'Black American English',
-      subtitle: 'AAVE history, speech patterns, and cultural expression.',
+      subtitle: 'AAVE history and cultural expression.',
       flag: '🇺🇸',
-      category: 'Urban Dialect',
-      isNew: false,
+      category: 'USA',
+    },
+    {
+      id: 'gullah',
+      label: 'Gullah Geechee',
+      subtitle: 'Sea Islands heritage creole.',
+      flag: '🇺🇸',
+      category: 'USA',
+    },
+    {
+      id: 'swahili',
+      label: 'Swahili',
+      subtitle: 'Greetings, basics, numbers, and travel.',
+      flag: '🇰🇪',
+      category: 'East Africa',
+    },
+    {
+      id: 'igbo',
+      label: 'Igbo',
+      subtitle: 'Greetings, family words, and expressions.',
+      flag: '🇳🇬',
+      category: 'West Africa',
+    },
+    {
+      id: 'yoruba',
+      label: 'Yoruba',
+      subtitle: 'Yorubaland greetings and family terms.',
+      flag: '🇳🇬',
+      category: 'West Africa',
     },
   ],
   french: [
     {
       id: 'haitian',
       label: 'Créole Haïtien',
-      subtitle: 'Apprenez les bases du créole haïtien.',
+      subtitle: 'Les bases du créole haïtien.',
       flag: '🇭🇹',
-      category: 'Caribbean French Creole',
-      isNew: false,
+      category: 'Caribbean',
+    },
+    {
+      id: 'nouchi',
+      label: 'Nouchi Ivoirien',
+      subtitle: "Argot de la rue d'Abidjan.",
+      flag: '🇨🇮',
+      category: 'West Africa',
     },
     {
       id: 'wolof',
       label: 'Wolof',
-      subtitle: 'Pratiquez les salutations et phrases de base.',
+      subtitle: 'Salutations et phrases de base au Sénégal.',
       flag: '🇸🇳',
-      category: 'West African Language',
-      isNew: false,
+      category: 'West Africa',
+    },
+    {
+      id: 'fr-swahili',
+      label: 'Swahili (fr)',
+      subtitle: "La langue swahili pour francophones.",
+      flag: '🇨🇩',
+      category: 'East Africa',
     },
   ],
   arabic: [
     {
       id: 'sudanese',
       label: 'Sudanese Arabic',
-      subtitle: 'Everyday Sudanese greetings and useful phrases.',
+      subtitle: 'Everyday Sudanese greetings and phrases.',
       flag: '🇸🇩',
-      category: 'Arabic Dialect',
-      isNew: false,
+      category: 'North Africa',
     },
     {
       id: 'nubian',
       label: 'Nubian',
-      subtitle: 'Introductory Nubian words and Nile Valley heritage.',
+      subtitle: 'Nile Valley heritage words.',
       flag: '🇪🇬',
-      category: 'Nile Valley Language',
-      isNew: true,
+      category: 'Nile Valley',
+    },
+    {
+      id: 'ar-swahili',
+      label: 'Swahili (ar)',
+      subtitle: 'تعلم السواحيلية مع روابطها العربية.',
+      flag: '🇰🇪',
+      category: 'East Africa',
     },
   ],
 };
 
-export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBack }) {
+export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBack, userName }) {
   const [selected, setSelected] = useState(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(18)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
   const courses = useMemo(() => COURSES_BY_LANG[userLanguage] || COURSES_BY_LANG.english, [userLanguage]);
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 480,
+        duration: 500,
         useNativeDriver: true,
       }),
       Animated.spring(slideAnim, {
@@ -119,7 +146,10 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 
   return (
     <View style={styles.root}>
-      <AnimatedAtmosphere colors={['#F7FCF9', '#EEF8F4']} accent={colors.primary} />
+      <LinearGradient
+        colors={[colors.skyTop, colors.splash, colors.skyBottom]}
+        style={StyleSheet.absoluteFill}
+      />
 
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
@@ -137,29 +167,20 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
             { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
           ]}
         >
-          <View style={styles.heroRow}>
-            <View style={styles.heroCopy}>
-              <Text style={styles.eyebrow}>Choose your path</Text>
-              <Text style={styles.title}>What would you like to learn?</Text>
-              <Text style={styles.subtitle}>
-                Pick one course. You can add more languages later.
-              </Text>
-            </View>
-            <MascotAvatar mood="happy" size={0.55} />
-          </View>
+          <Text style={styles.title}>
+            {userName ? `${userName}, what` : 'What'} do you{"\n"}want to learn?
+          </Text>
+          <Text style={styles.subtitle}>
+            Pick one to start free. Unlock more with Premium.
+          </Text>
 
           <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
             <View style={styles.list}>
-              <Text style={styles.sectionLabel}>
-                {userLanguage === 'french'
-                  ? 'Pour les francophones'
-                  : userLanguage === 'arabic'
-                  ? 'For Arabic speakers'
-                  : 'For English speakers'}
-              </Text>
-
-              {courses.map((course) => {
+              {courses.map((course, index) => {
                 const isSelected = selected === course.id;
+                const isFree = index < FREE_COURSE_COUNT;
+                const isLocked = !isFree;
+
                 return (
                   <Pressable
                     key={course.id}
@@ -176,11 +197,15 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
                     <View style={styles.cardInfo}>
                       <View style={styles.labelRow}>
                         <Text style={styles.cardLabel}>{course.label}</Text>
-                        {course.isNew ? (
-                          <View style={styles.newBadge}>
-                            <Text style={styles.newBadgeText}>NEW</Text>
+                        {isFree ? (
+                          <View style={styles.freeBadge}>
+                            <Text style={styles.freeBadgeText}>FREE</Text>
                           </View>
-                        ) : null}
+                        ) : (
+                          <View style={styles.premiumBadge}>
+                            <Text style={styles.premiumBadgeText}>🔒 PRO</Text>
+                          </View>
+                        )}
                       </View>
                       <Text style={styles.cardSubtitle}>{course.subtitle}</Text>
                       <View style={styles.tagWrapper}>
@@ -197,11 +222,15 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
           </ScrollView>
 
           <View style={styles.footer}>
-            <PrimaryButton
-              label="Continue"
+            <Pressable
+              style={[styles.continueButton, !selected && styles.continueButtonDisabled]}
               disabled={!selected}
               onPress={() => selected && onSelectCourse(selected)}
-            />
+            >
+              <Text style={[styles.continueText, !selected && styles.continueTextDisabled]}>
+                CONTINUE
+              </Text>
+            </Pressable>
           </View>
         </Animated.View>
       </SafeAreaView>
@@ -211,7 +240,7 @@ export default function CourseSelectScreen({ userLanguage, onSelectCourse, onBac
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: '#F7FCF9',
+    backgroundColor: colors.splash,
     flex: 1,
   },
   safeArea: {
@@ -225,25 +254,26 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignItems: 'center',
-    height: 40,
+    height: 44,
     justifyContent: 'center',
-    width: 40,
+    width: 44,
   },
   backText: {
-    color: '#66756C',
-    fontFamily: fonts.black,
+    color: colors.textMuted,
+    fontFamily: fonts.extraBold,
     fontSize: 24,
   },
   progressContainer: {
-    backgroundColor: '#DCEAE4',
+    backgroundColor: colors.border,
     borderRadius: radius.pill,
     flex: 1,
-    height: 10,
+    height: 8,
     marginLeft: spacing.sm,
     overflow: 'hidden',
   },
   progressBar: {
     backgroundColor: colors.primary,
+    borderRadius: radius.pill,
     height: '100%',
     width: '66%',
   },
@@ -251,74 +281,49 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: spacing.lg,
   },
-  heroRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: spacing.md,
+  title: {
+    color: colors.text,
+    fontFamily: fonts.extraBold,
+    fontSize: 28,
+    letterSpacing: -0.3,
+    lineHeight: 36,
     marginTop: spacing.sm,
   },
-  heroCopy: {
-    flex: 1,
-  },
-  eyebrow: {
-    color: colors.primaryDark,
-    fontFamily: fonts.black,
-    fontSize: 12,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: '#102018',
-    fontFamily: fonts.black,
-    fontSize: 29,
-    lineHeight: 35,
-    marginTop: spacing.xs,
-  },
   subtitle: {
-    color: '#66756C',
-    fontFamily: fonts.semiBold,
+    color: colors.textMuted,
+    fontFamily: fonts.medium,
     fontSize: 15,
     lineHeight: 22,
-    marginTop: spacing.xs,
+    marginTop: spacing.sm,
   },
   scrollView: {
     flex: 1,
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
   },
   list: {
     gap: spacing.sm,
     paddingBottom: spacing.xl,
   },
-  sectionLabel: {
-    color: '#66756C',
-    fontFamily: fonts.black,
-    fontSize: 13,
-    letterSpacing: 0.8,
-    marginBottom: spacing.xs,
-    textTransform: 'uppercase',
-  },
   card: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E1EEE8',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
     borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: 'row',
     gap: spacing.md,
     padding: spacing.md,
-    ...shadows.soft,
   },
   cardSelected: {
-    backgroundColor: '#F1FFF6',
     borderColor: colors.primary,
+    backgroundColor: 'rgba(88, 204, 2, 0.06)',
   },
   cardPressed: {
-    opacity: 0.82,
-    transform: [{ translateY: 2 }],
+    transform: [{ scale: 0.98 }],
   },
   flagBox: {
     alignItems: 'center',
-    backgroundColor: '#F2F6F4',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: radius.md,
     height: 52,
     justifyContent: 'center',
@@ -337,23 +342,35 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cardLabel: {
-    color: '#102018',
-    fontFamily: fonts.black,
-    fontSize: 17,
+    color: colors.text,
+    fontFamily: fonts.bold,
+    fontSize: 16,
   },
-  newBadge: {
-    backgroundColor: colors.africaGold,
+  freeBadge: {
+    backgroundColor: colors.successBg,
     borderRadius: radius.sm,
     paddingHorizontal: 7,
     paddingVertical: 2,
   },
-  newBadgeText: {
-    color: '#102018',
-    fontFamily: fonts.black,
+  freeBadgeText: {
+    color: colors.primary,
+    fontFamily: fonts.extraBold,
+    fontSize: 9,
+    letterSpacing: 0.5,
+  },
+  premiumBadge: {
+    backgroundColor: colors.premiumBg,
+    borderRadius: radius.sm,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+  },
+  premiumBadgeText: {
+    color: colors.premium,
+    fontFamily: fonts.extraBold,
     fontSize: 9,
   },
   cardSubtitle: {
-    color: '#66756C',
+    color: colors.textMuted,
     fontFamily: fonts.medium,
     fontSize: 13,
     lineHeight: 18,
@@ -361,25 +378,25 @@ const styles = StyleSheet.create({
   },
   tagWrapper: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(244, 185, 66, 0.16)',
+    backgroundColor: 'rgba(244, 185, 66, 0.12)',
     borderRadius: radius.sm,
     marginTop: 7,
     paddingHorizontal: 9,
     paddingVertical: 4,
   },
   categoryText: {
-    color: '#8B6914',
+    color: colors.africaGold,
     fontFamily: fonts.bold,
     fontSize: 11,
   },
   radioCircle: {
     alignItems: 'center',
-    borderColor: '#C9D7D0',
+    borderColor: colors.borderLight,
     borderRadius: 999,
     borderWidth: 2,
-    height: 23,
+    height: 24,
     justifyContent: 'center',
-    width: 23,
+    width: 24,
   },
   radioCircleActive: {
     borderColor: colors.primary,
@@ -391,10 +408,27 @@ const styles = StyleSheet.create({
     width: 12,
   },
   footer: {
-    backgroundColor: 'rgba(247,252,249,0.96)',
-    borderTopColor: '#E1EEE8',
+    borderTopColor: colors.border,
     borderTopWidth: 1,
     paddingBottom: spacing.lg,
     paddingTop: spacing.md,
+  },
+  continueButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+  },
+  continueButtonDisabled: {
+    backgroundColor: colors.locked,
+  },
+  continueText: {
+    color: '#FFFFFF',
+    fontFamily: fonts.extraBold,
+    fontSize: 15,
+    letterSpacing: 1,
+  },
+  continueTextDisabled: {
+    color: colors.textLight,
   },
 });

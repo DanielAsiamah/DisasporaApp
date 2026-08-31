@@ -1,4 +1,5 @@
 import { useAudioPlayer } from 'expo-audio';
+import { useEffect } from 'react';
 import { Pressable } from 'react-native';
 
 export default function AudioPressable({
@@ -10,7 +11,17 @@ export default function AudioPressable({
   style,
   ...pressableProps
 }) {
-  const player = useAudioPlayer(audioSource);
+  // Always initialize with a valid fallback sound to prevent crash on null
+  const player = useAudioPlayer(audioSource || require('../../../assets/sounds/correct.mp3'));
+
+  // Dynamically swap the audio source when the prop changes
+  useEffect(() => {
+    if (audioSource && typeof player.replace === 'function') {
+      try {
+        player.replace(audioSource);
+      } catch (e) {}
+    }
+  }, [audioSource]);
 
   function playAudio() {
     if (!audioSource) return;

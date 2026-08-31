@@ -113,7 +113,11 @@ export default function LessonStepRenderer({
                   isWrongSelection && styles.answerCardWrong,
                 ]}
               >
-                {imageSource ? (
+                {typeof choiceItem !== 'string' && choiceItem.emoji ? (
+                  <Text style={[styles.imageChoiceArt, { fontSize: 48, textAlign: 'center', lineHeight: 96, backgroundColor: 'transparent' }]}>
+                    {choiceItem.emoji}
+                  </Text>
+                ) : imageSource ? (
                   <Image source={imageSource} style={styles.imageChoiceArt} resizeMode="contain" />
                 ) : null}
                 <Text style={styles.answerCardText}>{choice}</Text>

@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Anton", sans-serif;
+  
+  --color-brand-green: #009E49;
+  --color-brand-gold: #FCD116;
+  --color-brand-red: #CE1126;
+  --color-brand-black: #0A0A0A;
+  --color-brand-cream: #FDFCF8;
+}
+
+/* Custom background pattern from the Artistic Flair design */
+.pattern-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.04;
+  background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* Vertical writing sidebar effect */
+.sidebar-text-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
