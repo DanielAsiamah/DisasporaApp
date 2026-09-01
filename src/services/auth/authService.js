@@ -12,6 +12,10 @@ import {
 } from 'firebase/auth';
 
 import { firebaseAuth } from '../../firebase/app';
+const {
+  getOptionalConfiguredPublicEnv,
+  requireConfiguredPublicEnv,
+} = require('../../config/publicEnv.cjs');
 
 export function subscribeToAuthState(listener) {
   return onAuthStateChanged(firebaseAuth, listener);
@@ -29,9 +33,11 @@ export async function signInWithEmail(email, password) {
 
 export async function signInWithGoogleProvider() {
   const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
-  const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
-  const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
-  if (!webClientId) throw new Error('Google sign-in is not configured yet. Add the Google OAuth client IDs to the Diaspora environment.');
+  const webClientId = requireConfiguredPublicEnv(
+    'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID',
+    process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+  );
+  const iosClientId = getOptionalConfiguredPublicEnv(process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID);
 
   GoogleSignin.configure({ webClientId, iosClientId: iosClientId || undefined });
   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });

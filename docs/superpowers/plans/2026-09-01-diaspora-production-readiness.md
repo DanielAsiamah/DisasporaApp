@@ -14,13 +14,13 @@
 
 - Verified on branch `codex/implementation-plan` on 2026-09-01.
 - `npm ci` completed on the MacBook clone.
-- `.env` exists locally, but Firebase and Google OAuth values are still placeholders. Replace them with fresh client values from Firebase Console before real auth or physical-device verification.
-- `node --test` passed with 369 tests and 0 failures.
+- `.env` exists locally, but Firebase and Google OAuth values are still placeholders. The app now rejects placeholder public env values instead of treating them as configured. Replace them with fresh client values from Firebase Console before real auth or physical-device verification.
+- `node --test` passed with 374 tests and 0 failures.
 - `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift.
 - `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures.
-- `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json`.
+- `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-01 after the env-readiness guard was added.
 - `npx expo start --lan --clear` is running locally, and `http://localhost:8081` returns the Diaspora web shell.
-- Onboarding/auth audit: focused onboarding and email-verification tests pass; inspected `App.js`, `AuthContext`, `authHandoff`, `GuidedOnboardingScreen`, and `AccountChoiceScreen`; no stale account routing defect was found.
+- Onboarding/auth audit: focused onboarding and email-verification tests pass; inspected `App.js`, `AuthContext`, `authHandoff`, `GuidedOnboardingScreen`, and `AccountChoiceScreen`; no stale account routing defect was found. A credential-readiness defect was fixed so placeholder public env values do not enable Google/Firebase paths.
 - Lesson/progress/XP audit: focused and named persistence tests pass; inspected `MvpHomeScreen`, `PatoisLessonModal`, `lessonEngine`, and `userService`; no unsafe UID/course/reward persistence defect was found.
 - Leaderboard/restart audit: focused leaderboard tests pass; leaderboard derives from active `profile` state, and lesson state remounts by account/course storage key; no stale current-user/restart defect was found.
 
@@ -48,7 +48,7 @@
 
 - [ ] **Step 1: Replace placeholder Firebase values**
 
-Status: blocked on fresh Firebase Console / Google OAuth client values. The local `.env` file exists, but still contains placeholders and must not be filled from old-machine secrets.
+Status: blocked on fresh Firebase Console / Google OAuth client values. The local `.env` file exists, but still contains placeholders and must not be filled from old-machine secrets. Placeholder values now fail closed through `src/config/publicEnv.cjs`.
 
 Set `.env` to real client values from Firebase Console:
 
@@ -75,7 +75,11 @@ npm run images:audit
 
 Expected: `node --test` passes all tests, content validator reports `"status": "valid"`, image audit reports `Failures: 0`.
 
+Latest result: `node --test` passes 374 tests with 0 failures.
+
 - [x] **Step 3: Verify Expo export**
+
+Status: latest export regenerated `outputs/verify-transfer/metadata.json` on 2026-09-01. Real Firebase/Google env values are still required for auth and physical-device verification.
 
 Run:
 

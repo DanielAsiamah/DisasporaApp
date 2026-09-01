@@ -11,6 +11,7 @@ import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { fonts, radius, spacing } from '../theme';
 const { getCourseById } = require('../data/courseCatalog.cjs');
 const { getStartingLevelLabel } = require('../onboarding/authHandoff');
+const { isGoogleSignInConfigured } = require('../config/publicEnv.cjs');
 
 function formatReminderTime(value = '19:00') {
   const [rawHour, minute = '00'] = value.split(':');
@@ -32,7 +33,11 @@ export default function AccountChoiceScreen({
   const [loadingProvider, setLoadingProvider] = useState(null);
   const [error, setError] = useState('');
   const isExpoGo = Constants.appOwnership === 'expo';
-  const googleConfigured = Boolean(process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID);
+  const googleConfigured = isGoogleSignInConfigured({
+    platformOS: Platform.OS,
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+  });
   const courseTitle = getCourseById(onboardingData?.currentCourse)?.displayName || 'Your language';
   const planItems = [
     { id: 'course', emoji: '🗺️', label: 'LEARNING', value: courseTitle },
