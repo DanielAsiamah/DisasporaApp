@@ -15,7 +15,8 @@
 - Verified on branch `codex/implementation-plan` on 2026-09-01.
 - `npm ci` completed on the MacBook clone.
 - `.env` exists locally, but Firebase and Google OAuth values are still placeholders. The app now rejects placeholder public env values instead of treating them as configured. Replace them with fresh client values from Firebase Console before real auth or physical-device verification.
-- `node --test` passed with 374 tests and 0 failures.
+- `npm run env:check` safely reports whether required public Expo config values are missing/placeholders without printing secret values.
+- `node --test` passed with 378 tests and 0 failures.
 - `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift.
 - `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures.
 - `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-01 after the env-readiness guard was added.
@@ -50,6 +51,14 @@
 
 Status: blocked on fresh Firebase Console / Google OAuth client values. The local `.env` file exists, but still contains placeholders and must not be filled from old-machine secrets. Placeholder values now fail closed through `src/config/publicEnv.cjs`.
 
+Check readiness without printing secret values:
+
+```bash
+npm run env:check
+```
+
+Expected before credentials are filled: nonzero exit with placeholder variable names only. Expected after credentials are filled: zero exit.
+
 Set `.env` to real client values from Firebase Console:
 
 ```bash
@@ -75,7 +84,7 @@ npm run images:audit
 
 Expected: `node --test` passes all tests, content validator reports `"status": "valid"`, image audit reports `Failures: 0`.
 
-Latest result: `node --test` passes 374 tests with 0 failures.
+Latest result: `node --test` passes 378 tests with 0 failures.
 
 - [x] **Step 3: Verify Expo export**
 
