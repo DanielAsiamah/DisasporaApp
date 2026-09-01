@@ -30,6 +30,7 @@ Copy-Item .env.example .env
 Fill `.env` with the Firebase web-app values and Google OAuth client IDs named in `.env.example`. Then verify locally:
 
 ```powershell
+npm run env:check
 node --test
 npm run content:validate
 npm run images:audit
@@ -38,6 +39,8 @@ npx expo start --lan --clear
 ```
 
 Use Expo Go compatible with SDK 54 for the physical-iPhone check.
+
+`npm run env:check` is safe to run before and after filling `.env`: it reports only variable names that are missing or still placeholders, never secret values.
 
 ## Credentials that are intentionally not in Git
 
@@ -50,9 +53,10 @@ Retrieve Firebase client configuration from Firebase Console on the new laptop. 
 
 ## Verified state before transfer
 
-- Active app tests: `372/372` passed before the documentation-only checkpoint.
+- Active app tests: `378/378` passed on the MacBook implementation branch after adding placeholder public-env guards and the safe env readiness checker.
 - Curriculum validator: 39 concepts, 9 courses, 351 vocabulary rows, 81 topics and 320 deterministic lesson steps passed.
 - Jamaican Patois image audit: 39/39 canonical transparent PNGs passed.
+- iOS export produced `outputs/verify-transfer/metadata.json` after the MacBook readiness checks.
 - Active worktree had no remaining tracked or untracked project changes after checkpointing.
 - Every local branch head was verified reachable from an exact `origin/*` ref.
 - No local tags or stashes existed.
@@ -62,14 +66,13 @@ Retrieve Firebase client configuration from Firebase Console on the new laptop. 
 
 - The full frontend/backend production-readiness audit is still in progress.
 - Physical iPhone end-to-end verification must be repeated after cloning on the new laptop.
-- The most recent attempted iOS export did not produce a bundle and must be rerun; do not treat the app as build-verified from that attempt.
+- Real Firebase/Google client values still need to replace `.env` placeholders before auth and phone persistence can be verified.
 - Jamaican Patois remains a preview until native-language/cultural review, approved multi-role audio and phone evidence are complete.
 - Remaining courses must stay unreleased until their own 39-row content, 39-image art, voice/audio and persistence gates pass.
 
 ## Resume order
 
-1. Clone `main`, recreate only the safe Firebase/Google client configuration and run the verification commands above.
+1. Clone `main`, recreate only the safe Firebase/Google client configuration, confirm `npm run env:check` passes, and run the verification commands above.
 2. Finish the prioritized frontend/backend audit across onboarding → auth → lesson → XP → leaderboard → restart.
 3. Fix the highest-severity persistence/security issue test-first, one verified commit per slice.
 4. Resume the course release pipeline without fabricating native, cultural, audio or physical-device approvals.
-
