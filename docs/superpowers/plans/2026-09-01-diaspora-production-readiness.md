@@ -23,6 +23,7 @@
 - `npx expo start --lan --clear` is running locally, and `http://localhost:8081` returns the Diaspora web shell.
 - Remote push is pending GitHub authentication. Local `git push -u origin codex/implementation-plan` failed because HTTPS credentials are not configured, and the Codex GitHub connector is read-only for this repo write path.
 - A verified portable Git bundle backup exists at `/Users/danielblackman/Downloads/Diaspora-Transfer-Backups/disaspora-implementation-plan-2026-09-01.bundle`; it contains `codex/implementation-plan` at `91a8dd18da01782020c70ba235b29975375014ce` and requires base commit `ba034c4d931c2cf0cec71f6f15255b8cd68b0d04`.
+- Phone verification should be captured with `docs/handoff/phone-verification-template.md` after real Firebase/Google client values are configured.
 - Onboarding/auth audit: focused onboarding and email-verification tests pass; inspected `App.js`, `AuthContext`, `authHandoff`, `GuidedOnboardingScreen`, and `AccountChoiceScreen`; no stale account routing defect was found. A credential-readiness defect was fixed so placeholder public env values do not enable Google/Firebase paths.
 - Lesson/progress/XP audit: focused and named persistence tests pass; inspected `MvpHomeScreen`, `PatoisLessonModal`, `lessonEngine`, and `userService`; no unsafe UID/course/reward persistence defect was found.
 - Leaderboard/restart audit: focused leaderboard tests pass; leaderboard derives from active `profile` state, and lesson state remounts by account/course storage key; no stale current-user/restart defect was found.
@@ -359,7 +360,7 @@ Expected: Metro shows a QR code and `Web is waiting on http://localhost:8081`.
 
 - [ ] **Step 2: Open on device**
 
-Status: pending physical iPhone access with a compatible Expo Go/development build and real auth configuration.
+Status: pending physical iPhone access with a compatible Expo Go/development build and real auth configuration. Use `docs/handoff/phone-verification-template.md` to record the run.
 
 Use the QR code with a compatible Expo Go/development build for SDK 54. Confirm these screens load:
 

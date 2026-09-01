@@ -38,7 +38,7 @@ npx expo export --platform ios --output-dir outputs/verify-transfer
 npx expo start --lan --clear
 ```
 
-Use Expo Go compatible with SDK 54 for the physical-iPhone check.
+Use Expo Go compatible with SDK 54 for the physical-iPhone check, and capture results with `docs/handoff/phone-verification-template.md`.
 
 `npm run env:check` is safe to run before and after filling `.env`: it reports only variable names that are missing or still placeholders, never secret values.
 
