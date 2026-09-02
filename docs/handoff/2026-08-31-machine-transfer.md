@@ -59,7 +59,7 @@ Retrieve Firebase client configuration from Firebase Console on the new laptop. 
 
 ## Verified state before transfer
 
-- Active app tests: `378/378` passed on the MacBook implementation branch after adding placeholder public-env guards and the safe env readiness checker.
+- Active app tests: `380/380` passed on the MacBook implementation branch after adding placeholder public-env guards, the safe env readiness checker, and the phone-verification report scaffold.
 - Curriculum validator: 39 concepts, 9 courses, 351 vocabulary rows, 81 topics and 320 deterministic lesson steps passed.
 - Jamaican Patois image audit: 39/39 canonical transparent PNGs passed.
 - iOS export produced `outputs/verify-transfer/metadata.json` after the MacBook readiness checks.

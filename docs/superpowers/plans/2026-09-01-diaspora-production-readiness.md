@@ -16,7 +16,7 @@
 - `npm ci` completed on the MacBook clone.
 - `.env` exists locally, but Firebase and Google OAuth values are still placeholders. The app now rejects placeholder public env values instead of treating them as configured. Replace them with fresh client values from Firebase Console before real auth or physical-device verification.
 - `npm run env:check` safely reports whether required public Expo config values are missing/placeholders without printing secret values.
-- `node --test` passed with 378 tests and 0 failures on 2026-09-02.
+- `node --test` passed with 380 tests and 0 failures on 2026-09-02.
 - `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift on 2026-09-02.
 - `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures on 2026-09-02.
 - `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-02 after the env-readiness guard was added.
@@ -88,7 +88,7 @@ npm run images:audit
 
 Expected: `node --test` passes all tests, content validator reports `"status": "valid"`, image audit reports `Failures: 0`.
 
-Latest result: `node --test` passes 378 tests with 0 failures.
+Latest result: `node --test` passes 380 tests with 0 failures.
 
 - [x] **Step 3: Verify Expo export**
 
