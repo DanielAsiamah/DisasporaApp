@@ -14,12 +14,12 @@
 
 - Verified on branch `codex/implementation-plan` on 2026-09-02.
 - `npm ci` completed on the MacBook clone.
-- `.env` exists locally, but Firebase and Google OAuth values are still placeholders. The app now rejects placeholder public env values instead of treating them as configured. Replace them with fresh client values from Firebase Console before real auth or physical-device verification.
+- `.env` exists locally with filtered public Firebase client values imported from `/Users/danielblackman/Downloads/env-backup-2026-08-31.zip`. Old-machine ElevenLabs/private values were not copied. Google OAuth web/iOS client IDs are still placeholders, so `npm run env:check` remains nonzero until they are replaced.
 - `npm run env:check` safely reports whether required public Expo config values are missing/placeholders without printing secret values.
 - `node --test` passed with 380 tests and 0 failures on 2026-09-02.
 - `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift on 2026-09-02.
 - `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures on 2026-09-02.
-- `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-02 after the env-readiness guard was added.
+- `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-02 after the filtered Firebase import.
 - `npm run phone:verification:scaffold` creates an ignored local report under `outputs/phone-verification/` with current branch, commit, command, URL, and export metadata so the physical-device walkthrough can be captured without committing secrets.
 - `npx expo start --lan --clear` is running locally, and `http://localhost:8081` returns the Diaspora web shell.
 - Remote push is pending GitHub authentication. Local `git push -u origin codex/implementation-plan` failed because HTTPS credentials are not configured, and the Codex GitHub connector is read-only for this repo write path.
@@ -53,7 +53,7 @@
 
 - [ ] **Step 1: Replace placeholder Firebase values**
 
-Status: blocked on fresh Firebase Console / Google OAuth client values. The local `.env` file exists, but still contains placeholders and must not be filled from old-machine secrets. Placeholder values now fail closed through `src/config/publicEnv.cjs`.
+Status: partially complete. Public Firebase client values were filtered from `/Users/danielblackman/Downloads/env-backup-2026-08-31.zip` into the ignored local `.env`, and old-machine ElevenLabs/private values were excluded. Google OAuth web/iOS client IDs are still placeholders and must be replaced before this step can be checked complete. Placeholder values now fail closed through `src/config/publicEnv.cjs`.
 
 Check readiness without printing secret values:
 

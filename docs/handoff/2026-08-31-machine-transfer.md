@@ -55,7 +55,7 @@ Then complete the generated `outputs/phone-verification/*.md` report during the 
 - Previously shared ElevenLabs keys are compromised and must be revoked/rotated; do not copy them to the new laptop.
 - Paid ElevenLabs generation remains disabled until rotated credentials, native wording approval, voice approval and explicit spend approval all exist.
 
-Retrieve Firebase client configuration from Firebase Console on the new laptop. Store any server-side service-account file outside Git and only recreate it if a development script genuinely needs it.
+Public Firebase client configuration has been filtered into the ignored local `.env` from `/Users/danielblackman/Downloads/env-backup-2026-08-31.zip`. The import intentionally excluded old-machine ElevenLabs/private values. Google OAuth web/iOS client IDs still need to be retrieved from Google/Firebase Console before `npm run env:check` can pass. Store any server-side service-account file outside Git and only recreate it if a development script genuinely needs it.
 
 ## Verified state before transfer
 
@@ -72,7 +72,7 @@ Retrieve Firebase client configuration from Firebase Console on the new laptop. 
 
 - The full frontend/backend production-readiness audit is still in progress.
 - Physical iPhone end-to-end verification must be repeated after cloning on the new laptop.
-- Real Firebase/Google client values still need to replace `.env` placeholders before auth and phone persistence can be verified.
+- Google OAuth web/iOS client values still need to replace `.env` placeholders before the full auth/device gate can pass. Firebase public client values have been imported locally without copying old-machine ElevenLabs/private values.
 - Jamaican Patois remains a preview until native-language/cultural review, approved multi-role audio and phone evidence are complete.
 - Remaining courses must stay unreleased until their own 39-row content, 39-image art, voice/audio and persistence gates pass.
 
