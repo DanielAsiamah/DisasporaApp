@@ -59,6 +59,7 @@
     "audio:swahili-production:generate": "node scripts/generate-course-production-audio.js --course swahili --generate --max-credits 1000",
     "voices:audit": "node scripts/audit-voices.js",
     "env:check": "node scripts/check-public-env.js",
+    "phone:verification:scaffold": "node scripts/scaffold-phone-verification-report.js",
     "content:build": "node scripts/generate-runtime-curriculum.mjs",
     "content:validate": "node scripts/validate-content.js",
     "sources:audit": "node scripts/audit-source-intake.js",

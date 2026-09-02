@@ -38,7 +38,13 @@ npx expo export --platform ios --output-dir outputs/verify-transfer
 npx expo start --lan --clear
 ```
 
-Use Expo Go compatible with SDK 54 for the physical-iPhone check, and capture results with `docs/handoff/phone-verification-template.md`.
+Use Expo Go compatible with SDK 54 for the physical-iPhone check. To scaffold a dated local report from the template, run:
+
+```bash
+npm run phone:verification:scaffold -- --device="<device>" --ios-version="<ios-version>" --tester="<name>"
+```
+
+Then complete the generated `outputs/phone-verification/*.md` report during the phone walkthrough. The output directory is intentionally ignored so evidence can include local device notes without committing secrets or private account details.
 
 `npm run env:check` is safe to run before and after filling `.env`: it reports only variable names that are missing or still placeholders, never secret values.
 

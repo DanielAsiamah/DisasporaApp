@@ -20,6 +20,7 @@
 - `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift on 2026-09-02.
 - `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures on 2026-09-02.
 - `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-02 after the env-readiness guard was added.
+- `npm run phone:verification:scaffold` creates an ignored local report under `outputs/phone-verification/` with current branch, commit, command, URL, and export metadata so the physical-device walkthrough can be captured without committing secrets.
 - `npx expo start --lan --clear` is running locally, and `http://localhost:8081` returns the Diaspora web shell.
 - Remote push is pending GitHub authentication. Local `git push -u origin codex/implementation-plan` failed because HTTPS credentials are not configured, and the Codex GitHub connector is read-only for this repo write path.
 - A current portable Git bundle backup is maintained at `/Users/danielblackman/Downloads/Diaspora-Transfer-Backups/disaspora-implementation-plan-2026-09-01-current.bundle`. Verify its exact branch head with `git bundle verify` and `git bundle list-heads`; it requires base commit `ba034c4d931c2cf0cec71f6f15255b8cd68b0d04`.
@@ -360,7 +361,7 @@ Expected: Metro shows a QR code and `Web is waiting on http://localhost:8081`.
 
 - [ ] **Step 2: Open on device**
 
-Status: pending physical iPhone access with a compatible Expo Go/development build and real auth configuration. Use `docs/handoff/phone-verification-template.md` to record the run.
+Status: pending physical iPhone access with a compatible Expo Go/development build and real auth configuration. Use `npm run phone:verification:scaffold -- --device="<device>" --ios-version="<ios-version>" --tester="<name>"` to create the ignored local report, then record the walkthrough results there.
 
 Use the QR code with a compatible Expo Go/development build for SDK 54. Confirm these screens load:
 
