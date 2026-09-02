@@ -12,14 +12,14 @@
 
 ## Current MacBook Verification Status
 
-- Verified on branch `codex/implementation-plan` on 2026-09-01.
+- Verified on branch `codex/implementation-plan` on 2026-09-02.
 - `npm ci` completed on the MacBook clone.
 - `.env` exists locally, but Firebase and Google OAuth values are still placeholders. The app now rejects placeholder public env values instead of treating them as configured. Replace them with fresh client values from Firebase Console before real auth or physical-device verification.
 - `npm run env:check` safely reports whether required public Expo config values are missing/placeholders without printing secret values.
-- `node --test` passed with 378 tests and 0 failures.
-- `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift.
-- `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures.
-- `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-01 after the env-readiness guard was added.
+- `node --test` passed with 378 tests and 0 failures on 2026-09-02.
+- `npm run content:validate` passed with `"status": "valid"` and 0 generated-artifact drift on 2026-09-02.
+- `npm run images:audit` passed with 39/39 Jamaican Patois canonical PNGs audited and 0 failures on 2026-09-02.
+- `npx expo export --platform ios --output-dir outputs/verify-transfer` produced `outputs/verify-transfer/metadata.json` on 2026-09-02 after the env-readiness guard was added.
 - `npx expo start --lan --clear` is running locally, and `http://localhost:8081` returns the Diaspora web shell.
 - Remote push is pending GitHub authentication. Local `git push -u origin codex/implementation-plan` failed because HTTPS credentials are not configured, and the Codex GitHub connector is read-only for this repo write path.
 - A current portable Git bundle backup is maintained at `/Users/danielblackman/Downloads/Diaspora-Transfer-Backups/disaspora-implementation-plan-2026-09-01-current.bundle`. Verify its exact branch head with `git bundle verify` and `git bundle list-heads`; it requires base commit `ba034c4d931c2cf0cec71f6f15255b8cd68b0d04`.
