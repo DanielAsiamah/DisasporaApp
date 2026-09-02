@@ -104,7 +104,7 @@ Expected: iOS bundle and `outputs/verify-transfer/metadata.json` are produced.
 
 - [ ] **Step 4: Commit only if tracked setup docs changed**
 
-Status: no tracked setup doc change has been made. This plan/evidence file is new and intentionally separate from `.env`.
+Status: completed. Setup, verification, and transfer evidence docs have been committed on `codex/implementation-plan`. The local `.env` remains uncommitted and must stay that way.
 
 Do not commit `.env`. If setup docs are improved later, commit those docs only:
 
