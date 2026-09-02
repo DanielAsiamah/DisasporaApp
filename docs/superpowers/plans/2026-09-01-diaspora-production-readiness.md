@@ -102,7 +102,7 @@ npx expo export --platform ios --output-dir outputs/verify-transfer
 
 Expected: iOS bundle and `outputs/verify-transfer/metadata.json` are produced.
 
-- [ ] **Step 4: Commit only if tracked setup docs changed**
+- [x] **Step 4: Commit only if tracked setup docs changed**
 
 Status: completed. Setup, verification, and transfer evidence docs have been committed on `codex/implementation-plan`. The local `.env` remains uncommitted and must stay that way.
 
