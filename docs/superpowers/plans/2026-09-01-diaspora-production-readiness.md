@@ -91,7 +91,7 @@ Latest result: `node --test` passes 378 tests with 0 failures.
 
 - [x] **Step 3: Verify Expo export**
 
-Status: latest export regenerated `outputs/verify-transfer/metadata.json` on 2026-09-01. Real Firebase/Google env values are still required for auth and physical-device verification.
+Status: latest export regenerated `outputs/verify-transfer/metadata.json` on 2026-09-02. Real Firebase/Google env values are still required for auth and physical-device verification.
 
 Run:
 
