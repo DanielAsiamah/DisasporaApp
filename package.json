@@ -61,7 +61,7 @@
     "env:check": "node scripts/check-public-env.js",
     "firebase:config:check": "node scripts/check-firebase-deploy-config.js",
     "firebase:rules:deploy": "firebase deploy --only firestore:rules,firestore:indexes",
-    "phone:handoff": "node scripts/open-expo-phone-handoff.js --tunnel-url=exp://1mkwgci-anonymous-8083.exp.direct --lan-url=exp://192.168.1.32:8082 --web-url=http://localhost:8082",
+    "phone:handoff": "node scripts/open-expo-phone-handoff.js --tunnel-url=exp://1mkwgci-anonymous-8085.exp.direct --lan-url=exp://192.168.1.32:8082 --web-url=http://localhost:8085",
     "phone:verification:scaffold": "node scripts/scaffold-phone-verification-report.js",
     "content:build": "node scripts/generate-runtime-curriculum.mjs",
     "content:validate": "node scripts/validate-content.js",
