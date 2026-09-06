@@ -16,7 +16,7 @@ test('lesson feedback uses the cross-platform announcement API with the revealed
   assert.match(lessonSource, /return correct[\s\S]*?`Correct\. \$\{answerCopy\}`[\s\S]*?`Incorrect\. \$\{incorrectCopy\}`/s);
   assert.match(lessonSource, /AccessibilityInfo\.announceForAccessibility\(getFeedbackAnnouncement\(correct, exercise\)\)/);
   assert.match(lessonSource, /function getExerciseAnswerLabel\(exercise\)[\s\S]*?MATCH_PAIRS\) return ['"]All pairs matched['"]/s);
-  assert.match(lessonSource, /<Text style=\{styles\.feedbackAnswer\}>\{exerciseAnswerLabel\}<\/Text>/);
+  assert.match(lessonSource, /<Text style=\{styles\.feedbackAnswer\}>\{feedbackModel\.answerLabel\}<\/Text>/);
 });
 
 test('answer choices expose exclusive selection, position, result, and disabled state', () => {

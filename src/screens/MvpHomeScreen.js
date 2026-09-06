@@ -31,6 +31,7 @@ const {
   isProgressSnapshotCurrent,
 } = require('../lessonEngine/mvpProgressState.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
+const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
 const { getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
 const SKY = '#1CB0F6';
@@ -321,17 +322,32 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
   const progressReady = isProgressSnapshotCurrent(progressSnapshot, storageKey);
   const completedTopicIds = getCompletedTopicIdsForKey(progressSnapshot, storageKey);
   const topicStates = useMemo(() => buildTopicStates(topics, completedTopicIds), [completedTopicIds, topics]);
-  const featuredGuide = topicStates.find((topic) => topic.state === 'active')?.guide
+  const coreLoopView = useMemo(() => buildCoreLoopViewModel({
+    activeTopicId: topicStates.find((topic) => topic.state === 'active')?.id || null,
+    completedTopicIds,
+    course: {
+      ...runtimeCourse,
+      category: courseConfig.category,
+      displayName: courseConfig.name || runtimeCourse?.displayName,
+      flag: courseConfig.flag,
+    },
+    topics,
+  }), [completedTopicIds, courseConfig.category, courseConfig.flag, courseConfig.name, runtimeCourse, topicStates, topics]);
+  const topicCardsById = useMemo(() => new Map(coreLoopView.lessonCards.map((card) => [card.id, card])), [coreLoopView.lessonCards]);
+  const featuredGuide = topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)?.guide
     || topics[0]?.guide
     || 'Kai';
-  const activeLearnTopic = topicStates.find((topic) => topic.state === 'active') || topicStates[0] || null;
+  const activeLearnTopic = topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)
+    || topicStates.find((topic) => topic.state === 'active')
+    || topicStates[0]
+    || null;
   const activeTopicIndex = activeLearnTopic ? topicStates.findIndex((topic) => topic.id === activeLearnTopic.id) + 1 : 1;
-  const completedTopicCount = topicStates.filter((topic) => topic.state === 'complete').length;
-  const chapterComplete = completedTopicCount >= topicStates.length && topicStates.length > 0;
+  const completedTopicCount = coreLoopView.progress.completed;
+  const chapterComplete = coreLoopView.chapterComplete;
   const nextUpTopic = topicStates.find((topic) => topic.state === 'active') || null;
   const chapterProgressLabel = !progressReady
     ? 'Loading saved progress'
-    : `${completedTopicCount} of ${topicStates.length} topics complete`;
+    : `${coreLoopView.progress.completed} of ${coreLoopView.progress.total} topics complete`;
   const nextUpLabel = !progressReady
     ? 'Checking your topics…'
     : completedTopicCount >= topicStates.length
@@ -345,7 +361,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
     : chapterComplete ? 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
   const currentFocusMetaLabel = !progressReady
     ? 'Progress syncing'
-    : chapterComplete ? '9 topics complete' : `Lesson ${activeTopicIndex} of ${topicStates.length}`;
+    : chapterComplete ? `${coreLoopView.progress.total} topics complete` : `${coreLoopView.activeCard?.modeLabel || 'Lesson'} ${activeTopicIndex} of ${topicStates.length}`;
   const currentFocusHint = !progressReady
     ? 'Wait while saved progress loads'
     : chapterComplete
@@ -353,9 +369,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
     : 'Opens your current lesson';
   const currentFocusCtaLabel = !progressReady
     ? 'Please wait'
-    : chapterComplete
-    ? `Review ${activeLearnTopic?.title || 'first topic'} →`
-    : 'Tap to continue →';
+    : `${coreLoopView.activeCard?.ctaLabel || 'Start lesson'} →`;
   const streakPresentation = getStreakPresentation(profile?.streak);
 
   useEffect(() => {
@@ -432,7 +446,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
         {activeTab === 'learn' ? (
           <ScrollView contentContainerStyle={styles.learnContent} showsVerticalScrollIndicator={false}>
             <View style={styles.brandRow}>
-              <View style={styles.flagBadge}><Text style={styles.flag}>{courseConfig.flag}</Text></View>
+              <View style={styles.flagBadge}><Text style={styles.flag}>{coreLoopView.courseIdentity.flag}</Text></View>
               <Text style={styles.brand}>Diaspora</Text>
               <View accessible accessibilityLabel={`${profile?.streak || 0} day streak`} style={styles.statPill}>
                 <Ionicons accessible={false} color="#FF8A32" name="flame" size={18} />
@@ -453,8 +467,18 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
             <ChapterHero guideName={featuredGuide} heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
             <View style={styles.chapterCard}>
                 <View style={styles.chapterHeader}>
-                  <Text accessibilityRole="header" style={styles.chapterTitle}>{courseChapter?.title || 'Greetings & basic conversations'}</Text>
-                  <Text style={styles.chapterMeta}>{`${courseChapter?.topicCount ?? 9} topics • ${courseChapter?.wordCount ?? 39} words`}</Text>
+                  <Text style={styles.courseKicker}>{coreLoopView.courseIdentity.category}</Text>
+                  <Text accessibilityRole="header" style={styles.chapterTitle}>{courseChapter?.title || `${coreLoopView.courseIdentity.title} foundations`}</Text>
+                  <Text style={styles.chapterMeta}>{`${courseChapter?.topicCount ?? coreLoopView.progress.total} topics • ${courseChapter?.wordCount ?? 39} words`}</Text>
+                      <View
+                        accessible
+                        accessibilityLabel={`Course progress ${coreLoopView.progress.percent} percent`}
+                        accessibilityRole="progressbar"
+                        accessibilityValue={{ min: 0, max: 100, now: coreLoopView.progress.percent }}
+                        style={styles.pathProgressTrack}
+                      >
+                        <View style={[styles.pathProgressFill, { width: `${progressReady ? coreLoopView.progress.percent : 0}%` }]} />
+                      </View>
                       <View style={styles.chapterSummaryRow}>
                         <View style={styles.chapterSummaryPill}><Text style={styles.chapterSummaryText}>{chapterProgressLabel}</Text></View>
                         <View style={styles.chapterSummaryPill}><Text style={styles.chapterSummaryText}>{nextUpLabel}</Text></View>
@@ -479,7 +503,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
                       {!progressReady ? <Text accessibilityLiveRegion="polite" style={styles.progressLoading}>Loading your saved progress…</Text> : null}
                       {courseReviewPending ? (
                         <View style={styles.reviewBanner}>
-                          <Text style={styles.reviewBannerTitle}>Native review pending</Text>
+                          <Text style={styles.reviewBannerTitle}>{coreLoopView.courseIdentity.reviewLabel}</Text>
                       <Text style={styles.reviewBannerBody}>
                         This preview content is still awaiting native-speaker approval.
                       </Text>
@@ -487,7 +511,15 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
                   ) : null}
                 </View>
                 <View style={styles.topicGrid}>
-              {topicStates.map((topic) => <TopicButton key={topic.id} onPress={setActiveTopic} progressReady={progressReady} reducedMotion={reducedMotion} topic={topic} />)}
+              {topicStates.map((topic) => (
+                <TopicButton
+                  key={topic.id}
+                  onPress={setActiveTopic}
+                  progressReady={progressReady}
+                  reducedMotion={reducedMotion}
+                  topic={{ ...topic, ...topicCardsById.get(topic.id), state: topic.state }}
+                />
+              ))}
             </View>
             </View>
           </ScrollView>
@@ -526,7 +558,8 @@ const styles = StyleSheet.create({
   hero: { backgroundColor: '#BFEAFF', height: 208, overflow: 'hidden' }, heroBackground: { bottom: -8, left: -8, position: 'absolute', right: -8, top: -8 }, heroWash: { backgroundColor: 'rgba(222,247,255,0.16)', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }, heroGuide: { bottom: -24, height: 230, left: 22, position: 'absolute', width: 230, zIndex: 3 },
   cloud: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute', zIndex: 2 }, cloudBubble: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute' },
   chapterCard: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 34, borderTopRightRadius: 34, marginTop: -30, paddingTop: 24 },
-  chapterHeader: { alignItems: 'center', paddingHorizontal: 20 }, chapterTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23, textAlign: 'center' }, chapterMeta: { color: MUTED, fontFamily: fonts.bold, fontSize: 15, marginTop: 6 },
+  chapterHeader: { alignItems: 'center', paddingHorizontal: 20 }, courseKicker: { color: SKY_TEXT, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 7, textTransform: 'uppercase' }, chapterTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23, textAlign: 'center' }, chapterMeta: { color: MUTED, fontFamily: fonts.bold, fontSize: 15, marginTop: 6 },
+  pathProgressTrack: { backgroundColor: '#E4EEF4', borderRadius: 999, height: 13, marginTop: 14, overflow: 'hidden', width: '100%' }, pathProgressFill: { backgroundColor: GREEN, borderRadius: 999, height: 13 },
   chapterSummaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 12 }, chapterSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 8 }, chapterSummaryText: { color: NAVY, fontFamily: fonts.bold, fontSize: 12 },
   currentFocusCard: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 22, borderWidth: 1, marginTop: 16, paddingHorizontal: 18, paddingVertical: 16, width: '100%' }, currentFocusEyebrow: { color: SKY_TEXT, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8 }, currentFocusTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 22, marginTop: 6 }, currentFocusBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 6 }, currentFocusFooter: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', marginTop: 12 }, currentFocusMeta: { color: NAVY, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12 }, currentFocusCta: { color: SKY_TEXT, flexShrink: 1, fontFamily: fonts.extraBold, fontSize: 12, textAlign: 'right' }, progressLoading: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 12, marginTop: 10, textAlign: 'center' },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },

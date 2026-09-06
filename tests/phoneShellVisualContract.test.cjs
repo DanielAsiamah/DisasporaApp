@@ -127,10 +127,13 @@ test('the Learn topic grid uses centered spacing with enough width and bottom pa
 test('the Learn chapter header summarizes real progress and the next topic above the grid', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const completedTopicCount = topicStates\.filter\(\(topic\) => topic\.state === ['"]complete['"]\)\.length/);
+  assert.match(source, /const \{ buildCoreLoopViewModel \} = require\(['"]\.\.\/lessonExperience\/coreLoopPresentation\.cjs['"]\)/);
+  assert.match(source, /const coreLoopView = useMemo\(\(\) => buildCoreLoopViewModel\(\{/);
+  assert.match(source, /const completedTopicCount = coreLoopView\.progress\.completed/);
   assert.match(source, /const nextUpTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| null/);
-  assert.match(source, /const chapterProgressLabel = !progressReady[\s\S]*?`\$\{completedTopicCount\} of \$\{topicStates\.length\} topics complete`/);
+  assert.match(source, /const chapterProgressLabel = !progressReady[\s\S]*?`\$\{coreLoopView\.progress\.completed\} of \$\{coreLoopView\.progress\.total\} topics complete`/);
   assert.match(source, /const nextUpLabel = !progressReady[\s\S]*?completedTopicCount >= topicStates\.length[\s\S]*?['"]Chapter complete['"][\s\S]*?`Next up: \$\{nextUpTopic\?\.title \|\| ['"]Getting Started['"]\}`/);
+  assert.match(source, /accessibilityLabel=\{`Course progress \$\{coreLoopView\.progress\.percent\} percent`\}/);
   assert.match(source, /<View style=\{styles\.chapterSummaryRow\}>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{chapterProgressLabel\}<\/Text>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{nextUpLabel\}<\/Text>/s);
   assert.match(source, /chapterSummaryRow:\s*\{/);
   assert.match(source, /chapterSummaryPill:\s*\{/);
@@ -222,13 +225,16 @@ test('the lesson modal adds a compact summary row so learners can see the curren
 test('the lesson modal structures feedback into an outcome header and dedicated answer reveal card', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
-  assert.match(source, /function getCorrectFeedbackTitle\(xpAwardStatus\) \{[\s\S]*?if \(xpAwardStatus === ['"]awarded['"]\) return ['"]Correct! \+10 XP['"][\s\S]*?return ['"]Correct!['"][\s\S]*?\}/s);
-  assert.match(source, /<View style=\{styles\.feedbackHeader\}>[\s\S]*?<Text style=\{styles\.feedbackEyebrow\}>\{feedback === ['"]correct['"] \? ['"]NICE WORK['"] : ['"]KEEP GOING['"]\}<\/Text>[\s\S]*?<Text style=\{styles\.feedbackTitle\}>\{feedback === ['"]correct['"] \? getCorrectFeedbackTitle\(xpAwardStatus\) : ['"]Almost — try again['"]\}<\/Text>[\s\S]*?<\/View>/s);
-  assert.match(source, /\{feedback === ['"]correct['"] && getXpAwardMessage\(xpAwardStatus\) \? \([\s\S]*?<Text style=\{styles\.feedbackStatus\}>\{getXpAwardMessage\(xpAwardStatus\)\}<\/Text>/s);
+  assert.match(source, /const \{ buildLessonFeedbackModel \} = require\(['"]\.\.\/\.\.\/lessonExperience\/lessonFeedbackModel\.cjs['"]\)/);
+  assert.match(source, /const feedbackModel = buildLessonFeedbackModel\(\{[\s\S]*?answerLabel: exerciseAnswerLabel,[\s\S]*?feedback,[\s\S]*?xpAwardStatus,[\s\S]*?\}\)/s);
+  assert.match(source, /<View style=\{styles\.feedbackHeader\}>[\s\S]*?<Text style=\{styles\.feedbackEyebrow\}>\{feedback === ['"]correct['"] \? ['"]NICE WORK['"] : ['"]KEEP GOING['"]\}<\/Text>[\s\S]*?<Text style=\{styles\.feedbackTitle\}>\{feedbackModel\.title\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /\{feedbackModel\.xpLabel \? \([\s\S]*?<Text style=\{styles\.feedbackXpPillText\}>\{feedbackModel\.xpLabel\}<\/Text>/s);
+  assert.match(source, /\{feedbackModel\.message \? \([\s\S]*?<Text style=\{styles\.feedbackStatus\}>\{feedbackModel\.message\}<\/Text>/s);
   assert.match(source, /const exerciseAnswerLabel = getExerciseAnswerLabel\(exercise\)/);
-  assert.match(source, /<View style=\{styles\.feedbackAnswerCard\}>[\s\S]*?<Text style=\{styles\.feedbackAnswerLabel\}>ANSWER<\/Text>[\s\S]*?<Text style=\{styles\.feedbackAnswer\}>\{exerciseAnswerLabel\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /<View style=\{styles\.feedbackAnswerCard\}>[\s\S]*?<Text style=\{styles\.feedbackAnswerLabel\}>ANSWER<\/Text>[\s\S]*?<Text style=\{styles\.feedbackAnswer\}>\{feedbackModel\.answerLabel\}<\/Text>[\s\S]*?<\/View>/s);
   assert.match(source, /feedbackHeader:\s*\{/);
   assert.match(source, /feedbackEyebrow:\s*\{/);
+  assert.match(source, /feedbackXpPill:\s*\{/);
   assert.match(source, /feedbackAnswerCard:\s*\{/);
   assert.match(source, /feedbackAnswerLabel:\s*\{/);
 });
@@ -275,7 +281,7 @@ test('the Learn shell surfaces the active topic in a dedicated current-focus car
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /function getTopicFocusDescription\(topic\)/);
-  assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| topicStates\[0\] \|\| null/);
+  assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.id === coreLoopView\.activeCard\?\.id\)[\s\S]*?\|\| topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\)[\s\S]*?\|\| topicStates\[0\][\s\S]*?\|\| null/s);
   assert.match(source, /<Pressable\s+accessibilityHint=\{currentFocusHint\}[\s\S]*?disabled=\{!progressReady \|\| !activeLearnTopic\}[\s\S]*?onPress=\{\(\) => progressReady && activeLearnTopic && setActiveTopic\(activeLearnTopic\)\}[\s\S]*?style=\{styles\.currentFocusCard\}\s*>/s);
   assert.match(source, /<Text style=\{styles\.currentFocusEyebrow\}>CURRENT FOCUS<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
@@ -301,12 +307,12 @@ test('the current-focus card spells out lesson position and a continue cue for t
 test('the current-focus card switches to a chapter-complete state instead of pretending there is another active lesson', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const chapterComplete = completedTopicCount >= topicStates\.length && topicStates\.length > 0/);
+  assert.match(source, /const chapterComplete = coreLoopView\.chapterComplete/);
   assert.match(source, /const currentFocusTitle = !progressReady[\s\S]*?chapterComplete \? ['"]Chapter complete['"] : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
   assert.match(source, /const currentFocusBody = !progressReady[\s\S]*?chapterComplete \? ['"]You finished this chapter — replay any topic below whenever you want a refresher\.['"] : getTopicFocusDescription\(activeLearnTopic\)/);
-  assert.match(source, /const currentFocusMetaLabel = !progressReady[\s\S]*?chapterComplete \? ['"]9 topics complete['"] : `Lesson \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
+  assert.match(source, /const currentFocusMetaLabel = !progressReady[\s\S]*?chapterComplete \? `\$\{coreLoopView\.progress\.total\} topics complete` : `\$\{coreLoopView\.activeCard\?\.modeLabel \|\| ['"]Lesson['"]\} \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
   assert.match(source, /const currentFocusHint = !progressReady[\s\S]*?chapterComplete[\s\S]*?`Opens \$\{activeLearnTopic\?\.title \|\| ['"]the first topic['"]\} for review`[\s\S]*?: ['"]Opens your current lesson['"]/s);
-  assert.match(source, /const currentFocusCtaLabel = !progressReady[\s\S]*?chapterComplete[\s\S]*?`Review \$\{activeLearnTopic\?\.title \|\| ['"]first topic['"]\} →`[\s\S]*?: ['"]Tap to continue →['"]/s);
+  assert.match(source, /const currentFocusCtaLabel = !progressReady[\s\S]*?`\$\{coreLoopView\.activeCard\?\.ctaLabel \|\| ['"]Start lesson['"]\} →`/s);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusBody\}>\{currentFocusBody\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusMeta\}>\{currentFocusMetaLabel\}<\/Text>/);

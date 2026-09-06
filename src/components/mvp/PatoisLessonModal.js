@@ -44,6 +44,7 @@ const {
   buildCorrectAnswerRewardRecord,
   isRetryableXpAwardError,
 } = require('../../lessonEngine/lessonXpReward.cjs');
+const { buildLessonFeedbackModel } = require('../../lessonExperience/lessonFeedbackModel.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -195,19 +196,6 @@ function getFeedbackAnnouncement(correct, exercise) {
   return correct
     ? `Correct. ${answerCopy}`
     : `Incorrect. ${incorrectCopy}`;
-}
-
-function getCorrectFeedbackTitle(xpAwardStatus) {
-  if (xpAwardStatus === 'awarded') return 'Correct! +10 XP';
-  if (xpAwardStatus === 'already-awarded') return 'Correct! XP saved';
-  return 'Correct!';
-}
-
-function getXpAwardMessage(xpAwardStatus) {
-  if (xpAwardStatus === 'pending') return 'Saving 10 XP…';
-  if (xpAwardStatus === 'error') return 'XP could not be saved. Check your connection and retry.';
-  if (xpAwardStatus === 'unavailable') return 'Your answer is correct, but saved XP is unavailable.';
-  return '';
 }
 
 function ChoiceExercise({ exercise, feedback, response, setResponse }) {
@@ -623,6 +611,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const footerReady = ready && !xpAwardPending;
   const exerciseVisualConceptId = getExerciseVisualConceptId(exercise);
   const exerciseAnswerLabel = getExerciseAnswerLabel(exercise);
+  const feedbackModel = buildLessonFeedbackModel({
+    answerLabel: exerciseAnswerLabel,
+    feedback,
+    xpAwardStatus,
+  });
+  const completionFeedbackModel = buildLessonFeedbackModel({
+    finished,
+    nextTopicTitle: nextTopic?.title || '',
+    topicTitle: topic.title,
+  });
   const currentStepLabel = `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
   const currentExerciseLabel = exercise?.title || 'Lesson step';
   const footerActionLabel = xpAwardFailed
@@ -670,7 +668,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
               <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
               <Image accessible={false} resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
               <Text style={styles.completeTitle}>{completionTitle}</Text>
-              <Text style={styles.completeBody}>{completeBody}</Text>
+              <View style={styles.completeXpPill}><Text style={styles.completeXpPillText}>{completionFeedbackModel.xpLabel}</Text></View>
+              <Text style={styles.completeBody}>{completionFeedbackModel.message || completeBody}</Text>
               {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
               <View style={styles.completeActions}>
                 {nextTopic ? (
@@ -769,14 +768,17 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   )}
                   <View style={styles.feedbackHeader}>
                     <Text style={styles.feedbackEyebrow}>{feedback === 'correct' ? 'NICE WORK' : 'KEEP GOING'}</Text>
-                    <Text style={styles.feedbackTitle}>{feedback === 'correct' ? getCorrectFeedbackTitle(xpAwardStatus) : 'Almost — try again'}</Text>
+                    <Text style={styles.feedbackTitle}>{feedbackModel.title}</Text>
                   </View>
-                  {feedback === 'correct' && getXpAwardMessage(xpAwardStatus) ? (
-                    <Text style={styles.feedbackStatus}>{getXpAwardMessage(xpAwardStatus)}</Text>
+                  {feedbackModel.xpLabel ? (
+                    <View style={styles.feedbackXpPill}><Text style={styles.feedbackXpPillText}>{feedbackModel.xpLabel}</Text></View>
+                  ) : null}
+                  {feedbackModel.message ? (
+                    <Text style={styles.feedbackStatus}>{feedbackModel.message}</Text>
                   ) : null}
                   <View style={styles.feedbackAnswerCard}>
                     <Text style={styles.feedbackAnswerLabel}>ANSWER</Text>
-                    <Text style={styles.feedbackAnswer}>{exerciseAnswerLabel}</Text>
+                    <Text style={styles.feedbackAnswer}>{feedbackModel.answerLabel}</Text>
                   </View>
                 </Animated.View>
               ) : null}
@@ -869,6 +871,8 @@ const styles = StyleSheet.create({
   feedbackHeader: { alignItems: 'center', gap: 4 },
   feedbackEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8, textAlign: 'center' },
   feedbackTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 21, lineHeight: 27, textAlign: 'center' },
+  feedbackXpPill: { alignSelf: 'center', backgroundColor: '#FFFFFF', borderColor: '#BFEED0', borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 8 },
+  feedbackXpPillText: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.4 },
   feedbackStatus: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 12, lineHeight: 18, marginTop: 8, textAlign: 'center' },
   feedbackAnswerCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 18, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
   feedbackAnswerLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, textAlign: 'center' },
@@ -887,6 +891,8 @@ const styles = StyleSheet.create({
   completeImage: { height: 250, width: 250 },
   completeActions: { gap: 12, width: '100%' },
   completeTitle: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 31, paddingTop: 8 },
+  completeXpPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 12, paddingHorizontal: 14, paddingVertical: 9 },
+  completeXpPillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.4 },
   completeNextPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginBottom: 18, paddingHorizontal: 14, paddingVertical: 9 },
   completeNextPillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },
   completeBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 16, lineHeight: 23, paddingBottom: 28, paddingTop: 8, textAlign: 'center' },

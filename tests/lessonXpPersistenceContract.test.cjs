@@ -87,7 +87,9 @@ test('the lesson uses a stable per-attempt reward and never claims XP before per
   assert.match(lessonSource, /result\?\.awarded \? ['"]awarded['"] : ['"]already-awarded['"]/);
   assert.match(lessonSource, /result\?\.currentAccount === false/);
   assert.doesNotMatch(lessonSource, /return correct[\s\S]*?Correct\. \+10 XP\./s);
-  assert.match(lessonSource, /xpAwardStatus === ['"]awarded['"][\s\S]*?Correct! \+10 XP/s);
+  assert.match(lessonSource, /const \{ buildLessonFeedbackModel \} = require\(['"]\.\.\/\.\.\/lessonExperience\/lessonFeedbackModel\.cjs['"]\)/);
+  assert.match(lessonSource, /const feedbackModel = buildLessonFeedbackModel\(\{[\s\S]*?xpAwardStatus,[\s\S]*?\}\)/s);
+  assert.match(lessonSource, /feedbackModel\.xpLabel/);
   assert.match(lessonSource, /XP could not be saved/);
   assert.match(lessonSource, /isRetryableXpAwardError\(error\)/);
   assert.match(lessonSource, /setXpAwardStatus\(retryable \? ['"]error['"] : ['"]unavailable['"]\)/);

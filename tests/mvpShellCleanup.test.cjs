@@ -24,8 +24,9 @@ test('MVP shell delegates lessons to the production Patois lesson modal', () => 
 });
 
 test('MVP shell retains the approved chapter contract', () => {
-  assert.match(source, /courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]/);
-  assert.match(source, /courseChapter\?\.topicCount \?\? 9/);
+  assert.match(source, /const \{ buildCoreLoopViewModel \} = require\(['"]\.\.\/lessonExperience\/coreLoopPresentation\.cjs['"]\)/);
+  assert.match(source, /courseChapter\?\.title \|\| `\$\{coreLoopView\.courseIdentity\.title\} foundations`/);
+  assert.match(source, /courseChapter\?\.topicCount \?\? coreLoopView\.progress\.total/);
   assert.match(source, /courseChapter\?\.wordCount \?\? 39/);
   assert.match(source, /\[['"]learn['"],\s*['"]book-outline['"],\s*['"]book['"],\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*['"]trophy-outline['"],\s*['"]trophy['"],\s*['"]Leaderboard['"]\]/);
 });
@@ -34,15 +35,16 @@ test('the Learn shell derives chapter title and meta from the rebuilt curriculum
   assert.match(source, /const courseChapter = useMemo\(\(\) => \(/);
   assert.match(source, /GENERATED_CURRICULUM\.chapters/);
   assert.match(source, /chapter\.courseId === storageCourseId/);
-  assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.chapterTitle\}>\{courseChapter\?\.title \|\| ['"]Greetings & basic conversations['"]\}<\/Text>/);
-  assert.match(source, /<Text style=\{styles\.chapterMeta\}>\{`\$\{courseChapter\?\.topicCount \?\? 9\} topics .* \$\{courseChapter\?\.wordCount \?\? 39\} words`\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.courseKicker\}>\{coreLoopView\.courseIdentity\.category\}<\/Text>/);
+  assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.chapterTitle\}>\{courseChapter\?\.title \|\| `\$\{coreLoopView\.courseIdentity\.title\} foundations`\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.chapterMeta\}>\{`\$\{courseChapter\?\.topicCount \?\? coreLoopView\.progress\.total\} topics .* \$\{courseChapter\?\.wordCount \?\? 39\} words`\}<\/Text>/);
 });
 
 test('the chapter uses original Jamaica artwork behind the active topic guide instead of a hardcoded mascot', () => {
   assert.match(source, /getCoursePresentation\(storageCourseId\)/);
   assert.match(presentationRegistrySource, /jamaican-patois-greetings\.png/);
   assert.match(source, /function\s+ChapterHero\s*\(/);
-  assert.match(source, /const\s+featuredGuide\s*=\s*topicStates\.find\(\(topic\)\s*=>\s*topic\.state\s*===\s*['"]active['"]\)\?\.guide/);
+  assert.match(source, /const\s+featuredGuide\s*=\s*topicStates\.find\(\(topic\)\s*=>\s*topic\.id === coreLoopView\.activeCard\?\.id\)\?\.guide/);
   assert.match(source, /<ChapterHero[^>]+guideName=\{featuredGuide\}/s);
   assert.match(source, /<BreathingGuide[^>]+name=\{guideName\}/s);
   assert.doesNotMatch(source, /<BreathingGuide\s+name="Kai"/);
@@ -71,7 +73,7 @@ test('legacy product destinations and exercises are absent from visible MVP copy
 
 test('preview courses disclose that native review is still pending in the shell and active lessons', () => {
   assert.match(source, /const courseReviewPending = runtimeCourse\?\.published !== true/);
-  assert.match(source, /Native review pending/);
+  assert.match(source, /coreLoopView\.courseIdentity\.reviewLabel/);
   assert.match(source, /awaiting native-speaker approval/i);
   assert.match(lessonSource, /const courseReviewPending = runtimeCourse\?\.published !== true/);
   assert.match(lessonSource, /Native review pending/);
