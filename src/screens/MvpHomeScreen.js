@@ -33,6 +33,7 @@ const {
 } = require('../lessonEngine/mvpProgressState.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
+const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
 const { getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
 const SKY = '#1CB0F6';
@@ -360,6 +361,9 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
   const reducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState('learn');
   const [progressSnapshot, setProgressSnapshot] = useState(() => createProgressSnapshot(null));
+  const [progressRetry, setProgressRetry] = useState(0);
+  const [saveRetry, setSaveRetry] = useState(0);
+  const [saveStatus, setSaveStatus] = useState({ local: 'not-required', remote: 'not-required' });
   const [activeTopic, setActiveTopic] = useState(null);
   const runtimeCourse = getCourseById(storageCourseId);
   const courseReviewPending = runtimeCourse?.published !== true;
@@ -471,18 +475,24 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
     return () => {
       cancelled = true;
     };
-  }, [loadLanguageProgress, storageCourseId, storageKey, topics, user?.uid]);
+  }, [loadLanguageProgress, storageCourseId, storageKey, topics, user?.uid, progressRetry]);
 
   useEffect(() => {
     if (!isProgressSnapshotCurrent(progressSnapshot, storageKey)) return;
-    AsyncStorage.setItem(storageKey, JSON.stringify(progressSnapshot.completedTopicIds)).catch(() => {});
-    if (user?.uid && progressSnapshot.shouldSyncRemote) {
-      syncLanguageProgress?.(storageCourseId, {
+    let current = true;
+    setSaveStatus({ local: 'saving', remote: progressSnapshot.shouldSyncRemote ? 'saving' : 'not-required' });
+    saveProgressSnapshot({
+      snapshot: progressSnapshot,
+      storageKey,
+      onUpdate: (result) => { if (current) setSaveStatus(result); },
+      saveLocal: () => AsyncStorage.setItem(storageKey, JSON.stringify(progressSnapshot.completedTopicIds)),
+      saveRemote: user?.uid && syncLanguageProgress ? () => syncLanguageProgress?.(storageCourseId, {
         completedTopicIds: progressSnapshot.completedTopicIds,
         updatedAt: Date.now(),
-      }).catch(() => {});
-    }
-  }, [progressSnapshot, storageCourseId, storageKey, syncLanguageProgress, user?.uid]);
+      }) : null,
+    }).then((result) => { if (current) setSaveStatus(result); });
+    return () => { current = false; };
+  }, [progressSnapshot, storageCourseId, storageKey, syncLanguageProgress, user?.uid, saveRetry]);
 
   const completeTopic = useCallback((topicId) => {
     if (!progressReady) return;
@@ -498,6 +508,24 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
       <View style={styles.content}>
         {activeTab === 'learn' ? (
           <ScrollView contentContainerStyle={styles.learnContent} showsVerticalScrollIndicator={false}>
+            {progressReady && (saveStatus.local === 'error' || saveStatus.remote === 'error' || progressSnapshot.remoteReadStatus === 'error') ? (
+              <View style={styles.progressNotice} accessibilityLiveRegion="polite">
+                <Text style={styles.rankCardBody}>{saveStatus.local === 'error'
+                  ? 'Progress could not be saved on this device. Keep the app open and retry.'
+                  : progressSnapshot.remoteReadStatus === 'error'
+                    ? 'Cloud progress could not be loaded. Your current progress will be kept on this device when its save finishes.'
+                    : saveStatus.local === 'saved'
+                      ? 'Cloud sync failed. Your progress is saved on this device.'
+                      : 'Cloud sync failed. The device save is still pending.'}</Text>
+                <Pressable accessibilityRole="button" style={styles.leagueButton} onPress={() => {
+                  if (saveStatus.local === 'error') setSaveRetry((value) => value + 1);
+                  else if (progressSnapshot.remoteReadStatus === 'error' && saveStatus.local === 'saved') setProgressRetry((value) => value + 1);
+                  else setSaveRetry((value) => value + 1);
+                }}>
+                  <Text style={styles.leagueButtonText}>Retry progress save</Text>
+                </Pressable>
+              </View>
+            ) : null}
             <View style={styles.brandRow}>
               <View style={styles.flagBadge}><Text style={styles.flag}>{coreLoopView.courseIdentity.flag}</Text></View>
               <Text style={styles.brand}>Diaspora</Text>
@@ -602,6 +630,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
 }
 
 const styles = StyleSheet.create({
+  progressNotice: { backgroundColor: '#FFF7DB', borderColor: '#E7C96A', borderWidth: 1, borderRadius: 16, padding: 14, marginBottom: 12 },
   leagueButton: { backgroundColor: NAVY, borderRadius: 16, minHeight: 48, justifyContent: 'center', alignItems: 'center', padding: 12, marginVertical: 12 },
   leagueButtonText: { color: '#FFFFFF', fontFamily: fonts.bold, fontSize: 15 },
   root: { backgroundColor: '#FFFFFF', flex: 1 }, content: { flex: 1 }, learnContent: { paddingBottom: 132 },
