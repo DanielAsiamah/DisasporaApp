@@ -31,6 +31,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
+    "test:leaderboard:rules": "npx --yes firebase-tools@14.17.0 emulators:exec --only firestore --project demo-diaspora-rules \"node --test tests/leaderboardRules.test.cjs\"",
     "test:onboarding": "node --test tests/onboardingFlow.test.cjs tests/onboardingRouting.test.cjs",
     "test:verification": "node --test tests/emailVerificationFlow.test.cjs",
     "test:leaderboard": "node --test tests/leaderboardRanking.test.cjs tests/mvpHomePresentation.test.cjs tests/phoneShellVisualContract.test.cjs",
@@ -82,6 +83,7 @@
   },
   "private": true,
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
     "@types/react": "~19.1.10",
     "typescript": "~5.9.2"
   }

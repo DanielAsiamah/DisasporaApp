@@ -45,15 +45,19 @@ test('leaderboard rankings below the podium live in their own card with a sectio
   assert.match(source, /rankCardBody:\s*\{/);
 });
 
-test('leaderboard derives a truthful practice rank from saved profile XP and stable identity', () => {
+test('leaderboard uses live entries and exposes membership and connection states', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const \{ learner, progressCopy, rows \} = buildLeaderboard\(profile\)/);
+  assert.match(source, /buildLiveLeaderboard\(entries, user\?\.uid\)/);
   assert.doesNotMatch(source, /\[learner,\s*600/);
   assert.doesNotMatch(source, /name === learner/);
-  assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.pageTitle\}>Practice League<\/Text>/);
-  assert.match(source, /Compare your saved XP with example practice opponents\./);
-  assert.match(source, /<View style=\{styles\.leaderboardSummaryRow\}>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>LEAGUE<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>Diaspora Practice<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.leaderboardSummaryPill\}>[\s\S]*?<Text style=\{styles\.leaderboardSummaryLabel\}>YOUR RANK<\/Text>[\s\S]*?<Text style=\{styles\.leaderboardSummaryValue\}>#\{learner\.rank\}<\/Text>[\s\S]*?<\/View>/s);
+  assert.match(source, /Diaspora League/);
+  assert.doesNotMatch(source, /example practice opponents/);
+  assert.match(source, /subscribeLeaderboard\(/);
+  assert.match(source, /Join leaderboard/);
+  assert.match(source, /Leave leaderboard/);
+  assert.match(source, /Retry connection/);
+  assert.match(source, /Unranked/);
   assert.match(source, /leaderboardSummaryRow:\s*\{/);
   assert.match(source, /leaderboardSummaryPill:\s*\{/);
   assert.match(source, /leaderboardSummaryLabel:\s*\{/);

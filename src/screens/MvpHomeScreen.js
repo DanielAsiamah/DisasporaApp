@@ -18,12 +18,13 @@ import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { fonts } from '../theme';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { subscribeLeaderboard, subscribeLeaderboardMembership, syncLeaderboardEntry, leaveLeaderboard } from '../services/firestore/leaderboardService';
 
 const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
 const { getCourseById } = require('../data/courseCatalog.cjs');
 const { canAccessRuntimeCourse } = require('../data/courseAccessPolicy.cjs');
 const { buildCourseProgressStorageKey } = require('../lessonEngine/courseProgressKey.cjs');
-const { buildLeaderboard } = require('../lessonEngine/leaderboardRanking.cjs');
+const { buildLiveLeaderboard } = require('../lessonEngine/liveLeaderboard.cjs');
 const {
   createMutationProgressSnapshot,
   createProgressSnapshot,
@@ -213,24 +214,76 @@ function formatLeaderboardEntryAccessibilityLabel(entry) {
 }
 
 function Leaderboard({ profile, reducedMotion }) {
-  const { learner, progressCopy, rows } = buildLeaderboard(profile);
+  const { user } = useAuth();
+  const [entries, setEntries] = useState([]);
+  const [member, setMember] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    if (!user?.uid) return undefined;
+    let current = true;
+    setLoading(true);
+    setError('');
+    setMember(null);
+    setEntries([]);
+    const failed = () => {
+      if (!current) return;
+      setLoading(false);
+      setError('The leaderboard could not connect. Your lesson progress is safe.');
+    };
+    const stopRows = subscribeLeaderboard((rows) => {
+      if (!current) return;
+      setEntries(rows);
+      setLoading(false);
+    }, failed);
+    const stopMember = subscribeLeaderboardMembership(user.uid, (value) => {
+      if (current) setMember(value);
+    }, failed);
+    syncLeaderboardEntry(user.uid).catch(failed);
+    return () => { current = false; stopRows(); stopMember(); };
+  }, [user?.uid, profile?.xp, profile?.preferredName, revision]);
+  const changeMembership = async () => {
+    if (busy || member === null) return;
+    setBusy(true);
+    setError('');
+    try {
+      if (member) await leaveLeaderboard(user.uid);
+      else await syncLeaderboardEntry(user.uid, { join: true });
+    } catch {
+      setError('Your leaderboard preference could not be saved. Please retry.');
+    } finally { setBusy(false); }
+  };
+  const { learner, progressCopy, rows } = buildLiveLeaderboard(entries, user?.uid);
   const podiumRows = orderPodiumEntries(rows);
   const rankRows = rows.slice(3);
   return (
     <ScrollView contentContainerStyle={styles.leaderboardContent} showsVerticalScrollIndicator={false}>
-      <Text accessibilityRole="header" style={styles.pageTitle}>Practice League</Text>
-      <Text style={styles.pageSubtitle}>Compare your saved XP with example practice opponents.</Text>
+      <Text accessibilityRole="header" style={styles.pageTitle}>Diaspora League</Text>
+      <Text style={styles.pageSubtitle}>The top 50 learners, ranked by shared saved XP.</Text>
+      <View style={styles.rankCard}>
+        <Text style={styles.rankCardBody}>{member
+          ? 'Your display name and saved XP are shared with signed-in learners. Leave whenever you like.'
+          : 'Join to share your display name and saved XP with other learners. Your email stays private.'}</Text>
+        <Pressable accessibilityRole="button" accessibilityState={{ disabled: busy || member === null }} disabled={busy || member === null} onPress={changeMembership} style={styles.leagueButton}>
+          <Text style={styles.leagueButtonText}>{busy ? 'Saving...' : member ? 'Leave leaderboard' : 'Join leaderboard'}</Text>
+        </Pressable>
+      </View>
+      {loading ? <Text accessibilityLiveRegion="polite" style={styles.pageSubtitle}>Loading leaderboard...</Text> : null}
+      {error ? <View accessibilityLiveRegion="polite"><Text style={styles.rankCardBody}>{error}</Text><Pressable accessibilityRole="button" onPress={() => setRevision((value) => value + 1)} style={styles.leagueButton}><Text style={styles.leagueButtonText}>Retry connection</Text></Pressable></View> : null}
+      {!loading && !error && rows.length === 0 ? <Text style={styles.pageSubtitle}>Be the first learner to join.</Text> : null}
       <View style={styles.leaderboardSummaryRow}>
         <View style={styles.leaderboardSummaryPill}>
           <Text style={styles.leaderboardSummaryLabel}>LEAGUE</Text>
-          <Text style={styles.leaderboardSummaryValue}>Diaspora Practice</Text>
+          <Text style={styles.leaderboardSummaryValue}>Diaspora</Text>
         </View>
         <View style={styles.leaderboardSummaryPill}>
           <Text style={styles.leaderboardSummaryLabel}>YOUR RANK</Text>
-          <Text style={styles.leaderboardSummaryValue}>#{learner.rank}</Text>
+          <Text style={styles.leaderboardSummaryValue}>{learner ? `#${learner.rank}` : 'Unranked'}</Text>
         </View>
       </View>
-      <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
+      {rows.length > 0 ? <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
         <Cloud top={26} size={82} duration={16000} restingX={CLOUD_PODIUM_RESTING_X} reducedMotion={reducedMotion} />
         <Cloud top={76} size={60} delay={2400} duration={19000} restingX={CLOUD_PODIUM_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
         <View style={styles.podiumGlow} />
@@ -259,7 +312,7 @@ function Leaderboard({ profile, reducedMotion }) {
             </View>
           ))}
         </View>
-      </LinearGradient>
+      </LinearGradient> : null}
       <View style={styles.rankCard}>
         <Text accessibilityRole="header" style={styles.rankCardTitle}>Your position</Text>
         <Text style={styles.rankCardBody}>{progressCopy}</Text>
@@ -549,6 +602,8 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
 }
 
 const styles = StyleSheet.create({
+  leagueButton: { backgroundColor: NAVY, borderRadius: 16, minHeight: 48, justifyContent: 'center', alignItems: 'center', padding: 12, marginVertical: 12 },
+  leagueButtonText: { color: '#FFFFFF', fontFamily: fonts.bold, fontSize: 15 },
   root: { backgroundColor: '#FFFFFF', flex: 1 }, content: { flex: 1 }, learnContent: { paddingBottom: 132 },
   brandRow: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18, paddingTop: 10 },
   brand: { color: NAVY, flex: 1, fontFamily: fonts.extraBold, fontSize: 19, textAlign: 'center' },

@@ -2,6 +2,20 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /leaderboardEntries/{userId} {
+      allow read: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+      allow create, update: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['name', 'xp', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 40
+        && request.resource.data.xp is int
+        && request.resource.data.xp >= 0
+        && request.resource.data.xp == get(/databases/$(database)/documents/users/$(userId)).data.xp
+        && request.resource.data.updatedAt == request.time;
+    }
+
     match /languages/{languageId} {
       allow read: if true;
       allow write: if false;
