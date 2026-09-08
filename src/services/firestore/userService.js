@@ -8,6 +8,7 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
+  Timestamp,
 } from 'firebase/firestore';
 
 import { firebaseDb } from '../../firebase/app';
@@ -24,6 +25,7 @@ const {
   planCorrectAnswerXpMutation,
 } = require('../../lessonEngine/lessonXpReward.cjs');
 const { filterUserProgressFields } = require('../../lessonEngine/userProgressPolicy.cjs');
+const { removeUndefined, buildAnswerRecord } = require('./firestorePayload.cjs');
 
 export const DEFAULT_USER_PROFILE = {
   xp: 0,
@@ -115,22 +117,6 @@ function xpRewardDocRef(uid, rewardId) {
   return doc(firebaseDb, COLLECTIONS.USERS, uid, 'xpRewards', rewardId);
 }
 
-function removeUndefined(value) {
-  if (Array.isArray(value)) {
-    return value.map(removeUndefined);
-  }
-
-  if (value && typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value)
-        .filter(([, item]) => item !== undefined)
-        .map(([key, item]) => [key, removeUndefined(item)])
-    );
-  }
-
-  return value;
-}
-
 export async function getLanguageProgress(uid, languageId) {
   const snapshot = await getDoc(languageProgressDocRef(uid, languageId));
 
@@ -176,10 +162,8 @@ export async function addAnswerToLessonSession(uid, sessionId, answer) {
   if (!sessionId) return;
 
   await updateDoc(doc(firebaseDb, COLLECTIONS.USERS, uid, 'lessonSessions', sessionId), {
-    answers: arrayUnion({
-      ...removeUndefined(answer),
-      answeredAt: serverTimestamp(),
-    }),
+    // Firestore transforms cannot appear inside arrayUnion values.
+    answers: arrayUnion(buildAnswerRecord(answer, Timestamp.now())),
     updatedAt: serverTimestamp(),
   });
 }
