@@ -34,6 +34,7 @@ const {
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
 const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
+const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
 const { getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
 const SKY = '#1CB0F6';
@@ -362,6 +363,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
   const [activeTab, setActiveTab] = useState('learn');
   const [progressSnapshot, setProgressSnapshot] = useState(() => createProgressSnapshot(null));
   const [progressRetry, setProgressRetry] = useState(0);
+  const [progressReadError, setProgressReadError] = useState(false);
   const [saveRetry, setSaveRetry] = useState(0);
   const [saveStatus, setSaveStatus] = useState({ local: 'not-required', remote: 'not-required' });
   const [activeTopic, setActiveTopic] = useState(null);
@@ -436,26 +438,24 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
   useEffect(() => {
     let cancelled = false;
     setProgressSnapshot(createProgressSnapshot(null));
+    setProgressReadError(false);
 
     async function hydrateProgress() {
-      const remotePromise = user?.uid
-        ? Promise.resolve()
+      let localIds;
+      try {
+        localIds = await readLocalProgress(() => AsyncStorage.getItem(storageKey));
+      } catch {
+        if (!cancelled) setProgressReadError(true);
+        return;
+      }
+      if (cancelled) return;
+      const remoteResult = user?.uid
+        ? await Promise.resolve()
           .then(() => loadLanguageProgress?.(storageCourseId))
           .then((value) => ({ status: 'success', value }))
           .catch(() => ({ status: 'error', value: null }))
-        : Promise.resolve({ status: 'not-required', value: null });
-      const [localRaw, remoteResult] = await Promise.all([
-        AsyncStorage.getItem(storageKey).catch(() => null),
-        remotePromise,
-      ]);
+        : { status: 'not-required', value: null };
       if (cancelled) return;
-
-      let localIds = [];
-      try {
-        localIds = localRaw ? JSON.parse(localRaw) : [];
-      } catch {
-        localIds = [];
-      }
       const remoteIds = Array.isArray(remoteResult.value?.completedTopicIds)
         ? remoteResult.value.completedTopicIds
         : [];
@@ -508,6 +508,14 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
       <View style={styles.content}>
         {activeTab === 'learn' ? (
           <ScrollView contentContainerStyle={styles.learnContent} showsVerticalScrollIndicator={false}>
+            {progressReadError ? (
+              <View style={styles.progressNotice} accessibilityLiveRegion="polite">
+                <Text style={styles.rankCardBody}>Saved progress on this device could not be read. Lessons are paused to protect it; no replacement progress has been saved.</Text>
+                <Pressable accessibilityRole="button" style={styles.leagueButton} onPress={() => setProgressRetry((value) => value + 1)}>
+                  <Text style={styles.leagueButtonText}>Retry loading progress</Text>
+                </Pressable>
+              </View>
+            ) : null}
             {progressReady && (saveStatus.local === 'error' || saveStatus.remote === 'error' || progressSnapshot.remoteReadStatus === 'error') ? (
               <View style={styles.progressNotice} accessibilityLiveRegion="polite">
                 <Text style={styles.rankCardBody}>{saveStatus.local === 'error'
