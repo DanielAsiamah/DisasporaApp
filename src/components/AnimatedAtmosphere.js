@@ -66,7 +66,7 @@ export default function AnimatedAtmosphere({
   });
 
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.container]}>
       <LinearGradient colors={gradientColors} style={StyleSheet.absoluteFill} />
 
       <Animated.View
@@ -107,6 +107,7 @@ export default function AnimatedAtmosphere({
 }
 
 const styles = StyleSheet.create({
+  container: { overflow: 'hidden' },
   cloudCluster: {
     height: 70,
     position: 'absolute',

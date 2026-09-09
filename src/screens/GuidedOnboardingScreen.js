@@ -763,7 +763,7 @@ function CloudBackdrop() {
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="none"
-      style={StyleSheet.absoluteFill}
+      style={[StyleSheet.absoluteFill, styles.cloudBounds]}
     >
       <Animated.View style={[styles.cloud, styles.cloudOne, cloudOneStyle]}>
         <View style={[styles.cloudPuff, styles.cloudPuffLarge]} />
@@ -827,6 +827,7 @@ function PrimaryAction({ busy, disabled, label, onPress }) {
 }
 
 const styles = StyleSheet.create({
+  cloudBounds: { overflow: 'hidden' },
   root: {
     backgroundColor: palette.backgroundTop,
     flex: 1,

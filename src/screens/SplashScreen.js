@@ -206,6 +206,7 @@ function wait(ms) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    overflow: 'hidden',
   },
   glow: {
     backgroundColor: 'rgba(28,176,246,0.08)',
