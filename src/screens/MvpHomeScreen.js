@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '../context/AuthContext';
 import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
+import CourseRoadmap from '../components/mvp/CourseRoadmap';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { fonts } from '../theme';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -611,6 +612,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
               ))}
             </View>
             </View>
+            <CourseRoadmap courseId={storageCourseId} />
           </ScrollView>
         ) : <Leaderboard profile={profile} reducedMotion={reducedMotion} />}
       </View>

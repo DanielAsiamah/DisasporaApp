@@ -31,6 +31,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
+    "content:roadmap": "node scripts/generate-course-roadmap.cjs",
+    "content:roadmap:check": "node scripts/generate-course-roadmap.cjs --check",
     "test:leaderboard:rules": "npx --yes firebase-tools@14.17.0 emulators:exec --only firestore --project demo-diaspora-rules \"node --test tests/leaderboardRules.test.cjs\"",
     "test:onboarding": "node --test tests/onboardingFlow.test.cjs tests/onboardingRouting.test.cjs",
     "test:verification": "node --test tests/emailVerificationFlow.test.cjs",
