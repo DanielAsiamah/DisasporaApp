@@ -29,8 +29,23 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
-      match /{document=**} {
+      match /progress/{languageId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /sessions/{sessionId} {
+        allow read, create: if request.auth != null && request.auth.uid == userId;
+        allow update, delete: if false;
+      }
+
+      match /lessonSessions/{sessionId} {
+        allow read, create, update: if request.auth != null && request.auth.uid == userId;
+        allow delete: if false;
+      }
+
+      match /xpRewards/{rewardId} {
+        allow read, create: if request.auth != null && request.auth.uid == userId;
+        allow update, delete: if false;
       }
     }
   }
