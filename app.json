@@ -41,7 +41,12 @@
           "defaultChannel": "daily-practice"
         }
       ],
-      "@react-native-google-signin/google-signin",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.744778448890-79nae01f7cce857sqnp85v2a30hc6iio"
+        }
+      ],
       "expo-asset"
     ]
   }
