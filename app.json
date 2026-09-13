@@ -48,6 +48,12 @@
         }
       ],
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "08a79e9c-971e-4f5a-ad17-c1f1341ef158"
+      }
+    },
+    "owner": "danielasiamah"
   }
 }
