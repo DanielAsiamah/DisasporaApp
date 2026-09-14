@@ -22,3 +22,19 @@ Google Sign-In still requires an EAS development build for native testing; Expo 
 does not contain this custom native module. Native sign-in, Apple signing, and a
 development build on a physical iPhone have not yet been verified. When building
 on another machine or EAS, supply the same public environment values there.
+
+## EAS Development Setup
+
+On 2026-09-13, the project was linked to `@danielasiamah/patois-learn`
+(`08a79e9c-971e-4f5a-ad17-c1f1341ef158`). The eight public configuration
+variables required by `scripts/lib/public-env-check.cjs` were uploaded to its
+project-scoped `development` environment. No private service keys were uploaded.
+The development build profile explicitly selects this environment.
+
+Values use EAS sensitive visibility to reduce accidental log exposure, but
+`EXPO_PUBLIC_` values remain readable in the app bundle; they are not secrets.
+The local `.env` and verification downloads remain ignored by Git.
+Preview and production environments have not been configured by this step.
+
+EAS reported no Apple teams associated with this Expo account. Apple account
+linking, device registration, signing, and a physical iPhone build remain pending.
