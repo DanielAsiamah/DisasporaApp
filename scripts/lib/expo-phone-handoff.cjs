@@ -10,8 +10,14 @@ function normalizeExpoUrls({ tunnelUrl = '', lanUrl = '', webUrl = '' } = {}) {
 
 function readLastOption(args, name) {
   const prefix = `--${name}=`;
-  const matches = args.filter((arg) => arg.startsWith(prefix));
-  return matches.length > 0 ? matches[matches.length - 1].slice(prefix.length) : '';
+  let value = '';
+  for (let index = 0; index < args.length; index += 1) {
+    if (args[index].startsWith(prefix)) value = args[index].slice(prefix.length);
+    else if (args[index] === `--${name}`) {
+      value = args[index + 1] && !args[index + 1].startsWith('--') ? args[++index] : '';
+    }
+  }
+  return value;
 }
 
 function escapeHtml(value) {
@@ -30,7 +36,7 @@ function buildExpoPhoneHandoffHtml({ tunnelUrl, lanUrl, webUrl, generatedAt = ne
   const urls = normalizeExpoUrls({ tunnelUrl, lanUrl, webUrl });
   const primaryUrl = urls.tunnelUrl || urls.lanUrl;
   if (!primaryUrl) {
-    throw new Error('A tunnel or LAN Expo URL is required.');
+    throw new Error('Supply the current Expo URL: npm run phone:handoff -- --lan-url=exp://YOUR_MAC_IP:PORT (or --tunnel-url=exp://CURRENT_TUNNEL).');
   }
 
   return `<!doctype html>
@@ -129,8 +135,9 @@ function buildExpoPhoneHandoffHtml({ tunnelUrl, lanUrl, webUrl, generatedAt = ne
   <main>
     <h1>Open Diaspora in Expo Go</h1>
     <p>Scan this with your iPhone camera, or open this page on your phone and tap the green button.</p>
+    ${!urls.tunnelUrl ? '<p>Keep your iPhone and Mac on the same Wi-Fi network.</p>' : ''}
     <img alt="QR code for ${escapeHtml(primaryUrl)}" src="${escapeHtml(buildQrUrl(primaryUrl))}">
-    <a class="button" href="${escapeHtml(primaryUrl)}">Open Expo Go tunnel</a>
+    <a class="button" href="${escapeHtml(primaryUrl)}">${urls.tunnelUrl ? 'Open Expo Go tunnel' : 'Open Expo Go on Wi-Fi'}</a>
     <div class="backup">
       ${urls.lanUrl ? `<a href="${escapeHtml(urls.lanUrl)}">LAN backup: ${escapeHtml(urls.lanUrl)}</a>` : ''}
       ${urls.webUrl ? `<a href="${escapeHtml(urls.webUrl)}">Mac web preview: ${escapeHtml(urls.webUrl)}</a>` : ''}

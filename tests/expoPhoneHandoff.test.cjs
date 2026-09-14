@@ -1,6 +1,22 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
+test('phone command does not embed stale machine addresses', () => {
+  assert.equal(require('../package.json').scripts['phone:handoff'],
+    'node scripts/open-expo-phone-handoff.js');
+});
+
+test('phone options accept separate values and last occurrence wins', () => {
+  assert.equal(readLastOption(['--lan-url=old', '--lan-url', 'exp://192.168.1.32:8085'], 'lan-url'), 'exp://192.168.1.32:8085');
+  assert.equal(readLastOption(['--lan-url', '--web-url=http://localhost:8085'], 'lan-url'), '');
+});
+
+test('LAN-only handoff explains Wi-Fi and does not claim a tunnel', () => {
+  const html = buildExpoPhoneHandoffHtml({lanUrl: 'exp://192.168.1.32:8085'});
+  assert.match(html, /same Wi-Fi/);
+  assert.doesNotMatch(html, /Open Expo Go tunnel/);
+});
+
 const {
   buildExpoPhoneHandoffHtml,
   normalizeExpoUrls,
