@@ -8,10 +8,14 @@ import {
   sendPasswordResetEmail,
   signInWithCredential,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 import { firebaseAuth } from '../../firebase/app';
+const { getAuthRuntime, runGoogleAuth } = require('./authRuntime.cjs');
 const {
   getOptionalConfiguredPublicEnv,
   requireConfiguredPublicEnv,
@@ -32,6 +36,17 @@ export async function signInWithEmail(email, password) {
 }
 
 export async function signInWithGoogleProvider() {
+  return runGoogleAuth({
+    runtime: getAuthRuntime({ platform: Platform.OS, executionEnvironment: Constants.executionEnvironment, appOwnership: Constants.appOwnership }),
+    web: async () => {
+      const result = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+      return result.user;
+    },
+    native: signInWithNativeGoogleProvider,
+  });
+}
+
+async function signInWithNativeGoogleProvider() {
   const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
   const webClientId = requireConfiguredPublicEnv(
     'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID',

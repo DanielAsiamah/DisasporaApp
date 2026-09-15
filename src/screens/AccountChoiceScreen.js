@@ -12,6 +12,7 @@ import { fonts, radius, spacing } from '../theme';
 const { getCourseById } = require('../data/courseCatalog.cjs');
 const { getStartingLevelLabel } = require('../onboarding/authHandoff');
 const { isGoogleSignInConfigured } = require('../config/publicEnv.cjs');
+const { getAuthRuntime } = require('../services/auth/authRuntime.cjs');
 
 function formatReminderTime(value = '19:00') {
   const [rawHour, minute = '00'] = value.split(':');
@@ -32,8 +33,9 @@ export default function AccountChoiceScreen({
   const { signInWithGoogle, signInWithApple } = useAuth();
   const [loadingProvider, setLoadingProvider] = useState(null);
   const [error, setError] = useState('');
-  const isExpoGo = Constants.appOwnership === 'expo';
-  const googleConfigured = isGoogleSignInConfigured({
+  const authRuntime = getAuthRuntime({ platform: Platform.OS, executionEnvironment: Constants.executionEnvironment, appOwnership: Constants.appOwnership });
+  const isExpoGo = authRuntime.google === 'unavailable';
+  const googleConfigured = authRuntime.google === 'web' || isGoogleSignInConfigured({
     platformOS: Platform.OS,
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
@@ -122,7 +124,7 @@ export default function AccountChoiceScreen({
           loading={loadingProvider === 'google'}
           onPress={() => continueWith('google')}
         />
-        {Platform.OS === 'ios' ? (
+        {authRuntime.apple ? (
           <ProviderButton
             dark
             disabled={Boolean(loadingProvider)}
@@ -141,9 +143,9 @@ export default function AccountChoiceScreen({
       </View>
 
       {error ? <Text selectable style={styles.error}>{error}</Text> : null}
-      {__DEV__ && isExpoGo ? (
+      {isExpoGo ? (
         <Text style={styles.devNote}>
-          Google is enabled in the native development build; email remains available in Expo Go.
+          Use email to create your account and save lesson progress in Expo Go. No Apple Developer account is needed.
         </Text>
       ) : null}
       {__DEV__ && !googleConfigured ? (

@@ -15,6 +15,7 @@ import PrimaryButton from '../components/PrimaryButton';
 import { useAuth } from '../context/AuthContext';
 import { getAuthErrorMessage } from '../services/auth/authErrors';
 import { fonts, radius, spacing } from '../theme';
+const { getAuthRuntime } = require('../services/auth/authRuntime.cjs');
 
 export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassword }) {
   const { signIn, signInWithGoogle, signInWithApple } = useAuth();
@@ -23,6 +24,8 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
   const [formError, setFormError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState(null);
+  const authRuntime = getAuthRuntime({ platform: Platform.OS, executionEnvironment: Constants.executionEnvironment, appOwnership: Constants.appOwnership });
+  const googleUnavailable = authRuntime.google === 'unavailable';
 
   async function handleSignIn() {
     if (loading || loadingProvider) return;
@@ -49,7 +52,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
     setFormError('');
     setLoadingProvider(provider);
     try {
-      if (Constants.appOwnership === 'expo' && provider === 'google') {
+      if (googleUnavailable && provider === 'google') {
         throw new Error('Google sign-in needs the Diaspora development build. Email sign-in works in Expo Go.');
       }
       const result = provider === 'google' ? await signInWithGoogle() : await signInWithApple();
@@ -69,7 +72,7 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
       headerLabel="Sign in"
       keyboardAware
       onBack={onBack}
-      subtitle="Sign in to keep your hearts, XP, and lesson progress synced across devices."
+      subtitle="Sign in to keep your XP and lesson progress synced across devices."
       title="Welcome back"
     >
       <View style={styles.form}>
@@ -114,11 +117,12 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
       </View>
 
       <Pressable
-        disabled={loading || Boolean(loadingProvider)}
+        accessibilityRole="button"
+        disabled={loading || Boolean(loadingProvider) || googleUnavailable}
         onPress={() => handleProviderSignIn('google')}
         style={[
           styles.providerButton,
-          (loading || Boolean(loadingProvider)) && styles.providerDisabled,
+          (loading || Boolean(loadingProvider) || googleUnavailable) && styles.providerDisabled,
         ]}
       >
         {loadingProvider === 'google' ? (
@@ -129,7 +133,9 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
         <Text style={styles.providerText}>Continue with Google</Text>
       </Pressable>
 
-      {Platform.OS === 'ios' ? (
+      {googleUnavailable ? <Text style={styles.providerNote}>Use email and password in Expo Go. Your lesson progress still syncs to your account.</Text> : null}
+
+      {authRuntime.apple ? (
         <Pressable
           disabled={loading || Boolean(loadingProvider)}
           onPress={() => handleProviderSignIn('apple')}
@@ -156,6 +162,14 @@ export default function LoginScreen({ onSuccess, onSignUp, onBack, onForgotPassw
 }
 
 const styles = StyleSheet.create({
+  providerNote: {
+    color: AUTH_PALETTE.textSoft,
+    fontFamily: fonts.medium,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+  },
   form: {
     gap: spacing.md,
     marginBottom: spacing.lg,
