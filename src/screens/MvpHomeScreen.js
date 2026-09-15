@@ -36,6 +36,7 @@ const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/to
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
 const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
 const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
+const { readRemoteProgress } = require('../lessonEngine/remoteProgressRead.cjs');
 const { getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
 const SKY = '#1CB0F6';
@@ -451,10 +452,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
       }
       if (cancelled) return;
       const remoteResult = user?.uid
-        ? await Promise.resolve()
-          .then(() => loadLanguageProgress?.(storageCourseId))
-          .then((value) => ({ status: 'success', value }))
-          .catch(() => ({ status: 'error', value: null }))
+        ? await readRemoteProgress(() => loadLanguageProgress?.(storageCourseId))
         : { status: 'not-required', value: null };
       if (cancelled) return;
       const remoteIds = Array.isArray(remoteResult.value?.completedTopicIds)
