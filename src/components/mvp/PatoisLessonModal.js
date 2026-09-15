@@ -45,6 +45,7 @@ const {
   isRetryableXpAwardError,
 } = require('../../lessonEngine/lessonXpReward.cjs');
 const { buildLessonFeedbackModel } = require('../../lessonExperience/lessonFeedbackModel.cjs');
+const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLessonSummary } = require('../../lessonExperience/lessonSummary.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -430,6 +431,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const [finished, setFinished] = useState(false);
   const [matchMessage, setMatchMessage] = useState('');
   const [xpAwardStatus, setXpAwardStatus] = useState(null);
+  const [lessonSummary, setLessonSummary] = useState(createLessonSummary);
   const celebration = useRef(new Animated.Value(0)).current;
   const audioEventGate = useRef(createLessonAudioEventGate()).current;
   const audioSessionId = useRef(0);
@@ -463,6 +465,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     setResponse(createExerciseResponse(firstExercise));
     setFeedback(null);
     setFinished(false);
+    setLessonSummary(createLessonSummary());
     setMatchMessage('');
     setXpAwardStatus(null);
     celebration.setValue(0);
@@ -509,6 +512,9 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
           return;
         }
         const nextStatus = result?.awarded ? 'awarded' : 'already-awarded';
+        if (result && typeof result.awarded === 'boolean') {
+          setLessonSummary((current) => recordSavedReward(current, rewardFields.rewardId, rewardFields.amount));
+        }
         setXpAwardStatus(nextStatus);
         AccessibilityInfo.announceForAccessibility(
           result?.awarded ? '10 XP added.' : 'This answer’s XP was already saved.'
@@ -541,6 +547,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     const answerKey = `${audioSessionId.current}:${exercise.id}`;
     if (!audioEventGate.claim('answer', answerKey)) return;
     const correct = evaluateExerciseResponse(exercise, response);
+    setLessonSummary((current) => recordCheckedAnswer(current, correct));
     setFeedback(correct ? 'correct' : 'incorrect');
     AccessibilityInfo.announceForAccessibility(getFeedbackAnnouncement(correct, exercise));
     if (correct) {
@@ -598,6 +605,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
 
   if (!topic) return null;
   const topicModeLabel = getTopicModeLabel(topic);
+  const summary = presentLessonSummary(lessonSummary);
   const completionTitle = topic.type === 'challenge' ? 'Challenge complete!' : topic.type === 'review' ? 'Review complete!' : 'Topic complete!';
   const completeBody = nextTopic ? `You finished ${topic.title}. Next up: ${nextTopic.title}.` : `You finished ${topic.title} and completed this chapter.`;
   const completionBackButtonStyle = nextTopic ? styles.secondaryButton : styles.primaryButton;
@@ -669,6 +677,21 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
               <Image accessible={false} resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
               <Text style={styles.completeTitle}>{completionTitle}</Text>
               <View style={styles.completeXpPill}><Text style={styles.completeXpPillText}>{completionFeedbackModel.xpLabel}</Text></View>
+              <View style={styles.resultGrid}>
+                <View accessible accessibilityLabel={`${summary.savedXp} XP saved this lesson`} style={styles.resultCard}>
+                  <Text style={styles.resultValue}>{summary.savedXp}</Text>
+                  <Text style={styles.resultLabel}>XP SAVED</Text>
+                </View>
+                <View accessible accessibilityLabel={`${summary.accuracy ?? 0} percent accuracy across ${summary.checkedAnswers} checked answers`} style={styles.resultCard}>
+                  <Text style={styles.resultValue}>{summary.accuracy === null ? '-' : `${summary.accuracy}%`}</Text>
+                  <Text style={styles.resultLabel}>ACCURACY</Text>
+                </View>
+              </View>
+              <Text style={styles.completeBody}>
+                {summary.mistakes > 0
+                  ? `${summary.mistakes} ${summary.mistakes === 1 ? 'mistake' : 'mistakes'} reviewed. Every retry is practice.`
+                  : 'Every checked answer was correct. Keep going!'}
+              </Text>
               <Text style={styles.completeBody}>{completionFeedbackModel.message || completeBody}</Text>
               {nextTopic ? <View style={styles.completeNextPill}><Text style={styles.completeNextPillText}>Next up: {nextTopic.title}</Text></View> : null}
               <View style={styles.completeActions}>
@@ -803,6 +826,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
 }
 
 const styles = StyleSheet.create({
+  resultGrid: { flexDirection: 'row', gap: 12, width: '100%', maxWidth: 360 },
+  resultCard: { flex: 1, alignItems: 'center', padding: 16, borderRadius: 20, backgroundColor: PALE, borderWidth: 1, borderColor: BORDER },
+  resultValue: { fontFamily: fonts.extraBold, fontSize: 28, color: NAVY },
+  resultLabel: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, color: MUTED, marginTop: 4 },
   root: { backgroundColor: '#FFFFFF', flex: 1 },
   topBar: { alignItems: 'center', flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingVertical: 14 },
   closeText: { color: NAVY, fontFamily: fonts.medium, fontSize: 35, lineHeight: 36 },
