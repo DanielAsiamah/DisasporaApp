@@ -39,7 +39,7 @@ test('lesson feedback supports retry, wrong answer, and completion states', () =
     {
       animationTone: 'retry',
       canContinue: true,
-      message: 'Your answer is right, but XP did not save yet.',
+    message: 'Your answer is right. XP is not confirmed yet; retry or keep practising without confirmed XP.',
       state: 'correct',
       title: 'Correct!',
       xpLabel: 'Retry XP',

@@ -45,6 +45,7 @@ const {
   isRetryableXpAwardError,
 } = require('../../lessonEngine/lessonXpReward.cjs');
 const { buildLessonFeedbackModel } = require('../../lessonExperience/lessonFeedbackModel.cjs');
+const { saveXpWithDeadline } = require('../../lessonExperience/xpSaveAttempt.cjs');
 const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLessonSummary } = require('../../lessonExperience/lessonSummary.cjs');
 
 const SKY = '#1CB0F6';
@@ -498,10 +499,9 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
       return;
     }
 
-    const requestGeneration = xpRequestGeneration.current;
+    const requestGeneration = ++xpRequestGeneration.current;
     setXpAwardStatus('pending');
-    Promise.resolve()
-      .then(() => onAwardCorrectAnswerXp(rewardFields))
+    saveXpWithDeadline(() => onAwardCorrectAnswerXp(rewardFields))
       .then((result) => {
         if (xpRequestGeneration.current !== requestGeneration) return;
         if (result?.currentAccount === false) {
@@ -526,7 +526,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
         setXpAwardStatus(retryable ? 'error' : 'unavailable');
         AccessibilityInfo.announceForAccessibility(
           retryable
-            ? 'XP could not be saved. Retry when you are connected.'
+            ? 'XP has not been confirmed. Retry, or continue without confirmed XP.'
             : 'XP is unavailable for this answer. You can continue the lesson.'
         );
       });
@@ -817,6 +817,17 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
               >
                 <Text style={styles.primaryButtonText}>{xpAwardFailed ? 'RETRY XP' : feedback === 'incorrect' ? 'TRY AGAIN' : feedback ? 'CONTINUE' : 'CHECK'}</Text>
               </Pressable>
+              {xpAwardFailed ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Continue without confirmed XP"
+                  accessibilityHint="Moves on without counting this answer's XP in your lesson summary. A pending save may still complete later."
+                  onPress={continueLesson}
+                  style={styles.unconfirmedContinue}
+                >
+                  <Text style={styles.unconfirmedContinueText}>Continue without confirmed XP</Text>
+                </Pressable>
+              ) : null}
             </View>
           </>
         )}
@@ -826,6 +837,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
 }
 
 const styles = StyleSheet.create({
+  unconfirmedContinue: { minHeight: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+  unconfirmedContinueText: { color: MUTED, fontFamily: fonts.bold, fontSize: 13, textAlign: 'center' },
   resultGrid: { flexDirection: 'row', gap: 12, width: '100%', maxWidth: 360 },
   resultCard: { flex: 1, alignItems: 'center', padding: 16, borderRadius: 20, backgroundColor: PALE, borderWidth: 1, borderColor: BORDER },
   resultValue: { fontFamily: fonts.extraBold, fontSize: 28, color: NAVY },

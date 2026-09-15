@@ -90,7 +90,9 @@ test('the lesson uses a stable per-attempt reward and never claims XP before per
   assert.match(lessonSource, /const \{ buildLessonFeedbackModel \} = require\(['"]\.\.\/\.\.\/lessonExperience\/lessonFeedbackModel\.cjs['"]\)/);
   assert.match(lessonSource, /const feedbackModel = buildLessonFeedbackModel\(\{[\s\S]*?xpAwardStatus,[\s\S]*?\}\)/s);
   assert.match(lessonSource, /feedbackModel\.xpLabel/);
-  assert.match(lessonSource, /XP could not be saved/);
+  assert.match(lessonSource, /XP has not been confirmed/);
+  assert.match(lessonSource, /saveXpWithDeadline\(\(\) => onAwardCorrectAnswerXp\(rewardFields\)\)/);
+  assert.match(lessonSource, /accessibilityLabel="Continue without confirmed XP"/);
   assert.match(lessonSource, /isRetryableXpAwardError\(error\)/);
   assert.match(lessonSource, /setXpAwardStatus\(retryable \? ['"]error['"] : ['"]unavailable['"]\)/);
   assert.match(lessonSource, /function retryXpAward\(\)[\s\S]*?saveCorrectAnswerXp\(pendingXpReward\.current\)/s);
