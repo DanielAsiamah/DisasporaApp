@@ -31,6 +31,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
+    "firebase:emulators": "npx --yes firebase-tools@14.17.0 emulators:start --config firebase.emulators.json --project demo-diaspora-app --only auth,firestore,storage",
+    "web:emulators": "EXPO_PUBLIC_USE_FIREBASE_EMULATORS=true expo start --web --go --port 8086 --clear",
     "content:roadmap": "node scripts/generate-course-roadmap.cjs",
     "content:roadmap:check": "node scripts/generate-course-roadmap.cjs --check",
     "test:leaderboard:rules": "npx --yes firebase-tools@14.17.0 emulators:exec --only firestore --project demo-diaspora-rules \"node --test tests/leaderboardRules.test.cjs\"",
