@@ -36,7 +36,9 @@ export const firebaseDb = getFirestore(app);
 export const firebaseStorage = getStorage(app);
 
 if (emulator && !existingApp) {
-  connectAuthEmulator(auth, `http://${emulator.host}:${emulator.authPort}`);
+  // The SDK's fixed browser banner covers bottom navigation on narrow screens.
+  connectAuthEmulator(auth, `http://${emulator.host}:${emulator.authPort}`, { disableWarnings: true });
+  console.info('[Diaspora] Local Firebase emulators enabled. Use disposable test accounts only.');
   connectFirestoreEmulator(firebaseDb, emulator.host, emulator.firestorePort);
   connectStorageEmulator(firebaseStorage, emulator.host, emulator.storagePort);
 }

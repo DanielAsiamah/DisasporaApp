@@ -44,3 +44,20 @@ screen, and created the expected local learner profile. The browser blocked
 production Auth/Firestore endpoints as a safeguard; no such requests were
 attempted and no page errors were recorded. The complete lesson, restart, and
 leaderboard walkthrough remains to be verified.
+
+## Core Loop Verified On 2026-09-21
+
+A fresh local account completed the six workbook-generated exercises in Jamaican
+Patois's Getting Started topic through the actual browser UI. The completion
+screen showed 60 confirmed XP and 100% checked-answer accuracy. After a page
+reload, the app retained 60 XP and one of nine completed topics. Joining the
+leaderboard displayed the learner with 60 XP; leaving removed their membership
+and returned the screen to its unranked state. No page errors or attempted
+production Auth/Firestore requests were recorded.
+
+The Firebase SDK's fixed emulator warning overlay intercepted taps on bottom
+navigation. Emulator mode now disables that overlay and emits an explicit
+console notice instead. This affects only the opt-in local test environment.
+
+This walkthrough covers one course's first lesson and leaderboard membership,
+not all courses, failure scenarios, native devices, or production authentication.
