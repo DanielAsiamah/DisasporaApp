@@ -61,3 +61,31 @@ console notice instead. This affects only the opt-in local test environment.
 
 This walkthrough covers one course's first lesson and leaderboard membership,
 not all courses, failure scenarios, native devices, or production authentication.
+
+## Repeatable Browser Regression
+
+With the emulators and `web:emulators` running, run `npm run test:app:browser`.
+This optional test requires Playwright and a browser installed separately:
+
+```sh
+npm install --no-save --package-lock=false playwright@1.48.2
+DIASPORA_CHROMIUM_EXECUTABLE="/path/to/Chrome executable" npm run test:app:browser
+```
+
+Alternatively, omit the executable override to use Playwright's installed
+Chromium. `DIASPORA_PLAYWRIGHT_MODULE` can point at an existing Playwright
+installation instead of installing it into this repository.
+
+The test creates a disposable emulator account, completes onboarding, deliberately
+answers incorrectly and retries, completes all six first-topic exercises, checks
+60 saved XP and 86% accuracy over seven checked answers, reloads to verify progress,
+and joins/leaves the leaderboard. It blocks production Auth/Firestore requests
+before opening the app and fails if any are attempted. Screenshots are written
+under ignored `outputs/browser-smoke/`. Do not point this test at a live backend.
+
+The wrong-answer regression exposed an unhandled interrupted-playback promise
+in the installed Expo Audio web player. A web-only adapter now returns browser
+playback promises to the existing controller's error handler. Native Expo Audio
+and the approved-phrase policy remain unchanged. After a clean Metro restart,
+the full retry, completion, reload, and leaderboard regression passed with no
+page errors or production requests.
