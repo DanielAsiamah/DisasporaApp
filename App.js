@@ -1,11 +1,12 @@
 import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-  PlusJakartaSans_800ExtraBold,
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+  Nunito_900Black,
   useFonts,
-} from '@expo-google-fonts/plus-jakarta-sans';
+} from '@expo-google-fonts/nunito';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -468,11 +469,12 @@ function ProfileLoadErrorScreen({ onRetry }) {
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    PlusJakartaSans_400Regular,
-    PlusJakartaSans_500Medium,
-    PlusJakartaSans_600SemiBold,
-    PlusJakartaSans_700Bold,
-    PlusJakartaSans_800ExtraBold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+    Nunito_900Black,
   });
 
   if (!fontsLoaded) {
@@ -510,14 +512,14 @@ const styles = StyleSheet.create({
   },
   profileErrorTitle: {
     color: AUTH_PALETTE.brandBlue,
-    fontFamily: 'PlusJakartaSans_800ExtraBold',
+    fontFamily: 'Nunito_800ExtraBold',
     fontSize: 26,
     lineHeight: 34,
     textAlign: 'center',
   },
   profileErrorBody: {
     color: AUTH_PALETTE.textMuted,
-    fontFamily: 'PlusJakartaSans_500Medium',
+    fontFamily: 'Nunito_500Medium',
     fontSize: 15,
     lineHeight: 23,
     maxWidth: 360,
@@ -538,7 +540,7 @@ const styles = StyleSheet.create({
   },
   profileErrorButtonText: {
     color: '#FFFFFF',
-    fontFamily: 'PlusJakartaSans_800ExtraBold',
+    fontFamily: 'Nunito_800ExtraBold',
     fontSize: 14,
     letterSpacing: 0.6,
   },

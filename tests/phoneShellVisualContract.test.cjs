@@ -94,7 +94,8 @@ test('lesson prompts render inside a dedicated learning card with helper copy an
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
   assert.match(source, /function getExerciseHelperText\(exercise\)/);
-  assert.match(source, /<View style=\{styles\.promptCard\}>[\s\S]*?<Text style=\{styles\.prompt\}>\{exercise\?\.prompt\}<\/Text>[\s\S]*?<Text style=\{styles\.promptHelper\}>\{getExerciseHelperText\(exercise\)\}<\/Text>[\s\S]*?<AudioControls/s);
+  assert.match(source, /<View style=\{styles\.promptCard\}>[\s\S]*?<Text style=\{styles\.prompt\}>\{exercise\?\.prompt\}<\/Text>[\s\S]*?<AudioControls/s);
+  assert.match(source, /<Text style=\{styles\.promptHelper\}>\{getExerciseHelperText\(exercise\)\}<\/Text>/);
   assert.match(source, /promptCard:\s*\{/);
   assert.match(source, /promptHelper:\s*\{/);
 });
@@ -261,24 +262,25 @@ test('matching lessons explain both columns, surface pair progress, and announce
   assert.match(source, /<View style=\{styles\.matchHeader\}>[\s\S]*?<Text style=\{styles\.sectionLabel\}>MATCH THE PAIRS<\/Text>[\s\S]*?<Text style=\{styles\.sectionMeta\}>\{matchProgressLabel\}<\/Text>[\s\S]*?<\/View>/s);
   assert.match(source, /<Text style=\{styles\.matchColumnLabel\}>PHRASE<\/Text>[\s\S]*?\{column\(exercise\.leftItems, ['"]left['"]\)\}/s);
   assert.match(source, /<Text style=\{styles\.matchColumnLabel\}>MEANING<\/Text>[\s\S]*?\{column\(exercise\.rightItems, ['"]right['"]\)\}/s);
-  assert.match(source, /const matchStateLabel = matched \? ['"]matched['"] : selected \? ['"]selected['"] : ['"]not selected['"]/);
+  assert.match(source, /const matchStateLabel = matched \? ['"]matched['"] : rejected \? ['"]incorrect match['"] : selected \? ['"]selected['"] : ['"]not selected['"]/);
   assert.match(source, /accessibilityLabel=\{`\$\{side === ['"]left['"] \? ['"]Phrase['"] : ['"]Meaning['"]\}: \$\{item\.value\}, \$\{matchStateLabel\}`\}/);
   assert.match(source, /accessibilityRole=['"]button['"]/);
   assert.match(source, /accessibilityState=\{\{ disabled: Boolean\(feedback\) \|\| matched, selected, checked: matched \}\}/);
   assert.match(source, /AccessibilityInfo\.announceForAccessibility\(matchMessage\)/);
-  assert.match(source, /accessibilityLiveRegion=['"]polite['"][\s\S]*?style=\{styles\.matchMessage\}/s);
+  assert.match(source, /accessibilityLiveRegion=['"]polite['"][\s\S]*?style=\{\[styles\.matchMessage,/s);
   assert.match(source, /matchHeader:\s*\{/);
   assert.match(source, /matchColumnLabel:\s*\{/);
 });
 
-test('every lesson type keeps the animated stage alive by deriving a stable visual concept for the scene', () => {
+test('lesson prompts have a human guide while non-matching exercises retain the animated vocabulary stage', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
   assert.match(source, /function getExerciseVisualConceptId\(exercise\)/);
   assert.match(source, /exercise\?\.imageConceptId \|\| exercise\?\.conceptId \|\| exercise\?\.pairs\?\.\[0\]\?\.conceptId \|\| null/);
   assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
-  assert.match(source, /<View style=\{styles\.scene\}>[\s\S]*?<LessonClouds[\s\S]*?primaryRestingX=\{LESSON_CLOUD_PRIMARY_RESTING_X\}[\s\S]*?secondaryRestingX=\{LESSON_CLOUD_SECONDARY_RESTING_X\}[\s\S]*?reducedMotion=\{reducedMotion\}[\s\S]*?\/>[\s\S]*?<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\} imageRegistry=\{imageRegistry\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<BreathingGuidePortrait guideName=\{topic\.guide \|\| ['"]Kai['"]\} reducedMotion=\{reducedMotion\} style=\{styles\.lessonGuide\} \/>[\s\S]*?<\/View>/s);
-  assert.doesNotMatch(source, /\{!isMatch \?/);
+  assert.match(source, /!isMatch && <View style=\{styles\.scene\}>/);
+  assert.match(source, /<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\}/);
+  assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\}/);
 });
 
 test('the Learn shell surfaces the active topic in a dedicated current-focus card above the grid', () => {

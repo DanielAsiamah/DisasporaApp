@@ -62,6 +62,8 @@ const guideArt = {
   Kai: require('../../../assets/guides/kai.png'),
   Amara: require('../../../assets/guides/amara.png'),
   Sol: require('../../../assets/guides/sol.png'),
+  Nia: require('../../../assets/guides/nia.png'),
+  Kofi: require('../../../assets/guides/kofi.png'),
 };
 
 function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
@@ -276,7 +278,8 @@ function MatchExercise({
         {items.map((item) => {
           const matched = response.matchedPairIds.includes(item.pairId);
           const selected = response.selectedMatch?.id === item.id;
-          const matchStateLabel = matched ? 'matched' : selected ? 'selected' : 'not selected';
+          const rejected = response.rejectedMatchIds?.includes(item.id);
+          const matchStateLabel = matched ? 'matched' : rejected ? 'incorrect match' : selected ? 'selected' : 'not selected';
           return (
             <Pressable
               accessibilityLabel={`${side === 'left' ? 'Phrase' : 'Meaning'}: ${item.value}, ${matchStateLabel}`}
@@ -285,10 +288,11 @@ function MatchExercise({
               disabled={Boolean(feedback) || matched}
               key={item.id}
               onPress={() => choose(side, item)}
-              style={[styles.matchCard, selected && styles.selectedCard, matched && styles.correctCard]}
+              style={[styles.matchCard, selected && styles.selectedCard, matched && styles.correctCard, rejected && styles.wrongCard]}
             >
               <Text style={styles.matchText}>{item.value}</Text>
               {matched ? <Text style={styles.matchCheck}>✓</Text> : null}
+              {rejected ? <Text style={styles.matchError}>Not a match</Text> : null}
             </Pressable>
           );
         })}
@@ -442,6 +446,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const pendingXpReward = useRef(null);
   const xpRequestGeneration = useRef(0);
   const exercise = exercises[index];
+  const promptGuide = [topic?.guide || 'Kai', 'Nia', 'Kofi', 'Amara', 'Sol'][index % 5];
   const nextTopic = useMemo(() => courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null, [courseTopics, topic?.order]);
 
   useEffect(() => {
@@ -738,20 +743,23 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   </Text>
                 </View>
               ) : null}
-              <View style={styles.scene}>
+              {!isMatch && <View style={styles.scene}>
                 <LessonClouds
                   primaryRestingX={LESSON_CLOUD_PRIMARY_RESTING_X}
                   secondaryRestingX={LESSON_CLOUD_SECONDARY_RESTING_X}
                   reducedMotion={reducedMotion}
                 />
                 <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
-                <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.lessonGuide} />
-              </View>
-              <View style={styles.promptCard}>
+              </View>}
+              <View style={styles.promptConversation}>
+                <BreathingGuidePortrait guideName={promptGuide} reducedMotion={reducedMotion} style={styles.promptGuide} />
+                <View style={styles.promptCard}>
+                <Text style={styles.speakerName}>{promptGuide.toUpperCase()}</Text>
                 <Text style={styles.prompt}>{exercise?.prompt}</Text>
-                <Text style={styles.promptHelper}>{getExerciseHelperText(exercise)}</Text>
                 <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
+                </View>
               </View>
+              <Text style={styles.promptHelper}>{getExerciseHelperText(exercise)}</Text>
               {isChoice ? <ChoiceExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
               {isMatch ? (
                 <MatchExercise
@@ -763,7 +771,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   }}
                   onMatchRejected={() => {
                     const mismatchKey = `${audioSessionId.current}:${exercise.id}:${matchAttempt.current}`;
-                    if (audioEventGate.claim('mismatch', mismatchKey)) audio.dispatch({ event: 'answer-accepted', correct: false });
+                    if (audioEventGate.claim('mismatch', mismatchKey)) {
+                      audio.dispatch({ event: 'answer-accepted', correct: false });
+                      setLessonSummary(current => recordCheckedAnswer(current, false));
+                    }
                   }}
                   onMatchSelection={() => { matchAttempt.current += 1; }}
                   response={response}
@@ -772,7 +783,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                 />
               ) : null}
               {isBuild ? <WordTrayExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
-              {isMatch && matchMessage ? <Text accessibilityLiveRegion="polite" style={styles.matchMessage}>{matchMessage}</Text> : null}
+              {isMatch && matchMessage ? <Text accessibilityLiveRegion="polite" style={[styles.matchMessage, response.rejectedMatchIds?.length > 0 && styles.matchMessageWrong]}>{matchMessage}</Text> : null}
               {feedback ? (
                 <Animated.View style={[
                   styles.feedbackCard,
@@ -844,12 +855,12 @@ const styles = StyleSheet.create({
   resultValue: { fontFamily: fonts.extraBold, fontSize: 28, color: NAVY },
   resultLabel: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, color: MUTED, marginTop: 4 },
   root: { backgroundColor: '#FFFFFF', flex: 1 },
-  topBar: { alignItems: 'center', flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingVertical: 14 },
+  topBar: { alignItems: 'center', alignSelf: 'center', width: '100%', maxWidth: 900, flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingVertical: 14 },
   closeText: { color: NAVY, fontFamily: fonts.medium, fontSize: 35, lineHeight: 36 },
   progressTrack: { backgroundColor: '#E4EEF4', borderRadius: 8, flex: 1, height: 10, overflow: 'hidden' },
   progressFill: { backgroundColor: SKY, borderRadius: 8, height: 10 },
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
-  content: { padding: 22, paddingBottom: 132 },
+  content: { alignSelf: 'center', width: '100%', maxWidth: 800, padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
   topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 7 },
   topicModePillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.6 },
@@ -858,14 +869,17 @@ const styles = StyleSheet.create({
   lessonSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, flexShrink: 1, paddingHorizontal: 12, paddingVertical: 8 },
   lessonSummaryLabel: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.7 },
   lessonSummaryValue: { color: NAVY, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12 },
-  promptCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderWidth: 2, marginBottom: 18, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 2 },
-  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 25, lineHeight: 32, textAlign: 'center' },
+  promptConversation: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
+  promptGuide: { width: 92, height: 125, flexShrink: 0 },
+  speakerName: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 6 },
+  promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderBottomLeftRadius: 6, borderWidth: 2, padding: 16 },
+  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 21, lineHeight: 28 },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 18, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
   reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' },
   reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
-  scene: { backgroundColor: PALE, borderRadius: 28, height: 225, marginVertical: 18, overflow: 'hidden' },
-  vocabularyImage: { alignSelf: 'center', height: 220, marginTop: 5, width: '86%', zIndex: 2 },
+  scene: { backgroundColor: PALE, borderRadius: 28, height: 150, flexShrink: 0, marginVertical: 12, overflow: 'hidden' },
+  vocabularyImage: { alignSelf: 'center', height: 145, marginTop: 5, width: '86%', zIndex: 2 },
   lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
   cloudOne: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, height: 34, left: 20, position: 'absolute', top: 34, width: 110 },
   cloudTwo: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, position: 'absolute', right: 18, top: 78, height: 28, width: 92 },
@@ -889,6 +903,8 @@ const styles = StyleSheet.create({
   matchCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 15, borderWidth: 2, justifyContent: 'center', minHeight: 67, padding: 10 },
   matchText: { color: NAVY, fontFamily: fonts.bold, fontSize: 14, textAlign: 'center' },
   matchCheck: { color: GREEN, fontFamily: fonts.extraBold, paddingTop: 3 },
+  matchError: { color: RED, fontFamily: fonts.extraBold, fontSize: 12, paddingTop: 3 },
+  matchMessageWrong: { backgroundColor: '#FFF0F0', borderColor: RED, color: RED },
   matchMessage: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, color: NAVY, fontFamily: fonts.semiBold, marginTop: 14, overflow: 'hidden', paddingHorizontal: 14, paddingVertical: 9, textAlign: 'center' },
   buildArea: { paddingTop: 4 },
   sectionHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 7, paddingTop: 14 },

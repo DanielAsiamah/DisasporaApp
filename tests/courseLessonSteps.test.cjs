@@ -20,19 +20,21 @@ test('Swahili derives the complete silent interaction flow from the verified cou
     hasAudio: () => false,
   });
 
-  assert.equal(exercises.length, 6);
+  assert.equal(exercises.length, 8);
   assert.deepEqual(exercises.map(({ type }) => type), [
     LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
-    LESSON_EXERCISE_TYPES.SENTENCE_BUILD,
+    LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
     LESSON_EXERCISE_TYPES.MATCH_PAIRS,
+    LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
+    LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
+    LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
+    LESSON_EXERCISE_TYPES.SENTENCE_BUILD,
     LESSON_EXERCISE_TYPES.WORD_TRAY,
-    LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
-    LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
   ]);
   assert.equal(exercises[0].prompt, 'What does "Ndiyo" mean?');
   assert.equal(exercises[1].answer, 'Hapana');
-  assert.match(exercises[1].title, /Swahili phrase/);
-  assert.ok(exercises[2].pairs.some(({ localized, meaning }) => localized === 'Labda' && meaning === 'maybe'));
+  assert.match(exercises[1].prompt, /Swahili/);
+  assert.ok(exercises[2].pairs.every(({ localized }) => localized.split(/\s+/).length >= 2));
   assert.equal(exercises[4].answer, 'Sawa');
   assert.equal(exercises[5].answer, 'again');
   assert.doesNotMatch(JSON.stringify(exercises), /\b(?:Nuh|Mebbe|Awright)\b/);

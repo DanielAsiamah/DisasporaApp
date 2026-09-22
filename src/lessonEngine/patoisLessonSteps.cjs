@@ -1,4 +1,5 @@
 const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
+const { normalizeAnswer } = require('./patoisLessonSession.cjs');
 
 const LESSON_EXERCISE_TYPES = Object.freeze({
   TRANSLATE_CHOICE: 'translate-choice',
@@ -248,10 +249,39 @@ function buildCourseTopicExercises(courseId, topicId, {
   const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
   const vocabularyById = new Map(vocabulary.map((row) => [row.conceptId, row]));
   const courseDisplayName = GENERATED_CURRICULUM.courses.find((course) => course.id === courseId)?.displayName || courseId;
-  return materializeCourseLessonSteps(courseId, { concepts, vocabulary, lessonSteps })
-    .filter((step) => step.topicId === topicId)
+  const materialized = materializeCourseLessonSteps(courseId, { concepts, vocabulary, lessonSteps });
+  let steps = materialized.filter((step) => step.topicId === topicId)
     .sort((left, right) => left.order - right.order)
-    .map((step) => createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName));
+    .map(step => ({ ...step }));
+
+  // Introduce real conversational phrases immediately using existing workbook rows.
+  if (topicId === 'getting-started') {
+    const greetings = materialized.filter(step => step.topicId === 'easy-greetings');
+    const phraseMatch = greetings.find(step => step.exerciseType === 'match-pairs');
+    if (phraseMatch) steps = steps.map(step => step.exerciseType === 'match-pairs'
+      ? { ...phraseMatch, id: `${phraseMatch.id}-intro`, sourceStepId: phraseMatch.id, primary: false }
+      : step);
+    steps.push(...greetings.filter(step => (
+      ['sentence-build-target', 'word-tray-meaning'].includes(step.exerciseType)
+      && tokenizeAnswer(step.answer).length >= 3
+    )).slice(0, 2).map(step => ({
+      ...step, id: `${step.id}-intro`, sourceStepId: step.id, primary: false,
+    })));
+  }
+
+  return steps.flatMap(step => {
+    const row = vocabularyById.get(step.conceptId);
+    const concept = conceptById.get(step.conceptId);
+    const isListening = step.exerciseType === 'listen-choice' && hasAudio(step.conceptId, row);
+    if (row && concept && !isListening && normalizeAnswer(row.localized) === normalizeAnswer(concept.meaning)) return [];
+    let exercise = createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName);
+    if (exercise.answerTokens?.length === 1) {
+      const target = step.exerciseType === 'sentence-build-target';
+      exercise = createChoiceExercise(step, row, LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
+        target ? `Choose the ${courseDisplayName} for "${concept.meaning}".` : `What does "${row.localized}" mean?`);
+    }
+    return [{ ...exercise, sourceStepId: step.sourceStepId || step.id }];
+  });
 }
 
 function buildPatoisTopicExercises(topicId, options = {}) {

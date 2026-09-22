@@ -63,7 +63,7 @@ test('the complete hidden Swahili journey is answerable and silent', () => {
   ));
 
   assert.equal(swahiliTopics.length, 9);
-  assert.equal(exercises.length, 64);
+  assert.equal(exercises.length, 66);
   assert.ok(exercises.every(({ type }) => type !== LESSON_EXERCISE_TYPES.LISTEN_CHOICE));
   assert.ok(exercises.every(({ audioPath, voiceId }) => !audioPath && !voiceId));
 

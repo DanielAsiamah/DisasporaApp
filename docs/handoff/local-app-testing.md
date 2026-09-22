@@ -77,9 +77,9 @@ Chromium. `DIASPORA_PLAYWRIGHT_MODULE` can point at an existing Playwright
 installation instead of installing it into this repository.
 
 The test creates a disposable emulator account, completes onboarding, deliberately
-answers incorrectly and retries, completes all six first-topic exercises, checks
-60 saved XP and 86% accuracy over seven checked answers, reloads to verify progress,
-and joins/leaves the leaderboard. It blocks production Auth/Firestore requests
+answers incorrectly and mismatches one phrase pair before retrying, completes the
+first topic, checks saved XP and accuracy derived from its current exercises,
+reloads to verify progress, and joins/leaves the leaderboard. It blocks production Auth/Firestore requests
 before opening the app and fails if any are attempted. Screenshots are written
 under ignored `outputs/browser-smoke/`. Do not point this test at a live backend.
 
@@ -118,3 +118,10 @@ On 2026-09-22, Swahili's first-topic regression passed: wrong-answer retry, six
 completed exercises, 60 confirmed XP, 86% accuracy, progress retained after reload,
 and leaderboard join/leave. No page errors or production Auth/Firestore requests
 were recorded. This verifies the local web preview, not Expo Go on a device.
+
+The subsequent friendly-lesson refresh changes the introduction to seven Patois
+exercises and eight Swahili exercises, including workbook-backed phrase practice.
+Current regression totals are 70 XP / 78% accuracy for Patois and 80 XP / 80%
+accuracy for Swahili after one wrong answer and one mismatched pair. The earlier
+six-exercise figures above describe the previous build, not the current course.
+See `lesson-experience-refresh.md` for the content and presentation changes.

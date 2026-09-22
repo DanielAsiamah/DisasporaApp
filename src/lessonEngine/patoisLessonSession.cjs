@@ -10,7 +10,7 @@ function normalizeAnswer(value) {
 
 function createExerciseResponse(exercise = {}) {
   if (exercise.type === 'match-pairs') {
-    return { selectedMatch: null, matchedPairIds: [] };
+    return { selectedMatch: null, matchedPairIds: [], rejectedMatchIds: [] };
   }
   if (exercise.type === 'sentence-build' || exercise.type === 'word-tray') {
     return { builtWords: [] };
@@ -22,20 +22,25 @@ function selectMatchItem(response, item) {
   const current = {
     selectedMatch: response?.selectedMatch || null,
     matchedPairIds: [...(response?.matchedPairIds || [])],
+    rejectedMatchIds: [...(response?.rejectedMatchIds || [])],
   };
   if (!item || current.matchedPairIds.includes(item.pairId)) {
     return { response: current, status: 'ignored' };
   }
   if (!current.selectedMatch || current.selectedMatch.side === item.side) {
-    return { response: { ...current, selectedMatch: item }, status: 'selected' };
+    return { response: { ...current, selectedMatch: item, rejectedMatchIds: [] }, status: 'selected' };
   }
   if (current.selectedMatch.pairId !== item.pairId) {
-    return { response: { ...current, selectedMatch: null }, status: 'mismatch' };
+    return {
+      response: { ...current, selectedMatch: null, rejectedMatchIds: [current.selectedMatch.id, item.id] },
+      status: 'mismatch',
+    };
   }
   return {
     response: {
       selectedMatch: null,
       matchedPairIds: [...new Set([...current.matchedPairIds, item.pairId])],
+      rejectedMatchIds: [],
     },
     status: 'matched',
     matchedPairId: item.pairId,

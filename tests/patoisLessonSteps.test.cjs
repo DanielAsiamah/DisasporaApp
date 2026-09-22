@@ -41,7 +41,7 @@ test('listening is included only for an available pre-generated clip', () => {
   assert.equal(withAudio.find(({ type }) => type === LESSON_EXERCISE_TYPES.LISTEN_CHOICE).conceptId, 'have-a-good-day');
 });
 
-test('the seven teaching topics cover all 39 concepts exactly once as their primary exercises', () => {
+test('teaching topics retain primary coverage except identical-word translation quizzes', () => {
   const primaryConceptIds = TOPICS.filter(({ type }) => type === 'lesson').flatMap(({ id }) =>
     buildPatoisTopicExercises(id, {
       concepts: CONCEPTS,
@@ -52,8 +52,24 @@ test('the seven teaching topics cover all 39 concepts exactly once as their prim
       .map(({ conceptId }) => conceptId)
   );
 
-  assert.equal(primaryConceptIds.length, 39);
-  assert.deepEqual([...new Set(primaryConceptIds)].sort(), CONCEPTS.map(({ id }) => id).sort());
+  const usefulConcepts = CONCEPTS.filter(concept => {
+    const row = JAMAICAN_PATOIS_VOCABULARY.find(row => row.conceptId === concept.id);
+    return row.localized.toLowerCase() !== concept.meaning.toLowerCase();
+  });
+  assert.equal(primaryConceptIds.length, usefulConcepts.length);
+  assert.deepEqual([...new Set(primaryConceptIds)].sort(), usefulConcepts.map(({ id }) => id).sort());
+});
+
+test('the introductory topic progresses to workbook-backed phrases instead of Again-to-again', () => {
+  const exercises = buildPatoisTopicExercises('getting-started');
+  assert.ok(!exercises.some(exercise => exercise.conceptId === 'again'));
+  const builds = exercises.filter(exercise => exercise.answerTokens);
+  assert.ok(builds.length >= 2);
+  assert.ok(builds.every(exercise => exercise.answerTokens.length >= 3));
+  const matching = exercises.find(exercise => exercise.type === 'match-pairs');
+  assert.ok(matching.pairs.every(pair => tokenizeAnswer(pair.localized).length >= 2));
+  assert.ok(exercises.some(exercise => exercise.sourceStepId.includes('easy-greetings')));
+  assert.equal(new Set(exercises.map(exercise => exercise.id)).size, exercises.length);
 });
 
 test('exercise generation is deterministic and match pairs never duplicate concepts', () => {

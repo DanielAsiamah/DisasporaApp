@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 
 import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
+import { COURSE_CATALOG } from '../data/courseCatalog.cjs';
+import { buildWelcomeCourseSummary } from '../data/welcomeCourseSummary.cjs';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { fonts, radius, spacing } from '../theme';
 
@@ -47,29 +49,7 @@ const GUIDE_STRIP = [
   },
 ];
 
-const COURSE_LANES = [
-  {
-    id: 'english',
-    title: 'English speakers',
-    caption: 'Jamaican Patois · Swahili',
-    detail: 'Start with live MVP lessons rooted in culture and conversation.',
-    color: '#22B65D',
-  },
-  {
-    id: 'french',
-    title: 'French speakers',
-    caption: 'Wolof · Haitian Creole',
-    detail: 'Build from familiar French into diaspora languages step by step.',
-    color: '#F4B942',
-  },
-  {
-    id: 'arabic',
-    title: 'Arabic speakers',
-    caption: 'Sudanese Arabic · Nobiin',
-    detail: 'Move through greetings, family words, and confidence-building practice.',
-    color: palette.sky,
-  },
-];
+const courseSummary = buildWelcomeCourseSummary(COURSE_CATALOG);
 
 export default function WelcomeScreen({ onGetStarted, onSignIn }) {
   const reducedMotion = useReducedMotion(null);
@@ -133,11 +113,11 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
 
             <View style={styles.heroCopy}>
               <View style={styles.heroPill}>
-                <Text style={styles.heroPillText}>Six live MVP courses</Text>
+                <Text style={styles.heroPillText}>{courseSummary.headline}</Text>
               </View>
               <Text style={styles.title}>Languages carry us home</Text>
               <Text style={styles.subtitle}>
-                Start with six live MVP courses: Jamaican Patois, Swahili, Wolof, Haitian Creole, Sudanese Arabic, and Nobiin.
+                {courseSummary.description}
               </Text>
             </View>
 
@@ -152,9 +132,9 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
             </View>
 
             <View style={styles.lanesSection}>
-              <Text style={styles.sectionHeader}>Choose your lane in onboarding</Text>
+              <Text style={styles.sectionHeader}>Explore our language paths</Text>
               <View style={styles.lanesGrid}>
-                {COURSE_LANES.map((lane) => (
+                {courseSummary.lanes.map((lane) => (
                   <Pressable
                     accessibilityRole="button"
                     key={lane.id}

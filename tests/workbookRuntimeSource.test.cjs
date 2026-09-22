@@ -102,7 +102,16 @@ test('runtime curriculum adapters expose only workbook-generated content', () =>
 
   const runtimeSteps = TOPICS.flatMap(({ id }) => buildPatoisTopicExercises(id, { hasAudio: () => true }));
   const workbookSteps = GENERATED_CURRICULUM.lessonSteps.filter(({ courseId }) => courseId === 'jamaican-patois');
-  assert.deepEqual(runtimeSteps.map(({ sourceStepId }) => sourceStepId), workbookSteps.map(({ id }) => id));
+  const workbookById = new Map(workbookSteps.map(step => [step.id, step]));
+  for (const exercise of runtimeSteps) {
+    const source = workbookById.get(exercise.sourceStepId);
+    assert.ok(source, `${exercise.id} must trace to a real workbook step`);
+    assert.equal(exercise.answer, source.answer);
+    assert.equal(exercise.conceptId ?? null, source.conceptId);
+    if (exercise.pairs) {
+      assert.deepEqual(exercise.pairs.map(pair => pair.conceptId), source.conceptRefs);
+    }
+  }
 });
 
 test('the content build command regenerates the canonical workbook projection', () => {

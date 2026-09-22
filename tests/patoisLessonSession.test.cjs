@@ -24,6 +24,8 @@ test('matching accepts only opposite sides of the same pair', () => {
   assert.equal(left.status, 'selected');
   assert.equal(mismatch.status, 'mismatch');
   assert.deepEqual(mismatch.response.matchedPairIds, []);
+  assert.deepEqual(mismatch.response.rejectedMatchIds, ['left-yes', 'right-no']);
+  assert.deepEqual(retryLeft.response.rejectedMatchIds, []);
   assert.equal(accepted.status, 'matched');
   assert.deepEqual(accepted.response.matchedPairIds, ['yes']);
 });

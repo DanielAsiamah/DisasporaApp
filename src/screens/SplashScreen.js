@@ -3,8 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { AUTH_PALETTE } from '../components/AuthScreenFrame';
+import { COURSE_CATALOG } from '../data/courseCatalog.cjs';
+import { buildWelcomeCourseSummary } from '../data/welcomeCourseSummary.cjs';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { fonts } from '../theme';
+
+const courseSummary = buildWelcomeCourseSummary(COURSE_CATALOG);
 
 const PHASES = [
   {
@@ -17,8 +21,8 @@ const PHASES = [
   },
   {
     key: 'courses',
-    line: 'Six live MVP courses',
-    subline: 'Jamaican Patois · Swahili · Wolof · Haitian Creole · Sudanese Arabic · Nobiin',
+    line: courseSummary.headline,
+    subline: courseSummary.description,
     accent: AUTH_PALETTE.sky,
     gradient: ['#EEF9FF', '#FFFFFF', '#F3FBFF'],
     duration: 1600,

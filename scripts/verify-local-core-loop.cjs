@@ -1,4 +1,5 @@
 const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwright');
+const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 (async () => {
   const appUrl = new URL(process.env.DIASPORA_APP_URL || 'http://localhost:8086');
   if (!['localhost', '127.0.0.1'].includes(appUrl.hostname) || appUrl.protocol !== 'http:') throw new Error('Only local emulator previews may be tested.');
@@ -10,6 +11,14 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
   const browser = await chromium.launch({ headless: true, executablePath: process.env.DIASPORA_CHROMIUM_EXECUTABLE || undefined });
   try {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    await page.addInitScript(() => {
+      window.__lessonAudioPlays = [];
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function (...args) {
+        window.__lessonAudioPlays.push(this.src);
+        return play.apply(this, args);
+      };
+    });
     const errors = [];
     const blocked = [];
     page.on('pageerror', (error) => errors.push(error.message));
@@ -46,7 +55,8 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
       hasAudio: () => false,
     });
     const expectedXp = exercises.length * CORRECT_ANSWER_XP;
-    const expectedAccuracy = Math.round(exercises.length / (exercises.length + 1) * 100);
+    const checkedAnswers = exercises.length + 1 + exercises.filter(exercise => exercise.pairs).length;
+    const expectedAccuracy = Math.round(exercises.length / checkedAnswers * 100);
     const topicCount = curriculum.topics.filter(topic => topic.courseId === courseId).length;
     const first = exercises[0];
     const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
@@ -59,9 +69,32 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
       } else if (exercise.answerTokens) {
         for (const token of exercise.answerTokens) await page.getByRole('button', { name: `Add word: ${token}`, exact: true }).click();
       } else {
+        const firstPair = exercise.pairs[0];
+        const wrongPair = exercise.pairs[1];
+        await page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(firstPair.localized)},`) }).click();
+        const playsBefore = await page.evaluate(() => window.__lessonAudioPlays.length);
+        await page.getByRole('button', { name: new RegExp(`^Meaning: ${escapePattern(wrongPair.meaning)},`) }).click();
+        const rejected = page.getByRole('button', { name: /incorrect match$/ });
+        if (await rejected.count() !== 2) throw new Error('Both mismatched cards must stay visibly rejected.');
+        const rejectedColor = await rejected.first().evaluate(node => getComputedStyle(node).backgroundColor);
+        if (rejectedColor !== 'rgb(255, 240, 240)') throw new Error(`Expected red mismatch background, got ${rejectedColor}`);
+        const font = await page.getByText('Not a match', { exact: true }).first().evaluate(node => getComputedStyle(node).fontFamily);
+        if (!font.includes('Nunito')) throw new Error(`Expected friendly Nunito font, got ${font}`);
+        const playsAfter = await page.evaluate(() => window.__lessonAudioPlays);
+        if (playsAfter.length !== playsBefore + 1 || !playsAfter.at(-1).includes('wrong')) throw new Error('Mismatch must trigger the wrong-answer sound once.');
+        await rejected.first().scrollIntoViewIfNeeded();
+        await page.screenshot({ path: `outputs/browser-smoke/mismatch-${courseId}.png` });
+        await page.setViewportSize({ width: 1440, height: 900 });
+        const desktopBounds = await rejected.first().boundingBox();
+        if (!desktopBounds || desktopBounds.width > 400) throw new Error('Desktop lesson cards must remain in a readable centered column.');
+        const fontLoaded = await page.evaluate(() => document.fonts.check('16px "Nunito_800ExtraBold"'));
+        if (!fontLoaded) throw new Error('Nunito must actually load, not fall back to a browser font.');
+        await page.screenshot({ path: `outputs/browser-smoke/mismatch-desktop-${courseId}.png` });
+        await page.setViewportSize({ width: 390, height: 844 });
+        console.log('Rejected pair: two red cards, Nunito font, incorrect sound triggered once.');
         for (const pair of exercise.pairs) {
-          await page.getByRole('button', { name: new RegExp(`^Phrase: ${pair.localized},`) }).click();
-          await page.getByRole('button', { name: new RegExp(`^Meaning: ${pair.meaning},`) }).click();
+          await page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(pair.localized)},`) }).click();
+          await page.getByRole('button', { name: new RegExp(`^Meaning: ${escapePattern(pair.meaning)},`) }).click();
         }
       }
       await page.getByRole('button', { name: 'Check answer', exact: true }).click();
@@ -69,7 +102,7 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
     }
     await page.getByText('Topic complete!', { exact: true }).waitFor();
     await page.getByLabel(`${expectedXp} XP saved this lesson`, { exact: true }).waitFor();
-    await page.getByLabel(`${expectedAccuracy} percent accuracy across ${exercises.length + 1} checked answers`, { exact: true }).waitFor();
+    await page.getByLabel(`${expectedAccuracy} percent accuracy across ${checkedAnswers} checked answers`, { exact: true }).waitFor();
     console.log(JSON.stringify({ stage: 'completion', text: await page.locator('body').innerText() }));
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     await page.reload();
