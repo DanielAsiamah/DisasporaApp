@@ -1,5 +1,9 @@
 const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwright');
 (async () => {
+  const appUrl = new URL(process.env.DIASPORA_APP_URL || 'http://localhost:8086');
+  if (!['localhost', '127.0.0.1'].includes(appUrl.hostname) || appUrl.protocol !== 'http:') throw new Error('Only local emulator previews may be tested.');
+  const courseId = process.env.DIASPORA_TEST_COURSE || 'jamaican-patois';
+  if (!['jamaican-patois', 'swahili'].includes(courseId)) throw new Error('This test supports Patois and the opt-in Swahili preview.');
   require('node:fs').mkdirSync('outputs/browser-smoke', { recursive: true });
   const hub = await fetch('http://127.0.0.1:4400/emulators', { signal: AbortSignal.timeout(5000) }).then(response => response.json());
   if (!hub.auth || !hub.firestore) throw new Error('Start the local Firebase emulators first.');
@@ -13,7 +17,7 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
       blocked.push(new URL(route.request().url()).hostname);
       return route.abort();
     });
-    await page.goto('http://localhost:8086', { timeout: 120000 });
+    await page.goto(appUrl.href, { timeout: 120000 });
     await page.getByText('START YOUR PATH', { exact: true }).click({ timeout: 120000 });
     await page.getByLabel('Preferred name', { exact: true }).fill('Local Learner');
     await page.getByRole('button', { name: 'CONTINUE', exact: true }).click();
@@ -35,11 +39,15 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
     const { GENERATED_CURRICULUM: curriculum } = require('../src/data/generatedCurriculum.cjs');
     const { CONCEPTS } = require('../src/data/curriculumContract.cjs');
     const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
-    const exercises = buildCourseTopicExercises('jamaican-patois', 'getting-started', {
+    const { CORRECT_ANSWER_XP } = require('../src/lessonEngine/lessonXpReward.cjs');
+    const exercises = buildCourseTopicExercises(courseId, 'getting-started', {
       concepts: CONCEPTS,
-      vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === 'jamaican-patois'),
+      vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
       hasAudio: () => false,
     });
+    const expectedXp = exercises.length * CORRECT_ANSWER_XP;
+    const expectedAccuracy = Math.round(exercises.length / (exercises.length + 1) * 100);
+    const topicCount = curriculum.topics.filter(topic => topic.courseId === courseId).length;
     const first = exercises[0];
     const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
     await page.getByRole('radio', { name: `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`, exact: true }).click();
@@ -60,14 +68,14 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
       await page.getByRole('button', { name: 'Continue lesson', exact: true }).click({ timeout: 20000 });
     }
     await page.getByText('Topic complete!', { exact: true }).waitFor();
-    await page.getByLabel('60 XP saved this lesson', { exact: true }).waitFor();
-    await page.getByLabel('86 percent accuracy across 7 checked answers', { exact: true }).waitFor();
+    await page.getByLabel(`${expectedXp} XP saved this lesson`, { exact: true }).waitFor();
+    await page.getByLabel(`${expectedAccuracy} percent accuracy across ${exercises.length + 1} checked answers`, { exact: true }).waitFor();
     console.log(JSON.stringify({ stage: 'completion', text: await page.locator('body').innerText() }));
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     await page.reload();
-    await page.getByText('1 of 9 topics complete', { exact: true }).waitFor({ timeout: 60000 });
-    await page.getByLabel('60 experience points', { exact: true }).waitFor();
-    console.log('Reload preserved 60 XP and 1 completed topic.');
+    await page.getByText(`1 of ${topicCount} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
+    await page.getByLabel(`${expectedXp} experience points`, { exact: true }).waitFor();
+    console.log(`Reload preserved ${expectedXp} XP and 1 completed topic for ${courseId}.`);
     await page.getByRole('tab', { name: /Leaderboard, 2 of 2/ }).click();
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).click();
     await page.getByRole('button', { name: 'Leave leaderboard', exact: true }).waitFor();
@@ -77,7 +85,7 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).waitFor();
     console.log('Leaderboard opt-in and opt-out completed.');
     console.log(JSON.stringify({ text: await page.locator('body').innerText(), errors, blocked }));
-    await page.screenshot({ path: 'outputs/browser-smoke/core-loop.png', fullPage: true });
+    await page.screenshot({ path: `outputs/browser-smoke/core-loop-${courseId}.png`, fullPage: true });
     if (errors.length || blocked.length) throw new Error('Browser errors or production request attempted');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

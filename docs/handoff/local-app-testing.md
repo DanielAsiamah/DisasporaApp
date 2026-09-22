@@ -89,3 +89,32 @@ playback promises to the existing controller's error handler. Native Expo Audio
 and the approved-phrase policy remain unchanged. After a clean Metro restart,
 the full retry, completion, reload, and leaderboard regression passed with no
 page errors or production requests.
+
+## Swahili Developer Preview
+
+With the same local emulators running, start a separate preview:
+
+```sh
+EXPO_PUBLIC_USE_FIREBASE_EMULATORS=true \
+EXPO_PUBLIC_PREVIEW_COURSE_ID=swahili \
+EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW=true \
+npx expo start --web --go --port 8087
+```
+
+Run the browser regression with the Playwright/browser overrides above if needed:
+
+```sh
+DIASPORA_TEST_COURSE=swahili DIASPORA_APP_URL=http://localhost:8087 \
+npm run test:app:browser
+```
+
+The runner accepts only loopback HTTP app URLs and derives exercises, XP, accuracy,
+and topic counts from the selected runtime curriculum. Onboarding still selects
+Patois; the explicit development override selects Swahili for the lesson screen.
+This is not proof that Swahili is selectable through normal onboarding or ready
+for publication. Its native-speaker review gate remains unchanged.
+
+On 2026-09-22, Swahili's first-topic regression passed: wrong-answer retry, six
+completed exercises, 60 confirmed XP, 86% accuracy, progress retained after reload,
+and leaderboard join/leave. No page errors or production Auth/Firestore requests
+were recorded. This verifies the local web preview, not Expo Go on a device.
