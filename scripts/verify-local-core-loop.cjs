@@ -9,8 +9,10 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const hub = await fetch('http://127.0.0.1:4400/emulators', { signal: AbortSignal.timeout(5000) }).then(response => response.json());
   if (!hub.auth || !hub.firestore) throw new Error('Start the local Firebase emulators first.');
   const browser = await chromium.launch({ headless: true, executablePath: process.env.DIASPORA_CHROMIUM_EXECUTABLE || undefined });
+  let page;
+  const errors = [];
   try {
-    const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     await page.addInitScript(() => {
       window.__lessonAudioPlays = [];
       const play = HTMLMediaElement.prototype.play;
@@ -19,7 +21,6 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         return play.apply(this, args);
       };
     });
-    const errors = [];
     const blocked = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.route(/https:\/\/(identitytoolkit|firestore|securetoken)\.googleapis\.com\//, (route) => {
@@ -49,25 +50,46 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const { CONCEPTS } = require('../src/data/curriculumContract.cjs');
     const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
     const { CORRECT_ANSWER_XP } = require('../src/lessonEngine/lessonXpReward.cjs');
-    const exercises = buildCourseTopicExercises(courseId, 'getting-started', {
+    const topics = curriculum.topics.filter(topic => topic.courseId === courseId).sort((a, b) => a.order - b.order);
+    const testedTopics = process.env.DIASPORA_TEST_FULL_CHAPTER === 'true' ? topics : topics.slice(0, 1);
+    let totalXp = 0;
+    for (const [topicIndex, topic] of testedTopics.entries()) {
+    const exercises = buildCourseTopicExercises(courseId, topic.id, {
       concepts: CONCEPTS,
       vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
       hasAudio: () => false,
     });
     const expectedXp = exercises.length * CORRECT_ANSWER_XP;
-    const checkedAnswers = exercises.length + 1 + exercises.filter(exercise => exercise.pairs).length;
+    const checkedAnswers = exercises.length + (topicIndex === 0 ? 1 : 0) + exercises.filter(exercise => exercise.pairs).length;
     const expectedAccuracy = Math.round(exercises.length / checkedAnswers * 100);
-    const topicCount = curriculum.topics.filter(topic => topic.courseId === courseId).length;
+    if (topicIndex === 0) {
     const first = exercises[0];
     const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
     await page.getByRole('radio', { name: `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`, exact: true }).click();
     await page.getByRole('button', { name: 'Check answer', exact: true }).click();
     await page.getByRole('button', { name: 'Try again', exact: true }).click();
+    }
     for (const exercise of exercises) {
       if (exercise.choices) {
         await page.getByRole('radio', { name: `${exercise.answer}, answer ${exercise.choices.indexOf(exercise.answer) + 1} of ${exercise.choices.length}`, exact: true }).click();
       } else if (exercise.answerTokens) {
-        for (const token of exercise.answerTokens) await page.getByRole('button', { name: `Add word: ${token}`, exact: true }).click();
+        const used = new Set();
+        const selected = [];
+        for (const token of exercise.answerTokens) {
+          const index = exercise.wordBank.findIndex((word, index) => word === token && !used.has(index));
+          if (index < 0) throw new Error(`Missing word-bank token: ${token}`);
+          used.add(index);
+          const duplicate = exercise.wordBank.filter(word => word === token).length > 1;
+          const name = `Add word: ${token}${duplicate ? `, option ${index + 1}` : ''}`;
+          await page.getByRole('button', { name, exact: true }).click();
+          selected.push({ token, name });
+          await page.getByText(`${selected.length} words placed`, { exact: true }).waitFor();
+        }
+        const last = selected.at(-1);
+        await page.getByRole('button', { name: `Remove word: ${last.token}, position ${selected.length} of ${selected.length}`, exact: true }).click();
+        await page.getByText(`${selected.length - 1} words placed`, { exact: true }).waitFor();
+        await page.getByRole('button', { name: last.name, exact: true }).click();
+        await page.getByText(`${selected.length} words placed`, { exact: true }).waitFor();
       } else {
         const firstPair = exercise.pairs[0];
         const wrongPair = exercise.pairs[1];
@@ -100,15 +122,21 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByRole('button', { name: 'Check answer', exact: true }).click();
       await page.getByRole('button', { name: 'Continue lesson', exact: true }).click({ timeout: 20000 });
     }
-    await page.getByText('Topic complete!', { exact: true }).waitFor();
+    await page.getByText(/^(Topic|Review|Challenge) complete!$/).waitFor();
     await page.getByLabel(`${expectedXp} XP saved this lesson`, { exact: true }).waitFor();
     await page.getByLabel(`${expectedAccuracy} percent accuracy across ${checkedAnswers} checked answers`, { exact: true }).waitFor();
     console.log(JSON.stringify({ stage: 'completion', text: await page.locator('body').innerText() }));
+    totalXp += expectedXp;
+    console.log(`Completed ${topic.id}: ${exercises.length} exercises, ${expectedXp} XP saved.`);
+    if (topicIndex + 1 < testedTopics.length) {
+      await page.getByRole('button', { name: `Start next topic: ${testedTopics[topicIndex + 1].title}`, exact: true }).click();
+    }
+    }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     await page.reload();
-    await page.getByText(`1 of ${topicCount} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
-    await page.getByLabel(`${expectedXp} experience points`, { exact: true }).waitFor();
-    console.log(`Reload preserved ${expectedXp} XP and 1 completed topic for ${courseId}.`);
+    await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
+    await page.getByLabel(`${totalXp} experience points`, { exact: true }).waitFor();
+    console.log(`Reload preserved ${totalXp} XP and ${testedTopics.length} completed topics for ${courseId}.`);
     await page.getByRole('tab', { name: /Leaderboard, 2 of 2/ }).click();
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).click();
     await page.getByRole('button', { name: 'Leave leaderboard', exact: true }).waitFor();
@@ -120,5 +148,11 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     console.log(JSON.stringify({ text: await page.locator('body').innerText(), errors, blocked }));
     await page.screenshot({ path: `outputs/browser-smoke/core-loop-${courseId}.png`, fullPage: true });
     if (errors.length || blocked.length) throw new Error('Browser errors or production request attempted');
+  } catch (error) {
+    if (page) {
+      console.error(JSON.stringify({ stage: 'failure', errors, text: await page.locator('body').innerText().catch(() => '') }));
+      await page.screenshot({ path: `outputs/browser-smoke/failure-${courseId}.png` }).catch(() => {});
+    }
+    throw error;
   } finally { await browser.close(); }
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

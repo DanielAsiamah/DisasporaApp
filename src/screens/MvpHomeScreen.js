@@ -632,7 +632,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal courseId={storageCourseId} key={storageKey} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
+      <PatoisLessonModal courseId={storageCourseId} key={`${storageKey}:${activeTopic?.id || 'closed'}`} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
     </SafeAreaView>
   );
 }

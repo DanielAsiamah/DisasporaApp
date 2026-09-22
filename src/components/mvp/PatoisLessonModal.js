@@ -346,7 +346,7 @@ function AudioControls({ conceptId, controller, hasAudio }) {
 
 function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   const usedIndexes = new Set(response.builtWords.map(({ index }) => index));
-  const answerProgressLabel = `${response.builtWords.length} / ${exercise.wordBank.length} words placed`;
+  const answerProgressLabel = `${response.builtWords.length} words placed`;
   return (
     <View style={styles.buildArea}>
       <View style={styles.sectionHeader}>

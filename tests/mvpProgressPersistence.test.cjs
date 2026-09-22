@@ -84,7 +84,7 @@ test('account and course progress live in a storage-keyed shell that remounts le
 
   assert.match(source, /<MvpHomeCourseShell[\s\S]*?key=\{storageKey\}[\s\S]*?storageCourseId=\{storageCourseId\}[\s\S]*?storageKey=\{storageKey\}/s);
   assert.match(source, /function MvpHomeCourseShell\(\{ previewCourseId, storageCourseId, storageKey \}\)/);
-  assert.match(source, /<PatoisLessonModal[\s\S]*?key=\{storageKey\}[\s\S]*?visible=\{Boolean\(activeTopic\) && progressReady\}/s);
+  assert.match(source, /<PatoisLessonModal[\s\S]*?key=\{`\$\{storageKey\}:\$\{activeTopic\?\.id \|\| 'closed'\}`\}[\s\S]*?visible=\{Boolean\(activeTopic\) && progressReady\}/s);
 });
 
 test('course progress keys isolate users and courses while making guest progress explicit', () => {

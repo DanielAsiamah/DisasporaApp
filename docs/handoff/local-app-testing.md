@@ -125,3 +125,29 @@ Current regression totals are 70 XP / 78% accuracy for Patois and 80 XP / 80%
 accuracy for Swahili after one wrong answer and one mismatched pair. The earlier
 six-exercise figures above describe the previous build, not the current course.
 See `lesson-experience-refresh.md` for the content and presentation changes.
+
+## Full Chapter Regression
+
+Set `DIASPORA_TEST_FULL_CHAPTER=true` when running `npm run test:app:browser` to
+walk every topic, including review and challenge, using the completion screen's
+Start Next Topic button. The default remains the shorter first-topic check.
+The course and local app URL overrides above still apply.
+
+Every sentence-building exercise adds the actual answer tokens, removes the last
+word, and adds it again. Repeated tokens are selected by their unique word-bank
+indices. The counter reports words placed, not a fraction of the bank, because
+the bank also contains distractors. At the end, the runner reloads and verifies
+the whole chapter's completed-topic count and cumulative XP, then joins/leaves
+the leaderboard. Failures capture page errors, visible text, and a screenshot.
+
+This longer test exposed a blank-screen transition from Polite Conversation to
+Introducing Others: the previous response shape was read against a new topic's
+exercise before the reset effect ran. The lesson instance is now keyed by both
+learner/course storage scope and active topic, so the new topic starts with fresh
+response state and old XP callbacks are invalidated during unmount.
+
+Verified on 2026-09-22 after the fix: all nine Patois topics completed through
+the browser UI, totaling 58 exercises and 580 saved XP. Reload retained all nine
+completed topics and 580 XP. Leaderboard join/leave passed, with no page errors
+or attempted production Auth/Firestore requests. This covers the current Patois
+preview chapter, not the unfilled master curriculum or physical-device testing.

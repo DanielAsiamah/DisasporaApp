@@ -4,6 +4,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 
+test('advancing topics remounts the lesson before old response state can render a new exercise', () => {
+  assert.match(read('src/screens/MvpHomeScreen.js'), /key=\{`\$\{storageKey\}:\$\{activeTopic\?\.id \|\| 'closed'\}`\}/);
+});
+
 test('theme and root load all friendly Nunito font weights', () => {
   for (const weight of ['400Regular', '500Medium', '600SemiBold', '700Bold', '800ExtraBold', '900Black']) {
     assert.ok(read('src/theme.js').includes(`Nunito_${weight}`));
