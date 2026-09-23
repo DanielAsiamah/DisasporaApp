@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '../context/AuthContext';
 import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
+import LearnerAccountPanel from '../components/mvp/LearnerAccountPanel';
 import CourseRoadmap from '../components/mvp/CourseRoadmap';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { fonts } from '../theme';
@@ -340,7 +341,7 @@ function Leaderboard({ profile, reducedMotion }) {
   );
 }
 
-export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCourseId = null }) {
+export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCourseId = null, onSignedOut }) {
   const { user } = useAuth();
   const requestedCourseId = courseId === 'patois' ? 'jamaican-patois' : courseId;
   const requestedCourse = getCourseById(requestedCourseId);
@@ -355,12 +356,14 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
       previewCourseId={previewCourseId}
       storageCourseId={storageCourseId}
       storageKey={storageKey}
+      onSignedOut={onSignedOut}
     />
   );
 }
 
-function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
-  const { awardCorrectAnswerXp, loadLanguageProgress, profile, syncLanguageProgress, user } = useAuth();
+function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSignedOut }) {
+  const { awardCorrectAnswerXp, loadLanguageProgress, profile, signOut, syncLanguageProgress, user } = useAuth();
+  const [accountOpen, setAccountOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState('learn');
   const [progressSnapshot, setProgressSnapshot] = useState(() => createProgressSnapshot(null));
@@ -536,6 +539,9 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
             <View style={styles.brandRow}>
               <View style={styles.flagBadge}><Text style={styles.flag}>{coreLoopView.courseIdentity.flag}</Text></View>
               <Text style={styles.brand}>Diaspora</Text>
+              <Pressable accessibilityRole="button" accessibilityLabel="Account" accessibilityState={{ expanded: accountOpen }} onPress={() => setAccountOpen(open => !open)} style={styles.accountButton}>
+                <Ionicons accessible={false} color={NAVY} name="person-circle-outline" size={27} />
+              </Pressable>
               <View accessible accessibilityLabel={`${profile?.streak || 0} day streak`} style={styles.statPill}>
                 <Ionicons accessible={false} color="#FF8A32" name="flame" size={18} />
                 <Text style={styles.statText}>{profile?.streak || 0}</Text>
@@ -545,6 +551,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey }) {
                 <Text style={styles.statText}>{profile?.xp || 0}</Text>
               </View>
             </View>
+            {accountOpen ? <LearnerAccountPanel user={user} profile={profile} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
             <View style={styles.streakCopy}>
               <View style={styles.streakTextColumn}>
                 <Text accessibilityRole="header" style={styles.streakTitle}>{streakPresentation.title}</Text>
@@ -643,6 +650,7 @@ const styles = StyleSheet.create({
   leagueButtonText: { color: '#FFFFFF', fontFamily: fonts.bold, fontSize: 15 },
   root: { backgroundColor: '#FFFFFF', flex: 1 }, content: { flex: 1 }, learnContent: { paddingBottom: 132 },
   brandRow: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18, paddingTop: 10 },
+  accountButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 22, backgroundColor: '#FFFFFF', borderColor: BORDER, borderWidth: 1 },
   brand: { color: NAVY, flex: 1, fontFamily: fonts.extraBold, fontSize: 19, textAlign: 'center' },
   flagBadge: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 13, borderWidth: 1, height: 42, justifyContent: 'center', width: 48 }, flag: { fontSize: 28 },
   statPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 20, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 10, paddingVertical: 7 }, statText: { color: NAVY, fontFamily: fonts.bold, fontSize: 13 },

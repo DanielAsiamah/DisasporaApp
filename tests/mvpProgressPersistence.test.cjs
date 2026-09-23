@@ -83,7 +83,7 @@ test('account and course progress live in a storage-keyed shell that remounts le
   const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'screens', 'MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /<MvpHomeCourseShell[\s\S]*?key=\{storageKey\}[\s\S]*?storageCourseId=\{storageCourseId\}[\s\S]*?storageKey=\{storageKey\}/s);
-  assert.match(source, /function MvpHomeCourseShell\(\{ previewCourseId, storageCourseId, storageKey \}\)/);
+  assert.match(source, /function MvpHomeCourseShell\(\{ previewCourseId, storageCourseId, storageKey, onSignedOut \}\)/);
   assert.match(source, /<PatoisLessonModal[\s\S]*?key=\{`\$\{storageKey\}:\$\{activeTopic\?\.id \|\| 'closed'\}`\}[\s\S]*?visible=\{Boolean\(activeTopic\) && progressReady\}/s);
 });
 

@@ -151,3 +151,24 @@ the browser UI, totaling 58 exercises and 580 saved XP. Reload retained all nine
 completed topics and 580 XP. Leaderboard join/leave passed, with no page errors
 or attempted production Auth/Firestore requests. This covers the current Patois
 preview chapter, not the unfilled master curriculum or physical-device testing.
+
+The same full-chapter run also passed for the explicitly opted-in Swahili preview:
+nine topics, 66 exercises, and 660 XP retained after reload, with leaderboard
+join/leave and no page errors or production requests. Swahili remains unpublished.
+
+## Learner Account
+
+The Learn header's Account button opens a compact panel with the current learner's
+name/email, lesson-progress save status, and Sign Out. No extra navigation tab is
+added. It uses the existing authentication service and welcome-route callback;
+it does not delete account data or clear device progress. A failed sign-out keeps
+the panel open with a retryable error. Pending or failed saves are identified
+before the learner chooses whether to sign out.
+
+The browser regression now ends by signing out and signing back into its same
+disposable emulator account, then checking the topic count and XP again. Login
+uses the existing email/password route, which is also the Expo Go testing route.
+
+The account-panel browser check passed with 70 XP and one completed Patois topic
+preserved after sign-out/sign-in, with no page errors or production requests.
+This verifies local browser authentication and persistence, not a physical phone.
