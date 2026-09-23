@@ -218,7 +218,9 @@ test('the lesson modal keeps the current topic title visible above every exercis
 test('the lesson modal adds a compact summary row so learners can see the current step and exercise mode at a glance', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
-  assert.match(source, /const currentStepLabel = `STEP \$\{Math\.min\(index \+ 1, exercises\.length\)\} OF \$\{exercises\.length\}`/);
+  assert.match(source, /const currentStepLabel = isMistakePractice/);
+  assert.match(source, /`RECALL \$\{index - exercises.length \+ 1\} OF \$\{reviewExercises.length\}`/);
+  assert.match(source, /`STEP \$\{Math\.min\(index \+ 1, exercises\.length\)\} OF \$\{exercises\.length\}`/);
   assert.match(source, /const currentExerciseLabel = exercise\?\.title \|\| ['"]Lesson step['"]/);
   assert.match(source, /<View style=\{styles\.lessonSummaryRow\}>[\s\S]*?<View style=\{styles\.lessonSummaryPill\}>[\s\S]*?<Text style=\{styles\.lessonSummaryLabel\}>\{currentStepLabel\}<\/Text>[\s\S]*?<\/View>[\s\S]*?<View style=\{styles\.lessonSummaryPill\}>[\s\S]*?<Text style=\{styles\.lessonSummaryValue\}>\{currentExerciseLabel\}<\/Text>[\s\S]*?<\/View>/s);
   assert.match(source, /lessonSummaryRow:\s*\{/);
@@ -279,7 +281,7 @@ test('lesson prompts have a human guide while non-matching exercises retain the 
   assert.match(source, /function getExerciseVisualConceptId\(exercise\)/);
   assert.match(source, /exercise\?\.imageConceptId \|\| exercise\?\.conceptId \|\| exercise\?\.pairs\?\.\[0\]\?\.conceptId \|\| null/);
   assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
-  assert.match(source, /!isMatch && <View style=\{styles\.scene\}>/);
+  assert.match(source, /!isMatch && !isMistakePractice && <View style=\{styles\.scene\}>/);
   assert.match(source, /<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\}/);
   assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\}/);
 });

@@ -38,7 +38,7 @@ test('word-tray controls clearly add and remove words with accessible state', ()
 
 test('lesson navigation, progress, footer, and completion actions expose explicit semantics', () => {
   assert.match(lessonSource, /accessibilityHint=['"]Closes this lesson and returns to the chapter['"][\s\S]*?accessibilityLabel=['"]Close lesson['"][\s\S]*?accessibilityRole=['"]button['"]/s);
-  assert.match(lessonSource, /accessible[\s\S]*?accessibilityLabel=['"]Lesson progress['"][\s\S]*?accessibilityRole=['"]progressbar['"][\s\S]*?accessibilityValue=\{\{[\s\S]*?max: Math\.max\(exercises\.length, 1\)[\s\S]*?now: finished \? exercises\.length : index \+ 1/s);
+  assert.match(lessonSource, /accessible[\s\S]*?accessibilityLabel=['"]Lesson progress['"][\s\S]*?accessibilityRole=['"]progressbar['"][\s\S]*?accessibilityValue=\{\{[\s\S]*?max: Math\.max\(lessonExercises\.length, 1\)[\s\S]*?now: finished \? lessonExercises\.length : index \+ 1/s);
   assert.match(lessonSource, /accessibilityLabel=\{`Start next topic: \$\{nextTopic\.title\}`\}[\s\S]*?accessibilityRole=['"]button['"]/s);
   assert.match(lessonSource, /accessibilityLabel=['"]Back to chapter['"][\s\S]*?accessibilityRole=['"]button['"]/s);
   assert.match(lessonSource, /const footerActionLabel = xpAwardFailed[\s\S]*?['"]Retry saving XP['"][\s\S]*?feedback === ['"]incorrect['"][\s\S]*?['"]Try again['"][\s\S]*?['"]Continue lesson['"][\s\S]*?['"]Check answer['"]/s);

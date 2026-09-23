@@ -4,6 +4,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const appUrl = new URL(process.env.DIASPORA_APP_URL || 'http://localhost:8086');
   if (!['localhost', '127.0.0.1'].includes(appUrl.hostname) || appUrl.protocol !== 'http:') throw new Error('Only local emulator previews may be tested.');
   const courseId = process.env.DIASPORA_TEST_COURSE || 'jamaican-patois';
+  const makeMistakes = process.env.DIASPORA_TEST_PERFECT !== 'true';
   if (!['jamaican-patois', 'swahili'].includes(courseId)) throw new Error('This test supports Patois and the opt-in Swahili preview.');
   require('node:fs').mkdirSync('outputs/browser-smoke', { recursive: true });
   const hub = await fetch('http://127.0.0.1:4400/emulators', { signal: AbortSignal.timeout(5000) }).then(response => response.json());
@@ -61,16 +62,31 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       hasAudio: () => false,
     });
     const expectedXp = exercises.length * CORRECT_ANSWER_XP;
-    const checkedAnswers = exercises.length + (topicIndex === 0 ? 1 : 0) + exercises.filter(exercise => exercise.pairs).length;
-    const expectedAccuracy = Math.round(exercises.length / checkedAnswers * 100);
-    if (topicIndex === 0) {
+    const missedExercises = makeMistakes ? exercises.filter((exercise, index) => exercise.pairs || (topicIndex === 0 && index === 0)) : [];
+    const testSequence = [...exercises, ...missedExercises];
+    const checkedAnswers = testSequence.length + (makeMistakes ? (topicIndex === 0 ? 1 : 0) + exercises.filter(exercise => exercise.pairs).length : 0);
+    const expectedAccuracy = Math.round(testSequence.length / checkedAnswers * 100);
+    if (topicIndex === 0 && makeMistakes) {
     const first = exercises[0];
     const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
     await page.getByRole('radio', { name: `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`, exact: true }).click();
     await page.getByRole('button', { name: 'Check answer', exact: true }).click();
     await page.getByRole('button', { name: 'Try again', exact: true }).click();
     }
-    for (const exercise of exercises) {
+    for (const [stepIndex, exercise] of testSequence.entries()) {
+      const isRecall = stepIndex >= exercises.length;
+      if (isRecall) {
+        await page.getByText('Mistake practice', { exact: true }).waitFor();
+        await page.waitForFunction(() => {
+          const rect = document.querySelector('[data-testid="mistake-practice-banner"]')?.getBoundingClientRect();
+          return rect && rect.top >= 0 && rect.bottom <= innerHeight;
+        });
+        if (stepIndex === exercises.length && exercise.choices) {
+          const secondChoice = await page.getByRole('radio').nth(1).boundingBox();
+          if (!secondChoice || secondChoice.y + secondChoice.height > 750) throw new Error('Recall prompt should leave at least two answer choices visible above the phone footer.');
+        }
+        if (stepIndex === exercises.length) await page.screenshot({ path: `outputs/browser-smoke/recall-${courseId}.png` });
+      }
       if (exercise.choices) {
         await page.getByRole('radio', { name: `${exercise.answer}, answer ${exercise.choices.indexOf(exercise.answer) + 1} of ${exercise.choices.length}`, exact: true }).click();
       } else if (exercise.answerTokens) {
@@ -92,6 +108,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         await page.getByRole('button', { name: last.name, exact: true }).click();
         await page.getByText(`${selected.length} words placed`, { exact: true }).waitFor();
       } else {
+        if (!isRecall && makeMistakes) {
         const firstPair = exercise.pairs[0];
         const wrongPair = exercise.pairs[1];
         await page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(firstPair.localized)},`) }).click();
@@ -115,12 +132,14 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         await page.screenshot({ path: `outputs/browser-smoke/mismatch-desktop-${courseId}.png` });
         await page.setViewportSize({ width: 390, height: 844 });
         console.log('Rejected pair: two red cards, Nunito font, incorrect sound triggered once.');
+        }
         for (const pair of exercise.pairs) {
           await page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(pair.localized)},`) }).click();
           await page.getByRole('button', { name: new RegExp(`^Meaning: ${escapePattern(pair.meaning)},`) }).click();
         }
       }
       await page.getByRole('button', { name: 'Check answer', exact: true }).click();
+      if (isRecall) await page.getByText('You already saved XP for this answer.', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue lesson', exact: true }).click({ timeout: 20000 });
     }
     await page.getByText(/^(Topic|Review|Challenge) complete!$/).waitFor();
@@ -128,7 +147,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByLabel(`${expectedAccuracy} percent accuracy across ${checkedAnswers} checked answers`, { exact: true }).waitFor();
     console.log(JSON.stringify({ stage: 'completion', text: await page.locator('body').innerText() }));
     totalXp += expectedXp;
-    console.log(`Completed ${topic.id}: ${exercises.length} exercises, ${expectedXp} XP saved.`);
+    console.log(`Completed ${topic.id}: ${exercises.length} exercises + ${missedExercises.length} recall questions, ${expectedXp} XP saved.`);
     if (topicIndex + 1 < testedTopics.length) {
       await page.getByRole('button', { name: `Start next topic: ${testedTopics[topicIndex + 1].title}`, exact: true }).click();
     }

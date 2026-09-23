@@ -47,6 +47,7 @@ const {
 const { buildLessonFeedbackModel } = require('../../lessonExperience/lessonFeedbackModel.cjs');
 const { saveXpWithDeadline } = require('../../lessonExperience/xpSaveAttempt.cjs');
 const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLessonSummary } = require('../../lessonExperience/lessonSummary.cjs');
+const { recordMistake, buildMistakeReview } = require('../../lessonExperience/mistakeReview.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -430,6 +431,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     vocabulary,
     hasAudio: hasCourseAudio,
   }) : [], [hasCourseAudio, runtimeCourseId, topic, vocabulary]);
+  const [mistakeIds, setMistakeIds] = useState([]);
+  const [reviewStarted, setReviewStarted] = useState(false);
+  const reviewExercises = useMemo(() => buildMistakeReview(exercises, mistakeIds), [exercises, mistakeIds]);
+  const lessonExercises = useMemo(() => reviewStarted ? [...exercises, ...reviewExercises] : exercises, [exercises, reviewExercises, reviewStarted]);
   const [index, setIndex] = useState(0);
   const [response, setResponse] = useState(() => createExerciseResponse(exercises[0]));
   const [feedback, setFeedback] = useState(null);
@@ -437,6 +442,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const [matchMessage, setMatchMessage] = useState('');
   const [xpAwardStatus, setXpAwardStatus] = useState(null);
   const [lessonSummary, setLessonSummary] = useState(createLessonSummary);
+  const lessonScrollRef = useRef(null);
   const celebration = useRef(new Animated.Value(0)).current;
   const audioEventGate = useRef(createLessonAudioEventGate()).current;
   const audioSessionId = useRef(0);
@@ -445,9 +451,14 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const lessonAttemptId = useRef(null);
   const pendingXpReward = useRef(null);
   const xpRequestGeneration = useRef(0);
-  const exercise = exercises[index];
+  const exercise = lessonExercises[index];
+  const isMistakePractice = index >= exercises.length && reviewStarted;
   const promptGuide = [topic?.guide || 'Kai', 'Nia', 'Kofi', 'Amara', 'Sol'][index % 5];
   const nextTopic = useMemo(() => courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null, [courseTopics, topic?.order]);
+
+  useEffect(() => {
+    if (visible && !finished) lessonScrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [index, visible, finished]);
 
   useEffect(() => {
     if (!visible) {
@@ -471,6 +482,8 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     setResponse(createExerciseResponse(firstExercise));
     setFeedback(null);
     setFinished(false);
+    setMistakeIds([]);
+    setReviewStarted(false);
     setLessonSummary(createLessonSummary());
     setMatchMessage('');
     setXpAwardStatus(null);
@@ -552,6 +565,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     const answerKey = `${audioSessionId.current}:${exercise.id}`;
     if (!audioEventGate.claim('answer', answerKey)) return;
     const correct = evaluateExerciseResponse(exercise, response);
+    if (!correct && !reviewStarted) setMistakeIds(current => recordMistake(current, exercise.id));
     setLessonSummary((current) => recordCheckedAnswer(current, correct));
     setFeedback(correct ? 'correct' : 'incorrect');
     AccessibilityInfo.announceForAccessibility(getFeedbackAnnouncement(correct, exercise));
@@ -569,8 +583,13 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
           exerciseId: exercise.id,
         }),
       };
-      pendingXpReward.current = rewardFields;
-      saveCorrectAnswerXp(rewardFields);
+      if (Object.hasOwn(lessonSummary.rewards, rewardFields.rewardId)) {
+        pendingXpReward.current = null;
+        setXpAwardStatus('already-awarded');
+      } else {
+        pendingXpReward.current = rewardFields;
+        saveCorrectAnswerXp(rewardFields);
+      }
     }
     audio.dispatch({ event: 'answer-accepted', correct, phraseId: exercise.conceptId });
     Haptics.notificationAsync(correct
@@ -582,6 +601,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
 
   function continueLesson() {
     if (feedback === 'incorrect') {
+      lessonScrollRef.current?.scrollTo({ y: 0, animated: false });
       audio.dispatch({ event: 'lesson-restart' });
       audioEventGate.release('answer', `${audioSessionId.current}:${exercise.id}`);
       setResponse(createExerciseResponse(exercise));
@@ -591,7 +611,15 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
       return;
     }
     audio.dispatch({ event: 'step-change' });
-    if (index >= exercises.length - 1) {
+    let nextSequence = lessonExercises;
+    if (!reviewStarted && index === exercises.length - 1 && reviewExercises.length) {
+      nextSequence = [...exercises, ...reviewExercises];
+      setReviewStarted(true);
+      audioSessionId.current += 1;
+      audioEventGate.clear();
+      AccessibilityInfo.announceForAccessibility('Mistake practice. Try the questions you missed once more from memory.');
+    }
+    if (index >= nextSequence.length - 1) {
       setFinished(true);
       onComplete(topic.id);
       return;
@@ -601,7 +629,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     pendingXpReward.current = null;
     matchAttempt.current = 0;
     setIndex(nextIndex);
-    setResponse(createExerciseResponse(exercises[nextIndex]));
+    setResponse(createExerciseResponse(nextSequence[nextIndex]));
     setFeedback(null);
     setMatchMessage('');
     setXpAwardStatus(null);
@@ -634,7 +662,9 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     nextTopicTitle: nextTopic?.title || '',
     topicTitle: topic.title,
   });
-  const currentStepLabel = `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
+  const currentStepLabel = isMistakePractice
+    ? `RECALL ${index - exercises.length + 1} OF ${reviewExercises.length}`
+    : `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
   const currentExerciseLabel = exercise?.title || 'Lesson step';
   const footerActionLabel = xpAwardFailed
     ? 'Retry saving XP'
@@ -662,16 +692,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
             accessibilityLabel="Lesson progress"
             accessibilityRole="progressbar"
             accessibilityValue={{
-              max: Math.max(exercises.length, 1),
+              max: Math.max(lessonExercises.length, 1),
               min: 0,
-              now: finished ? exercises.length : index + 1,
-              text: `${finished ? exercises.length : index + 1} of ${exercises.length}`,
+              now: finished ? lessonExercises.length : index + 1,
+              text: `${finished ? lessonExercises.length : index + 1} of ${lessonExercises.length}`,
             }}
             style={styles.progressTrack}
           >
-            <View style={[styles.progressFill, { width: `${finished ? 100 : ((index + 1) / Math.max(exercises.length, 1)) * 100}%` }]} />
+            <View style={[styles.progressFill, { width: `${finished ? 100 : ((index + 1) / Math.max(lessonExercises.length, 1)) * 100}%` }]} />
           </View>
-          <Text style={styles.count}>{finished ? exercises.length : index + 1}/{exercises.length}</Text>
+          <Text style={styles.count}>{finished ? lessonExercises.length : index + 1}/{lessonExercises.length}</Text>
         </View>
 
         {finished ? (
@@ -723,10 +753,22 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
           </ScrollView>
         ) : (
           <>
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                <Text style={styles.eyebrow}>{exercise?.title?.toUpperCase()}</Text>
+          <ScrollView
+            ref={lessonScrollRef}
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator={false}
+            onContentSizeChange={() => {
+              if (feedback) lessonScrollRef.current?.scrollToEnd({ animated: !reducedMotion });
+            }}
+          >
                 <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>
                 <Text style={styles.topicTitle}>{topic.title}</Text>
+                {isMistakePractice ? (
+                  <View testID="mistake-practice-banner" accessibilityLiveRegion="polite" style={styles.recallBanner}>
+                    <Text style={styles.recallTitle}>Mistake practice</Text>
+                    <Text style={styles.recallBody}>Try it once more from memory. XP already saved will not be awarded twice.</Text>
+                  </View>
+                ) : null}
                 <View style={styles.lessonSummaryRow}>
                   <View style={styles.lessonSummaryPill}>
                     <Text style={styles.lessonSummaryLabel}>{currentStepLabel}</Text>
@@ -737,13 +779,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                 </View>
                 {courseReviewPending ? (
                   <View style={styles.reviewBanner}>
-                    <Text style={styles.reviewBannerTitle}>Native review pending</Text>
-                  <Text style={styles.reviewBannerBody}>
-                    This preview content is still awaiting native-speaker approval.
-                  </Text>
+                    <Text accessibilityLabel="Preview content is still awaiting native-speaker approval." style={styles.reviewBannerTitle}>Preview: Native review pending</Text>
                 </View>
               ) : null}
-              {!isMatch && <View style={styles.scene}>
+              {!isMatch && !isMistakePractice && <View style={styles.scene}>
                 <LessonClouds
                   primaryRestingX={LESSON_CLOUD_PRIMARY_RESTING_X}
                   secondaryRestingX={LESSON_CLOUD_SECONDARY_RESTING_X}
@@ -774,6 +813,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                     if (audioEventGate.claim('mismatch', mismatchKey)) {
                       audio.dispatch({ event: 'answer-accepted', correct: false });
                       setLessonSummary(current => recordCheckedAnswer(current, false));
+                      if (!reviewStarted) setMistakeIds(current => recordMistake(current, exercise.id));
                     }
                   }}
                   onMatchSelection={() => { matchAttempt.current += 1; }}
@@ -862,24 +902,27 @@ const styles = StyleSheet.create({
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
   content: { alignSelf: 'center', width: '100%', maxWidth: 800, padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
-  topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 7 },
+  topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 5 },
   topicModePillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.6 },
-  topicTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 24, lineHeight: 31, marginTop: 14, textAlign: 'center' },
-  lessonSummaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 12 },
+  topicTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 20, lineHeight: 26, marginTop: 6, textAlign: 'center' },
+  recallBanner: { backgroundColor: PALE, borderColor: SKY, borderWidth: 1, borderRadius: 18, padding: 10, marginTop: 10 },
+  recallTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 16, textAlign: 'center' },
+  recallBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, textAlign: 'center', marginTop: 4 },
+  lessonSummaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 8 },
   lessonSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, flexShrink: 1, paddingHorizontal: 12, paddingVertical: 8 },
   lessonSummaryLabel: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.7 },
   lessonSummaryValue: { color: NAVY, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12 },
   promptConversation: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
-  promptGuide: { width: 92, height: 125, flexShrink: 0 },
+  promptGuide: { width: 72, height: 100, flexShrink: 0 },
   speakerName: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 6 },
-  promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderBottomLeftRadius: 6, borderWidth: 2, padding: 16 },
-  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 21, lineHeight: 28 },
+  promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderBottomLeftRadius: 6, borderWidth: 2, padding: 12 },
+  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 19, lineHeight: 25 },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
-  reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 18, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
-  reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' },
+  reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 8, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8 },
+  reviewBannerTitle: { color: NAVY, fontFamily: fonts.bold, fontSize: 11, textAlign: 'center' },
   reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
-  scene: { backgroundColor: PALE, borderRadius: 28, height: 150, flexShrink: 0, marginVertical: 12, overflow: 'hidden' },
-  vocabularyImage: { alignSelf: 'center', height: 145, marginTop: 5, width: '86%', zIndex: 2 },
+  scene: { backgroundColor: PALE, borderRadius: 28, height: 110, flexShrink: 0, marginVertical: 8, overflow: 'hidden' },
+  vocabularyImage: { alignSelf: 'center', height: 105, marginTop: 5, width: '86%', zIndex: 2 },
   lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
   cloudOne: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, height: 34, left: 20, position: 'absolute', top: 34, width: 110 },
   cloudTwo: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, position: 'absolute', right: 18, top: 78, height: 28, width: 92 },

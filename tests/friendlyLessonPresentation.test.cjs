@@ -8,6 +8,22 @@ test('advancing topics remounts the lesson before old response state can render 
   assert.match(read('src/screens/MvpHomeScreen.js'), /key=\{`\$\{storageKey\}:\$\{activeTopic\?\.id \|\| 'closed'\}`\}/);
 });
 
+test('missed questions return for recall before completion without replacing reward IDs', () => {
+  const modal = read('src/components/mvp/PatoisLessonModal.js');
+  assert.match(modal, /buildMistakeReview\(exercises, mistakeIds\)/);
+  assert.match(modal, /recordMistake\(current, exercise.id\)/);
+  assert.match(modal, /Mistake practice/);
+  assert.match(modal, /Object.hasOwn\(lessonSummary.rewards, rewardFields.rewardId\)/);
+});
+
+test('new questions reset the lesson scroll and checked feedback is brought into view', () => {
+  const modal = read('src/components/mvp/PatoisLessonModal.js');
+  assert.match(modal, /ref=\{lessonScrollRef\}/);
+  assert.match(modal, /scrollTo\(\{ y: 0, animated: false \}\)/);
+  assert.match(modal, /onContentSizeChange=/);
+  assert.match(modal, /scrollToEnd\(\{ animated: !reducedMotion \}\)/);
+});
+
 test('theme and root load all friendly Nunito font weights', () => {
   for (const weight of ['400Regular', '500Medium', '600SemiBold', '700Bold', '800ExtraBold', '900Black']) {
     assert.ok(read('src/theme.js').includes(`Nunito_${weight}`));
