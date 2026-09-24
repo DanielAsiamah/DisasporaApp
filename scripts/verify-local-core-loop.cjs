@@ -12,6 +12,12 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const browser = await chromium.launch({ headless: true, executablePath: process.env.DIASPORA_CHROMIUM_EXECUTABLE || undefined });
   let page;
   const errors = [];
+  const networkFailures = [];
+  const pendingRequests = new Map();
+  const requestSummary = request => {
+    const url = new URL(request.url());
+    return { host: url.host, path: url.pathname, type: request.resourceType() };
+  };
   try {
     page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     await page.addInitScript(() => {
@@ -24,6 +30,13 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     });
     const blocked = [];
     page.on('pageerror', (error) => errors.push(error.message));
+    page.on('request', request => pendingRequests.set(request, requestSummary(request)));
+    page.on('requestfinished', request => pendingRequests.delete(request));
+    page.on('requestfailed', request => {
+      pendingRequests.delete(request);
+      networkFailures.push({ ...requestSummary(request), error: request.failure()?.errorText });
+      if (networkFailures.length > 30) networkFailures.shift();
+    });
     await page.route(/https:\/\/(identitytoolkit|firestore|securetoken)\.googleapis\.com\//, (route) => {
       blocked.push(new URL(route.request().url()).hostname);
       return route.abort();
@@ -182,7 +195,17 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (errors.length || blocked.length) throw new Error('Browser errors or production request attempted');
   } catch (error) {
     if (page) {
-      console.error(JSON.stringify({ stage: 'failure', errors, text: await page.locator('body').innerText().catch(() => '') }));
+      console.error(JSON.stringify({
+        stage: 'failure', errors, networkFailures,
+        pendingRequests: [...pendingRequests.values()],
+        document: await page.evaluate(() => ({
+          readyState: document.readyState,
+          rootChildren: document.getElementById('root')?.childElementCount,
+          progressIndicators: document.querySelectorAll('[role="progressbar"]').length,
+          fontStatus: document.fonts.status,
+        })).catch(() => null),
+        text: await page.locator('body').innerText().catch(() => ''),
+      }));
       await page.screenshot({ path: `outputs/browser-smoke/failure-${courseId}.png` }).catch(() => {});
     }
     throw error;

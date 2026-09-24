@@ -22,3 +22,23 @@ Run the perfect-answer scenario with `DIASPORA_TEST_PERFECT=true npm run test:ap
 The browser runner requires local emulators, Expo web, and Playwright/Chrome configured as described in its environment variables.
 
 These checks are not an iPhone or Expo Go device test. Curriculum remains preview content pending native-speaker approval; this change does not publish courses or fill missing workbook translations.
+
+## Swahili cross-course check (2026-09-24)
+
+The opt-in Swahili developer preview passed all nine topics: 66 base exercises
+plus ten recall questions, with 660 XP retained after reload and sign-out/sign-in.
+Leaderboard join/leave also passed. No JavaScript page errors or attempted
+production Firebase requests were reported by the successful run.
+
+An earlier run completed the lessons but timed out waiting for the chapter after
+reload, showing a blank page without a reported JavaScript exception. The preview
+server remained live. Three separate unauthenticated reloads passed, followed by
+the successful full-chapter retest. The intermittent failure remains unexplained,
+not proven fixed. The browser runner now captures failed/pending request paths
+(without query strings), document readiness, root children, loading indicators,
+and font status on failure to help isolate any recurrence.
+
+Local evidence: `outputs/recall-swahili-full-chapter.log` (initial failure),
+`outputs/recall-swahili-diagnostic.log` (successful retest), and
+`outputs/swahili-reload-probe.log` (three successful reloads).
+Swahili remains a developer preview, not a published or native-reviewed course.
