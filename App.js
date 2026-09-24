@@ -8,7 +8,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/nunito';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -468,7 +468,17 @@ function ProfileLoadErrorScreen({ onRetry }) {
 }
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  const [fontAttempt, setFontAttempt] = useState(0);
+  function retryFonts() {
+    // Web retains failed font-face rules, so remounting useFonts alone cannot retry them.
+    if (Platform.OS === 'web') globalThis.location.reload();
+    else setFontAttempt(attempt => attempt + 1);
+  }
+  return <FontReadyApp key={fontAttempt} onRetryFonts={retryFonts} />;
+}
+
+function FontReadyApp({ onRetryFonts }) {
+  const [fontsLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_500Medium,
     Nunito_600SemiBold,
@@ -476,6 +486,25 @@ export default function App() {
     Nunito_800ExtraBold,
     Nunito_900Black,
   });
+
+  if (fontError && !fontsLoaded) {
+    return (
+      <View style={styles.profileErrorRoot}>
+        <Text accessibilityRole="header" style={[styles.profileErrorTitle, styles.recoveryFont]}>Could not load the app fonts</Text>
+        <Text accessibilityLiveRegion="polite" style={[styles.profileErrorBody, styles.recoveryFont]}>
+          Check your connection and try again. Your saved lessons have not been changed.
+        </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Retry loading fonts"
+          onPress={onRetryFonts}
+          style={({ pressed }) => [styles.profileErrorButton, pressed && styles.profileErrorButtonPressed]}
+        >
+          <Text style={[styles.profileErrorButtonText, styles.recoveryFont]}>TRY AGAIN</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   if (!fontsLoaded) {
     return (
@@ -496,6 +525,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  recoveryFont: { fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif' },
   loading: {
     alignItems: 'center',
     backgroundColor: AUTH_PALETTE.backgroundBottom,
