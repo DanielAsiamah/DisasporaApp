@@ -30,5 +30,5 @@ Several suggested fixes require an Expo major upgrade; `xlsx` has no fix offered
 by that npm audit report. No `npm audit fix --force` was run. This patch is a
 compatibility update, not a claim that dependency security is resolved.
 
-Lesson exit currently closes immediately; a confirmation interaction remains a
-separate follow-up rather than being mixed into this dependency update.
+Lesson exit confirmation was kept separate from this dependency update and is
+covered by `docs/lesson-exit-confirmation.md`.

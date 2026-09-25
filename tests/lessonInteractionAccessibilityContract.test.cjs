@@ -25,6 +25,7 @@ test('answer choices expose exclusive selection, position, result, and disabled 
   assert.match(lessonSource, /const choiceStateLabel = feedback[\s\S]*?['"], correct answer['"][\s\S]*?['"], incorrect selection['"]/s);
   assert.match(lessonSource, /const choiceLabel = `\$\{choice\}, answer \$\{index \+ 1\} of \$\{exercise\.choices\.length\}\$\{choiceStateLabel\}`/);
   assert.match(lessonSource, /accessibilityLabel=\{choiceLabel\}[\s\S]*?accessibilityRole=['"]radio['"][\s\S]*?accessibilityState=\{\{ checked: selected, disabled: Boolean\(feedback\) \}\}/s);
+  assert.match(lessonSource, /aria-checked=\{selected\}/);
 });
 
 test('word-tray controls clearly add and remove words with accessible state', () => {
@@ -37,7 +38,7 @@ test('word-tray controls clearly add and remove words with accessible state', ()
 });
 
 test('lesson navigation, progress, footer, and completion actions expose explicit semantics', () => {
-  assert.match(lessonSource, /accessibilityHint=['"]Closes this lesson and returns to the chapter['"][\s\S]*?accessibilityLabel=['"]Close lesson['"][\s\S]*?accessibilityRole=['"]button['"]/s);
+  assert.match(lessonSource, /accessibilityHint=['"]Asks before leaving an unfinished lesson['"][\s\S]*?accessibilityLabel=['"]Close lesson['"][\s\S]*?accessibilityRole=['"]button['"]/s);
   assert.match(lessonSource, /accessible[\s\S]*?accessibilityLabel=['"]Lesson progress['"][\s\S]*?accessibilityRole=['"]progressbar['"][\s\S]*?accessibilityValue=\{\{[\s\S]*?max: Math\.max\(lessonExercises\.length, 1\)[\s\S]*?now: finished \? lessonExercises\.length : index \+ 1/s);
   assert.match(lessonSource, /accessibilityLabel=\{`Start next topic: \$\{nextTopic\.title\}`\}[\s\S]*?accessibilityRole=['"]button['"]/s);
   assert.match(lessonSource, /accessibilityLabel=['"]Back to chapter['"][\s\S]*?accessibilityRole=['"]button['"]/s);

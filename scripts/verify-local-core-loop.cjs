@@ -61,6 +61,25 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByRole('tab', { name: /Learn, 1 of 2/ }).waitFor({ timeout: 60000 });
     console.log(JSON.stringify({ stage: 'learn', text: await page.locator('body').innerText() }));
     await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
+    await page.getByRole('radio').first().click();
+    const selectedAnswerLabel = await page.getByRole('radio').first().getAttribute('aria-label');
+    await page.waitForFunction(() => document.querySelector('[role="radio"][aria-checked="true"]'));
+    await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
+    await page.getByText('Leave this lesson?', { exact: true }).waitFor();
+    await page.screenshot({ path: `outputs/browser-smoke/exit-${courseId}.png` });
+    await page.getByRole('button', { name: 'Keep learning', exact: true }).click();
+    if (await page.getByRole('radio', { name: selectedAnswerLabel, exact: true }).getAttribute('aria-checked') !== 'true') {
+      throw new Error('Cancelling exit must preserve the selected answer.');
+    }
+    await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
+    await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
+    await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+    await page.getByLabel('0 experience points', { exact: true }).waitFor();
+    await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
+    if (await page.getByRole('radio', { checked: true }).count()) {
+      throw new Error('An intentionally exited lesson must restart with a fresh response.');
+    }
+    console.log('Lesson exit cancelled without losing selection; confirmed exit left the topic incomplete.');
     const { GENERATED_CURRICULUM: curriculum } = require('../src/data/generatedCurriculum.cjs');
     const { CONCEPTS } = require('../src/data/curriculumContract.cjs');
     const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
@@ -152,6 +171,24 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
       }
       await page.getByRole('button', { name: 'Check answer', exact: true }).click();
+      if (topicIndex === 0 && stepIndex === 0) {
+        if (process.env.DIASPORA_TEST_EXIT_AFTER_XP === 'true') {
+          await page.getByText('+10 XP', { exact: true }).waitFor();
+          await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
+          await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
+          await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+          await page.getByLabel('10 experience points', { exact: true }).waitFor();
+          await page.reload();
+          await page.getByText('0 of 9 topics complete', { exact: true }).waitFor({ timeout: 60000 });
+          await page.getByLabel('10 experience points', { exact: true }).waitFor();
+          if (errors.length || blocked.length) throw new Error('Browser errors or production request attempted');
+          console.log('Confirmed exit preserved 10 saved XP after reload without completing the topic.');
+          return;
+        }
+        await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
+        await page.getByRole('button', { name: 'Keep learning', exact: true }).click();
+        await page.getByText('Correct!', { exact: true }).waitFor();
+      }
       if (isRecall) await page.getByText('You already saved XP for this answer.', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Continue lesson', exact: true }).click({ timeout: 20000 });
     }

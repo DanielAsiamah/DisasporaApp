@@ -223,6 +223,7 @@ function ChoiceExercise({ exercise, feedback, response, setResponse }) {
             accessibilityLabel={choiceLabel}
             accessibilityRole="radio"
             accessibilityState={{ checked: selected, disabled: Boolean(feedback) }}
+            aria-checked={selected}
             disabled={Boolean(feedback)}
             key={choice}
             onPress={() => {
@@ -439,6 +440,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const [response, setResponse] = useState(() => createExerciseResponse(exercises[0]));
   const [feedback, setFeedback] = useState(null);
   const [finished, setFinished] = useState(false);
+  const [exitRequested, setExitRequested] = useState(false);
   const [matchMessage, setMatchMessage] = useState('');
   const [xpAwardStatus, setXpAwardStatus] = useState(null);
   const [lessonSummary, setLessonSummary] = useState(createLessonSummary);
@@ -482,6 +484,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     setResponse(createExerciseResponse(firstExercise));
     setFeedback(null);
     setFinished(false);
+    setExitRequested(false);
     setMistakeIds([]);
     setReviewStarted(false);
     setLessonSummary(createLessonSummary());
@@ -506,9 +509,19 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   }, [matchMessage, visible]);
 
   function closeLesson() {
+    setExitRequested(false);
     xpRequestGeneration.current += 1;
     audio.dispatch({ event: 'lesson-exit' });
     onClose();
+  }
+
+  function requestCloseLesson() {
+    if (finished) {
+      closeLesson();
+      return;
+    }
+    audio.dispatch({ event: 'lesson-exit' });
+    setExitRequested(true);
   }
 
   function saveCorrectAnswerXp(rewardFields) {
@@ -674,16 +687,44 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
       ? 'Continue lesson'
       : 'Check answer';
 
+  if (exitRequested) {
+    return (
+      <Modal animationType="none" onRequestClose={() => setExitRequested(false)} visible={visible}>
+        <SafeAreaView edges={['top', 'bottom']} style={styles.root}>
+          <ScrollView contentContainerStyle={styles.exitContent}>
+            <View accessibilityViewIsModal style={styles.exitCard}>
+              <Text style={styles.exitEyebrow}>YOUR LESSON</Text>
+              <Text accessibilityRole="header" style={styles.exitTitle}>Leave this lesson?</Text>
+              <Text style={styles.exitBody}>This unfinished lesson will restart from the first question. XP already saved stays in your account.</Text>
+              {xpAwardStatus === 'pending' ? (
+                <Text accessibilityLiveRegion="polite" style={styles.exitNotice}>An XP save is still running. Keep learning to wait for confirmation.</Text>
+              ) : null}
+              {xpAwardStatus === 'error' ? (
+                <Text accessibilityLiveRegion="polite" style={styles.exitNotice}>Your latest XP is not confirmed. Keep learning to retry saving it.</Text>
+              ) : null}
+              <Pressable accessibilityRole="button" accessibilityLabel="Keep learning" onPress={() => setExitRequested(false)} style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>KEEP LEARNING</Text>
+              </Pressable>
+              <Pressable accessibilityRole="button" accessibilityLabel="Leave lesson" onPress={closeLesson} style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtonText}>LEAVE LESSON</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+    );
+  }
+
   return (
-    <Modal animationType={reducedMotion ? 'none' : 'slide'} onRequestClose={closeLesson} visible={visible}>
+    <Modal animationType={reducedMotion ? 'none' : 'slide'} onRequestClose={requestCloseLesson} visible={visible}>
       <SafeAreaView edges={['top', 'bottom']} style={styles.root}>
         <View style={styles.topBar}>
           <Pressable
-            accessibilityHint="Closes this lesson and returns to the chapter"
+            accessibilityHint="Asks before leaving an unfinished lesson"
             accessibilityLabel="Close lesson"
             accessibilityRole="button"
             hitSlop={12}
-            onPress={closeLesson}
+            onPress={requestCloseLesson}
           >
             <Text style={styles.closeText}>×</Text>
           </Pressable>
@@ -888,6 +929,12 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
 }
 
 const styles = StyleSheet.create({
+  exitContent: { flexGrow: 1, justifyContent: 'center', padding: 24 },
+  exitCard: { alignSelf: 'center', width: '100%', maxWidth: 440, gap: 16 },
+  exitEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1, textAlign: 'center' },
+  exitTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 36, textAlign: 'center' },
+  exitBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 16, lineHeight: 24, textAlign: 'center' },
+  exitNotice: { color: NAVY, backgroundColor: PALE, borderRadius: 16, padding: 16, fontFamily: fonts.bold, fontSize: 14, lineHeight: 21, textAlign: 'center' },
   unconfirmedContinue: { minHeight: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
   unconfirmedContinueText: { color: MUTED, fontFamily: fonts.bold, fontSize: 13, textAlign: 'center' },
   resultGrid: { flexDirection: 'row', gap: 12, width: '100%', maxWidth: 360 },
