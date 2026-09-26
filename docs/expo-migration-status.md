@@ -20,13 +20,16 @@ Completed checks:
 - Generated curriculum validation and Patois image audit passed.
 - npm reports 16 dependency advisories (11 moderate, five high), not zero.
 
-Pending at this checkpoint:
+Runtime checks completed on 2026-09-26:
 
-- iOS/web export is still running; log in the parent checkout's
-  `outputs/expo55-export.log`.
-- Emulator-backed browser regression is still running against port 8090;
-  logs in the parent checkout's `outputs/expo55-browser.log` and
-  `outputs/expo55-preview.log`.
+- iOS/web export passed; log in the parent checkout's `outputs/expo55-export.log`.
+- Emulator-backed browser regression passed: onboarding, lesson exit/cancel,
+  wrong-match feedback, recall, 70 XP, reload, leaderboard opt-in/out, and
+  sign-out/sign-in. No page errors or production Firebase requests were reported.
+  Logs: `outputs/expo55-browser.log` and `outputs/expo55-preview.log` in the parent checkout.
+- Expo added the `expo-font` config plugin during this stage; retained it.
+
+Pending:
 - SDK 56 and SDK 57 upgrades have not started.
 - Phone compatibility and actual device interaction remain unverified.
 
