@@ -30,7 +30,7 @@ Runtime checks completed on 2026-09-26:
 - Expo added the `expo-font` config plugin during this stage; retained it.
 
 Pending:
-- SDK 57 upgrade has not started; SDK 56 results follow below.
+- SDK 57 local verification is complete; results follow below.
 - Phone compatibility and actual device interaction remain unverified.
 
 The preview uses synthetic configuration for `demo-diaspora-app` and local
@@ -66,3 +66,36 @@ runtime verification on the known-affected SDK 56 checkpoint. SDK 56 is not a
 release candidate; the full browser and font recovery gates still apply to SDK
 57 before integration. Cost: a browser regression first found there may need
 comparison against this intermediate dependency snapshot.
+
+## SDK 57 (2026-09-28)
+
+Installed Expo 57.0.25 and React Native 0.86.3, with React 19.2.3,
+Reanimated 4.5.1 and Worklets 0.10.1 through Expo's dependency installer.
+
+Verified:
+
+- Dependency alignment passed; Expo Doctor passed 21/21 checks, with no Hermes
+  regression warning.
+- Full Node suite: 458 passed, one skipped, zero failed.
+- Curriculum validation and image audit passed.
+- Public configuration check passed against the parent checkout's existing
+  environment without copying its credentials into this worktree.
+- iOS/web exports passed (`outputs/expo57-export.log` in the parent checkout).
+- Emulator-backed browser flow passed: onboarding, exit/cancel, wrong-match
+  red state and sound, mistake recall, 70 XP, reload, leaderboard join/leave,
+  and sign-out/sign-in persistence. No page errors or blocked production
+  Firebase requests. Log: `outputs/expo57-browser-retry.log`.
+- Font failure recovery passed: error UI, retry, Nunito loaded and Welcome
+  displayed. Log: `outputs/expo57-font-recovery.log`.
+- Separate branch review reported no findings, while explicitly leaving
+  actual phone compatibility unverified.
+
+The first browser attempt failed before rendering with
+`net::ERR_NETWORK_IO_SUSPENDED` on `/index.bundle`; Metro's cold web build took
+144 seconds. Retrying after it completed passed. This does not establish that
+the environmental interruption cannot recur.
+
+Audit: 14 advisories (12 moderate, two high). High entries are `shell-quote`
+(fix available) and `xlsx` (npm reports no fix). No forced audit upgrade was
+applied. Phone testing, installed Expo Go/iOS confirmation, and integration
+into the working branch remain pending. All runtime tests used demo Firebase.
