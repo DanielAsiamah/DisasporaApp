@@ -1,6 +1,7 @@
 # Expo migration checkpoint
 
-Branch: `codex/expo57-compatibility`. Main remains on the tested SDK 54 build.
+Migration branch: `codex/expo57-compatibility`. Historical checkpoints below
+record the SDK 54 baseline and incremental upgrade verification.
 
 ## SDK 55 (2026-09-25)
 
@@ -99,3 +100,16 @@ Audit: 14 advisories (12 moderate, two high). High entries are `shell-quote`
 (fix available) and `xlsx` (npm reports no fix). No forced audit upgrade was
 applied. Phone testing, installed Expo Go/iOS confirmation, and integration
 into the working branch remain pending. All runtime tests used demo Firebase.
+
+## Targeted dependency fix (2026-09-28)
+
+Updated only `shell-quote` in the lockfile from 1.8.4 to 1.10.0 using
+`npm update shell-quote --ignore-scripts`, within its existing dependency range.
+The new audit no longer flags that package: 13 advisories remain (12 moderate,
+one high in `xlsx`). Expo dependency alignment passed, and the full suite
+again passed 458 tests with one skipped and no failures.
+
+Integration is authorized by the standing request to push working changes to
+the implementation branch and main without routine approvals. Phone testing
+remains a separate outstanding verification, not implied by this integration.
+Keep the migration worktree while its local demo preview is still in use.
