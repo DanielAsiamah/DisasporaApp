@@ -30,7 +30,7 @@ Runtime checks completed on 2026-09-26:
 - Expo added the `expo-font` config plugin during this stage; retained it.
 
 Pending:
-- SDK 56 and SDK 57 upgrades have not started.
+- SDK 57 upgrade has not started; SDK 56 results follow below.
 - Phone compatibility and actual device interaction remain unverified.
 
 The preview uses synthetic configuration for `demo-diaspora-app` and local
@@ -41,3 +41,28 @@ not a production-configured release artifact.
 Do not merge this checkpoint merely because unit tests pass. Finish runtime and
 export checks, then continue the version-by-version migration described in
 `docs/expo57-compatibility-plan.md`.
+
+## SDK 56 (2026-09-26, intermediate checkpoint)
+
+- Installed Expo 56.0.22, React 19.2.3, React Native 0.85.3,
+  Reanimated 4.3.1 and Worklets 0.8.3 using Expo's dependency installer.
+- Dependency alignment passed.
+- Full suite: 458 passed, one skipped, zero failures.
+- Curriculum validation and image audit passed.
+- Expo Doctor: 21/22 passed. The remaining check detects the known Hermes V1
+  memory regression in this SDK. Do not merge or release this checkpoint.
+  Continue to patched SDK 57 as planned; see
+  https://expo.dev/changelog/sdk-57#known-regressions.
+- Installer reports 14 advisories (12 moderate, two high); no forced audit fix.
+- Expo added the `expo-status-bar` config plugin during installation.
+- iOS/web export completed successfully. Its log is in the parent
+  checkout at `outputs/expo56-export.log`.
+- SDK 56 browser regression and native phone testing remain unverified.
+
+Main remains unchanged on SDK 54. No production environment file was copied.
+
+Ruling: proceed to SDK 57 before the next browser regression rather than spend
+runtime verification on the known-affected SDK 56 checkpoint. SDK 56 is not a
+release candidate; the full browser and font recovery gates still apply to SDK
+57 before integration. Cost: a browser regression first found there may need
+comparison against this intermediate dependency snapshot.
