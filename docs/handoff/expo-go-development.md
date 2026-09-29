@@ -8,6 +8,21 @@ features and browser testing. Do not block ordinary app work on Apple signing.
 Keep native development-build configuration for later, not as a prerequisite
 for working on lessons, progress, onboarding, or the leaderboard.
 
+## Verified SDK Baseline
+
+The working branch now uses Expo 57.0.25 and React Native 0.86.3. Local
+verification covered iOS/web bundling, the emulator-backed lesson flow,
+progress persistence, leaderboard participation, and font-load recovery.
+These checks do not prove physical iPhone compatibility. See
+`docs/expo-migration-status.md` for the evidence and outstanding risks.
+
+When phone testing resumes, confirm the installed Expo Go version and iOS
+version first. Start a fresh server with `npx expo start --go --tunnel --clear`
+from this repository and scan that session's QR code. Do not reuse an old
+tunnel hostname. Keep the Mac and Metro process running. The local demo
+preview at port 8090 uses Mac-local Firebase emulators and is not the phone
+handoff server.
+
 ## Authentication
 
 - Expo Go uses Firebase email/password accounts and the existing verification,
