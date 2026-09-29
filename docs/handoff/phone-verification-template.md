@@ -23,7 +23,7 @@ Do not record secret values, API keys, service-account contents, or private user
 - [ ] `npm run content:validate` passes.
 - [ ] `npm run images:audit` passes.
 - [ ] `npx expo export --platform ios --output-dir outputs/verify-transfer` produces `outputs/verify-transfer/metadata.json`.
-- [ ] `npx expo start --lan --clear` shows a QR code and the phone can reach the dev server.
+- [ ] `npx expo start --go --tunnel --clear` shows a fresh QR code and the phone can reach the dev server.
 
 ## Walkthrough
 

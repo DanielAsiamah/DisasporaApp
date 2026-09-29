@@ -41,12 +41,12 @@ const templatePath = path.join(process.cwd(), 'docs/handoff/phone-verification-t
 const template = fs.readFileSync(templatePath, 'utf8');
 const commit = readGitValue(['rev-parse', 'HEAD']);
 const metadata = {
-  appRuntime: readOption('runtime') || 'development build or Expo Go compatible with SDK 54',
+  appRuntime: readOption('runtime') || `Expo Go compatible with SDK ${require('expo/package.json').version.split('.')[0]} (device not yet verified)`,
   branch: readGitValue(['branch', '--show-current']),
   commit,
   date: formatLocalTimestamp(),
   device: readOption('device'),
-  expoCommand: readOption('expo-command') || 'npx expo start --lan --clear',
+  expoCommand: readOption('expo-command') || 'npx expo start --go --tunnel --clear',
   exportMetadata: getExportMetadataSummary('outputs/verify-transfer/metadata.json'),
   iosVersion: readOption('ios-version'),
   localUrl: readOption('local-url') || 'http://localhost:8081',

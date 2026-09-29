@@ -1,10 +1,34 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { execFileSync } = require('node:child_process');
 
 const {
   buildPhoneVerificationReport,
   createPhoneVerificationReportPath,
 } = require('../scripts/lib/phone-verification-report.cjs');
+
+test('phone report CLI defaults to the installed Expo SDK and Expo Go', () => {
+  const root = path.resolve(__dirname, '..');
+  const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'diaspora-phone-report-'));
+  try {
+    fs.mkdirSync(path.join(temporary, 'docs/handoff'), { recursive: true });
+    fs.copyFileSync(path.join(root, 'docs/handoff/phone-verification-template.md'),
+      path.join(temporary, 'docs/handoff/phone-verification-template.md'));
+    execFileSync(process.execPath, [path.join(root, 'scripts/scaffold-phone-verification-report.js')],
+      { cwd: temporary, stdio: 'pipe' });
+    const directory = path.join(temporary, 'outputs/phone-verification');
+    const report = fs.readFileSync(path.join(directory, fs.readdirSync(directory)[0]), 'utf8');
+    const major = require('expo/package.json').version.split('.')[0];
+    assert.ok(report.includes(`- App runtime: Expo Go compatible with SDK ${major} (device not yet verified)`));
+    assert.ok(report.includes('- Expo command: npx expo start --go --tunnel --clear'));
+    assert.ok(report.includes('- [ ]'));
+  } finally {
+    fs.rmSync(temporary, { recursive: true, force: true });
+  }
+});
 
 test('phone verification report scaffolds run metadata without copying secrets', () => {
   const report = buildPhoneVerificationReport({
