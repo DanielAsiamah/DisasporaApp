@@ -347,7 +347,9 @@ test('Learn and Leaderboard use responsive vector icons and compact-phone podium
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /import\s+Ionicons\s+from\s+['"]@expo\/vector-icons\/Ionicons['"]/);
-  assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.streak \|\| 0\} day streak`\}/);
+  assert.match(source, /accessibilityLabel=\{learningPresentation\.accessibilityLabel\}/);
+  assert.match(source, /getLearningProgressPresentation\(\{ ready: progressReady, completed: completedTopicCount, total: topicStates\.length \}\)/);
+  assert.doesNotMatch(source, /profile\?\.streak/);
   assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.xp \|\| 0\} experience points`\}/);
   assert.match(source, /name=\{activeTab === id \? activeIcon : icon\}/);
   assert.match(source, /<Text numberOfLines=\{1\} style=\{styles\.podiumName\}>\{entry\.name\}<\/Text>/);

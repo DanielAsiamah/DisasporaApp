@@ -38,7 +38,7 @@ const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresenta
 const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
 const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
 const { readRemoteProgress } = require('../lessonEngine/remoteProgressRead.cjs');
-const { getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
+const { getLearningProgressPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
 const SKY = '#1CB0F6';
 const SKY_TEXT = '#0076B5';
@@ -434,7 +434,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const currentFocusCtaLabel = !progressReady
     ? 'Please wait'
     : `${coreLoopView.activeCard?.ctaLabel || 'Start lesson'} →`;
-  const streakPresentation = getStreakPresentation(profile?.streak);
+  const learningPresentation = getLearningProgressPresentation({ ready: progressReady, completed: completedTopicCount, total: topicStates.length });
 
   useEffect(() => {
     setActiveTopic(null);
@@ -542,9 +542,9 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
               <Pressable accessibilityRole="button" accessibilityLabel="Account" accessibilityState={{ expanded: accountOpen }} onPress={() => setAccountOpen(open => !open)} style={styles.accountButton}>
                 <Ionicons accessible={false} color={NAVY} name="person-circle-outline" size={27} />
               </Pressable>
-              <View accessible accessibilityLabel={`${profile?.streak || 0} day streak`} style={styles.statPill}>
-                <Ionicons accessible={false} color="#FF8A32" name="flame" size={18} />
-                <Text style={styles.statText}>{profile?.streak || 0}</Text>
+              <View accessible accessibilityLabel={learningPresentation.accessibilityLabel} style={styles.statPill}>
+                <Ionicons accessible={false} color="#1F7A4D" name="checkmark-circle" size={18} />
+                <Text style={styles.statText}>{learningPresentation.countLabel}</Text>
               </View>
               <View accessible accessibilityLabel={`${profile?.xp || 0} experience points`} style={styles.statPill}>
                 <Ionicons accessible={false} color="#FFC928" name="star" size={18} />
@@ -554,10 +554,10 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
             {accountOpen ? <LearnerAccountPanel user={user} profile={profile} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
             <View style={styles.streakCopy}>
               <View style={styles.streakTextColumn}>
-                <Text accessibilityRole="header" style={styles.streakTitle}>{streakPresentation.title}</Text>
-                <Text style={styles.streakSubtitle}>{streakPresentation.subtitle}</Text>
+                <Text accessibilityRole="header" style={styles.streakTitle}>{learningPresentation.title}</Text>
+                <Text style={styles.streakSubtitle}>{learningPresentation.subtitle}</Text>
               </View>
-              <Ionicons accessible={false} color="#FF8A32" name="flame" size={38} />
+              <Ionicons accessible={false} color="#1F7A4D" name="chatbubbles" size={38} />
             </View>
             <ChapterHero guideName={featuredGuide} heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
             <View style={styles.chapterCard}>

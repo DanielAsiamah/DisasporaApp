@@ -3,8 +3,19 @@ const assert = require('node:assert/strict');
 
 const {
   getStreakPresentation,
+  getLearningProgressPresentation,
   orderPodiumEntries,
 } = require('../src/screens/mvpHomePresentation.cjs');
+
+test('learning banner reflects loaded topic progress rather than an unimplemented streak', () => {
+  assert.equal(getLearningProgressPresentation({ ready: false }).title, 'Loading your progress');
+  assert.equal(getLearningProgressPresentation({ ready: false }).countLabel, '...');
+  assert.equal(getLearningProgressPresentation({ ready: true, completed: 0, total: 9 }).title, 'Your first conversation starts here');
+  assert.equal(getLearningProgressPresentation({ ready: true, completed: 1, total: 9 }).subtitle, '1 of 9 topics complete. Keep building your conversation skills.');
+  assert.equal(getLearningProgressPresentation({ ready: true, completed: 9, total: 9 }).title, 'Look how far you have come');
+  assert.equal(getLearningProgressPresentation({ ready: true, completed: 99, total: 9 }).countLabel, '9');
+  assert.equal(getLearningProgressPresentation({ ready: true, completed: 0, total: 0 }).title, 'Your learning path');
+});
 
 test('the streak banner reflects zero, one, and multi-day saved streaks', () => {
   assert.deepEqual(getStreakPresentation(0), {
