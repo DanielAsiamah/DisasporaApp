@@ -4,6 +4,7 @@ function createLessonAudioController({
   player,
   resolvePhraseSource = () => null,
   resolveSfxSource = () => null,
+  soundEffectsEnabled = true,
   onError = () => {},
 } = {}) {
   if (!player) throw new TypeError('A single Expo Audio player is required.');
@@ -48,6 +49,7 @@ function createLessonAudioController({
       return { ...playSource(resolvePhraseSource(action.phraseId), action.rate), action };
     }
     if (action.type === 'play-sfx') {
+      if (!soundEffectsEnabled) return { status: 'muted', action };
       return { ...playSource(resolveSfxSource(action.name), 1), action };
     }
     return { status: 'silent', action };

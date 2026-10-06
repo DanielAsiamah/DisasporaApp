@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
 import LearnerAccountPanel from '../components/mvp/LearnerAccountPanel';
+import { useSoundPreference } from '../audio/useSoundPreference';
 import CourseRoadmap from '../components/mvp/CourseRoadmap';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { fonts } from '../theme';
@@ -362,7 +363,8 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
 }
 
 function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSignedOut }) {
-  const { awardCorrectAnswerXp, loadLanguageProgress, profile, signOut, syncLanguageProgress, user } = useAuth();
+  const { awardCorrectAnswerXp, loadLanguageProgress, profile, signOut, syncLanguageProgress, syncProgress, user } = useAuth();
+  const soundPreference = useSoundPreference({ savedValue: profile?.soundEffectsEnabled, save: syncProgress });
   const [accountOpen, setAccountOpen] = useState(false);
   const reducedMotion = useReducedMotion();
   const [activeTab, setActiveTab] = useState('learn');
@@ -551,7 +553,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
                 <Text style={styles.statText}>{profile?.xp || 0}</Text>
               </View>
             </View>
-            {accountOpen ? <LearnerAccountPanel user={user} profile={profile} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
+            {accountOpen ? <LearnerAccountPanel user={user} profile={profile} soundPreference={soundPreference} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
             <View style={styles.streakCopy}>
               <View style={styles.streakTextColumn}>
                 <Text accessibilityRole="header" style={styles.streakTitle}>{learningPresentation.title}</Text>
@@ -639,7 +641,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal courseId={storageCourseId} key={`${storageKey}:${activeTopic?.id || 'closed'}`} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
+      <PatoisLessonModal courseId={storageCourseId} key={`${storageKey}:${activeTopic?.id || 'closed'}`} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} soundEffectsEnabled={soundPreference.enabled} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
     </SafeAreaView>
   );
 }

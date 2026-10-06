@@ -24,7 +24,7 @@ test('lesson modal resolves images and approved audio independently for the sele
   assert.match(source, /canAccessRuntimeCourse\(requestedCourse, previewCourseId\)/);
   assert.match(source, /getCourseProductionAudioRegistry\(runtimeCourseId\)/);
   assert.match(source, /hasApprovedCourseAudio\(runtimeCourseId,\s*conceptId\)/);
-  assert.match(source, /useControlledLessonAudio\(\{\s*phraseRegistry\s*\}\)/);
+  assert.match(source, /useControlledLessonAudio\(\{\s*phraseRegistry,\s*soundEffectsEnabled\s*\}\)/);
   assert.doesNotMatch(source, /vocabulary:\s*JAMAICAN_PATOIS_VOCABULARY/);
 });
 

@@ -8,6 +8,7 @@ const { createLessonAudioController } = require('./lessonAudioController.cjs');
 export function useControlledLessonAudio({
   phraseRegistry = PATOIS_PRODUCTION_AUDIO_REGISTRY,
   sfxRegistry = LESSON_SFX_REGISTRY,
+  soundEffectsEnabled = true,
 } = {}) {
   const player = useMemo(() => createBrowserLessonPlayer({
     createAudio: () => new Audio(),
@@ -17,8 +18,9 @@ export function useControlledLessonAudio({
     player,
     resolvePhraseSource: (id) => phraseRegistry[id] || null,
     resolveSfxSource: (name) => sfxRegistry[name] || null,
+    soundEffectsEnabled,
     onError: () => {},
-  }), [phraseRegistry, player, sfxRegistry]);
+  }), [phraseRegistry, player, sfxRegistry, soundEffectsEnabled]);
   useEffect(() => () => controller.stop(), [controller]);
   return controller;
 }

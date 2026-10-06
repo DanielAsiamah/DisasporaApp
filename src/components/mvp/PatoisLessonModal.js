@@ -404,7 +404,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onAwardCorrectAnswerXp, onClose, onComplete, previewCourseId = null, topic, visible }) {
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onAwardCorrectAnswerXp, onClose, onComplete, previewCourseId = null, soundEffectsEnabled = true, topic, visible }) {
   const requestedCourse = getCourseById(courseId);
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
@@ -412,7 +412,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const runtimeCourse = getCourseById(runtimeCourseId || 'jamaican-patois');
   const courseReviewPending = runtimeCourse?.published !== true;
   const phraseRegistry = getCourseProductionAudioRegistry(runtimeCourseId);
-  const audio = useControlledLessonAudio({ phraseRegistry });
+  const audio = useControlledLessonAudio({ phraseRegistry, soundEffectsEnabled });
   const reducedMotion = useReducedMotion();
   const imageRegistry = useMemo(() => getCourseImageRegistry(runtimeCourseId), [runtimeCourseId]);
   const courseTopics = useMemo(() => (

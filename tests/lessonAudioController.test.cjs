@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 
 const { createLessonAudioController } = require('../src/audio/lessonAudioController.cjs');
 
-function createHarness() {
+function createHarness(options = {}) {
   const calls = [];
   const player = {
     pause() { calls.push(['pause']); },
@@ -17,6 +17,7 @@ function createHarness() {
     player,
     resolvePhraseSource: (phraseId) => phraseId === 'approved' ? 'approved.mp3' : null,
     resolveSfxSource: (name) => name === 'incorrect' ? 'wrong.mp3' : null,
+    ...options,
   });
   return { calls, controller };
 }
@@ -27,6 +28,14 @@ test('ordinary lesson taps and transitions never touch the audio player', () => 
     assert.equal(controller.dispatch({ event }).status, 'silent');
   }
   assert.deepEqual(calls, []);
+});
+
+test('muting sound effects suppresses wrong-answer audio but leaves pronunciation playable', () => {
+  const { calls, controller } = createHarness({ soundEffectsEnabled: false });
+  assert.equal(controller.dispatch({ event: 'answer-accepted', correct: false }).status, 'muted');
+  assert.deepEqual(calls, []);
+  assert.equal(controller.dispatch({ event: 'manual-play', phraseId: 'approved' }).status, 'playing');
+  assert.equal(calls.filter(([name]) => name === 'play').length, 1);
 });
 
 test('a phrase event stops the old source before replacing and playing once', () => {

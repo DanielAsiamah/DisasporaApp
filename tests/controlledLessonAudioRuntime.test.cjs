@@ -5,6 +5,15 @@ const path = require('node:path');
 
 const root = path.join(__dirname, '..');
 
+test('native and web lesson players both apply the sound-effects preference', () => {
+  for (const file of ['useControlledLessonAudio.js', 'useControlledLessonAudio.web.js']) {
+    const source = fs.readFileSync(path.join(root, 'src/audio', file), 'utf8');
+    assert.match(source, /soundEffectsEnabled = true/);
+    assert.match(source, /createLessonAudioController\(\{[^}]+soundEffectsEnabled,/s);
+    assert.match(source, /\[phraseRegistry, player, sfxRegistry, soundEffectsEnabled\]/);
+  }
+});
+
 test('the mobile lesson runtime owns exactly one lifecycle-managed Expo Audio player', () => {
   const source = fs.readFileSync(path.join(root, 'src/audio/useControlledLessonAudio.js'), 'utf8');
   assert.equal((source.match(/useAudioPlayer\s*\(/g) || []).length, 1);
