@@ -45,6 +45,7 @@ const {
   isRetryableXpAwardError,
 } = require('../../lessonEngine/lessonXpReward.cjs');
 const { buildLessonFeedbackModel } = require('../../lessonExperience/lessonFeedbackModel.cjs');
+const { getLessonHapticFeedback } = require('../../lessonExperience/lessonHapticFeedback.cjs');
 const { saveXpWithDeadline } = require('../../lessonExperience/xpSaveAttempt.cjs');
 const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLessonSummary } = require('../../lessonExperience/lessonSummary.cjs');
 const { recordMistake, buildMistakeReview } = require('../../lessonExperience/mistakeReview.cjs');
@@ -66,6 +67,20 @@ const guideArt = {
   Nia: require('../../../assets/guides/nia.png'),
   Kofi: require('../../../assets/guides/kofi.png'),
 };
+
+function playLessonHaptic(event) {
+  const feedback = getLessonHapticFeedback(event);
+  if (feedback === 'selection') {
+    Haptics.selectionAsync().catch(() => {});
+    return;
+  }
+  const type = feedback === 'success'
+    ? Haptics.NotificationFeedbackType.Success
+    : feedback === 'error'
+      ? Haptics.NotificationFeedbackType.Error
+      : null;
+  if (type) Haptics.notificationAsync(type).catch(() => {});
+}
 
 function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
   const breathe = useRef(new Animated.Value(0)).current;
@@ -263,13 +278,14 @@ function MatchExercise({
     const result = selectMatchItem(response, { ...item, side });
     setResponse(result.response);
     if (result.status === 'mismatch') {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {});
       setMatchMessage('Those do not match yet. Try another pair.');
       onMatchRejected();
     } else {
-      Haptics.selectionAsync().catch(() => {});
       setMatchMessage(result.status === 'matched' ? 'Pair matched!' : 'Now choose its partner.');
-      if (result.status === 'selected') onMatchSelection();
+      if (result.status === 'selected') {
+        playLessonHaptic({ event: 'match-selected' });
+        onMatchSelection();
+      }
       if (result.status === 'matched') onMatchAccepted(result.matchedPairId);
     }
   }
@@ -605,9 +621,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
       }
     }
     audio.dispatch({ event: 'answer-accepted', correct, phraseId: exercise.conceptId });
-    Haptics.notificationAsync(correct
-      ? Haptics.NotificationFeedbackType.Success
-      : Haptics.NotificationFeedbackType.Error).catch(() => {});
+    playLessonHaptic({ event: 'answer-checked', correct });
     if (correct && !reducedMotion) Animated.spring(celebration, { toValue: 1, friction: 5, useNativeDriver: true }).start();
     else if (correct) celebration.setValue(1);
   }
@@ -847,12 +861,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   feedback={feedback}
                   onMatchAccepted={(phraseId) => {
                     const matchKey = `${audioSessionId.current}:${exercise.id}:${phraseId}`;
-                    if (audioEventGate.claim('match', matchKey)) audio.dispatch({ event: 'match-accepted', phraseId });
+                    if (audioEventGate.claim('match', matchKey)) {
+                      audio.dispatch({ event: 'match-accepted', phraseId });
+                      playLessonHaptic({ event: 'match-accepted' });
+                    }
                   }}
                   onMatchRejected={() => {
                     const mismatchKey = `${audioSessionId.current}:${exercise.id}:${matchAttempt.current}`;
                     if (audioEventGate.claim('mismatch', mismatchKey)) {
                       audio.dispatch({ event: 'answer-accepted', correct: false });
+                      playLessonHaptic({ event: 'match-rejected' });
                       setLessonSummary(current => recordCheckedAnswer(current, false));
                       if (!reviewStarted) setMistakeIds(current => recordMistake(current, exercise.id));
                     }
