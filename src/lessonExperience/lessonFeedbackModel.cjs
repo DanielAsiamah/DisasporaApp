@@ -5,6 +5,7 @@ function buildCorrectFeedback({ xpAwardStatus, answerLabel }) {
     return {
       animationTone: 'saving',
       canContinue: false,
+      guideTone: 'celebrate',
       message: 'Hold tight while your XP saves.',
       state: 'correct',
       title: 'Correct!',
@@ -16,6 +17,7 @@ function buildCorrectFeedback({ xpAwardStatus, answerLabel }) {
     return {
       animationTone: 'retry',
       canContinue: true,
+      guideTone: 'celebrate',
       message: 'Your answer is right. XP is not confirmed yet; retry or keep practising without confirmed XP.',
       state: 'correct',
       title: 'Correct!',
@@ -27,6 +29,7 @@ function buildCorrectFeedback({ xpAwardStatus, answerLabel }) {
     return {
       animationTone: 'steady',
       canContinue: true,
+      guideTone: 'celebrate',
       message: 'You already saved XP for this answer.',
       state: 'correct',
       title: 'Correct!',
@@ -37,6 +40,7 @@ function buildCorrectFeedback({ xpAwardStatus, answerLabel }) {
   return {
     animationTone: 'celebrate',
     canContinue: true,
+    guideTone: 'celebrate',
     message: 'Nice work. Keep the streak moving.',
     state: 'correct',
     title: 'Correct!',
@@ -57,6 +61,7 @@ function buildLessonFeedbackModel({
     return {
       animationTone: 'chapter-pop',
       canContinue: true,
+      guideTone: 'celebrate',
       message: nextTopicTitle
         ? `You finished ${topicTitle}. Next up: ${nextTopicTitle}.`
         : `You finished ${topicTitle} and completed this chapter.`,
@@ -71,6 +76,7 @@ function buildLessonFeedbackModel({
     return {
       animationTone: 'shake',
       canContinue: true,
+      guideTone: 'encourage',
       message: 'No stress. Study the answer and try again.',
       state: 'incorrect',
       title: 'Almost',
@@ -81,6 +87,7 @@ function buildLessonFeedbackModel({
   return {
     animationTone: 'idle',
     canContinue: false,
+    guideTone: 'none',
     message: '',
     state: 'idle',
     title: '',

@@ -286,6 +286,13 @@ test('lesson prompts have a human guide while non-matching exercises retain the 
   assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\}/);
 });
 
+test('wrong-answer feedback keeps the active human guide visible with the recovery message', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
+
+  assert.match(source, /feedbackModel\.guideTone !== ['"]none['"]/);
+  assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{topic\.guide \|\| ['"]Kai['"]\}[^>]+style=\{styles\.feedbackGuide\}/s);
+});
+
 test('the Learn shell surfaces the active topic in a dedicated current-focus card above the grid', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 

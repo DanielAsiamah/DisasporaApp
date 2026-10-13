@@ -889,15 +889,13 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   feedback === 'correct' ? styles.feedbackCorrect : styles.feedbackWrong,
                   feedback === 'correct' && { transform: [{ scale: celebration.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) }] },
                 ]}>
-                  {feedback === 'correct' && (
-                    <>
-                      <Text style={styles.feedbackConfetti}>✦  ✧  ✦</Text>
-                      <BreathingGuidePortrait
-                        guideName={topic.guide || 'Kai'}
-                        reducedMotion={reducedMotion}
-                        style={styles.feedbackGuide}
-                      />
-                    </>
+                  {feedback === 'correct' && <Text style={styles.feedbackConfetti}>✦  ✧  ✦</Text>}
+                  {feedbackModel.guideTone !== 'none' && (
+                    <BreathingGuidePortrait
+                      guideName={topic.guide || 'Kai'}
+                      reducedMotion={reducedMotion}
+                      style={styles.feedbackGuide}
+                    />
                   )}
                   <View style={styles.feedbackHeader}>
                     <Text style={styles.feedbackEyebrow}>{feedback === 'correct' ? 'NICE WORK' : 'KEEP GOING'}</Text>

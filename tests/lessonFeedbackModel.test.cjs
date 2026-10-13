@@ -11,6 +11,7 @@ test('lesson feedback gives distinct Airlearn-style states for correct XP outcom
     {
       animationTone: 'saving',
       canContinue: false,
+      guideTone: 'celebrate',
       message: 'Hold tight while your XP saves.',
       state: 'correct',
       title: 'Correct!',
@@ -24,6 +25,7 @@ test('lesson feedback gives distinct Airlearn-style states for correct XP outcom
     {
       animationTone: 'celebrate',
       canContinue: true,
+      guideTone: 'celebrate',
       message: 'Nice work. Keep the streak moving.',
       state: 'correct',
       title: 'Correct!',
@@ -39,7 +41,8 @@ test('lesson feedback supports retry, wrong answer, and completion states', () =
     {
       animationTone: 'retry',
       canContinue: true,
-    message: 'Your answer is right. XP is not confirmed yet; retry or keep practising without confirmed XP.',
+      guideTone: 'celebrate',
+      message: 'Your answer is right. XP is not confirmed yet; retry or keep practising without confirmed XP.',
       state: 'correct',
       title: 'Correct!',
       xpLabel: 'Retry XP',
@@ -52,6 +55,7 @@ test('lesson feedback supports retry, wrong answer, and completion states', () =
     {
       animationTone: 'shake',
       canContinue: true,
+      guideTone: 'encourage',
       message: 'No stress. Study the answer and try again.',
       state: 'incorrect',
       title: 'Almost',
@@ -65,6 +69,7 @@ test('lesson feedback supports retry, wrong answer, and completion states', () =
     {
       animationTone: 'chapter-pop',
       canContinue: true,
+      guideTone: 'celebrate',
       message: 'You finished Greetings. Next up: Family.',
       state: 'complete',
       title: 'Lesson complete!',
