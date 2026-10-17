@@ -90,6 +90,43 @@ and the approved-phrase policy remain unchanged. After a clean Metro restart,
 the full retry, completion, reload, and leaderboard regression passed with no
 page errors or production requests.
 
+## Switching Draft Languages
+
+`npm run phone:preview` starts the Expo Go tunnel with the draft language picker
+enabled. After signing in, tap **Change** below the Learn header. Jamaican Patois,
+Swahili, Wolof, Haitian Creole, and Sudanese Arabic have workbook-backed draft
+chapters. Nobiin, Igbo, Belizean Kriol, and AAVE remain disabled because their
+lesson steps are not implemented. The picker displays each course's status.
+
+The picker requires both development mode and
+`EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW=true`. It does not publish courses or
+change onboarding availability. A selected draft lasts for the current session;
+it does not replace the saved profile's course. Topic progress remains scoped to
+the authenticated user and the selected language. Reloading selects the saved
+course, or `EXPO_PUBLIC_PREVIEW_COURSE_ID` if explicitly provided.
+
+To test the picker with the local Firebase emulators, start a web preview with
+both `EXPO_PUBLIC_USE_FIREBASE_EMULATORS=true` and
+`EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW=true`. Then run:
+
+```sh
+DIASPORA_TEST_COURSE_PICKER=true DIASPORA_TEST_COURSE=sudanese-arabic \
+DIASPORA_APP_URL=http://localhost:8091 npm run test:app:browser
+```
+
+This opens each of the five draft courses, checks the four unavailable choices,
+completes the requested course's first topic, and verifies separate course
+progress before and after reload. Use the Playwright and Chrome overrides above
+if they are not installed in the repository.
+
+On 2026-10-17, the 390px browser test opened a lesson in all five drafts and
+confirmed the other four choices were disabled. Sudanese Arabic's first topic
+completed with seven exercises, two mistake-review questions, 70 saved XP, and
+82% accuracy. Switching to another language showed zero completed topics;
+switching back restored one completed topic. Reload, sign-out/sign-in, sound
+settings, and leaderboard membership passed with no page errors or production
+Firebase requests. This evidence covers the local browser, not a physical phone.
+
 ## Swahili Developer Preview
 
 With the same local emulators running, start a separate preview:

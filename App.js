@@ -17,6 +17,7 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { GameProvider } from './src/context/GameContext';
 import CourseSelectScreen from './src/screens/CourseSelectScreen';
 import HomeScreen from './src/screens/MvpHomeScreen';
+import CoursePicker from './src/components/mvp/CoursePicker';
 import LanguageSelectScreen from './src/screens/LanguageSelectScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
@@ -35,10 +36,12 @@ import {
 import { colors } from './src/theme';
 const {
   AVAILABLE_COURSE_IDS,
+  COURSE_CATALOG,
   getBaseLanguageForCourse,
   normalizeCourseId,
 } = require('./src/data/courseCatalog.cjs');
 const { resolveDeveloperPreviewCourseId } = require('./src/data/courseAccessPolicy.cjs');
+const { buildCoursePickerOptions } = require('./src/lessonExperience/coursePickerModel.cjs');
 const {
   resolveAuthenticatedRoute,
   shouldReconcileAuthenticatedRoute,
@@ -52,10 +55,15 @@ const {
 
 const ONBOARDING_DRAFT_KEY = 'diaspora:onboarding-draft:v1';
 const AVAILABLE_COURSE_ID_SET = new Set(AVAILABLE_COURSE_IDS);
-const previewCourseId = resolveDeveloperPreviewCourseId({
-  requestedCourseId: process.env.EXPO_PUBLIC_PREVIEW_COURSE_ID,
+const previewSettings = {
   isDevelopment: typeof __DEV__ !== 'undefined' && __DEV__ === true,
   previewOptIn: process.env.EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW === 'true',
+};
+const previewEnabled = previewSettings.isDevelopment && previewSettings.previewOptIn;
+const coursePickerOptions = buildCoursePickerOptions(COURSE_CATALOG, previewSettings);
+const initialPreviewCourseId = resolveDeveloperPreviewCourseId({
+  ...previewSettings,
+  requestedCourseId: process.env.EXPO_PUBLIC_PREVIEW_COURSE_ID,
 });
 
 function AppContent() {
@@ -73,6 +81,8 @@ function AppContent() {
   const [screen, setScreen] = useState(null);
   const [userLanguage, setUserLanguage] = useState('english');
   const [selectedCourse, setSelectedCourse] = useState('jamaican-patois');
+  const [previewCourseId, setPreviewCourseId] = useState(initialPreviewCourseId);
+  const [coursePickerOpen, setCoursePickerOpen] = useState(false);
   const [onboardingDraft, setOnboardingDraft] = useState(null);
   const [pendingSignup, setPendingSignup] = useState(null);
   const [resetEmail, setResetEmail] = useState('');
@@ -438,8 +448,24 @@ function AppContent() {
           userLanguage={userLanguage}
           courseId={previewCourseId || selectedCourse}
           previewCourseId={previewCourseId}
+          onChooseCourse={previewEnabled ? () => setCoursePickerOpen(true) : undefined}
           onBack={() => setScreen('course-select')}
           onSignedOut={() => setScreen('welcome')}
+        />
+      ) : null}
+      {screen === 'home' && previewEnabled ? (
+        <CoursePicker
+          visible={coursePickerOpen}
+          options={coursePickerOptions}
+          selectedCourseId={previewCourseId || selectedCourse}
+          onClose={() => setCoursePickerOpen(false)}
+          onSelect={(courseId) => {
+            const choice = coursePickerOptions.find(option => option.id === courseId);
+            if (!choice?.selectable) return;
+            setPreviewCourseId(choice.previewCourseId);
+            if (!choice.previewCourseId) setSelectedCourse(choice.id);
+            setCoursePickerOpen(false);
+          }}
         />
       ) : null}
     </GameProvider>

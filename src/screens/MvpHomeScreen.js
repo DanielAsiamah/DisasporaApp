@@ -342,7 +342,7 @@ function Leaderboard({ profile, reducedMotion }) {
   );
 }
 
-export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCourseId = null, onSignedOut }) {
+export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCourseId = null, onSignedOut, onChooseCourse }) {
   const { user } = useAuth();
   const requestedCourseId = courseId === 'patois' ? 'jamaican-patois' : courseId;
   const requestedCourse = getCourseById(requestedCourseId);
@@ -358,11 +358,12 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
       storageCourseId={storageCourseId}
       storageKey={storageKey}
       onSignedOut={onSignedOut}
+      onChooseCourse={onChooseCourse}
     />
   );
 }
 
-function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSignedOut }) {
+function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSignedOut, onChooseCourse }) {
   const { awardCorrectAnswerXp, loadLanguageProgress, profile, signOut, syncLanguageProgress, syncProgress, user } = useAuth();
   const soundPreference = useSoundPreference({ savedValue: profile?.soundEffectsEnabled, save: syncProgress });
   const [accountOpen, setAccountOpen] = useState(false);
@@ -553,6 +554,13 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
                 <Text style={styles.statText}>{profile?.xp || 0}</Text>
               </View>
             </View>
+            {onChooseCourse ? (
+              <Pressable accessibilityRole="button" accessibilityLabel={`Change language, current course ${runtimeCourse.displayName}`} onPress={onChooseCourse} style={styles.courseSwitch}>
+                <Text style={styles.courseSwitchName}>{runtimeCourse.displayName}</Text>
+                <Text style={styles.courseSwitchAction}>Change</Text>
+                <Ionicons accessible={false} name="chevron-down" size={18} color={SKY_TEXT} />
+              </Pressable>
+            ) : null}
             {accountOpen ? <LearnerAccountPanel user={user} profile={profile} soundPreference={soundPreference} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
             <View style={styles.streakCopy}>
               <View style={styles.streakTextColumn}>
@@ -652,6 +660,9 @@ const styles = StyleSheet.create({
   leagueButtonText: { color: '#FFFFFF', fontFamily: fonts.bold, fontSize: 15 },
   root: { backgroundColor: '#FFFFFF', flex: 1 }, content: { flex: 1 }, learnContent: { paddingBottom: 132 },
   brandRow: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18, paddingTop: 10 },
+  courseSwitch: { alignItems: 'center', flexDirection: 'row', gap: 8, minHeight: 48, backgroundColor: PALE, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10, marginHorizontal: 18, marginTop: 14 },
+  courseSwitchName: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 15, flex: 1 },
+  courseSwitchAction: { color: SKY_TEXT, fontFamily: fonts.bold, fontSize: 13 },
   accountButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 22, backgroundColor: '#FFFFFF', borderColor: BORDER, borderWidth: 1 },
   brand: { color: NAVY, flex: 1, fontFamily: fonts.extraBold, fontSize: 19, textAlign: 'center' },
   flagBadge: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 13, borderWidth: 1, height: 42, justifyContent: 'center', width: 48 }, flag: { fontSize: 28 },

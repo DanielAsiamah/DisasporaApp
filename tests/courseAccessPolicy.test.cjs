@@ -41,7 +41,15 @@ test('developer preview requires development mode, explicit opt-in and an allowl
   assert.equal(resolveDeveloperPreviewCourseId(request), 'swahili');
   assert.equal(resolveDeveloperPreviewCourseId({ ...request, isDevelopment: false }), null);
   assert.equal(resolveDeveloperPreviewCourseId({ ...request, previewOptIn: false }), null);
-  assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId: 'wolof' }), null);
+  for (const requestedCourseId of ['swahili', 'wolof', 'haitian-creole', 'sudanese-arabic']) {
+    assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId }), requestedCourseId);
+    assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId, isDevelopment: false }), null);
+    assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId, previewOptIn: false }), null);
+  }
+  for (const requestedCourseId of ['nobiin', 'igbo', 'belizean-kriol', 'aave', 'unknown']) {
+    assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId }), null);
+    assert.equal(canAccessRuntimeCourse({ id: requestedCourseId }, requestedCourseId), false);
+  }
 });
 
 test('runtime access fails closed for unreleased courses without the exact preview capability', () => {

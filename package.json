@@ -69,6 +69,7 @@
     "firebase:config:check": "node scripts/check-firebase-deploy-config.js",
     "firebase:rules:deploy": "firebase deploy --only firestore:rules,firestore:indexes",
     "phone:handoff": "node scripts/open-expo-phone-handoff.js",
+    "phone:preview": "EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW=true expo start --go --tunnel --port 8085",
     "phone:verification:scaffold": "node scripts/scaffold-phone-verification-report.js",
     "content:build": "node scripts/generate-runtime-curriculum.mjs",
     "content:validate": "node scripts/validate-content.js",

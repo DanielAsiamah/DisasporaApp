@@ -6,7 +6,11 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const courseId = process.env.DIASPORA_TEST_COURSE || 'jamaican-patois';
   const makeMistakes = process.env.DIASPORA_TEST_PERFECT !== 'true';
   const muteEffects = process.env.DIASPORA_TEST_MUTED === 'true';
-  if (!['jamaican-patois', 'swahili'].includes(courseId)) throw new Error('This test supports Patois and the opt-in Swahili preview.');
+  const useCoursePicker = process.env.DIASPORA_TEST_COURSE_PICKER === 'true';
+  const previewCourses = ['jamaican-patois', 'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic'];
+  if (!previewCourses.includes(courseId)) throw new Error('This course does not have an implemented lesson preview.');
+  const { getCourseById } = require('../src/data/courseCatalog.cjs');
+  const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
   require('node:fs').mkdirSync('outputs/browser-smoke', { recursive: true });
   const hub = await fetch('http://127.0.0.1:4400/emulators', { signal: AbortSignal.timeout(5000) }).then(response => response.json());
   if (!hub.auth || !hub.firestore) throw new Error('Start the local Firebase emulators first.');
@@ -21,6 +25,12 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
   try {
     page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    async function selectCourse(id) {
+      await page.getByRole('button', { name: /^Change language, current course / }).click({ timeout: 60000 });
+      const label = getCourseById(id).label;
+      await page.getByRole('button', { name: `${label}, Draft lessons`, exact: true }).click();
+      await page.getByRole('button', { name: `Change language, current course ${label}`, exact: true }).waitFor();
+    }
     await page.addInitScript(() => {
       window.__lessonAudioPlays = [];
       const play = HTMLMediaElement.prototype.play;
@@ -74,6 +84,26 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     await page.getByRole('button', { name: 'Close account', exact: true }).click();
     console.log(`Sound preference saved, reloaded, and ${muteEffects ? 'kept off' : 're-enabled'}.`);
+    if (useCoursePicker) {
+      await page.getByRole('button', { name: /^Change language, current course / }).click();
+      for (const id of ['nobiin', 'igbo', 'belizean-kriol', 'aave']) {
+        const option = page.getByRole('button', { name: `${getCourseById(id).label}, Content in preparation`, exact: true });
+        if (await option.isEnabled()) throw new Error(`Incomplete course ${id} must stay disabled.`);
+      }
+      await page.screenshot({ path: 'outputs/browser-smoke/language-picker.png' });
+      await page.getByRole('button', { name: 'Close language picker', exact: true }).click();
+      for (const id of previewCourses) {
+        await selectCourse(id);
+        await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+        await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
+        const first = buildCourseTopicExercises(id, 'getting-started', { hasAudio: () => false })[0];
+        await page.getByText(first.prompt, { exact: true }).waitFor();
+        await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
+        await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
+      }
+      await selectCourse(courseId);
+      console.log('All five draft courses opened their own lesson; four incomplete courses stayed disabled.');
+    }
     console.log(JSON.stringify({ stage: 'learn', text: await page.locator('body').innerText() }));
     await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
     await page.getByRole('radio').first().click();
@@ -97,7 +127,6 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     console.log('Lesson exit cancelled without losing selection; confirmed exit left the topic incomplete.');
     const { GENERATED_CURRICULUM: curriculum } = require('../src/data/generatedCurriculum.cjs');
     const { CONCEPTS } = require('../src/data/curriculumContract.cjs');
-    const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
     const { CORRECT_ANSWER_XP } = require('../src/lessonEngine/lessonXpReward.cjs');
     const topics = curriculum.topics.filter(topic => topic.courseId === courseId).sort((a, b) => a.order - b.order);
     const testedTopics = process.env.DIASPORA_TEST_FULL_CHAPTER === 'true' ? topics : topics.slice(0, 1);
@@ -196,6 +225,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
           await page.getByLabel('10 experience points', { exact: true }).waitFor();
           await page.reload();
+          if (useCoursePicker) await selectCourse(courseId);
           await page.getByText('0 of 9 topics complete', { exact: true }).waitFor({ timeout: 60000 });
           await page.getByLabel('10 experience points', { exact: true }).waitFor();
           if (errors.length || blocked.length) throw new Error('Browser errors or production request attempted');
@@ -220,7 +250,16 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
+    if (useCoursePicker) {
+      const untouchedCourseId = previewCourses.find(id => id !== courseId);
+      await selectCourse(untouchedCourseId);
+      await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+      await selectCourse(courseId);
+      await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor();
+      console.log('Switching languages preserved separate topic progress.');
+    }
     await page.reload();
+    if (useCoursePicker) await selectCourse(courseId);
     await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
     await page.getByLabel(`${totalXp} experience points`, { exact: true }).waitFor();
     console.log(`Reload preserved ${totalXp} XP and ${testedTopics.length} completed topics for ${courseId}.`);
@@ -242,6 +281,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByLabel('Email', { exact: true }).fill(email);
     await page.getByLabel('Password', { exact: true }).fill('LocalOnly123!');
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+    if (useCoursePicker) await selectCourse(courseId);
     await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
     await page.getByLabel(`${totalXp} experience points`, { exact: true }).waitFor();
     console.log(`Sign-out and sign-in preserved ${totalXp} XP and ${testedTopics.length} completed topics.`);

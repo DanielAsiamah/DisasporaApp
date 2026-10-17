@@ -69,3 +69,22 @@ test('the complete hidden Swahili journey is answerable and silent', () => {
 
   for (const exercise of exercises) completeCorrectly(exercise);
 });
+
+for (const courseId of ['wolof', 'haitian-creole', 'sudanese-arabic']) {
+  test(`every ${courseId} draft topic has answerable exercises without unapproved audio`, () => {
+    const vocabulary = GENERATED_CURRICULUM.courseVocabulary.filter(row => row.courseId === courseId);
+    const topics = GENERATED_CURRICULUM.topics.filter(topic => topic.courseId === courseId);
+    const ids = new Set();
+    assert.equal(topics.length, 9);
+    for (const topic of topics) {
+      const exercises = buildCourseTopicExercises(courseId, topic.id, { vocabulary, hasAudio: () => false });
+      assert.ok(exercises.length > 0, `${courseId}/${topic.id} must contain exercises`);
+      for (const exercise of exercises) {
+        assert.equal(ids.has(exercise.id), false, 'reward identities must not collide across topics');
+        ids.add(exercise.id);
+        assert.ok(!exercise.audioPath && !exercise.voiceId);
+        completeCorrectly(exercise);
+      }
+    }
+  });
+}
