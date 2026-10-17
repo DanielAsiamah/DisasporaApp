@@ -49,6 +49,7 @@ const { getLessonHapticFeedback } = require('../../lessonExperience/lessonHaptic
 const { saveXpWithDeadline } = require('../../lessonExperience/xpSaveAttempt.cjs');
 const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLessonSummary } = require('../../lessonExperience/lessonSummary.cjs');
 const { recordMistake, buildMistakeReview } = require('../../lessonExperience/mistakeReview.cjs');
+const { getAnswerTextDirection } = require('../../lessonExperience/answerTextDirection.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -365,13 +366,15 @@ function AudioControls({ conceptId, controller, hasAudio }) {
 function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   const usedIndexes = new Set(response.builtWords.map(({ index }) => index));
   const answerProgressLabel = `${response.builtWords.length} words placed`;
+  const writingDirection = getAnswerTextDirection(exercise.answer);
+  const wordLayout = { direction: 'ltr', flexDirection: writingDirection === 'rtl' ? 'row-reverse' : 'row' };
   return (
     <View style={styles.buildArea}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>YOUR ANSWER</Text>
         <Text style={styles.sectionMeta}>{answerProgressLabel}</Text>
       </View>
-      <View style={styles.answerTray}>
+      <View style={[styles.answerTray, wordLayout]}>
         {response.builtWords.length ? response.builtWords.map((word, position) => (
           <Pressable
             accessibilityHint="Removes this word from your answer"
@@ -383,7 +386,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
             onPress={() => setResponse(toggleWordBankItem(response, word))}
             style={styles.selectedWord}
           >
-            <Text style={styles.selectedWordText}>{word.value}</Text>
+            <Text style={[styles.selectedWordText, { writingDirection }]}>{word.value}</Text>
           </Pressable>
         )) : <Text style={styles.answerPlaceholder}>Tap words below to build your answer</Text>}
       </View>
@@ -391,7 +394,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
         <Text style={styles.sectionLabel}>WORD BANK</Text>
         <Text style={styles.sectionMeta}>Tap a word to add it below</Text>
       </View>
-      <View style={styles.wordBank}>
+      <View style={[styles.wordBank, wordLayout]}>
         {exercise.wordBank.map((value, index) => {
           const used = usedIndexes.has(index);
           const duplicateCount = exercise.wordBank.filter((word) => word === value).length;
@@ -411,7 +414,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
               }}
               style={[styles.wordChip, used && styles.wordChipUsed]}
             >
-              <Text style={[styles.wordChipText, used && styles.wordChipTextUsed]}>{value}</Text>
+              <Text style={[styles.wordChipText, { writingDirection }, used && styles.wordChipTextUsed]}>{value}</Text>
             </Pressable>
           );
         })}

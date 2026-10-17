@@ -127,6 +127,15 @@ switching back restored one completed topic. Reload, sign-out/sign-in, sound
 settings, and leaderboard membership passed with no page errors or production
 Firebase requests. This evidence covers the local browser, not a physical phone.
 
+The full Sudanese Arabic chapter also passed on 2026-10-17: nine topics, 65
+exercises, and 650 saved XP. The browser regression first reproduced an Arabic
+sentence tray flowing left-to-right, then passed after the answer-based RTL
+layout fix. It checks selected chip coordinates, removal/reinsertion, English
+answer ordering, course isolation, reload, sign-in, and leaderboard membership.
+Run with `DIASPORA_TEST_FULL_CHAPTER=true DIASPORA_TEST_PERFECT=true` in addition
+to the picker settings above. This validates interaction and persistence, not
+native-speaker approval of the draft wording.
+
 ## Swahili Developer Preview
 
 With the same local emulators running, start a separate preview:

@@ -183,6 +183,22 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         await page.getByText(`${selected.length - 1} words placed`, { exact: true }).waitFor();
         await page.getByRole('button', { name: last.name, exact: true }).click();
         await page.getByText(`${selected.length} words placed`, { exact: true }).waitFor();
+        const rtl = /[\u0600-\u06ff]/u.test(exercise.answer);
+        const wordBounds = [];
+        for (const [index, word] of selected.entries()) {
+          wordBounds.push(await page.getByRole('button', {
+            name: `Remove word: ${word.token}, position ${index + 1} of ${selected.length}`, exact: true,
+          }).boundingBox());
+        }
+        for (let index = 1; index < wordBounds.length; index++) {
+          const previous = wordBounds[index - 1];
+          const current = wordBounds[index];
+          if (!previous || !current) throw new Error('Selected words must remain visible.');
+          if (Math.abs(previous.y - current.y) < 3 && (rtl ? previous.x <= current.x : previous.x >= current.x)) {
+            throw new Error(`Answer words must flow ${rtl ? 'right-to-left' : 'left-to-right'}: ${exercise.answer}`);
+          }
+        }
+        if (rtl) await page.screenshot({ path: `outputs/browser-smoke/rtl-${courseId}.png` });
       } else {
         if (!isRecall && makeMistakes) {
         const firstPair = exercise.pairs[0];
