@@ -290,7 +290,8 @@ test('wrong-answer feedback keeps the active human guide visible with the recove
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
   assert.match(source, /feedbackModel\.guideTone !== ['"]none['"]/);
-  assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{topic\.guide \|\| ['"]Kai['"]\}[^>]+style=\{styles\.feedbackGuide\}/s);
+  assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{promptGuide\}[^>]+style=\{styles\.feedbackGuide\}/s);
+  assert.match(source, /tone=\{feedbackModel\.guideTone\}/);
 });
 
 test('the Learn shell surfaces the active topic in a dedicated current-focus card above the grid', () => {

@@ -25,6 +25,28 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
   try {
     page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    async function checkGuideImage(testId) {
+      const guide = page.getByTestId(testId);
+      await guide.waitFor();
+      await page.waitForFunction(id => {
+        const root = document.querySelector(`[data-testid="${id}"]`);
+        const image = root?.querySelector('img');
+        return image?.complete && image.naturalWidth > 0;
+      }, testId);
+      return guide.getAttribute('aria-label');
+    }
+    async function sampleGuideMotion() {
+      return page.getByTestId('lesson-prompt-guide').evaluate(node => new Promise(resolve => {
+        const transforms = new Set();
+        const start = performance.now();
+        function frame() {
+          transforms.add(getComputedStyle(node).transform);
+          if (performance.now() - start > 500) resolve([...transforms]);
+          else requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }));
+    }
     async function selectCourse(id) {
       await page.getByRole('button', { name: /^Change language, current course / }).click({ timeout: 60000 });
       const label = getCourseById(id).label;
@@ -125,12 +147,26 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       throw new Error('An intentionally exited lesson must restart with a fresh response.');
     }
     console.log('Lesson exit cancelled without losing selection; confirmed exit left the topic incomplete.');
+    if (process.env.DIASPORA_TEST_GUIDE_MOTION === 'true') {
+      await checkGuideImage('lesson-prompt-guide');
+      if ((await sampleGuideMotion()).length !== 1) throw new Error('Reduced motion must keep the guide still.');
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      if ((await sampleGuideMotion()).length < 2) throw new Error('The guide must animate when motion is enabled.');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.waitForFunction(() => {
+        const node = document.querySelector('[data-testid="lesson-prompt-guide"]');
+        const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform);
+        return matrix.isIdentity;
+      });
+      console.log('Guide breathing animates and stops at rest when reduced motion is enabled.');
+    }
     const { GENERATED_CURRICULUM: curriculum } = require('../src/data/generatedCurriculum.cjs');
     const { CONCEPTS } = require('../src/data/curriculumContract.cjs');
     const { CORRECT_ANSWER_XP } = require('../src/lessonEngine/lessonXpReward.cjs');
     const topics = curriculum.topics.filter(topic => topic.courseId === courseId).sort((a, b) => a.order - b.order);
     const testedTopics = process.env.DIASPORA_TEST_FULL_CHAPTER === 'true' ? topics : topics.slice(0, 1);
     let totalXp = 0;
+    const seenGuides = new Set();
     for (const [topicIndex, topic] of testedTopics.entries()) {
     const exercises = buildCourseTopicExercises(courseId, topic.id, {
       concepts: CONCEPTS,
@@ -147,9 +183,19 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
     await page.getByRole('radio', { name: `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`, exact: true }).click();
     await page.getByRole('button', { name: 'Check answer', exact: true }).click();
+    const wrongGuide = await checkGuideImage('lesson-feedback-guide');
+    if (wrongGuide !== await page.getByTestId('lesson-prompt-guide').getAttribute('aria-label')) {
+      throw new Error('Wrong-answer encouragement must keep the same speaking guide.');
+    }
     await page.getByRole('button', { name: 'Try again', exact: true }).click();
     }
     for (const [stepIndex, exercise] of testSequence.entries()) {
+      const speakingGuide = await checkGuideImage('lesson-prompt-guide');
+      seenGuides.add(speakingGuide);
+      if (speakingGuide === 'Ayo guide' || speakingGuide === 'Safiya guide') {
+        await page.getByTestId('lesson-prompt-guide').scrollIntoViewIfNeeded();
+        await page.screenshot({ path: `outputs/browser-smoke/guide-${speakingGuide.split(' ')[0].toLowerCase()}.png` });
+      }
       const isRecall = stepIndex >= exercises.length;
       if (isRecall) {
         await page.getByText('Mistake practice', { exact: true }).waitFor();
@@ -233,6 +279,9 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
       }
       await page.getByRole('button', { name: 'Check answer', exact: true }).click();
+      if (await checkGuideImage('lesson-feedback-guide') !== speakingGuide) {
+        throw new Error('Correct-answer celebration must keep the same speaking guide.');
+      }
       if (topicIndex === 0 && stepIndex === 0) {
         if (process.env.DIASPORA_TEST_EXIT_AFTER_XP === 'true') {
           await page.getByText('+10 XP', { exact: true }).waitFor();
@@ -256,6 +305,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByRole('button', { name: 'Continue lesson', exact: true }).click({ timeout: 20000 });
     }
     await page.getByText(/^(Topic|Review|Challenge) complete!$/).waitFor();
+    await checkGuideImage('lesson-complete-guide');
     await page.getByLabel(`${expectedXp} XP saved this lesson`, { exact: true }).waitFor();
     await page.getByLabel(`${expectedAccuracy} percent accuracy across ${checkedAnswers} checked answers`, { exact: true }).waitFor();
     console.log(JSON.stringify({ stage: 'completion', text: await page.locator('body').innerText() }));
@@ -264,6 +314,9 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (topicIndex + 1 < testedTopics.length) {
       await page.getByRole('button', { name: `Start next topic: ${testedTopics[topicIndex + 1].title}`, exact: true }).click();
     }
+    }
+    if (!seenGuides.has('Ayo guide') || !seenGuides.has('Safiya guide')) {
+      throw new Error('The first chapter must introduce both new original guides.');
     }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     if (useCoursePicker) {

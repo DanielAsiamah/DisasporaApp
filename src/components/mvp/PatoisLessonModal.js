@@ -22,6 +22,7 @@ import { useControlledLessonAudio } from '../../audio/useControlledLessonAudio';
 import { getCourseImageRegistry } from '../../data/courseImageRegistry';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { fonts } from '../../theme';
+import AnimatedGuide from './AnimatedGuide';
 
 const { CONCEPTS } = require('../../data/curriculumContract.cjs');
 const { GENERATED_CURRICULUM } = require('../../data/generatedCurriculum.cjs');
@@ -50,6 +51,7 @@ const { saveXpWithDeadline } = require('../../lessonExperience/xpSaveAttempt.cjs
 const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLessonSummary } = require('../../lessonExperience/lessonSummary.cjs');
 const { recordMistake, buildMistakeReview } = require('../../lessonExperience/mistakeReview.cjs');
 const { getAnswerTextDirection } = require('../../lessonExperience/answerTextDirection.cjs');
+const { getPromptGuideName } = require('../../lessonExperience/lessonGuidePresentation.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -61,13 +63,6 @@ const RED = '#FF5D66';
 const LESSON_CLOUD_FILL = '#F6FCFF';
 const LESSON_CLOUD_PRIMARY_RESTING_X = 6;
 const LESSON_CLOUD_SECONDARY_RESTING_X = -4;
-const guideArt = {
-  Kai: require('../../../assets/guides/kai.png'),
-  Amara: require('../../../assets/guides/amara.png'),
-  Sol: require('../../../assets/guides/sol.png'),
-  Nia: require('../../../assets/guides/nia.png'),
-  Kofi: require('../../../assets/guides/kofi.png'),
-};
 
 function playLessonHaptic(event) {
   const feedback = getLessonHapticFeedback(event);
@@ -118,36 +113,9 @@ function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
   );
 }
 
-function BreathingGuidePortrait({ guideName = 'Kai', reducedMotion, style }) {
-  const breathe = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (reducedMotion) {
-      breathe.setValue(0);
-      return undefined;
-    }
-    const animation = Animated.loop(Animated.sequence([
-      Animated.timing(breathe, { toValue: 1, duration: 1800, useNativeDriver: true }),
-      Animated.timing(breathe, { toValue: 0, duration: 1800, useNativeDriver: true }),
-    ]));
-    animation.start();
-    return () => animation.stop();
-  }, [breathe, reducedMotion]);
-
+function BreathingGuidePortrait({ guideName = 'Kai', reducedMotion, style, tone = 'idle', testID }) {
   return (
-    <Animated.Image
-      accessibilityLabel={`${guideName} guide`}
-      resizeMode="contain"
-      source={guideArt[guideName] || guideArt.Kai}
-      style={[
-        style,
-        {
-          transform: [
-            { translateY: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, -4] }) },
-            { scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 1.012] }) },
-          ],
-        },
-      ]}
-    />
+    <AnimatedGuide name={guideName} reducedMotion={reducedMotion} style={style} tone={tone} testID={testID} />
   );
 }
 
@@ -474,7 +442,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const xpRequestGeneration = useRef(0);
   const exercise = lessonExercises[index];
   const isMistakePractice = index >= exercises.length && reviewStarted;
-  const promptGuide = [topic?.guide || 'Kai', 'Nia', 'Kofi', 'Amara', 'Sol'][index % 5];
+  const promptGuide = getPromptGuideName(topic?.guide, index);
   const nextTopic = useMemo(() => courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null, [courseTopics, topic?.order]);
 
   useEffect(() => {
@@ -766,7 +734,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
           <ScrollView contentContainerStyle={styles.completeScrollContent} showsVerticalScrollIndicator={false} style={styles.completeScroll}>
             <View style={styles.completeScreen}>
               <Text style={styles.confetti}>✦  ✧  ✦</Text>
-              <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} />
+              <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} tone="celebrate" testID="lesson-complete-guide" />
               <Image accessible={false} resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
               <Text style={styles.completeTitle}>{completionTitle}</Text>
               <View style={styles.completeXpPill}><Text style={styles.completeXpPillText}>{completionFeedbackModel.xpLabel}</Text></View>
@@ -849,7 +817,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                 <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
               </View>}
               <View style={styles.promptConversation}>
-                <BreathingGuidePortrait guideName={promptGuide} reducedMotion={reducedMotion} style={styles.promptGuide} />
+                <BreathingGuidePortrait guideName={promptGuide} reducedMotion={reducedMotion} style={styles.promptGuide} testID="lesson-prompt-guide" />
                 <View style={styles.promptCard}>
                 <Text style={styles.speakerName}>{promptGuide.toUpperCase()}</Text>
                 <Text style={styles.prompt}>{exercise?.prompt}</Text>
@@ -895,9 +863,11 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   {feedback === 'correct' && <Text style={styles.feedbackConfetti}>✦  ✧  ✦</Text>}
                   {feedbackModel.guideTone !== 'none' && (
                     <BreathingGuidePortrait
-                      guideName={topic.guide || 'Kai'}
+                      guideName={promptGuide}
                       reducedMotion={reducedMotion}
                       style={styles.feedbackGuide}
+                      tone={feedbackModel.guideTone}
+                      testID="lesson-feedback-guide"
                     />
                   )}
                   <View style={styles.feedbackHeader}>

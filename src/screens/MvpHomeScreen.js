@@ -21,6 +21,8 @@ import CourseRoadmap from '../components/mvp/CourseRoadmap';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { fonts } from '../theme';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import AnimatedGuide from '../components/mvp/AnimatedGuide';
+import { guideArt } from '../data/guideArtRegistry';
 import { subscribeLeaderboard, subscribeLeaderboardMembership, syncLeaderboardEntry, leaveLeaderboard } from '../services/firestore/leaderboardService';
 
 const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
@@ -56,11 +58,6 @@ const CLOUD_HERO_RESTING_X = 34;
 const CLOUD_HERO_SECONDARY_RESTING_X = 228;
 const CLOUD_PODIUM_RESTING_X = 28;
 const CLOUD_PODIUM_SECONDARY_RESTING_X = 214;
-const guideArt = {
-  Kai: require('../../assets/guides/kai.png'),
-  Amara: require('../../assets/guides/amara.png'),
-  Sol: require('../../assets/guides/sol.png'),
-};
 function Cloud({ top, size, delay = 0, duration = 17000, restingX = 0, reducedMotion }) {
   const drift = useRef(new Animated.Value(CLOUD_OFFSCREEN_START)).current;
   useEffect(() => {
@@ -88,26 +85,8 @@ function Cloud({ top, size, delay = 0, duration = 17000, restingX = 0, reducedMo
 }
 
 function BreathingGuide({ accessible = false, name = 'Kai', style, reducedMotion }) {
-  const breathe = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (reducedMotion) {
-      breathe.setValue(0);
-      return undefined;
-    }
-    const loop = Animated.loop(Animated.sequence([
-      Animated.timing(breathe, { toValue: 1, duration: 1800, useNativeDriver: true }),
-      Animated.timing(breathe, { toValue: 0, duration: 1800, useNativeDriver: true }),
-    ]));
-    loop.start();
-    return () => loop.stop();
-  }, [breathe, reducedMotion]);
   return (
-    <Animated.Image
-      accessible={accessible}
-      resizeMode="contain"
-      source={guideArt[name] || guideArt.Kai}
-      style={[style, { transform: [{ translateY: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, -4] }) }, { scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [1, 1.012] }) }] }]}
-    />
+    <AnimatedGuide accessible={accessible} name={name} reducedMotion={reducedMotion} style={style} />
   );
 }
 

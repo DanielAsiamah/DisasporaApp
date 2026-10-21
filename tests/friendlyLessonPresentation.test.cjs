@@ -41,8 +41,12 @@ test('rejected matches get red cards, non-color feedback and the incorrect sound
 
 test('the expanded original human cast is used beside lesson prompts', () => {
   const modal = read('src/components/mvp/PatoisLessonModal.js');
-  assert.match(modal, /assets\/guides\/nia.png/);
-  assert.match(modal, /assets\/guides\/kofi.png/);
+  const registry = read('src/data/guideArtRegistry.js');
+  assert.match(modal, /getPromptGuideName\(topic\?\.guide, index\)/);
+  assert.match(read('src/components/mvp/AnimatedGuide.js'), /guideArt\[name\]/);
   assert.match(modal, /styles.promptGuide/);
-  for (const name of ['nia', 'kofi']) assert.ok(fs.statSync(path.join(__dirname, `../assets/guides/${name}.png`)).size > 1000);
+  for (const name of ['kai', 'amara', 'sol', 'nia', 'kofi', 'ayo', 'safiya']) {
+    assert.ok(registry.includes(`assets/guides/${name}.png`));
+    assert.ok(fs.statSync(path.join(__dirname, `../assets/guides/${name}.png`)).size > 1000);
+  }
 });
