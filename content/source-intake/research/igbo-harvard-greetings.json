@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "harvard-igbo-greetings",
+  "sourceUrl": "https://elias.fas.harvard.edu/languages/igbo/beginning/3/greetings-and-responses",
+  "accessedAt": "2026-11-02",
+  "reviewStatus": "reference-only-needs-native-review",
+  "facts": [
+    {
+      "evidenceId": "welcome",
+      "english": "welcome",
+      "localized": "Nnọọ",
+      "sourceText": "Nnọọ | Welcome"
+    },
+    {
+      "evidenceId": "how-are-you",
+      "english": "how are you",
+      "localized": "Kedụ",
+      "sourceText": "Kedụ? | How are you?"
+    }
+  ]
+}

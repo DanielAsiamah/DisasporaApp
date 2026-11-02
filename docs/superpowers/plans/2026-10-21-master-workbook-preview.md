@@ -1,7 +1,7 @@
 # Master Workbook Preview Implementation Plan
 
 **Goal:** Make real, source-backed lessons from the user's 10,000-item master
-workbook playable, beginning with its first two Igbo greeting lessons.
+workbook playable, beginning with its first three Igbo greeting lessons.
 
 **Architecture:** Preserve the original workbook and its canonical starter
 generator. Build a separate deterministic master projection from the master
@@ -74,3 +74,12 @@ roadmap must distinguish playable drafts from untranslated planned lessons.
   usage limit. Final code review was performed by the implementer; it is not an
   independent review. Full-course translation, review and native phone testing
   remain outside this completed increment and are still required for the goal.
+- 2026-11-02: expanded the same contiguous projection to Greetings 3 using the
+  restored user export plus hash-bound Harvard ELIAS reference evidence. This
+  adds three concepts and six exercises; Greetings 4 remains untranslated.
+- The expanded browser walkthrough passed all three lessons: 20 exercises,
+  200 saved XP, red/sound mismatch feedback, recall, reduced motion, progress
+  isolation, reload/sign-in persistence and leaderboard membership. The full
+  Node suite and the separately run local Firestore rules test passed, as did
+  content, roadmap, image and environment checks. The iOS export passed at
+  `outputs/verify-igbo-three-20261102-final`; physical iPhone testing remains.

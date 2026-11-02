@@ -134,7 +134,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     console.log(JSON.stringify({ stage: 'learn', text: await page.locator('body').innerText() }));
     if (courseId === 'igbo') {
-      await page.getByTestId('master-preview-coverage').filter({ hasText: '2 of 4 planned lessons' }).waitFor();
+      await page.getByTestId('master-preview-coverage').filter({ hasText: '3 of 4 planned lessons' }).waitFor();
       await page.getByRole('button', { name: /Igbo full course path/ }).click();
       await page.getByRole('button', { name: /1 Foundations Greetings 4 planned lessons/ }).click();
       await page.getByRole('button', { name: 'Greetings 1, Play draft lesson', exact: true }).click();

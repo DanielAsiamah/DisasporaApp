@@ -2,6 +2,13 @@
   "schemaVersion": 1,
   "sourcePath": "content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv",
   "sourceSha256": "edd366ba15dc398cb2f16d2592ba038c63b33028dc20f97a5cb09261eb144943",
+  "referenceSources": [
+    {
+      "id": "harvard-igbo-greetings",
+      "path": "content/source-intake/research/igbo-harvard-greetings.json",
+      "sha256": "bdcb18dafa1db5e74794f5d36206e180aa73358b386ce90ea04b87852adc57e2"
+    }
+  ],
   "reviewStatus": "needs-native-review",
   "candidates": [
     {
@@ -46,6 +53,28 @@
       "sourcePrompt": "What does 'Ka ọ di' mean?",
       "sourceResponse": "Goodbye (informal)",
       "usageNote": "Informal goodbye; source spelling retained pending native review."
+    },
+    {
+      "contentId": "igbo_u01_07_see_you_later",
+      "english": "see you later",
+      "localized": "Emesia anyi gā ahu",
+      "sourcePrompt": "What is 'Emesia anyi gā ahu'?",
+      "sourceResponse": "Later we will see",
+      "usageNote": "Literal source wording is 'Later we will see'; mapped to the workbook's conversational 'see you later' pending native review."
+    },
+    {
+      "contentId": "igbo_u01_08_welcome",
+      "english": "welcome",
+      "localized": "Nnọọ",
+      "referenceSourceId": "harvard-igbo-greetings",
+      "referenceEvidenceId": "welcome"
+    },
+    {
+      "contentId": "igbo_u01_09_how_are_you",
+      "english": "how are you",
+      "localized": "Kedụ",
+      "referenceSourceId": "harvard-igbo-greetings",
+      "referenceEvidenceId": "how-are-you"
     }
   ]
 }

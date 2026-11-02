@@ -7,7 +7,14 @@ const GENERATED_MASTER_PREVIEW = {
     "sourceWorkbook": "content/source-intake/workbooks/diaspora_10000_content_master.xlsx",
     "sourceSha256": "73ce354b696e1c485467b09f2d5562a11a1992a867bd1ed40aff78bcc35d0291",
     "candidatePath": "content/master-preview/igbo-greetings.json",
-    "candidateSha256": "5c5a7846444dd1b4c23f7a57905c197cf3eb7fd11f2699ac40ffaa16b814801b"
+    "candidateSha256": "4b854d02361b294b00828f9c43a4cabf15927388a4748f353aba27c430bfeebc",
+    "referenceSources": [
+      {
+        "id": "harvard-igbo-greetings",
+        "path": "content/source-intake/research/igbo-harvard-greetings.json",
+        "sha256": "bdcb18dafa1db5e74794f5d36206e180aa73358b386ce90ea04b87852adc57e2"
+      }
+    ]
   },
   "courses": [
     {
@@ -60,6 +67,27 @@ const GENERATED_MASTER_PREVIEW = {
       "topicId": "igbo_u01_l02",
       "topicOrder": 2,
       "order": 6
+    },
+    {
+      "id": "igbo_u01_07_see_you_later",
+      "meaning": "see you later",
+      "topicId": "igbo_u01_l03",
+      "topicOrder": 3,
+      "order": 7
+    },
+    {
+      "id": "igbo_u01_08_welcome",
+      "meaning": "welcome",
+      "topicId": "igbo_u01_l03",
+      "topicOrder": 3,
+      "order": 8
+    },
+    {
+      "id": "igbo_u01_09_how_are_you",
+      "meaning": "how are you",
+      "topicId": "igbo_u01_l03",
+      "topicOrder": 3,
+      "order": 9
     }
   ],
   "courseVocabulary": [
@@ -182,6 +210,68 @@ const GENERATED_MASTER_PREVIEW = {
         "prompt": "What does 'Ka ọ di' mean?",
         "response": "Goodbye (informal)"
       }
+    },
+    {
+      "courseId": "igbo",
+      "conceptId": "igbo_u01_07_see_you_later",
+      "localized": "Emesia anyi gā ahu",
+      "pronunciation": "",
+      "scriptAid": "",
+      "image": "",
+      "audio": "",
+      "voiceId": "",
+      "reviewStatus": "needs-native-review",
+      "publicationState": "unavailable",
+      "order": 7,
+      "usageNote": "Literal source wording is 'Later we will see'; mapped to the workbook's conversational 'see you later' pending native review.",
+      "source": {
+        "path": "content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv",
+        "sha256": "edd366ba15dc398cb2f16d2592ba038c63b33028dc20f97a5cb09261eb144943",
+        "prompt": "What is 'Emesia anyi gā ahu'?",
+        "response": "Later we will see"
+      }
+    },
+    {
+      "courseId": "igbo",
+      "conceptId": "igbo_u01_08_welcome",
+      "localized": "Nnọọ",
+      "pronunciation": "",
+      "scriptAid": "",
+      "image": "",
+      "audio": "",
+      "voiceId": "",
+      "reviewStatus": "needs-native-review",
+      "publicationState": "unavailable",
+      "order": 8,
+      "usageNote": "",
+      "source": {
+        "path": "content/source-intake/research/igbo-harvard-greetings.json",
+        "sha256": "bdcb18dafa1db5e74794f5d36206e180aa73358b386ce90ea04b87852adc57e2",
+        "url": "https://elias.fas.harvard.edu/languages/igbo/beginning/3/greetings-and-responses",
+        "evidenceId": "welcome",
+        "sourceText": "Nnọọ | Welcome"
+      }
+    },
+    {
+      "courseId": "igbo",
+      "conceptId": "igbo_u01_09_how_are_you",
+      "localized": "Kedụ",
+      "pronunciation": "",
+      "scriptAid": "",
+      "image": "",
+      "audio": "",
+      "voiceId": "",
+      "reviewStatus": "needs-native-review",
+      "publicationState": "unavailable",
+      "order": 9,
+      "usageNote": "",
+      "source": {
+        "path": "content/source-intake/research/igbo-harvard-greetings.json",
+        "sha256": "bdcb18dafa1db5e74794f5d36206e180aa73358b386ce90ea04b87852adc57e2",
+        "url": "https://elias.fas.harvard.edu/languages/igbo/beginning/3/greetings-and-responses",
+        "evidenceId": "how-are-you",
+        "sourceText": "Kedụ? | How are you?"
+      }
     }
   ],
   "chapters": [
@@ -190,11 +280,11 @@ const GENERATED_MASTER_PREVIEW = {
       "id": "igbo_u01",
       "title": "Greetings",
       "heroAsset": "",
-      "topicCount": 2,
+      "topicCount": 3,
       "plannedTopicCount": 4,
-      "wordCount": 6,
+      "wordCount": 9,
       "publicationState": "unavailable",
-      "coverageNote": "2 of 4 planned lessons available as text drafts. Native review and pronunciation audio are pending."
+      "coverageNote": "3 of 4 planned lessons available as text drafts. Native review and pronunciation audio are pending."
     }
   ],
   "topics": [
@@ -216,6 +306,16 @@ const GENERATED_MASTER_PREVIEW = {
       "type": "lesson",
       "unlockRequirement": 1,
       "guide": "Ayo",
+      "conceptCount": 3
+    },
+    {
+      "courseId": "igbo",
+      "id": "igbo_u01_l03",
+      "title": "Greetings 3",
+      "order": 3,
+      "type": "lesson",
+      "unlockRequirement": 2,
+      "guide": "Amara",
       "conceptCount": 3
     }
   ],
@@ -493,6 +593,125 @@ const GENERATED_MASTER_PREVIEW = {
       "conceptId": "igbo_u01_04_good_evening",
       "conceptRefs": [
         "igbo_u01_04_good_evening"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l03",
+      "id": "igbo_u01_l03_translate-to-meaning_igbo_u01_07_see_you_later",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Emesia anyi gā ahu\" mean?",
+      "answer": "see you later",
+      "distractors": [
+        "welcome",
+        "how are you"
+      ],
+      "conceptId": "igbo_u01_07_see_you_later",
+      "conceptRefs": [
+        "igbo_u01_07_see_you_later"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l03",
+      "id": "igbo_u01_l03_translate-to-meaning_igbo_u01_08_welcome",
+      "order": 2,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Nnọọ\" mean?",
+      "answer": "welcome",
+      "distractors": [
+        "see you later",
+        "how are you"
+      ],
+      "conceptId": "igbo_u01_08_welcome",
+      "conceptRefs": [
+        "igbo_u01_08_welcome"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l03",
+      "id": "igbo_u01_l03_translate-to-meaning_igbo_u01_09_how_are_you",
+      "order": 3,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Kedụ\" mean?",
+      "answer": "how are you",
+      "distractors": [
+        "see you later",
+        "welcome"
+      ],
+      "conceptId": "igbo_u01_09_how_are_you",
+      "conceptRefs": [
+        "igbo_u01_09_how_are_you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l03",
+      "id": "igbo_u01_l03_match-pairs_pairs",
+      "order": 4,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Igbo phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "igbo_u01_07_see_you_later",
+        "igbo_u01_08_welcome",
+        "igbo_u01_09_how_are_you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l03",
+      "id": "igbo_u01_l03_sentence-build-target_igbo_u01_07_see_you_later",
+      "order": 5,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Igbo phrase for \"see you later\".",
+      "answer": "Emesia anyi gā ahu",
+      "distractors": [
+        "Nnọọ",
+        "Kedụ"
+      ],
+      "conceptId": "igbo_u01_07_see_you_later",
+      "conceptRefs": [
+        "igbo_u01_07_see_you_later"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l03",
+      "id": "igbo_u01_l03_word-tray-meaning_igbo_u01_07_see_you_later",
+      "order": 6,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"Emesia anyi gā ahu\".",
+      "answer": "see you later",
+      "distractors": [
+        "welcome",
+        "how are you"
+      ],
+      "conceptId": "igbo_u01_07_see_you_later",
+      "conceptRefs": [
+        "igbo_u01_07_see_you_later"
       ],
       "voiceId": "",
       "primary": true,

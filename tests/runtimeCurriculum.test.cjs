@@ -16,10 +16,10 @@ test('master drafts do not replace canonical curricula for other courses', () =>
 
 test('Igbo master lessons unlock sequentially without inheriting another course progress', () => {
   const { topics } = getRuntimeCurriculum('igbo');
-  assert.equal(topics.length, 2);
-  assert.deepEqual(buildTopicStates(topics, ['getting-started']).map(t => t.state), ['active', 'locked']);
-  assert.deepEqual(buildTopicStates(topics, ['igbo_u01_l01']).map(t => t.state), ['complete', 'active']);
-  assert.equal(topics.flatMap(topic => buildCourseTopicExercises('igbo', topic.id)).length, 14);
+  assert.equal(topics.length, 3);
+  assert.deepEqual(buildTopicStates(topics, ['getting-started']).map(t => t.state), ['active', 'locked', 'locked']);
+  assert.deepEqual(buildTopicStates(topics, ['igbo_u01_l01']).map(t => t.state), ['complete', 'active', 'locked']);
+  assert.equal(topics.flatMap(topic => buildCourseTopicExercises('igbo', topic.id)).length, 20);
 });
 
 test('the Learn progress message distinguishes available drafts from a complete planned chapter', () => {

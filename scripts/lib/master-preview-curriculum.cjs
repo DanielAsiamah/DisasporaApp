@@ -4,7 +4,7 @@ const normalize = value => String(value || '').normalize('NFC').trim();
 const meaningKey = value => normalize(value).toLowerCase();
 const tokens = value => normalize(value).split(/\s+/).filter(Boolean);
 
-function buildMasterPreview({ languages, units, lessons, vocabulary }, manifest, sourceRows) {
+function buildMasterPreview({ languages, units, lessons, vocabulary }, manifest, sourceRows, referenceSources = {}) {
   if (manifest.schemaVersion !== 1 || manifest.reviewStatus !== 'needs-native-review') {
     throw new Error('Master preview requires schema 1 and pending native review.');
   }
@@ -17,17 +17,35 @@ function buildMasterPreview({ languages, units, lessons, vocabulary }, manifest,
     if (meaningKey(candidate.english) !== meaningKey(row.english_source)) {
       throw new Error(`Workbook meaning mismatch: ${candidate.contentId}`);
     }
-    const sourcePairExists = sourceRows.some((source, index) => (
-      source.Front === candidate.sourcePrompt && source.Back === candidate.sourcePrompt
-      && sourceRows[index + 1]?.Front === candidate.sourceResponse
-      && sourceRows[index + 1]?.Back === candidate.sourceResponse
-    ));
     const localized = normalize(candidate.localized);
-    if (!sourcePairExists || !localized || ![candidate.sourcePrompt, candidate.sourceResponse]
-      .some(text => normalize(text).includes(localized))) {
-      throw new Error(`Translation must be traceable to the exact source pair: ${candidate.contentId}`);
+    let sourceEvidence;
+    if (candidate.referenceSourceId || candidate.referenceEvidenceId) {
+      const sourceManifest = manifest.referenceSources?.find(source => source.id === candidate.referenceSourceId);
+      const reference = referenceSources[candidate.referenceSourceId];
+      const fact = reference?.facts?.find(item => item.evidenceId === candidate.referenceEvidenceId);
+      if (!sourceManifest || !reference || reference.id !== sourceManifest.id
+        || reference.schemaVersion !== 1 || reference.reviewStatus !== 'reference-only-needs-native-review'
+        || !fact || meaningKey(fact.english) !== meaningKey(candidate.english)
+        || normalize(fact.localized) !== localized
+        || !normalize(fact.sourceText).includes(localized)) {
+        throw new Error(`Reference evidence is missing or stale: ${candidate.contentId}`);
+      }
+      sourceEvidence = { path: sourceManifest.path, sha256: sourceManifest.sha256,
+        url: reference.sourceUrl, evidenceId: fact.evidenceId, sourceText: fact.sourceText };
+    } else {
+      const sourcePairExists = sourceRows.some((source, index) => (
+        source.Front === candidate.sourcePrompt && source.Back === candidate.sourcePrompt
+        && sourceRows[index + 1]?.Front === candidate.sourceResponse
+        && sourceRows[index + 1]?.Back === candidate.sourceResponse
+      ));
+      if (!sourcePairExists || !localized || ![candidate.sourcePrompt, candidate.sourceResponse]
+        .some(text => normalize(text).includes(localized))) {
+        throw new Error(`Translation must be traceable to the exact source pair: ${candidate.contentId}`);
+      }
+      sourceEvidence = { path: manifest.sourcePath, sha256: manifest.sourceSha256,
+        prompt: candidate.sourcePrompt, response: candidate.sourceResponse };
     }
-    candidates.set(candidate.contentId, { ...candidate, localized });
+    candidates.set(candidate.contentId, { ...candidate, localized, sourceEvidence });
   }
 
   const result = { courses: [], concepts: [], courseVocabulary: [], chapters: [], topics: [], lessonSteps: [] };
@@ -59,8 +77,7 @@ function buildMasterPreview({ languages, units, lessons, vocabulary }, manifest,
         result.courseVocabulary.push({ courseId, conceptId: row.content_id, localized: candidate.localized,
           pronunciation: '', scriptAid: '', image: '', audio: '', voiceId: '', reviewStatus: manifest.reviewStatus,
           publicationState: 'unavailable', order: row.item_order, usageNote: candidate.usageNote || '',
-          source: { path: manifest.sourcePath, sha256: manifest.sourceSha256,
-            prompt: candidate.sourcePrompt, response: candidate.sourceResponse } });
+          source: candidate.sourceEvidence });
       }
       const steps = [];
       const add = (kind, row, prompt, answer, distractors) => steps.push({
