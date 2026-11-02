@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "guideCast": ["Nneka", "Chidi"],
   "sourcePath": "content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv",
   "sourceSha256": "edd366ba15dc398cb2f16d2592ba038c63b33028dc20f97a5cb09261eb144943",
   "referenceSources": [

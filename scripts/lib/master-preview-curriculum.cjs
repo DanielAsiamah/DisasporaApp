@@ -8,6 +8,10 @@ function buildMasterPreview({ languages, units, lessons, vocabulary }, manifest,
   if (manifest.schemaVersion !== 1 || manifest.reviewStatus !== 'needs-native-review') {
     throw new Error('Master preview requires schema 1 and pending native review.');
   }
+  const guideCast = manifest.guideCast?.map(normalize);
+  if (!guideCast?.length || guideCast.some(name => !name) || new Set(guideCast).size !== guideCast.length) {
+    throw new Error('Master preview requires a unique non-empty guide cast.');
+  }
   const byId = new Map(vocabulary.map(row => [row.content_id, row]));
   const candidates = new Map();
   for (const candidate of manifest.candidates) {
@@ -70,7 +74,7 @@ function buildMasterPreview({ languages, units, lessons, vocabulary }, manifest,
     for (const [index, { lesson, items }] of ready.entries()) {
       const topicId = lesson.lesson_id;
       result.topics.push({ courseId, id: topicId, title: lesson.lesson_title, order: index + 1,
-        type: 'lesson', unlockRequirement: index, guide: index % 2 ? 'Ayo' : 'Amara', conceptCount: items.length });
+        type: 'lesson', unlockRequirement: index, guide: guideCast[index % guideCast.length], conceptCount: items.length });
       for (const row of items) {
         const candidate = candidates.get(row.content_id);
         result.concepts.push({ id: row.content_id, meaning: row.english_source, topicId, topicOrder: index + 1, order: row.item_order });

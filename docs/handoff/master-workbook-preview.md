@@ -41,10 +41,11 @@ trays, wrong-answer feedback, mistake recall, human-guide animation and XP
 deduplication. Account/course progress stores the original master lesson IDs.
 No new database schema or production deployment is required.
 
-Original shared guides appear without borrowing another language's vocabulary
-artwork. Pronunciation audio and dedicated Igbo vocabulary artwork are not yet
-available. The developer preview explicitly discloses its partial coverage and
-pending review. Human-guide animations and feedback sounds still work.
+Original Igbo guides Nneka and Chidi appear without borrowing another
+language's vocabulary artwork. Pronunciation audio and dedicated Igbo vocabulary
+artwork are not yet available. The developer preview explicitly discloses its
+partial coverage and pending review. Human-guide animations and feedback sounds
+still work.
 
 ## Verification (2026-10-29)
 

@@ -10,6 +10,8 @@ test('lesson cast starts with its workbook guide then visits each original guide
     assert.equal(getPromptGuideName(lead, GUIDE_NAMES.length), lead);
     assert.ok(cast.includes('Ayo'));
     assert.ok(cast.includes('Safiya'));
+    assert.ok(cast.includes('Nneka'));
+    assert.ok(cast.includes('Chidi'));
   }
   assert.equal(getPromptGuideName('missing', 0), 'Kai');
   assert.equal(getPromptGuideName('Kai', -1), 'Kai');

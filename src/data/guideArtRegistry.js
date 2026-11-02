@@ -6,4 +6,6 @@ export const guideArt = {
   Kofi: require('../../assets/guides/kofi.png'),
   Ayo: require('../../assets/guides/ayo.png'),
   Safiya: require('../../assets/guides/safiya.png'),
+  Nneka: require('../../assets/guides/nneka.png'),
+  Chidi: require('../../assets/guides/chidi.png'),
 };

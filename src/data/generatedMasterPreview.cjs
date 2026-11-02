@@ -7,7 +7,7 @@ const GENERATED_MASTER_PREVIEW = {
     "sourceWorkbook": "content/source-intake/workbooks/diaspora_10000_content_master.xlsx",
     "sourceSha256": "73ce354b696e1c485467b09f2d5562a11a1992a867bd1ed40aff78bcc35d0291",
     "candidatePath": "content/master-preview/igbo-greetings.json",
-    "candidateSha256": "752daf08bfdadd09d8bf5f32036ea026496dbfc63a7aab03f61c8a4cc15f0419",
+    "candidateSha256": "72601d44e04c8e6a160998d11068400ba6855ea0b37a53e348d27a6fd4642c37",
     "referenceSources": [
       {
         "id": "harvard-igbo-greetings",
@@ -382,7 +382,7 @@ const GENERATED_MASTER_PREVIEW = {
       "order": 1,
       "type": "lesson",
       "unlockRequirement": 0,
-      "guide": "Amara",
+      "guide": "Nneka",
       "conceptCount": 3
     },
     {
@@ -392,7 +392,7 @@ const GENERATED_MASTER_PREVIEW = {
       "order": 2,
       "type": "lesson",
       "unlockRequirement": 1,
-      "guide": "Ayo",
+      "guide": "Chidi",
       "conceptCount": 3
     },
     {
@@ -402,7 +402,7 @@ const GENERATED_MASTER_PREVIEW = {
       "order": 3,
       "type": "lesson",
       "unlockRequirement": 2,
-      "guide": "Amara",
+      "guide": "Nneka",
       "conceptCount": 3
     },
     {
@@ -412,7 +412,7 @@ const GENERATED_MASTER_PREVIEW = {
       "order": 4,
       "type": "lesson",
       "unlockRequirement": 3,
-      "guide": "Ayo",
+      "guide": "Chidi",
       "conceptCount": 3
     }
   ],

@@ -93,3 +93,7 @@ roadmap must distinguish playable drafts from untranslated planned lessons.
   test passed directly against the active local emulator. Content, roadmap,
   image, environment, TypeScript and Expo Doctor checks passed; SDK 58 iOS
   export passed at `outputs/verify-igbo-four-20261102`.
+- Added original course-specific Igbo guides Nneka and Chidi. Their manifest
+  assignment, global cast registration, real transparency, opaque subject core,
+  and dimensions are contract-tested; the phone-sized browser journey and SDK
+  58 iOS export passed with both assets bundled.

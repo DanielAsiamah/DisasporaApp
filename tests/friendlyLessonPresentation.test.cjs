@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { auditPngBuffer } = require('../scripts/lib/audit-vocab-images.cjs');
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 
 test('advancing topics remounts the lesson before old response state can render a new exercise', () => {
@@ -45,8 +46,14 @@ test('the expanded original human cast is used beside lesson prompts', () => {
   assert.match(modal, /getPromptGuideName\(topic\?\.guide, index\)/);
   assert.match(read('src/components/mvp/AnimatedGuide.js'), /guideArt\[name\]/);
   assert.match(modal, /styles.promptGuide/);
-  for (const name of ['kai', 'amara', 'sol', 'nia', 'kofi', 'ayo', 'safiya']) {
+  for (const name of ['kai', 'amara', 'sol', 'nia', 'kofi', 'ayo', 'safiya', 'nneka', 'chidi']) {
     assert.ok(registry.includes(`assets/guides/${name}.png`));
     assert.ok(fs.statSync(path.join(__dirname, `../assets/guides/${name}.png`)).size > 1000);
+  }
+  for (const name of ['nneka', 'chidi']) {
+    const result = auditPngBuffer(fs.readFileSync(path.join(__dirname, `../assets/guides/${name}.png`)), {
+      label: name, expectedWidth: 1024, expectedHeight: 1536,
+    });
+    assert.deepEqual(result.failures, []);
   }
 });

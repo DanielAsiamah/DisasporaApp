@@ -35,6 +35,7 @@ test('master preview preserves workbook IDs, order, wording and complete-lesson 
   const curriculum = build();
   assert.deepEqual(curriculum.topics.map(topic => topic.id), ['igbo_u01_l01', 'igbo_u01_l02', 'igbo_u01_l03', 'igbo_u01_l04']);
   assert.deepEqual(curriculum.topics.map(topic => topic.title), ['Greetings 1', 'Greetings 2', 'Greetings 3', 'Greetings 4']);
+  assert.deepEqual(curriculum.topics.map(topic => topic.guide), ['Nneka', 'Chidi', 'Nneka', 'Chidi']);
   assert.equal(curriculum.courseVocabulary.length, 12);
   assert.equal(curriculum.courseVocabulary[1].localized, '\u1ee4t\u1ee5t\u1ee5 \u1ecdma');
   assert.ok(curriculum.courseVocabulary.every(row => row.reviewStatus === 'needs-native-review'));
@@ -68,6 +69,7 @@ test('stale source text, unrelated wording, duplicate IDs and false approvals fa
   assert.throws(() => build(manifest, input, sourceRows, staleReference), /reference/i);
   assert.throws(() => build({ ...manifest, candidates: manifest.candidates.map(candidate => candidate.referenceEvidenceId === 'welcome' ? { ...candidate, referenceEvidenceId: 'missing' } : candidate) }), /reference/i);
   assert.throws(() => build({ ...manifest, reviewStatus: 'approved' }), /review/i);
+  assert.throws(() => build({ ...manifest, guideCast: ['Nneka', 'Nneka'] }), /guide cast/i);
 });
 
 test('generated exercises carry only lesson-owned concept and reward identities', () => {

@@ -1,6 +1,6 @@
 'use strict';
 
-const GUIDE_NAMES = Object.freeze(['Kai', 'Nia', 'Kofi', 'Amara', 'Sol', 'Ayo', 'Safiya']);
+const GUIDE_NAMES = Object.freeze(['Kai', 'Nia', 'Kofi', 'Amara', 'Sol', 'Ayo', 'Safiya', 'Nneka', 'Chidi']);
 
 function getPromptGuideName(topicGuide, index = 0) {
   const lead = GUIDE_NAMES.includes(topicGuide) ? topicGuide : 'Kai';

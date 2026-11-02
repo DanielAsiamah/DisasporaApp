@@ -33,6 +33,9 @@ a custom development build.
 - The local-emulator browser walkthrough completed all four Igbo lessons,
   saved 270 XP, preserved progress after sign-out/sign-in, exercised red and
   sound mismatch feedback, and completed leaderboard opt-in/out.
+- Nneka and Chidi load as course-specific Igbo guides. Their transparent PNGs
+  pass the project cutout audit, the phone-sized browser journey passed, and the
+  iOS export succeeded in `outputs/verify-igbo-guides-20261102`.
 
 The first tunnel bundle can exceed the proxy's 30-second cold-request window.
 If the first phone request returns 504, leave Metro running until it prints
