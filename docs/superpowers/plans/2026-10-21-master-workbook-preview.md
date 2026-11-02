@@ -83,3 +83,13 @@ roadmap must distinguish playable drafts from untranslated planned lessons.
   Node suite and the separately run local Firestore rules test passed, as did
   content, roadmap, image and environment checks. The iOS export passed at
   `outputs/verify-igbo-three-20261102-final`; physical iPhone testing remains.
+- 2026-11-02: completed Greetings 4 from the restored export plus hash-bound
+  Nkowaokwu evidence. The source's literal "What is happening" gloss is mapped
+  to workbook "what's up" only as a native-review draft.
+- The four-lesson browser walkthrough passed 27 exercises with 270 saved XP,
+  chapter completion, red/sound mismatch feedback, recall, course isolation,
+  reload/sign-in persistence and leaderboard membership.
+- The full suite passed with 492 tests plus one emulator-only skip, whose rules
+  test passed directly against the active local emulator. Content, roadmap,
+  image, environment, TypeScript and Expo Doctor checks passed; SDK 58 iOS
+  export passed at `outputs/verify-igbo-four-20261102`.

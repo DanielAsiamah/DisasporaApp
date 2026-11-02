@@ -134,7 +134,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     console.log(JSON.stringify({ stage: 'learn', text: await page.locator('body').innerText() }));
     if (courseId === 'igbo') {
-      await page.getByTestId('master-preview-coverage').filter({ hasText: '3 of 4 planned lessons' }).waitFor();
+      await page.getByTestId('master-preview-coverage').filter({ hasText: '4 of 4 planned lessons' }).waitFor();
       await page.getByRole('button', { name: /Igbo full course path/ }).click();
       await page.getByRole('button', { name: /1 Foundations Greetings 4 planned lessons/ }).click();
       await page.getByRole('button', { name: 'Greetings 1, Play draft lesson', exact: true }).click();
@@ -328,8 +328,8 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     if (courseId === 'igbo' && testedTopics.length === topics.length) {
-      await page.getByText('Available drafts complete', { exact: true }).first().waitFor();
-      if (await page.getByText('Chapter complete', { exact: true }).count()) throw new Error('Partial drafts must not claim the planned chapter is complete.');
+      await page.getByText('Chapter complete', { exact: true }).first().waitFor();
+      if (await page.getByText('Available drafts complete', { exact: true }).count()) throw new Error('A fully available planned chapter must use the complete state.');
     }
     if (useCoursePicker) {
       const untouchedCourseId = previewCourses.find(id => id !== courseId);

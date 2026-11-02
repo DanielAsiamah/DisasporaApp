@@ -33,16 +33,17 @@ test('checked-in master artifact is bound to current workbook, candidates and so
 
 test('master preview preserves workbook IDs, order, wording and complete-lesson coverage', () => {
   const curriculum = build();
-  assert.deepEqual(curriculum.topics.map(topic => topic.id), ['igbo_u01_l01', 'igbo_u01_l02', 'igbo_u01_l03']);
-  assert.deepEqual(curriculum.topics.map(topic => topic.title), ['Greetings 1', 'Greetings 2', 'Greetings 3']);
-  assert.equal(curriculum.courseVocabulary.length, 9);
+  assert.deepEqual(curriculum.topics.map(topic => topic.id), ['igbo_u01_l01', 'igbo_u01_l02', 'igbo_u01_l03', 'igbo_u01_l04']);
+  assert.deepEqual(curriculum.topics.map(topic => topic.title), ['Greetings 1', 'Greetings 2', 'Greetings 3', 'Greetings 4']);
+  assert.equal(curriculum.courseVocabulary.length, 12);
   assert.equal(curriculum.courseVocabulary[1].localized, '\u1ee4t\u1ee5t\u1ee5 \u1ecdma');
   assert.ok(curriculum.courseVocabulary.every(row => row.reviewStatus === 'needs-native-review'));
   assert.ok(curriculum.courses.every(course => course.availability === 'unavailable'));
   assert.equal(curriculum.courseVocabulary.find(row => row.conceptId === 'igbo_u01_08_welcome').localized, 'Nnọọ');
   assert.equal(curriculum.courseVocabulary.find(row => row.conceptId === 'igbo_u01_08_welcome').source.url, referenceSources['harvard-igbo-greetings'].sourceUrl);
-  assert.equal(curriculum.chapters[0].topicCount, 3);
-  assert.equal(curriculum.chapters[0].wordCount, 9);
+  assert.equal(curriculum.courseVocabulary.find(row => row.conceptId === 'igbo_u01_12_nice_to_meet_you').localized, 'Ọ dị mma izute gị');
+  assert.equal(curriculum.chapters[0].topicCount, 4);
+  assert.equal(curriculum.chapters[0].wordCount, 12);
   assert.equal(curriculum.chapters[0].plannedTopicCount, 4);
   assert.deepEqual(build(), curriculum);
 });
@@ -51,6 +52,7 @@ test('partial translations never expose partial lessons or skip earlier missing 
   assert.deepEqual(build({ ...manifest, candidates: manifest.candidates.slice(0, 2) }).topics, []);
   assert.deepEqual(build({ ...manifest, candidates: manifest.candidates.slice(0, 4) }).topics.map(t => t.id), ['igbo_u01_l01']);
   assert.deepEqual(build({ ...manifest, candidates: manifest.candidates.slice(0, 8) }).topics.map(t => t.id), ['igbo_u01_l01', 'igbo_u01_l02']);
+  assert.deepEqual(build({ ...manifest, candidates: manifest.candidates.slice(0, 11) }).topics.map(t => t.id), ['igbo_u01_l01', 'igbo_u01_l02', 'igbo_u01_l03']);
   assert.deepEqual(build({ ...manifest, candidates: manifest.candidates.slice(3) }).topics, []);
 });
 

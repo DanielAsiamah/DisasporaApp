@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "nkowaokwu-igbo-whats-up",
+  "sourceUrl": "https://nkowaokwu.com/word?word=gi%CC%A3ni%CC%A3",
+  "accessedAt": "2026-11-02",
+  "reviewStatus": "reference-only-needs-native-review",
+  "facts": [
+    {
+      "evidenceId": "whats-up",
+      "english": "what's up",
+      "localized": "Gịnị na-eme",
+      "sourceText": "Gịnị na-eme? | What is happening"
+    }
+  ]
+}

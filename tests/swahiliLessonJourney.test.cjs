@@ -76,7 +76,7 @@ for (const courseId of ['wolof', 'haitian-creole', 'sudanese-arabic', 'igbo']) {
     const vocabulary = curriculum.courseVocabulary.filter(row => row.courseId === courseId);
     const topics = curriculum.topics.filter(topic => topic.courseId === courseId);
     const ids = new Set();
-    assert.equal(topics.length, courseId === 'igbo' ? 3 : 9);
+    assert.equal(topics.length, courseId === 'igbo' ? 4 : 9);
     for (const topic of topics) {
       const exercises = buildCourseTopicExercises(courseId, topic.id, { vocabulary, hasAudio: () => false });
       assert.ok(exercises.length > 0, `${courseId}/${topic.id} must contain exercises`);

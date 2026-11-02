@@ -30,8 +30,8 @@ a custom development build.
 - The public Expo Go manifest reported `exposdk:58.0.0`.
 - A warmed iOS bundle returned HTTP 200 through the tunnel, downloading
   10.97 MB in 2.39 seconds.
-- The local-emulator browser walkthrough completed all three Igbo lessons,
-  saved 200 XP, preserved progress after sign-out/sign-in, exercised red and
+- The local-emulator browser walkthrough completed all four Igbo lessons,
+  saved 270 XP, preserved progress after sign-out/sign-in, exercised red and
   sound mismatch feedback, and completed leaderboard opt-in/out.
 
 The first tunnel bundle can exceed the proxy's 30-second cold-request window.

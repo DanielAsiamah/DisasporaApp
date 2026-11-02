@@ -7,12 +7,17 @@ const GENERATED_MASTER_PREVIEW = {
     "sourceWorkbook": "content/source-intake/workbooks/diaspora_10000_content_master.xlsx",
     "sourceSha256": "73ce354b696e1c485467b09f2d5562a11a1992a867bd1ed40aff78bcc35d0291",
     "candidatePath": "content/master-preview/igbo-greetings.json",
-    "candidateSha256": "4b854d02361b294b00828f9c43a4cabf15927388a4748f353aba27c430bfeebc",
+    "candidateSha256": "752daf08bfdadd09d8bf5f32036ea026496dbfc63a7aab03f61c8a4cc15f0419",
     "referenceSources": [
       {
         "id": "harvard-igbo-greetings",
         "path": "content/source-intake/research/igbo-harvard-greetings.json",
         "sha256": "bdcb18dafa1db5e74794f5d36206e180aa73358b386ce90ea04b87852adc57e2"
+      },
+      {
+        "id": "nkowaokwu-igbo-whats-up",
+        "path": "content/source-intake/research/igbo-nkowaokwu-whats-up.json",
+        "sha256": "b158b4b4e11dd126730f8125712e48b2a989c9aeaa71c42fd5af6b4713d5b061"
       }
     ]
   },
@@ -88,6 +93,27 @@ const GENERATED_MASTER_PREVIEW = {
       "topicId": "igbo_u01_l03",
       "topicOrder": 3,
       "order": 9
+    },
+    {
+      "id": "igbo_u01_10_i_am_fine",
+      "meaning": "I am fine",
+      "topicId": "igbo_u01_l04",
+      "topicOrder": 4,
+      "order": 10
+    },
+    {
+      "id": "igbo_u01_11_whats_up",
+      "meaning": "what's up",
+      "topicId": "igbo_u01_l04",
+      "topicOrder": 4,
+      "order": 11
+    },
+    {
+      "id": "igbo_u01_12_nice_to_meet_you",
+      "meaning": "nice to meet you",
+      "topicId": "igbo_u01_l04",
+      "topicOrder": 4,
+      "order": 12
     }
   ],
   "courseVocabulary": [
@@ -272,6 +298,67 @@ const GENERATED_MASTER_PREVIEW = {
         "evidenceId": "how-are-you",
         "sourceText": "Kedụ? | How are you?"
       }
+    },
+    {
+      "courseId": "igbo",
+      "conceptId": "igbo_u01_10_i_am_fine",
+      "localized": "adị m mma",
+      "pronunciation": "",
+      "scriptAid": "",
+      "image": "",
+      "audio": "",
+      "voiceId": "",
+      "reviewStatus": "needs-native-review",
+      "publicationState": "unavailable",
+      "order": 10,
+      "usageNote": "Source gloss is 'I'm okay'; mapped to the workbook's 'I am fine' pending native review.",
+      "source": {
+        "path": "content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv",
+        "sha256": "edd366ba15dc398cb2f16d2592ba038c63b33028dc20f97a5cb09261eb144943",
+        "prompt": "What does 'I'm okay' mean in Igbo?",
+        "response": "adị m mma"
+      }
+    },
+    {
+      "courseId": "igbo",
+      "conceptId": "igbo_u01_11_whats_up",
+      "localized": "Gịnị na-eme",
+      "pronunciation": "",
+      "scriptAid": "",
+      "image": "",
+      "audio": "",
+      "voiceId": "",
+      "reviewStatus": "needs-native-review",
+      "publicationState": "unavailable",
+      "order": 11,
+      "usageNote": "Source gloss is 'What is happening'; mapped to the workbook's colloquial 'what's up' pending native review.",
+      "source": {
+        "path": "content/source-intake/research/igbo-nkowaokwu-whats-up.json",
+        "sha256": "b158b4b4e11dd126730f8125712e48b2a989c9aeaa71c42fd5af6b4713d5b061",
+        "url": "https://nkowaokwu.com/word?word=gi%CC%A3ni%CC%A3",
+        "evidenceId": "whats-up",
+        "sourceText": "Gịnị na-eme? | What is happening"
+      }
+    },
+    {
+      "courseId": "igbo",
+      "conceptId": "igbo_u01_12_nice_to_meet_you",
+      "localized": "Ọ dị mma izute gị",
+      "pronunciation": "",
+      "scriptAid": "",
+      "image": "",
+      "audio": "",
+      "voiceId": "",
+      "reviewStatus": "needs-native-review",
+      "publicationState": "unavailable",
+      "order": 12,
+      "usageNote": "",
+      "source": {
+        "path": "content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv",
+        "sha256": "edd366ba15dc398cb2f16d2592ba038c63b33028dc20f97a5cb09261eb144943",
+        "prompt": "How do you say 'Nice to meet you' in Igbo?",
+        "response": "Ọ dị mma izute gị"
+      }
     }
   ],
   "chapters": [
@@ -280,11 +367,11 @@ const GENERATED_MASTER_PREVIEW = {
       "id": "igbo_u01",
       "title": "Greetings",
       "heroAsset": "",
-      "topicCount": 3,
+      "topicCount": 4,
       "plannedTopicCount": 4,
-      "wordCount": 9,
+      "wordCount": 12,
       "publicationState": "unavailable",
-      "coverageNote": "3 of 4 planned lessons available as text drafts. Native review and pronunciation audio are pending."
+      "coverageNote": "4 of 4 planned lessons available as text drafts. Native review and pronunciation audio are pending."
     }
   ],
   "topics": [
@@ -316,6 +403,16 @@ const GENERATED_MASTER_PREVIEW = {
       "type": "lesson",
       "unlockRequirement": 2,
       "guide": "Amara",
+      "conceptCount": 3
+    },
+    {
+      "courseId": "igbo",
+      "id": "igbo_u01_l04",
+      "title": "Greetings 4",
+      "order": 4,
+      "type": "lesson",
+      "unlockRequirement": 3,
+      "guide": "Ayo",
       "conceptCount": 3
     }
   ],
@@ -712,6 +809,145 @@ const GENERATED_MASTER_PREVIEW = {
       "conceptId": "igbo_u01_07_see_you_later",
       "conceptRefs": [
         "igbo_u01_07_see_you_later"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_translate-to-meaning_igbo_u01_10_i_am_fine",
+      "order": 1,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"adị m mma\" mean?",
+      "answer": "I am fine",
+      "distractors": [
+        "what's up",
+        "nice to meet you"
+      ],
+      "conceptId": "igbo_u01_10_i_am_fine",
+      "conceptRefs": [
+        "igbo_u01_10_i_am_fine"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_translate-to-meaning_igbo_u01_11_whats_up",
+      "order": 2,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Gịnị na-eme\" mean?",
+      "answer": "what's up",
+      "distractors": [
+        "I am fine",
+        "nice to meet you"
+      ],
+      "conceptId": "igbo_u01_11_whats_up",
+      "conceptRefs": [
+        "igbo_u01_11_whats_up"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_translate-to-meaning_igbo_u01_12_nice_to_meet_you",
+      "order": 3,
+      "exerciseType": "translate-to-meaning",
+      "prompt": "What does \"Ọ dị mma izute gị\" mean?",
+      "answer": "nice to meet you",
+      "distractors": [
+        "I am fine",
+        "what's up"
+      ],
+      "conceptId": "igbo_u01_12_nice_to_meet_you",
+      "conceptRefs": [
+        "igbo_u01_12_nice_to_meet_you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_match-pairs_pairs",
+      "order": 4,
+      "exerciseType": "match-pairs",
+      "prompt": "Match each Igbo phrase to its English meaning.",
+      "answer": "__matched__",
+      "distractors": [],
+      "conceptId": null,
+      "conceptRefs": [
+        "igbo_u01_10_i_am_fine",
+        "igbo_u01_11_whats_up",
+        "igbo_u01_12_nice_to_meet_you"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_sentence-build-target_igbo_u01_10_i_am_fine",
+      "order": 5,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Igbo phrase for \"I am fine\".",
+      "answer": "adị m mma",
+      "distractors": [
+        "Gịnị na-eme",
+        "Ọ dị mma izute gị"
+      ],
+      "conceptId": "igbo_u01_10_i_am_fine",
+      "conceptRefs": [
+        "igbo_u01_10_i_am_fine"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_sentence-build-target_igbo_u01_11_whats_up",
+      "order": 6,
+      "exerciseType": "sentence-build-target",
+      "prompt": "Build the Igbo phrase for \"what's up\".",
+      "answer": "Gịnị na-eme",
+      "distractors": [
+        "adị m mma",
+        "Ọ dị mma izute gị"
+      ],
+      "conceptId": "igbo_u01_11_whats_up",
+      "conceptRefs": [
+        "igbo_u01_11_whats_up"
+      ],
+      "voiceId": "",
+      "primary": true,
+      "publicationState": "unavailable"
+    },
+    {
+      "courseId": "igbo",
+      "topicId": "igbo_u01_l04",
+      "id": "igbo_u01_l04_word-tray-meaning_igbo_u01_10_i_am_fine",
+      "order": 7,
+      "exerciseType": "word-tray-meaning",
+      "prompt": "Build the English meaning of \"adị m mma\".",
+      "answer": "I am fine",
+      "distractors": [
+        "what's up",
+        "nice to meet you"
+      ],
+      "conceptId": "igbo_u01_10_i_am_fine",
+      "conceptRefs": [
+        "igbo_u01_10_i_am_fine"
       ],
       "voiceId": "",
       "primary": true,

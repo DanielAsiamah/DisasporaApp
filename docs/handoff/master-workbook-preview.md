@@ -1,7 +1,7 @@
 # Master Workbook Preview
 
-The first three Igbo greeting lessons from the master workbook are now projected
-into the existing lesson engine. This is a partial, text-only developer draft,
+The first four Igbo greeting lessons from the master workbook are now projected
+into the existing lesson engine. This is a text-only developer draft,
 not a published or native-reviewed language course.
 
 ## Sources
@@ -10,6 +10,7 @@ not a published or native-reviewed language course.
 - Translation candidates: `content/master-preview/igbo-greetings.json`.
 - Original user export: `content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv`.
 - Harvard ELIAS reference evidence: `content/source-intake/research/igbo-harvard-greetings.json`.
+- Nkowaokwu reference evidence: `content/source-intake/research/igbo-nkowaokwu-whats-up.json`.
 - Generated runtime: `src/data/generatedMasterPreview.cjs`.
 
 The manifest identifies exact workbook content IDs and original evidence. The
@@ -32,8 +33,8 @@ builds do not unlock this unfinished course. Selection remains session-local.
 - `igbo_u01_l01`: Greetings 1, three source-backed expressions, seven exercises.
 - `igbo_u01_l02`: Greetings 2, three source-backed expressions, seven exercises.
 - `igbo_u01_l03`: Greetings 3, three source-backed expressions, six exercises.
-- Greetings 4 remains unavailable until its full set of source-backed translations
-  is supplied. The full roadmap remains planned, not a claim of playable content.
+- `igbo_u01_l04`: Greetings 4, three source-backed expressions, seven exercises.
+- The remaining roadmap is planned, not a claim of playable content.
 
 Lessons reuse choice, matching, target-language sentence building, English word
 trays, wrong-answer feedback, mistake recall, human-guide animation and XP
@@ -79,3 +80,19 @@ skip, and the skipped Firestore rules test passed separately against the local
 emulator. Content, roadmap, image and environment checks also passed.
 The iOS export succeeded in `outputs/verify-igbo-three-20261102-final`; this is
 bundle verification, not evidence of a physical iPhone test.
+
+Greetings 4 completes the planned greeting chapter with "I am fine," "what's
+up," and "nice to meet you." The restored user export supports the first and
+third expressions. The second is hash-bound to Nkowaokwu's literal "What is
+happening" gloss and remains explicitly pending native review for the workbook's
+colloquial mapping.
+
+The SDK 58 browser walkthrough completed all four lessons: 27 exercises, 270
+saved XP, chapter completion, wrong-answer red/sound feedback, recall, reduced
+motion, course-progress isolation, reload/sign-in persistence and leaderboard
+opt-in/out. It made no production Firebase requests. The full Node suite passed
+with 492 passes and one emulator-only skip; that rules test passed separately
+against the active local Firestore emulator. Content, roadmap, image,
+environment, TypeScript and Expo Doctor checks passed. The SDK 58 iOS export
+succeeded in `outputs/verify-igbo-four-20261102`; physical iPhone testing remains
+outstanding.

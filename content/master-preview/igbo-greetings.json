@@ -7,6 +7,11 @@
       "id": "harvard-igbo-greetings",
       "path": "content/source-intake/research/igbo-harvard-greetings.json",
       "sha256": "bdcb18dafa1db5e74794f5d36206e180aa73358b386ce90ea04b87852adc57e2"
+    },
+    {
+      "id": "nkowaokwu-igbo-whats-up",
+      "path": "content/source-intake/research/igbo-nkowaokwu-whats-up.json",
+      "sha256": "b158b4b4e11dd126730f8125712e48b2a989c9aeaa71c42fd5af6b4713d5b061"
     }
   ],
   "reviewStatus": "needs-native-review",
@@ -75,6 +80,29 @@
       "localized": "Kedụ",
       "referenceSourceId": "harvard-igbo-greetings",
       "referenceEvidenceId": "how-are-you"
+    },
+    {
+      "contentId": "igbo_u01_10_i_am_fine",
+      "english": "I am fine",
+      "localized": "adị m mma",
+      "sourcePrompt": "What does 'I'm okay' mean in Igbo?",
+      "sourceResponse": "adị m mma",
+      "usageNote": "Source gloss is 'I'm okay'; mapped to the workbook's 'I am fine' pending native review."
+    },
+    {
+      "contentId": "igbo_u01_11_whats_up",
+      "english": "what's up",
+      "localized": "Gịnị na-eme",
+      "referenceSourceId": "nkowaokwu-igbo-whats-up",
+      "referenceEvidenceId": "whats-up",
+      "usageNote": "Source gloss is 'What is happening'; mapped to the workbook's colloquial 'what's up' pending native review."
+    },
+    {
+      "contentId": "igbo_u01_12_nice_to_meet_you",
+      "english": "nice to meet you",
+      "localized": "Ọ dị mma izute gị",
+      "sourcePrompt": "How do you say 'Nice to meet you' in Igbo?",
+      "sourceResponse": "Ọ dị mma izute gị"
     }
   ]
 }
