@@ -71,7 +71,7 @@ test('the Patois compatibility builder keeps its existing behaviour', () => {
 
 test('a course without workbook lesson steps fails closed instead of inheriting Patois templates', () => {
   assert.deepEqual(
-    materializeCourseLessonSteps('igbo', { vocabulary: igboVocabulary }),
+    materializeCourseLessonSteps('igbo', { vocabulary: igboVocabulary, lessonSteps: GENERATED_CURRICULUM.lessonSteps }),
     []
   );
   assert.deepEqual(

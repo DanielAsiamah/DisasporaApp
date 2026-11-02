@@ -1,4 +1,5 @@
 const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
+const { getRuntimeCurriculum } = require('../data/runtimeCurriculum.cjs');
 const { normalizeAnswer } = require('./patoisLessonSession.cjs');
 
 const LESSON_EXERCISE_TYPES = Object.freeze({
@@ -216,9 +217,9 @@ function materializeCourseStep(template, {
 }
 
 function materializeCourseLessonSteps(courseId, {
-  concepts = DEFAULT_CONCEPTS,
-  vocabulary = GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === courseId),
-  lessonSteps = DEFAULT_STEPS,
+  concepts = getRuntimeCurriculum(courseId).concepts,
+  vocabulary = getRuntimeCurriculum(courseId).courseVocabulary.filter((row) => row.courseId === courseId),
+  lessonSteps = getRuntimeCurriculum(courseId).lessonSteps,
 } = {}) {
   const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
   const vocabularyById = new Map(vocabulary.map((row) => [row.conceptId, row]));
@@ -241,9 +242,9 @@ function materializeCourseLessonSteps(courseId, {
 }
 
 function buildCourseTopicExercises(courseId, topicId, {
-  concepts = DEFAULT_CONCEPTS,
-  vocabulary = GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === courseId),
-  lessonSteps = DEFAULT_STEPS,
+  concepts = getRuntimeCurriculum(courseId).concepts,
+  vocabulary = getRuntimeCurriculum(courseId).courseVocabulary.filter((row) => row.courseId === courseId),
+  lessonSteps = getRuntimeCurriculum(courseId).lessonSteps,
   hasAudio = () => false,
 } = {}) {
   const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));

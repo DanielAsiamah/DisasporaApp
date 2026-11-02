@@ -25,7 +25,7 @@ import AnimatedGuide from '../components/mvp/AnimatedGuide';
 import { guideArt } from '../data/guideArtRegistry';
 import { subscribeLeaderboard, subscribeLeaderboardMembership, syncLeaderboardEntry, leaveLeaderboard } from '../services/firestore/leaderboardService';
 
-const { GENERATED_CURRICULUM } = require('../data/generatedCurriculum.cjs');
+const { getRuntimeCurriculum } = require('../data/runtimeCurriculum.cjs');
 const { getCourseById } = require('../data/courseCatalog.cjs');
 const { canAccessRuntimeCourse } = require('../data/courseAccessPolicy.cjs');
 const { buildCourseProgressStorageKey } = require('../lessonEngine/courseProgressKey.cjs');
@@ -107,7 +107,7 @@ function ChapterHero({ guideName = 'Kai', heroSource, reducedMotion }) {
 
   return (
     <View style={styles.hero}>
-      <Animated.Image
+      {heroSource ? <Animated.Image
         resizeMode="cover"
         source={heroSource}
         style={[
@@ -119,7 +119,7 @@ function ChapterHero({ guideName = 'Kai', heroSource, reducedMotion }) {
             ],
           },
         ]}
-      />
+      /> : null}
       <View style={styles.heroWash} />
       <Cloud top={42} size={100} duration={15000} restingX={CLOUD_HERO_RESTING_X} reducedMotion={reducedMotion} />
       <Cloud top={90} size={76} delay={2800} duration={19000} restingX={CLOUD_HERO_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
@@ -356,15 +356,16 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const [activeTopic, setActiveTopic] = useState(null);
   const runtimeCourse = getCourseById(storageCourseId);
   const courseReviewPending = runtimeCourse?.published !== true;
-  const courseConfig = getCoursePresentation(storageCourseId);
+  const courseConfig = getCoursePresentation(storageCourseId) || {};
+  const curriculum = getRuntimeCurriculum(storageCourseId);
   const courseChapter = useMemo(() => (
-    GENERATED_CURRICULUM.chapters.find((chapter) => chapter.courseId === storageCourseId) || null
-  ), [storageCourseId]);
+    curriculum.chapters.find((chapter) => chapter.courseId === storageCourseId) || null
+  ), [curriculum, storageCourseId]);
   const topics = useMemo(() => (
-    GENERATED_CURRICULUM.topics
+    curriculum.topics
       .filter((topic) => topic.courseId === storageCourseId)
       .sort((left, right) => left.order - right.order)
-  ), [storageCourseId]);
+  ), [curriculum, storageCourseId]);
   const progressReady = isProgressSnapshotCurrent(progressSnapshot, storageKey);
   const completedTopicIds = getCompletedTopicIdsForKey(progressSnapshot, storageKey);
   const topicStates = useMemo(() => buildTopicStates(topics, completedTopicIds), [completedTopicIds, topics]);
@@ -373,9 +374,9 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     completedTopicIds,
     course: {
       ...runtimeCourse,
-      category: courseConfig.category,
+      category: courseConfig.category || runtimeCourse?.category,
       displayName: courseConfig.name || runtimeCourse?.displayName,
-      flag: courseConfig.flag,
+      flag: courseConfig.flag || runtimeCourse?.flag,
     },
     topics,
   }), [completedTopicIds, courseConfig.category, courseConfig.flag, courseConfig.name, runtimeCourse, topicStates, topics]);
@@ -390,6 +391,8 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const activeTopicIndex = activeLearnTopic ? topicStates.findIndex((topic) => topic.id === activeLearnTopic.id) + 1 : 1;
   const completedTopicCount = coreLoopView.progress.completed;
   const chapterComplete = coreLoopView.chapterComplete;
+  const hasMorePlannedLessons = courseChapter?.plannedTopicCount > courseChapter?.topicCount;
+  const completionLabel = hasMorePlannedLessons ? 'Available drafts complete' : 'Chapter complete';
   const nextUpTopic = topicStates.find((topic) => topic.state === 'active') || null;
   const chapterProgressLabel = !progressReady
     ? 'Loading saved progress'
@@ -397,14 +400,16 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const nextUpLabel = !progressReady
     ? 'Checking your topics…'
     : completedTopicCount >= topicStates.length
-      ? 'Chapter complete'
+      ? completionLabel
       : `Next up: ${nextUpTopic?.title || 'Getting Started'}`;
   const currentFocusTitle = !progressReady
     ? 'Loading your learning path'
-    : chapterComplete ? 'Chapter complete' : activeLearnTopic?.title || 'Getting Started';
+    : chapterComplete ? completionLabel : activeLearnTopic?.title || 'Getting Started';
   const currentFocusBody = !progressReady
     ? 'Syncing your saved topics before the next lesson opens.'
-    : chapterComplete ? 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
+    : chapterComplete ? hasMorePlannedLessons
+      ? 'You finished the available drafts. Replay a lesson while the rest of the chapter is being prepared.'
+      : 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
   const currentFocusMetaLabel = !progressReady
     ? 'Progress syncing'
     : chapterComplete ? `${coreLoopView.progress.total} topics complete` : `${coreLoopView.activeCard?.modeLabel || 'Lesson'} ${activeTopicIndex} of ${topicStates.length}`;
@@ -416,7 +421,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const currentFocusCtaLabel = !progressReady
     ? 'Please wait'
     : `${coreLoopView.activeCard?.ctaLabel || 'Start lesson'} →`;
-  const learningPresentation = getLearningProgressPresentation({ ready: progressReady, completed: completedTopicCount, total: topicStates.length });
+  const learningPresentation = getLearningProgressPresentation({ ready: progressReady, completed: completedTopicCount, total: topicStates.length, hasMorePlannedLessons });
 
   useEffect(() => {
     setActiveTopic(null);
@@ -554,6 +559,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
                   <Text style={styles.courseKicker}>{coreLoopView.courseIdentity.category}</Text>
                   <Text accessibilityRole="header" style={styles.chapterTitle}>{courseChapter?.title || `${coreLoopView.courseIdentity.title} foundations`}</Text>
                   <Text style={styles.chapterMeta}>{`${courseChapter?.topicCount ?? coreLoopView.progress.total} topics • ${courseChapter?.wordCount ?? 39} words`}</Text>
+                  {courseChapter?.coverageNote ? <Text testID="master-preview-coverage" style={styles.reviewBannerBody}>{courseChapter.coverageNote}</Text> : null}
                       <View
                         accessible
                         accessibilityLabel={`Course progress ${coreLoopView.progress.percent} percent`}
@@ -606,7 +612,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
               ))}
             </View>
             </View>
-            <CourseRoadmap courseId={storageCourseId} />
+            <CourseRoadmap courseId={storageCourseId} topics={topicStates} progressReady={progressReady} onOpenTopic={setActiveTopic} />
           </ScrollView>
         ) : <Leaderboard profile={profile} reducedMotion={reducedMotion} />}
       </View>

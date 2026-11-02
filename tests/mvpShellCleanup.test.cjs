@@ -33,7 +33,9 @@ test('MVP shell retains the approved chapter contract', () => {
 
 test('the Learn shell derives chapter title and meta from the rebuilt curriculum chapter row', () => {
   assert.match(source, /const courseChapter = useMemo\(\(\) => \(/);
-  assert.match(source, /GENERATED_CURRICULUM\.chapters/);
+  assert.match(source, /const curriculum = getRuntimeCurriculum\(storageCourseId\)/);
+  assert.match(source, /curriculum\.chapters/);
+  assert.match(source, /courseChapter\?\.coverageNote/);
   assert.match(source, /chapter\.courseId === storageCourseId/);
   assert.match(source, /<Text style=\{styles\.courseKicker\}>\{coreLoopView\.courseIdentity\.category\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole=['"]header['"] style=\{styles\.chapterTitle\}>\{courseChapter\?\.title \|\| `\$\{coreLoopView\.courseIdentity\.title\} foundations`\}<\/Text>/);

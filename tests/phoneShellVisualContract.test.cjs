@@ -137,7 +137,7 @@ test('the Learn chapter header summarizes real progress and the next topic above
   assert.match(source, /const completedTopicCount = coreLoopView\.progress\.completed/);
   assert.match(source, /const nextUpTopic = topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\) \|\| null/);
   assert.match(source, /const chapterProgressLabel = !progressReady[\s\S]*?`\$\{coreLoopView\.progress\.completed\} of \$\{coreLoopView\.progress\.total\} topics complete`/);
-  assert.match(source, /const nextUpLabel = !progressReady[\s\S]*?completedTopicCount >= topicStates\.length[\s\S]*?['"]Chapter complete['"][\s\S]*?`Next up: \$\{nextUpTopic\?\.title \|\| ['"]Getting Started['"]\}`/);
+  assert.match(source, /const nextUpLabel = !progressReady[\s\S]*?completedTopicCount >= topicStates\.length[\s\S]*?completionLabel[\s\S]*?`Next up: \$\{nextUpTopic\?\.title \|\| ['"]Getting Started['"]\}`/);
   assert.match(source, /accessibilityLabel=\{`Course progress \$\{coreLoopView\.progress\.percent\} percent`\}/);
   assert.match(source, /<View style=\{styles\.chapterSummaryRow\}>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{chapterProgressLabel\}<\/Text>[\s\S]*?<Text style=\{styles\.chapterSummaryText\}>\{nextUpLabel\}<\/Text>/s);
   assert.match(source, /chapterSummaryRow:\s*\{/);
@@ -161,7 +161,8 @@ test('the lesson completion screen names the unlocked next topic instead of usin
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
   assert.match(source, /const courseTopics = useMemo\(\(\) => \(/);
-  assert.match(source, /GENERATED_CURRICULUM\.topics/);
+  assert.match(source, /const curriculum = getRuntimeCurriculum\(runtimeCourseId\)/);
+  assert.match(source, /curriculum\.topics/);
   assert.match(source, /const nextTopic = useMemo\(\(\) => courseTopics\.find\(\(candidate\) => candidate\.order === \(topic\?\.order \?\? 0\) \+ 1\) \|\| null, \[courseTopics, topic\?\.order\]\)/);
   assert.match(source, /nextTopic \? `You finished \$\{topic\.title\}\. Next up: \$\{nextTopic\.title\}\.` : `You finished \$\{topic\.title\} and completed this chapter\.`/);
   assert.match(source, /nextTopic \? <View style=\{styles\.completeNextPill\}><Text style=\{styles\.completeNextPillText\}>Next up: \{nextTopic\.title\}<\/Text><\/View> : null/);
@@ -275,13 +276,13 @@ test('matching lessons explain both columns, surface pair progress, and announce
   assert.match(source, /matchColumnLabel:\s*\{/);
 });
 
-test('lesson prompts have a human guide while non-matching exercises retain the animated vocabulary stage', () => {
+test('lesson prompts have a human guide and show vocabulary stages only when their course has artwork', () => {
   const source = fs.readFileSync(path.join(root, 'src/components/mvp/PatoisLessonModal.js'), 'utf8');
 
   assert.match(source, /function getExerciseVisualConceptId\(exercise\)/);
   assert.match(source, /exercise\?\.imageConceptId \|\| exercise\?\.conceptId \|\| exercise\?\.pairs\?\.\[0\]\?\.conceptId \|\| null/);
   assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
-  assert.match(source, /!isMatch && !isMistakePractice && <View style=\{styles\.scene\}>/);
+  assert.match(source, /!isMatch && !isMistakePractice && imageRegistry\[exerciseVisualConceptId\] \? <View style=\{styles\.scene\}>/);
   assert.match(source, /<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\}/);
   assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\}/);
 });
@@ -325,8 +326,9 @@ test('the current-focus card switches to a chapter-complete state instead of pre
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /const chapterComplete = coreLoopView\.chapterComplete/);
-  assert.match(source, /const currentFocusTitle = !progressReady[\s\S]*?chapterComplete \? ['"]Chapter complete['"] : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
-  assert.match(source, /const currentFocusBody = !progressReady[\s\S]*?chapterComplete \? ['"]You finished this chapter — replay any topic below whenever you want a refresher\.['"] : getTopicFocusDescription\(activeLearnTopic\)/);
+  assert.match(source, /const completionLabel = hasMorePlannedLessons \? 'Available drafts complete' : 'Chapter complete'/);
+  assert.match(source, /const currentFocusTitle = !progressReady[\s\S]*?chapterComplete \? completionLabel : activeLearnTopic\?\.title \|\| ['"]Getting Started['"]/);
+  assert.match(source, /const currentFocusBody = !progressReady[\s\S]*?chapterComplete \? hasMorePlannedLessons[\s\S]*?You finished the available drafts[\s\S]*?getTopicFocusDescription\(activeLearnTopic\)/);
   assert.match(source, /const currentFocusMetaLabel = !progressReady[\s\S]*?chapterComplete \? `\$\{coreLoopView\.progress\.total\} topics complete` : `\$\{coreLoopView\.activeCard\?\.modeLabel \|\| ['"]Lesson['"]\} \$\{activeTopicIndex\} of \$\{topicStates\.length\}`/);
   assert.match(source, /const currentFocusHint = !progressReady[\s\S]*?chapterComplete[\s\S]*?`Opens \$\{activeLearnTopic\?\.title \|\| ['"]the first topic['"]\} for review`[\s\S]*?: ['"]Opens your current lesson['"]/s);
   assert.match(source, /const currentFocusCtaLabel = !progressReady[\s\S]*?`\$\{coreLoopView\.activeCard\?\.ctaLabel \|\| ['"]Start lesson['"]\} →`/s);
@@ -356,7 +358,7 @@ test('Learn and Leaderboard use responsive vector icons and compact-phone podium
 
   assert.match(source, /import\s+Ionicons\s+from\s+['"]@expo\/vector-icons\/Ionicons['"]/);
   assert.match(source, /accessibilityLabel=\{learningPresentation\.accessibilityLabel\}/);
-  assert.match(source, /getLearningProgressPresentation\(\{ ready: progressReady, completed: completedTopicCount, total: topicStates\.length \}\)/);
+  assert.match(source, /getLearningProgressPresentation\(\{ ready: progressReady, completed: completedTopicCount, total: topicStates\.length, hasMorePlannedLessons \}\)/);
   assert.doesNotMatch(source, /profile\?\.streak/);
   assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.xp \|\| 0\} experience points`\}/);
   assert.match(source, /name=\{activeTab === id \? activeIcon : icon\}/);

@@ -31,6 +31,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
+    "content:master:build": "node scripts/generate-master-preview.cjs",
+    "content:master:check": "node scripts/generate-master-preview.cjs --check",
     "test:app:font-recovery": "node scripts/verify-font-recovery.cjs",
     "test:app:browser": "node scripts/verify-local-core-loop.cjs",
     "firebase:emulators": "npx --yes firebase-tools@14.17.0 emulators:start --config firebase.emulators.json --project demo-diaspora-app --only auth,firestore,storage",

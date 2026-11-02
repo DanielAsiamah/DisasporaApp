@@ -6,10 +6,10 @@ const { buildCoursePickerOptions } = require('../src/lessonExperience/coursePick
 test('the opted-in development picker offers only courses with implemented draft lessons', () => {
   const options = buildCoursePickerOptions(COURSE_CATALOG, { isDevelopment: true, previewOptIn: true });
   assert.deepEqual(options.filter(option => option.selectable).map(option => option.id), [
-    'jamaican-patois', 'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic',
+    'jamaican-patois', 'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic', 'igbo',
   ]);
   assert.deepEqual(options.filter(option => !option.selectable).map(option => option.id), [
-    'nobiin', 'igbo', 'belizean-kriol', 'aave',
+    'nobiin', 'belizean-kriol', 'aave',
   ]);
   assert.equal(options.find(option => option.id === 'swahili').previewCourseId, 'swahili');
   assert.equal(options.find(option => option.id === 'swahili').statusLabel, 'Draft lessons');

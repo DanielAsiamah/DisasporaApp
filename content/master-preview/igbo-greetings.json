@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "content/source-intake/quizlet/raw/igbo-greetings-family-common-phrases.csv",
+  "sourceSha256": "edd366ba15dc398cb2f16d2592ba038c63b33028dc20f97a5cb09261eb144943",
+  "reviewStatus": "needs-native-review",
+  "candidates": [
+    {
+      "contentId": "igbo_u01_01_hello",
+      "english": "hello",
+      "localized": "Ndewo",
+      "sourcePrompt": "Hello/Hi",
+      "sourceResponse": "Ndewo (pronounced as 'N-day-wo')"
+    },
+    {
+      "contentId": "igbo_u01_02_good_morning",
+      "english": "good morning",
+      "localized": "Ụtụtụ ọma",
+      "sourcePrompt": "Good morning",
+      "sourceResponse": "Ụtụtụ ọma (pronounced as 'Oo-too-too o-ma')"
+    },
+    {
+      "contentId": "igbo_u01_03_good_afternoon",
+      "english": "good afternoon",
+      "localized": "Ehihie ọma",
+      "sourcePrompt": "Good afternoon",
+      "sourceResponse": "Ehihie ọma (pronounced as 'Eh-hee-he o-ma')"
+    },
+    {
+      "contentId": "igbo_u01_04_good_evening",
+      "english": "good evening",
+      "localized": "Mgbede ọma",
+      "sourcePrompt": "Good evening",
+      "sourceResponse": "Mgbede ọma (pronounced as 'M-bay-day o-ma')"
+    },
+    {
+      "contentId": "igbo_u01_05_good_night",
+      "english": "good night",
+      "localized": "Kachifo",
+      "sourcePrompt": "What is 'Kachifo'?",
+      "sourceResponse": "Good night"
+    },
+    {
+      "contentId": "igbo_u01_06_goodbye",
+      "english": "goodbye",
+      "localized": "Ka ọ di",
+      "sourcePrompt": "What does 'Ka ọ di' mean?",
+      "sourceResponse": "Goodbye (informal)",
+      "usageNote": "Informal goodbye; source spelling retained pending native review."
+    }
+  ]
+}

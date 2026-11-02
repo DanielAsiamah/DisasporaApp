@@ -24,8 +24,7 @@ import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { fonts } from '../../theme';
 import AnimatedGuide from './AnimatedGuide';
 
-const { CONCEPTS } = require('../../data/curriculumContract.cjs');
-const { GENERATED_CURRICULUM } = require('../../data/generatedCurriculum.cjs');
+const { getRuntimeCurriculum } = require('../../data/runtimeCurriculum.cjs');
 const { getCourseById } = require('../../data/courseCatalog.cjs');
 const { canAccessRuntimeCourse } = require('../../data/courseAccessPolicy.cjs');
 const {
@@ -402,23 +401,25 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   const audio = useControlledLessonAudio({ phraseRegistry, soundEffectsEnabled });
   const reducedMotion = useReducedMotion();
   const imageRegistry = useMemo(() => getCourseImageRegistry(runtimeCourseId), [runtimeCourseId]);
+  const curriculum = getRuntimeCurriculum(runtimeCourseId);
   const courseTopics = useMemo(() => (
-    GENERATED_CURRICULUM.topics
+    curriculum.topics
       .filter((candidate) => candidate.courseId === runtimeCourseId)
       .sort((left, right) => left.order - right.order)
-  ), [runtimeCourseId]);
+  ), [curriculum, runtimeCourseId]);
   const vocabulary = useMemo(() => (
-    GENERATED_CURRICULUM.courseVocabulary.filter((row) => row.courseId === runtimeCourseId)
-  ), [runtimeCourseId]);
+    curriculum.courseVocabulary.filter((row) => row.courseId === runtimeCourseId)
+  ), [curriculum, runtimeCourseId]);
   const hasCourseAudio = useMemo(
     () => (conceptId) => hasApprovedCourseAudio(runtimeCourseId, conceptId),
     [runtimeCourseId]
   );
   const exercises = useMemo(() => topic && runtimeCourseId ? buildCourseTopicExercises(runtimeCourseId, topic.id, {
-    concepts: CONCEPTS,
+    concepts: curriculum.concepts,
+    lessonSteps: curriculum.lessonSteps,
     vocabulary,
     hasAudio: hasCourseAudio,
-  }) : [], [hasCourseAudio, runtimeCourseId, topic, vocabulary]);
+  }) : [], [curriculum, hasCourseAudio, runtimeCourseId, topic, vocabulary]);
   const [mistakeIds, setMistakeIds] = useState([]);
   const [reviewStarted, setReviewStarted] = useState(false);
   const reviewExercises = useMemo(() => buildMistakeReview(exercises, mistakeIds), [exercises, mistakeIds]);
@@ -657,6 +658,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
   });
   const completionFeedbackModel = buildLessonFeedbackModel({
     finished,
+    hasMorePlannedLessons: curriculum.chapters.some(chapter => chapter.courseId === runtimeCourseId && chapter.plannedTopicCount > chapter.topicCount),
     nextTopicTitle: nextTopic?.title || '',
     topicTitle: topic.title,
   });
@@ -735,7 +737,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
             <View style={styles.completeScreen}>
               <Text style={styles.confetti}>✦  ✧  ✦</Text>
               <BreathingGuidePortrait guideName={topic.guide || 'Kai'} reducedMotion={reducedMotion} style={styles.completeGuide} tone="celebrate" testID="lesson-complete-guide" />
-              <Image accessible={false} resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} />
+              {imageRegistry[exercises[0]?.conceptId] ? <Image accessible={false} resizeMode="contain" source={imageRegistry[exercises[0]?.conceptId]} style={styles.completeImage} /> : null}
               <Text style={styles.completeTitle}>{completionTitle}</Text>
               <View style={styles.completeXpPill}><Text style={styles.completeXpPillText}>{completionFeedbackModel.xpLabel}</Text></View>
               <View style={styles.resultGrid}>
@@ -808,14 +810,14 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                     <Text accessibilityLabel="Preview content is still awaiting native-speaker approval." style={styles.reviewBannerTitle}>Preview: Native review pending</Text>
                 </View>
               ) : null}
-              {!isMatch && !isMistakePractice && <View style={styles.scene}>
+              {!isMatch && !isMistakePractice && imageRegistry[exerciseVisualConceptId] ? <View style={styles.scene}>
                 <LessonClouds
                   primaryRestingX={LESSON_CLOUD_PRIMARY_RESTING_X}
                   secondaryRestingX={LESSON_CLOUD_SECONDARY_RESTING_X}
                   reducedMotion={reducedMotion}
                 />
                 <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
-              </View>}
+              </View> : null}
               <View style={styles.promptConversation}>
                 <BreathingGuidePortrait guideName={promptGuide} reducedMotion={reducedMotion} style={styles.promptGuide} testID="lesson-prompt-guide" />
                 <View style={styles.promptCard}>

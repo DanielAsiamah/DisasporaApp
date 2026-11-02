@@ -7,10 +7,15 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const makeMistakes = process.env.DIASPORA_TEST_PERFECT !== 'true';
   const muteEffects = process.env.DIASPORA_TEST_MUTED === 'true';
   const useCoursePicker = process.env.DIASPORA_TEST_COURSE_PICKER === 'true';
-  const previewCourses = ['jamaican-patois', 'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic'];
+  const previewCourses = ['jamaican-patois', 'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic', 'igbo'];
   if (!previewCourses.includes(courseId)) throw new Error('This course does not have an implemented lesson preview.');
   const { getCourseById } = require('../src/data/courseCatalog.cjs');
   const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
+  const { getRuntimeCurriculum } = require('../src/data/runtimeCurriculum.cjs');
+  const courseTopics = id => getRuntimeCurriculum(id).topics.filter(topic => topic.courseId === id).sort((a, b) => a.order - b.order);
+  const curriculum = getRuntimeCurriculum(courseId);
+  const topics = courseTopics(courseId);
+  const firstLessonName = new RegExp(`${escapePattern(topics[0].title)}\\. Lesson`);
   require('node:fs').mkdirSync('outputs/browser-smoke', { recursive: true });
   const hub = await fetch('http://127.0.0.1:4400/emulators', { signal: AbortSignal.timeout(5000) }).then(response => response.json());
   if (!hub.auth || !hub.firestore) throw new Error('Start the local Firebase emulators first.');
@@ -108,7 +113,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     console.log(`Sound preference saved, reloaded, and ${muteEffects ? 'kept off' : 're-enabled'}.`);
     if (useCoursePicker) {
       await page.getByRole('button', { name: /^Change language, current course / }).click();
-      for (const id of ['nobiin', 'igbo', 'belizean-kriol', 'aave']) {
+      for (const id of ['nobiin', 'belizean-kriol', 'aave']) {
         const option = page.getByRole('button', { name: `${getCourseById(id).label}, Content in preparation`, exact: true });
         if (await option.isEnabled()) throw new Error(`Incomplete course ${id} must stay disabled.`);
       }
@@ -116,18 +121,24 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByRole('button', { name: 'Close language picker', exact: true }).click();
       for (const id of previewCourses) {
         await selectCourse(id);
-        await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
-        await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
-        const first = buildCourseTopicExercises(id, 'getting-started', { hasAudio: () => false })[0];
+        const available = courseTopics(id);
+        await page.getByText(`0 of ${available.length} topics complete`, { exact: true }).waitFor();
+        await page.getByRole('button', { name: new RegExp(`${escapePattern(available[0].title)}\\. Lesson`) }).click();
+        const first = buildCourseTopicExercises(id, available[0].id, { hasAudio: () => false })[0];
         await page.getByText(first.prompt, { exact: true }).waitFor();
         await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
         await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
       }
       await selectCourse(courseId);
-      console.log('All five draft courses opened their own lesson; four incomplete courses stayed disabled.');
+      console.log('All six draft courses opened their own lesson; three incomplete courses stayed disabled.');
     }
     console.log(JSON.stringify({ stage: 'learn', text: await page.locator('body').innerText() }));
-    await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
+    if (courseId === 'igbo') {
+      await page.getByTestId('master-preview-coverage').filter({ hasText: '2 of 4 planned lessons' }).waitFor();
+      await page.getByRole('button', { name: /Igbo full course path/ }).click();
+      await page.getByRole('button', { name: /1 Foundations Greetings 4 planned lessons/ }).click();
+      await page.getByRole('button', { name: 'Greetings 1, Play draft lesson', exact: true }).click();
+    } else await page.getByRole('button', { name: firstLessonName }).click();
     await page.getByRole('radio').first().click();
     const selectedAnswerLabel = await page.getByRole('radio').first().getAttribute('aria-label');
     await page.waitForFunction(() => document.querySelector('[role="radio"][aria-checked="true"]'));
@@ -140,9 +151,9 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
     await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
-    await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+    await page.getByText(`0 of ${topics.length} topics complete`, { exact: true }).waitFor();
     await page.getByLabel('0 experience points', { exact: true }).waitFor();
-    await page.getByRole('button', { name: /Getting Started\. Lesson/ }).click();
+    await page.getByRole('button', { name: firstLessonName }).click();
     if (await page.getByRole('radio', { checked: true }).count()) {
       throw new Error('An intentionally exited lesson must restart with a fresh response.');
     }
@@ -160,16 +171,13 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       });
       console.log('Guide breathing animates and stops at rest when reduced motion is enabled.');
     }
-    const { GENERATED_CURRICULUM: curriculum } = require('../src/data/generatedCurriculum.cjs');
-    const { CONCEPTS } = require('../src/data/curriculumContract.cjs');
     const { CORRECT_ANSWER_XP } = require('../src/lessonEngine/lessonXpReward.cjs');
-    const topics = curriculum.topics.filter(topic => topic.courseId === courseId).sort((a, b) => a.order - b.order);
     const testedTopics = process.env.DIASPORA_TEST_FULL_CHAPTER === 'true' ? topics : topics.slice(0, 1);
     let totalXp = 0;
     const seenGuides = new Set();
     for (const [topicIndex, topic] of testedTopics.entries()) {
     const exercises = buildCourseTopicExercises(courseId, topic.id, {
-      concepts: CONCEPTS,
+      concepts: curriculum.concepts,
       vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
       hasAudio: () => false,
     });
@@ -287,11 +295,11 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           await page.getByText('+10 XP', { exact: true }).waitFor();
           await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
           await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
-          await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+          await page.getByText(`0 of ${topics.length} topics complete`, { exact: true }).waitFor();
           await page.getByLabel('10 experience points', { exact: true }).waitFor();
           await page.reload();
           if (useCoursePicker) await selectCourse(courseId);
-          await page.getByText('0 of 9 topics complete', { exact: true }).waitFor({ timeout: 60000 });
+          await page.getByText(`0 of ${topics.length} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
           await page.getByLabel('10 experience points', { exact: true }).waitFor();
           if (errors.length || blocked.length) throw new Error('Browser errors or production request attempted');
           console.log('Confirmed exit preserved 10 saved XP after reload without completing the topic.');
@@ -319,10 +327,14 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       throw new Error('The first chapter must introduce both new original guides.');
     }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
+    if (courseId === 'igbo' && testedTopics.length === topics.length) {
+      await page.getByText('Available drafts complete', { exact: true }).first().waitFor();
+      if (await page.getByText('Chapter complete', { exact: true }).count()) throw new Error('Partial drafts must not claim the planned chapter is complete.');
+    }
     if (useCoursePicker) {
       const untouchedCourseId = previewCourses.find(id => id !== courseId);
       await selectCourse(untouchedCourseId);
-      await page.getByText('0 of 9 topics complete', { exact: true }).waitFor();
+      await page.getByText(`0 of ${courseTopics(untouchedCourseId).length} topics complete`, { exact: true }).waitFor();
       await selectCourse(courseId);
       await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor();
       console.log('Switching languages preserved separate topic progress.');

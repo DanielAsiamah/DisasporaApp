@@ -2,7 +2,7 @@
 
 const LEGACY_PREVIEW_COURSE_IDS = new Set(['jamaican-patois']);
 const DEVELOPER_PREVIEW_COURSE_IDS = new Set([
-  'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic',
+  'swahili', 'wolof', 'haitian-creole', 'sudanese-arabic', 'igbo',
 ]);
 
 function deriveCourseReleaseState(course, { hasVerifiedRelease = false } = {}) {

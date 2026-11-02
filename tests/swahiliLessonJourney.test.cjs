@@ -70,12 +70,13 @@ test('the complete hidden Swahili journey is answerable and silent', () => {
   for (const exercise of exercises) completeCorrectly(exercise);
 });
 
-for (const courseId of ['wolof', 'haitian-creole', 'sudanese-arabic']) {
+for (const courseId of ['wolof', 'haitian-creole', 'sudanese-arabic', 'igbo']) {
   test(`every ${courseId} draft topic has answerable exercises without unapproved audio`, () => {
-    const vocabulary = GENERATED_CURRICULUM.courseVocabulary.filter(row => row.courseId === courseId);
-    const topics = GENERATED_CURRICULUM.topics.filter(topic => topic.courseId === courseId);
+    const curriculum = require('../src/data/runtimeCurriculum.cjs').getRuntimeCurriculum(courseId);
+    const vocabulary = curriculum.courseVocabulary.filter(row => row.courseId === courseId);
+    const topics = curriculum.topics.filter(topic => topic.courseId === courseId);
     const ids = new Set();
-    assert.equal(topics.length, 9);
+    assert.equal(topics.length, courseId === 'igbo' ? 2 : 9);
     for (const topic of topics) {
       const exercises = buildCourseTopicExercises(courseId, topic.id, { vocabulary, hasAudio: () => false });
       assert.ok(exercises.length > 0, `${courseId}/${topic.id} must contain exercises`);

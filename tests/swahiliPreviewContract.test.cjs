@@ -58,7 +58,8 @@ test('home shell selects course topics, hero and flag without publishing Swahili
   assert.match(source, /courseId\s*===\s*storageCourseId/);
   assert.match(source, /courseConfig\.flag/);
   assert.match(source, /courseId=\{storageCourseId\}/);
-  assert.match(source, /const\s+topics\s*=\s*useMemo\([\s\S]*GENERATED_CURRICULUM\.topics/);
+  assert.match(source, /const curriculum = getRuntimeCurriculum\(storageCourseId\)/);
+  assert.match(source, /const\s+topics\s*=\s*useMemo\([\s\S]*curriculum\.topics/);
 });
 
 test('Swahili preview hero matches the workbook projection and is a valid landscape PNG', () => {

@@ -53,6 +53,7 @@ function buildLessonFeedbackModel({
   answerLabel = '',
   feedback = null,
   finished = false,
+  hasMorePlannedLessons = false,
   nextTopicTitle = '',
   topicTitle = '',
   xpAwardStatus = null,
@@ -64,7 +65,9 @@ function buildLessonFeedbackModel({
       guideTone: 'celebrate',
       message: nextTopicTitle
         ? `You finished ${topicTitle}. Next up: ${nextTopicTitle}.`
-        : `You finished ${topicTitle} and completed this chapter.`,
+        : hasMorePlannedLessons
+          ? `You finished ${topicTitle} and completed the available draft lessons. More lessons are being prepared.`
+          : `You finished ${topicTitle} and completed this chapter.`,
       state: 'complete',
       title: 'Lesson complete!',
       xpLabel: 'Path updated',

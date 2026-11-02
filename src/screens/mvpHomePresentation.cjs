@@ -19,7 +19,7 @@ function getStreakPresentation(value) {
   };
 }
 
-function getLearningProgressPresentation({ ready, completed, total } = {}) {
+function getLearningProgressPresentation({ ready, completed, total, hasMorePlannedLessons = false } = {}) {
   const totalCount = normalizeCount(total);
   const count = Math.min(normalizeCount(completed), totalCount);
   if (!ready) return {
@@ -28,7 +28,9 @@ function getLearningProgressPresentation({ ready, completed, total } = {}) {
   };
   const progress = { countLabel: String(count), accessibilityLabel: `${count} of ${totalCount} topics complete` };
   if (!totalCount) return { ...progress, title: 'Your learning path', subtitle: 'More conversations are being prepared.' };
-  if (count === totalCount) return { ...progress, title: 'Look how far you have come', subtitle: 'Chapter complete. Revisit a topic to keep your phrases fresh.' };
+  if (count === totalCount) return { ...progress, title: 'Look how far you have come', subtitle: hasMorePlannedLessons
+    ? 'You completed the available draft lessons. More lessons are being prepared.'
+    : 'Chapter complete. Revisit a topic to keep your phrases fresh.' };
   return {
     ...progress,
     title: count ? 'Keep the conversation going' : 'Your first conversation starts here',

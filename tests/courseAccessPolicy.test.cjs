@@ -41,12 +41,12 @@ test('developer preview requires development mode, explicit opt-in and an allowl
   assert.equal(resolveDeveloperPreviewCourseId(request), 'swahili');
   assert.equal(resolveDeveloperPreviewCourseId({ ...request, isDevelopment: false }), null);
   assert.equal(resolveDeveloperPreviewCourseId({ ...request, previewOptIn: false }), null);
-  for (const requestedCourseId of ['swahili', 'wolof', 'haitian-creole', 'sudanese-arabic']) {
+  for (const requestedCourseId of ['swahili', 'wolof', 'haitian-creole', 'sudanese-arabic', 'igbo']) {
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId }), requestedCourseId);
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId, isDevelopment: false }), null);
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId, previewOptIn: false }), null);
   }
-  for (const requestedCourseId of ['nobiin', 'igbo', 'belizean-kriol', 'aave', 'unknown']) {
+  for (const requestedCourseId of ['nobiin', 'belizean-kriol', 'aave', 'unknown']) {
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId }), null);
     assert.equal(canAccessRuntimeCourse({ id: requestedCourseId }, requestedCourseId), false);
   }

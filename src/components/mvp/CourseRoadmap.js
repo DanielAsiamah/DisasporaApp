@@ -3,8 +3,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { fonts } from '../../theme';
 const { courses } = require('../../data/generatedCourseRoadmap.cjs');
+const { getRoadmapLessonState } = require('../../lessonExperience/roadmapLessonState.cjs');
 
-export default function CourseRoadmap({ courseId }) {
+export default function CourseRoadmap({ courseId, topics = [], progressReady = false, onOpenTopic }) {
   const [expanded, setExpanded] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const course = courses.find((item) => item.id === courseId);
@@ -22,7 +23,7 @@ export default function CourseRoadmap({ courseId }) {
       </Pressable>
       {expanded ? (
         <View style={styles.units}>
-          <Text style={styles.note}>Explore the planned course below. These lessons are being prepared; the starter collection above is available for testing.</Text>
+          <Text style={styles.note}>Explore the planned course below. Playable drafts are marked; locked lessons are still being prepared or need an earlier lesson completed.</Text>
           {course.units.map((unit) => {
             const open = selectedUnit === unit.id;
             return (
@@ -38,16 +39,20 @@ export default function CourseRoadmap({ courseId }) {
                 </Pressable>
                 {open ? <View style={styles.details}>
                   <Text style={styles.objective}>{unit.objective}</Text>
-                  {unit.lessons.map((lesson) => (
-                    <View key={lesson.id} style={styles.lesson}>
-                      <Ionicons accessible={false} name="lock-closed-outline" size={18} color="#586B7B" />
+                  {unit.lessons.map((lesson) => {
+                    const state = getRoadmapLessonState(lesson, topics, progressReady);
+                    return <Pressable key={lesson.id} style={styles.lesson} accessibilityRole="button"
+                      accessibilityLabel={`${lesson.title}, ${state.label}`}
+                      accessibilityState={{ disabled: !state.canOpen }} disabled={!state.canOpen}
+                      onPress={() => state.canOpen && onOpenTopic?.(state.topic)}>
+                      <Ionicons accessible={false} name={state.icon} size={18} color={state.canOpen ? '#0076B5' : '#586B7B'} />
                       <View style={styles.headingCopy}>
                         <Text style={styles.lessonTitle}>{lesson.title}</Text>
                         <Text style={styles.subtitle}>{lesson.type} / {lesson.wordCount} items</Text>
-                        <Text style={styles.preparing}>{lesson.status === 'translation-needed' ? 'Translation in preparation' : 'Language review pending'}</Text>
+                        <Text style={styles.preparing}>{state.label}</Text>
                       </View>
-                    </View>
-                  ))}
+                    </Pressable>;
+                  })}
                 </View> : null}
               </View>
             );
