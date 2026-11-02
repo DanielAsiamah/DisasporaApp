@@ -1,4 +1,6 @@
 {
   "compilerOptions": {},
-  "extends": "expo/tsconfig.base"
+  "extends": "expo/tsconfig.base",
+  "include": ["App.js", "index.js", "src/**/*"],
+  "exclude": ["node_modules", "outputs", "journalism"]
 }
