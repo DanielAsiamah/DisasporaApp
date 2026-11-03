@@ -46,7 +46,7 @@ test('the chapter uses original Jamaica artwork behind the active topic guide in
   assert.match(source, /getCoursePresentation\(storageCourseId\)/);
   assert.match(presentationRegistrySource, /jamaican-patois-greetings\.png/);
   assert.match(source, /function\s+ChapterHero\s*\(/);
-  assert.match(source, /const\s+featuredGuide\s*=\s*topicStates\.find\(\(topic\)\s*=>\s*topic\.id === coreLoopView\.activeCard\?\.id\)\?\.guide/);
+  assert.match(source, /const\s+featuredGuide\s*=\s*\(hasAdaptiveReview \? adaptiveReviewTopic\?\.guide : null\)[\s\S]*?\|\| topicStates\.find\(\(topic\)\s*=>\s*topic\.id === coreLoopView\.activeCard\?\.id\)\?\.guide/s);
   assert.match(source, /<ChapterHero[^>]+guideName=\{featuredGuide\}/s);
   assert.match(source, /<BreathingGuide[^>]+name=\{guideName\}/s);
   assert.doesNotMatch(source, /<BreathingGuide\s+name="Kai"/);

@@ -390,7 +390,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onAwardCorrectAnswerXp, onClose, onComplete, previewCourseId = null, soundEffectsEnabled = true, topic, visible }) {
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onAwardCorrectAnswerXp, onClose, onComplete, onMistake, previewCourseId = null, soundEffectsEnabled = true, topic, visible }) {
   const requestedCourse = getCourseById(courseId);
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
@@ -414,12 +414,16 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     () => (conceptId) => hasApprovedCourseAudio(runtimeCourseId, conceptId),
     [runtimeCourseId]
   );
-  const exercises = useMemo(() => topic && runtimeCourseId ? buildCourseTopicExercises(runtimeCourseId, topic.id, {
-    concepts: curriculum.concepts,
-    lessonSteps: curriculum.lessonSteps,
-    vocabulary,
-    hasAudio: hasCourseAudio,
-  }) : [], [curriculum, hasCourseAudio, runtimeCourseId, topic, vocabulary]);
+  const exercises = useMemo(() => {
+    if (!topic || !runtimeCourseId) return [];
+    if (Array.isArray(topic?.exerciseOverrides)) return topic.exerciseOverrides;
+    return buildCourseTopicExercises(runtimeCourseId, topic.id, {
+      concepts: curriculum.concepts,
+      lessonSteps: curriculum.lessonSteps,
+      vocabulary,
+      hasAudio: hasCourseAudio,
+    });
+  }, [curriculum, hasCourseAudio, runtimeCourseId, topic, vocabulary]);
   const [mistakeIds, setMistakeIds] = useState([]);
   const [reviewStarted, setReviewStarted] = useState(false);
   const reviewExercises = useMemo(() => buildMistakeReview(exercises, mistakeIds), [exercises, mistakeIds]);
@@ -461,7 +465,9 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     }
     if (openTopicId.current === topic?.id) return;
     openTopicId.current = topic?.id || null;
-    lessonAttemptId.current = Crypto.randomUUID();
+    lessonAttemptId.current = topic?.isAdaptiveReview
+      ? `adaptive-review-${runtimeCourseId}`
+      : Crypto.randomUUID();
     audioSessionId.current += 1;
     xpRequestGeneration.current += 1;
     matchAttempt.current = 0;
@@ -561,12 +567,23 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     saveCorrectAnswerXp(pendingXpReward.current);
   }
 
+  function recordCurrentMistake() {
+    setMistakeIds(current => recordMistake(current, exercise.id));
+    onMistake?.({
+      exerciseId: exercise.id,
+      occurredAt: Date.now(),
+      topicId: topic.isAdaptiveReview
+        ? topic.sourceTopicIdByExerciseId?.[exercise.id] || topic.id
+        : topic.id,
+    });
+  }
+
   function checkAnswer() {
     if (!isResponseReady(exercise, response) || feedback) return;
     const answerKey = `${audioSessionId.current}:${exercise.id}`;
     if (!audioEventGate.claim('answer', answerKey)) return;
     const correct = evaluateExerciseResponse(exercise, response);
-    if (!correct && !reviewStarted) setMistakeIds(current => recordMistake(current, exercise.id));
+    if (!correct && !reviewStarted) recordCurrentMistake();
     setLessonSummary((current) => recordCheckedAnswer(current, correct));
     setFeedback(correct ? 'correct' : 'incorrect');
     AccessibilityInfo.announceForAccessibility(getFeedbackAnnouncement(correct, exercise));
@@ -620,7 +637,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     }
     if (index >= nextSequence.length - 1) {
       setFinished(true);
-      onComplete(topic.id);
+      onComplete(topic.id, { mistakeExerciseIds: mistakeIds });
       return;
     }
     const nextIndex = index + 1;
@@ -845,7 +862,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                       audio.dispatch({ event: 'answer-accepted', correct: false });
                       playLessonHaptic({ event: 'match-rejected' });
                       setLessonSummary(current => recordCheckedAnswer(current, false));
-                      if (!reviewStarted) setMistakeIds(current => recordMistake(current, exercise.id));
+                      if (!reviewStarted) recordCurrentMistake();
                     }
                   }}
                   onMatchSelection={() => { matchAttempt.current += 1; }}

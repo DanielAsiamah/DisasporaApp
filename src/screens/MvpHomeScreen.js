@@ -38,6 +38,13 @@ const {
 } = require('../lessonEngine/mvpProgressState.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
+const { buildCourseTopicExercises } = require('../lessonEngine/patoisLessonSteps.cjs');
+const {
+  buildAdaptiveReviewTopic,
+  mergeMistakeQueues,
+  recordPersistentMistake,
+  resolveAdaptiveReview,
+} = require('../lessonExperience/adaptiveMistakeReview.cjs');
 const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
 const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
 const { readRemoteProgress } = require('../lessonEngine/remoteProgressRead.cjs');
@@ -354,6 +361,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const [saveRetry, setSaveRetry] = useState(0);
   const [saveStatus, setSaveStatus] = useState({ local: 'not-required', remote: 'not-required' });
   const [activeTopic, setActiveTopic] = useState(null);
+  const [mistakeQueue, setMistakeQueue] = useState(null);
   const runtimeCourse = getCourseById(storageCourseId);
   const courseReviewPending = runtimeCourse?.published !== true;
   const courseConfig = getCoursePresentation(storageCourseId) || {};
@@ -380,17 +388,34 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     },
     topics,
   }), [completedTopicIds, courseConfig.category, courseConfig.flag, courseConfig.name, runtimeCourse, topicStates, topics]);
+  const exercisesByTopic = useMemo(() => new Map(topics.map((topic) => [
+    topic.id,
+    buildCourseTopicExercises(storageCourseId, topic.id, {
+      concepts: curriculum.concepts,
+      lessonSteps: curriculum.lessonSteps,
+      vocabulary: curriculum.courseVocabulary.filter((row) => row.courseId === storageCourseId),
+    }),
+  ])), [curriculum, storageCourseId, topics]);
+  const adaptiveReviewTopic = useMemo(() => buildAdaptiveReviewTopic({
+    courseId: storageCourseId,
+    exercisesByTopic,
+    mistakeQueue: mistakeQueue || [],
+    topics,
+  }), [exercisesByTopic, mistakeQueue, storageCourseId, topics]);
   const topicCardsById = useMemo(() => new Map(coreLoopView.lessonCards.map((card) => [card.id, card])), [coreLoopView.lessonCards]);
-  const featuredGuide = topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)?.guide
+  const chapterComplete = coreLoopView.chapterComplete;
+  const hasAdaptiveReview = chapterComplete && Boolean(adaptiveReviewTopic);
+  const featuredGuide = (hasAdaptiveReview ? adaptiveReviewTopic?.guide : null)
+    || topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)?.guide
     || topics[0]?.guide
     || 'Kai';
-  const activeLearnTopic = topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)
+  const activeLearnTopic = (hasAdaptiveReview ? adaptiveReviewTopic : null)
+    || topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)
     || topicStates.find((topic) => topic.state === 'active')
     || topicStates[0]
     || null;
   const activeTopicIndex = activeLearnTopic ? topicStates.findIndex((topic) => topic.id === activeLearnTopic.id) + 1 : 1;
   const completedTopicCount = coreLoopView.progress.completed;
-  const chapterComplete = coreLoopView.chapterComplete;
   const hasMorePlannedLessons = courseChapter?.plannedTopicCount > courseChapter?.topicCount;
   const completionLabel = hasMorePlannedLessons ? 'Available drafts complete' : 'Chapter complete';
   const nextUpTopic = topicStates.find((topic) => topic.state === 'active') || null;
@@ -399,32 +424,42 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     : `${coreLoopView.progress.completed} of ${coreLoopView.progress.total} topics complete`;
   const nextUpLabel = !progressReady
     ? 'Checking your topics…'
+    : hasAdaptiveReview
+      ? `${adaptiveReviewTopic.reviewExerciseIds.length} weak ${adaptiveReviewTopic.reviewExerciseIds.length === 1 ? 'exercise' : 'exercises'} ready`
     : completedTopicCount >= topicStates.length
       ? completionLabel
       : `Next up: ${nextUpTopic?.title || 'Getting Started'}`;
   const currentFocusTitle = !progressReady
     ? 'Loading your learning path'
+    : hasAdaptiveReview ? adaptiveReviewTopic.title
     : chapterComplete ? completionLabel : activeLearnTopic?.title || 'Getting Started';
   const currentFocusBody = !progressReady
     ? 'Syncing your saved topics before the next lesson opens.'
+    : hasAdaptiveReview
+      ? 'Your guide picked these from answers that need another pass. Master them to clear your review queue.'
     : chapterComplete ? hasMorePlannedLessons
       ? 'You finished the available drafts. Replay a lesson while the rest of the chapter is being prepared.'
       : 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
   const currentFocusMetaLabel = !progressReady
     ? 'Progress syncing'
+    : hasAdaptiveReview ? `${adaptiveReviewTopic.reviewExerciseIds.length} selected from your mistakes`
     : chapterComplete ? `${coreLoopView.progress.total} topics complete` : `${coreLoopView.activeCard?.modeLabel || 'Lesson'} ${activeTopicIndex} of ${topicStates.length}`;
   const currentFocusHint = !progressReady
     ? 'Wait while saved progress loads'
+    : hasAdaptiveReview
+    ? 'Opens your personalised mistake review'
     : chapterComplete
     ? `Opens ${activeLearnTopic?.title || 'the first topic'} for review`
     : 'Opens your current lesson';
   const currentFocusCtaLabel = !progressReady
     ? 'Please wait'
+    : hasAdaptiveReview ? 'Practice now →'
     : `${coreLoopView.activeCard?.ctaLabel || 'Start lesson'} →`;
   const learningPresentation = getLearningProgressPresentation({ ready: progressReady, completed: completedTopicCount, total: topicStates.length, hasMorePlannedLessons });
 
   useEffect(() => {
     setActiveTopic(null);
+    setMistakeQueue(null);
   }, [storageCourseId, user?.uid]);
 
   useEffect(() => {
@@ -434,8 +469,12 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
 
     async function hydrateProgress() {
       let localIds;
+      let localMistakes;
       try {
         localIds = await readLocalProgress(() => AsyncStorage.getItem(storageKey));
+        const rawMistakes = await AsyncStorage.getItem(`${storageKey}:mistakes`);
+        localMistakes = rawMistakes === null ? [] : JSON.parse(rawMistakes);
+        if (!Array.isArray(localMistakes)) throw new Error('Saved mistake review is unreadable.');
       } catch {
         if (!cancelled) setProgressReadError(true);
         return;
@@ -458,6 +497,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
         shouldSyncRemote: remoteResult.status === 'success'
           && merged.some((topicId) => !remoteIds.includes(topicId)),
       }));
+      setMistakeQueue(mergeMistakeQueues(localMistakes, remoteResult.value?.mistakes));
     }
 
     hydrateProgress();
@@ -465,6 +505,14 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
       cancelled = true;
     };
   }, [loadLanguageProgress, storageCourseId, storageKey, topics, user?.uid, progressRetry]);
+
+  useEffect(() => {
+    if (!progressReady || mistakeQueue === null) return;
+    AsyncStorage.setItem(`${storageKey}:mistakes`, JSON.stringify(mistakeQueue)).catch(() => {});
+    if (user?.uid && syncLanguageProgress && progressSnapshot.remoteReadStatus === 'success') {
+      syncLanguageProgress(storageCourseId, { mistakes: mistakeQueue }).catch(() => {});
+    }
+  }, [mistakeQueue, progressReady, progressSnapshot.remoteReadStatus, storageCourseId, storageKey, syncLanguageProgress, user?.uid]);
 
   useEffect(() => {
     if (!isProgressSnapshotCurrent(progressSnapshot, storageKey)) return;
@@ -483,14 +531,26 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     return () => { current = false; };
   }, [progressSnapshot, storageCourseId, storageKey, syncLanguageProgress, user?.uid, saveRetry]);
 
-  const completeTopic = useCallback((topicId) => {
+  const completeTopic = useCallback((topicId, result = {}) => {
     if (!progressReady) return;
+    if (topicId === adaptiveReviewTopic?.id) {
+      setMistakeQueue((current) => resolveAdaptiveReview(
+        current || [],
+        adaptiveReviewTopic.reviewExerciseIds,
+        result.mistakeExerciseIds
+      ));
+      return;
+    }
     setProgressSnapshot((current) => {
       if (!isProgressSnapshotCurrent(current, storageKey)) return current;
       const merged = mergeCompletedTopicIds(topics, current.completedTopicIds, [topicId]);
       return createMutationProgressSnapshot(current, storageKey, merged);
     });
-  }, [progressReady, storageKey, topics]);
+  }, [adaptiveReviewTopic, progressReady, storageKey, topics]);
+
+  const recordLessonMistake = useCallback((mistake) => {
+    setMistakeQueue((current) => recordPersistentMistake(current || [], mistake));
+  }, []);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -634,7 +694,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal courseId={storageCourseId} key={`${storageKey}:${activeTopic?.id || 'closed'}`} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} previewCourseId={previewCourseId} soundEffectsEnabled={soundPreference.enabled} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
+      <PatoisLessonModal courseId={storageCourseId} key={`${storageKey}:${activeTopic?.id || 'closed'}`} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} onMistake={recordLessonMistake} previewCourseId={previewCourseId} soundEffectsEnabled={soundPreference.enabled} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
     </SafeAreaView>
   );
 }

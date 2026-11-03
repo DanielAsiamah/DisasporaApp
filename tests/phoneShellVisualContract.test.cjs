@@ -299,7 +299,7 @@ test('the Learn shell surfaces the active topic in a dedicated current-focus car
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /function getTopicFocusDescription\(topic\)/);
-  assert.match(source, /const activeLearnTopic = topicStates\.find\(\(topic\) => topic\.id === coreLoopView\.activeCard\?\.id\)[\s\S]*?\|\| topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\)[\s\S]*?\|\| topicStates\[0\][\s\S]*?\|\| null/s);
+  assert.match(source, /const activeLearnTopic = \(hasAdaptiveReview \? adaptiveReviewTopic : null\)[\s\S]*?\|\| topicStates\.find\(\(topic\) => topic\.id === coreLoopView\.activeCard\?\.id\)[\s\S]*?\|\| topicStates\.find\(\(topic\) => topic\.state === ['"]active['"]\)[\s\S]*?\|\| topicStates\[0\][\s\S]*?\|\| null/s);
   assert.match(source, /<Pressable\s+accessibilityHint=\{currentFocusHint\}[\s\S]*?disabled=\{!progressReady \|\| !activeLearnTopic\}[\s\S]*?onPress=\{\(\) => progressReady && activeLearnTopic && setActiveTopic\(activeLearnTopic\)\}[\s\S]*?style=\{styles\.currentFocusCard\}\s*>/s);
   assert.match(source, /<Text style=\{styles\.currentFocusEyebrow\}>CURRENT FOCUS<\/Text>/);
   assert.match(source, /<Text style=\{styles\.currentFocusTitle\}>\{currentFocusTitle\}<\/Text>/);

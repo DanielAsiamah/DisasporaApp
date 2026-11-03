@@ -103,6 +103,6 @@ test('the lesson uses a stable per-attempt reward and never claims XP before per
 test('the authenticated shell passes the real award operation into every lesson', () => {
   assert.match(homeSource, /awardCorrectAnswerXp/);
   assert.match(homeSource, /onAwardCorrectAnswerXp=\{awardCorrectAnswerXp\}/);
-  assert.match(homeSource, /useEffect\(\(\) => \{\s*setActiveTopic\(null\);\s*\}, \[storageCourseId, user\?\.uid\]\)/s);
+  assert.match(homeSource, /useEffect\(\(\) => \{\s*setActiveTopic\(null\);\s*setMistakeQueue\(null\);\s*\}, \[storageCourseId, user\?\.uid\]\)/s);
   assert.match(homeSource, /key=\{storageKey\}/);
 });
