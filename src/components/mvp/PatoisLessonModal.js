@@ -51,6 +51,7 @@ const { createLessonSummary, recordCheckedAnswer, recordSavedReward, presentLess
 const { recordMistake, buildMistakeReview } = require('../../lessonExperience/mistakeReview.cjs');
 const { getAnswerTextDirection } = require('../../lessonExperience/answerTextDirection.cjs');
 const { getPromptGuideName } = require('../../lessonExperience/lessonGuidePresentation.cjs');
+const { buildPhraseWordHintModel } = require('../../lessonExperience/phraseWordHint.cjs');
 
 const SKY = '#1CB0F6';
 const NAVY = '#0B245B';
@@ -184,6 +185,68 @@ function getFeedbackAnnouncement(correct, exercise) {
   return correct
     ? `Correct. ${answerCopy}`
     : `Incorrect. ${incorrectCopy}`;
+}
+
+function PhraseWordHint({ exercise }) {
+  const phraseHint = useMemo(() => buildPhraseWordHintModel(exercise), [exercise]);
+  const [selectedTokenIndex, setSelectedTokenIndex] = useState(null);
+
+  if (!phraseHint) return null;
+  const selectedToken = selectedTokenIndex === null
+    ? null
+    : phraseHint.tokens[selectedTokenIndex];
+
+  function toggleToken(token, index) {
+    const opening = selectedTokenIndex !== index;
+    setSelectedTokenIndex(opening ? index : null);
+    Haptics.selectionAsync().catch(() => {});
+    if (opening) {
+      AccessibilityInfo.announceForAccessibility(
+        `${token}. In this phrase: ${phraseHint.translation}`
+      );
+    }
+  }
+
+  return (
+    <View style={styles.phraseHintWrap}>
+      <Text style={styles.phraseHintLabel}>TAP A WORD FOR HELP</Text>
+      <View
+        accessibilityLabel={`Study phrase: ${phraseHint.phrase}`}
+        style={[
+          styles.phraseHintTokens,
+          phraseHint.direction === 'rtl' && styles.phraseHintTokensRtl,
+        ]}
+      >
+        {phraseHint.tokens.map((token, index) => (
+          <Pressable
+            accessibilityLabel={`Word ${token}, show phrase translation`}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: selectedTokenIndex === index }}
+            key={`${token}-${index}`}
+            onPress={() => toggleToken(token, index)}
+            style={({ pressed }) => [
+              styles.phraseHintToken,
+              selectedTokenIndex === index && styles.phraseHintTokenSelected,
+              pressed && styles.phraseHintTokenPressed,
+            ]}
+          >
+            <Text style={[
+              styles.phraseHintTokenText,
+              { writingDirection: phraseHint.direction },
+            ]}>{token}</Text>
+          </Pressable>
+        ))}
+      </View>
+      {selectedToken ? (
+        <View accessibilityLiveRegion="polite" style={styles.phraseHintBubble} testID="phrase-translation-bubble">
+          <Text style={styles.phraseHintSelectedWord}>{selectedToken}</Text>
+          <Text style={styles.phraseHintContextLabel}>In this phrase</Text>
+          <Text style={styles.phraseHintTranslation}>{phraseHint.translation}</Text>
+          <Text style={styles.phraseHintContextNote}>This is the verified meaning of the complete phrase.</Text>
+        </View>
+      ) : null}
+    </View>
+  );
 }
 
 function ChoiceExercise({ exercise, feedback, response, setResponse }) {
@@ -840,6 +903,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                 <View style={styles.promptCard}>
                 <Text style={styles.speakerName}>{promptGuide.toUpperCase()}</Text>
                 <Text style={styles.prompt}>{exercise?.prompt}</Text>
+                <PhraseWordHint exercise={exercise} key={exercise?.id} />
                 <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
                 </View>
               </View>
@@ -972,6 +1036,19 @@ const styles = StyleSheet.create({
   speakerName: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 6 },
   promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderBottomLeftRadius: 6, borderWidth: 2, padding: 12 },
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 19, lineHeight: 25 },
+  phraseHintWrap: { marginTop: 12 },
+  phraseHintLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 9, letterSpacing: 0.8, marginBottom: 7 },
+  phraseHintTokens: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  phraseHintTokensRtl: { flexDirection: 'row-reverse' },
+  phraseHintToken: { borderBottomColor: '#8CA4B4', borderBottomWidth: 2, borderStyle: 'dotted', minHeight: 34, justifyContent: 'center', paddingHorizontal: 3 },
+  phraseHintTokenSelected: { backgroundColor: PALE, borderBottomColor: SKY, borderRadius: 8, borderStyle: 'solid', paddingHorizontal: 7 },
+  phraseHintTokenPressed: { opacity: 0.7 },
+  phraseHintTokenText: { color: NAVY, fontFamily: fonts.bold, fontSize: 16 },
+  phraseHintBubble: { backgroundColor: PALE, borderColor: SKY, borderRadius: 14, borderWidth: 1, marginTop: 9, paddingHorizontal: 12, paddingVertical: 10 },
+  phraseHintSelectedWord: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.5 },
+  phraseHintContextLabel: { color: MUTED, fontFamily: fonts.bold, fontSize: 10, marginTop: 4, textTransform: 'uppercase' },
+  phraseHintTranslation: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 17, lineHeight: 23, marginTop: 2 },
+  phraseHintContextNote: { color: MUTED, fontFamily: fonts.medium, fontSize: 10, lineHeight: 14, marginTop: 4 },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 8, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8 },
   reviewBannerTitle: { color: NAVY, fontFamily: fonts.bold, fontSize: 11, textAlign: 'center' },

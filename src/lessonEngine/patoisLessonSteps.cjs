@@ -180,6 +180,17 @@ function meaningDistractors(conceptIds, conceptById, excludedId, seed) {
   ).slice(0, 3);
 }
 
+function buildStudyHint(step, row, concept) {
+  if (step.exerciseType === 'match-pairs') return {};
+  const localized = String(row?.localized || '').trim();
+  const meaning = String(concept?.meaning || '').trim();
+  if (!localized || !meaning) return {};
+  const expectsTargetLanguage = ['sentence-build-target', 'translate-to-target'].includes(step.exerciseType);
+  return expectsTargetLanguage
+    ? { studyPhrase: meaning, studyTranslation: localized }
+    : { studyPhrase: localized, studyTranslation: meaning };
+}
+
 function materializeCourseStep(template, {
   conceptById,
   courseDisplayName,
@@ -281,7 +292,11 @@ function buildCourseTopicExercises(courseId, topicId, {
       exercise = createChoiceExercise(step, row, LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,
         target ? `Choose the ${courseDisplayName} for "${concept.meaning}".` : `What does "${row.localized}" mean?`);
     }
-    return [{ ...exercise, sourceStepId: step.sourceStepId || step.id }];
+    return [{
+      ...exercise,
+      ...buildStudyHint(step, row, concept),
+      sourceStepId: step.sourceStepId || step.id,
+    }];
   });
 }
 

@@ -12,6 +12,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const { getCourseById } = require('../src/data/courseCatalog.cjs');
   const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
   const { getRuntimeCurriculum } = require('../src/data/runtimeCurriculum.cjs');
+  const { getPromptGuideName } = require('../src/lessonExperience/lessonGuidePresentation.cjs');
   const courseTopics = id => getRuntimeCurriculum(id).topics.filter(topic => topic.courseId === id).sort((a, b) => a.order - b.order);
   const curriculum = getRuntimeCurriculum(courseId);
   const topics = courseTopics(courseId);
@@ -157,6 +158,30 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (await page.getByRole('radio', { checked: true }).count()) {
       throw new Error('An intentionally exited lesson must restart with a fresh response.');
     }
+    const firstHintExercise = buildCourseTopicExercises(courseId, topics[0].id, {
+      concepts: curriculum.concepts,
+      vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
+      hasAudio: () => false,
+    })[0];
+    if (!firstHintExercise?.studyPhrase || !firstHintExercise?.studyTranslation) {
+      throw new Error('The first lesson exercise must expose a verified phrase hint.');
+    }
+    const firstHintToken = firstHintExercise.studyPhrase.split(/\s+/u)[0];
+    const firstHintButton = page.getByRole('button', {
+      name: `Word ${firstHintToken}, show phrase translation`,
+      exact: true,
+    });
+    await firstHintButton.click();
+    const phraseHintBubble = page.getByTestId('phrase-translation-bubble');
+    await phraseHintBubble.getByText(firstHintExercise.studyTranslation, { exact: true }).waitFor();
+    await phraseHintBubble.getByText('This is the verified meaning of the complete phrase.', { exact: true }).waitFor();
+    await page.screenshot({ path: `outputs/browser-smoke/phrase-hint-${courseId}.png` });
+    await firstHintButton.click();
+    await phraseHintBubble.waitFor({ state: 'detached' });
+    if (await page.getByRole('radio', { checked: true }).count()) {
+      throw new Error('Opening a phrase hint must not select an answer.');
+    }
+    console.log(`Tapped ${firstHintToken}; verified contextual phrase translation without changing the answer.`);
     console.log('Lesson exit cancelled without losing selection; confirmed exit left the topic incomplete.');
     if (process.env.DIASPORA_TEST_GUIDE_MOTION === 'true') {
       await checkGuideImage('lesson-prompt-guide');
@@ -323,8 +348,16 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByRole('button', { name: `Start next topic: ${testedTopics[topicIndex + 1].title}`, exact: true }).click();
     }
     }
-    if (!seenGuides.has('Ayo guide') || !seenGuides.has('Safiya guide')) {
-      throw new Error('The first chapter must introduce both new original guides.');
+    const expectedGuides = new Set(testedTopics.flatMap(topic => {
+      const exerciseCount = buildCourseTopicExercises(courseId, topic.id, {
+        concepts: curriculum.concepts,
+        vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
+        hasAudio: () => false,
+      }).length;
+      return Array.from({ length: exerciseCount }, (_, index) => `${getPromptGuideName(topic.guide, index)} guide`);
+    }));
+    for (const expectedGuide of expectedGuides) {
+      if (!seenGuides.has(expectedGuide)) throw new Error(`Expected lesson guide was not shown: ${expectedGuide}`);
     }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     if (courseId === 'igbo' && testedTopics.length === topics.length) {
