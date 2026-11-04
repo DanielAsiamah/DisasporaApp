@@ -22,6 +22,7 @@ import { useControlledLessonAudio } from '../../audio/useControlledLessonAudio';
 import { getCourseImageRegistry } from '../../data/courseImageRegistry';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { fonts } from '../../theme';
+import OutOfHeartsModal from '../OutOfHeartsModal';
 import AnimatedGuide from './AnimatedGuide';
 
 const { getRuntimeCurriculum } = require('../../data/runtimeCurriculum.cjs');
@@ -453,7 +454,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdvance, onAwardCorrectAnswerXp, onClose, onComplete, onMistake, previewCourseId = null, soundEffectsEnabled = true, topic, visible }) {
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', heartsPresentation = { accessibilityLabel: '5 of 5 hearts remaining', countLabel: '5' }, onAdvance, onAwardCorrectAnswerXp, onClose, onCloseOutOfHearts, onComplete, onMistake, onRefillHearts, onWrongAnswer, previewCourseId = null, showOutOfHearts = false, soundEffectsEnabled = true, timeUntilNextHeartMs = 0, topic, visible }) {
   const requestedCourse = getCourseById(courseId);
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
@@ -646,6 +647,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
     const answerKey = `${audioSessionId.current}:${exercise.id}`;
     if (!audioEventGate.claim('answer', answerKey)) return;
     const correct = evaluateExerciseResponse(exercise, response);
+    if (!correct) onWrongAnswer?.();
     if (!correct && !reviewStarted) recordCurrentMistake();
     setLessonSummary((current) => recordCheckedAnswer(current, correct));
     setFeedback(correct ? 'correct' : 'incorrect');
@@ -810,6 +812,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
             <View style={[styles.progressFill, { width: `${finished ? 100 : ((index + 1) / Math.max(lessonExercises.length, 1)) * 100}%` }]} />
           </View>
           <Text style={styles.count}>{finished ? lessonExercises.length : index + 1}/{lessonExercises.length}</Text>
+          <View accessible accessibilityLabel={heartsPresentation.accessibilityLabel} style={styles.lessonHeartPill}>
+            <Text accessible={false} style={styles.lessonHeartIcon}>♥</Text>
+            <Text style={styles.lessonHeartCount}>{heartsPresentation.countLabel}</Text>
+          </View>
         </View>
 
         {finished ? (
@@ -923,6 +929,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
                   onMatchRejected={() => {
                     const mismatchKey = `${audioSessionId.current}:${exercise.id}:${matchAttempt.current}`;
                     if (audioEventGate.claim('mismatch', mismatchKey)) {
+                      onWrongAnswer?.();
                       audio.dispatch({ event: 'answer-accepted', correct: false });
                       playLessonHaptic({ event: 'match-rejected' });
                       setLessonSummary(current => recordCheckedAnswer(current, false));
@@ -995,6 +1002,13 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', onAdva
             </View>
           </>
         )}
+        <OutOfHeartsModal
+          embedded
+          onClose={onCloseOutOfHearts}
+          onRefill={onRefillHearts}
+          timeUntilNextHeartMs={timeUntilNextHeartMs}
+          visible={showOutOfHearts}
+        />
       </SafeAreaView>
     </Modal>
   );
@@ -1019,6 +1033,9 @@ const styles = StyleSheet.create({
   progressTrack: { backgroundColor: '#E4EEF4', borderRadius: 8, flex: 1, height: 10, overflow: 'hidden' },
   progressFill: { backgroundColor: SKY, borderRadius: 8, height: 10 },
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
+  lessonHeartPill: { alignItems: 'center', backgroundColor: '#FFF0F0', borderColor: '#FFD2D5', borderRadius: 999, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 9, paddingVertical: 6 },
+  lessonHeartIcon: { color: RED, fontSize: 16 },
+  lessonHeartCount: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },
   content: { alignSelf: 'center', width: '100%', maxWidth: 800, padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
   topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 5 },

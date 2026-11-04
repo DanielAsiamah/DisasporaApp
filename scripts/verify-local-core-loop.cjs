@@ -1,4 +1,5 @@
 const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwright');
+const heartLabelPattern = expected => new RegExp('^' + expected + ' of 5 hearts remaining(?:\\.|$)');
 const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 (async () => {
   const appUrl = new URL(process.env.DIASPORA_APP_URL || 'http://localhost:8086');
@@ -22,6 +23,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   if (!hub.auth || !hub.firestore) throw new Error('Start the local Firebase emulators first.');
   const browser = await chromium.launch({ headless: true, executablePath: process.env.DIASPORA_CHROMIUM_EXECUTABLE || undefined });
   let page;
+  const initialHeartLabel = '5 of 5 hearts remaining';
   const errors = [];
   const networkFailures = [];
   const pendingRequests = new Map();
@@ -31,6 +33,15 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
   try {
     page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    async function currentHeartCount(expected) {
+      await page.getByLabel(heartLabelPattern(expected)).last().waitFor();
+    }
+    async function refillHeartsIfEmpty() {
+      const emptyDialog = page.getByRole('heading', { name: 'Out of hearts', exact: true });
+      if (!await emptyDialog.isVisible().catch(() => false)) return;
+      await page.getByRole('button', { name: 'Refill hearts', exact: true }).click();
+      await currentHeartCount(5);
+    }
     async function checkGuideImage(testId) {
       const guide = page.getByTestId(testId);
       await guide.waitFor();
@@ -98,6 +109,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByText('Verify your email', { exact: true }).waitFor({ timeout: 60000 });
     await page.getByText('Continue for now', { exact: true }).click();
     await page.getByRole('tab', { name: /Learn, 1 of 2/ }).waitFor({ timeout: 60000 });
+    await page.getByLabel(initialHeartLabel, { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Account', exact: true }).click();
     const soundSwitch = page.getByRole('switch', { name: 'Sound effects', exact: true });
     if (!await soundSwitch.isChecked()) throw new Error('New learners must get sound effects by default.');
@@ -216,11 +228,13 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
     await page.getByRole('radio', { name: `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`, exact: true }).click();
     await page.getByRole('button', { name: 'Check answer', exact: true }).click();
+    await currentHeartCount(4);
     const wrongGuide = await checkGuideImage('lesson-feedback-guide');
     if (wrongGuide !== await page.getByTestId('lesson-prompt-guide').getAttribute('aria-label')) {
       throw new Error('Wrong-answer encouragement must keep the same speaking guide.');
     }
     await page.getByRole('button', { name: 'Try again', exact: true }).click();
+    await currentHeartCount(4);
     }
     for (const [stepIndex, exercise] of testSequence.entries()) {
       const speakingGuide = await checkGuideImage('lesson-prompt-guide');
@@ -295,6 +309,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         if (muteEffects) {
           if (playsAfter.length !== playsBefore) throw new Error('Muted mismatch must not trigger a sound.');
         } else if (playsAfter.length !== playsBefore + 1 || !playsAfter.at(-1).includes('wrong')) throw new Error('Mismatch must trigger the wrong-answer sound once.');
+        await refillHeartsIfEmpty();
         await rejected.first().scrollIntoViewIfNeeded();
         await page.screenshot({ path: `outputs/browser-smoke/mismatch-${courseId}.png` });
         await page.setViewportSize({ width: 1440, height: 900 });

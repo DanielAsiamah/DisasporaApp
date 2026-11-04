@@ -357,13 +357,40 @@ test('Learn and Leaderboard use responsive vector icons and compact-phone podium
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /import\s+Ionicons\s+from\s+['"]@expo\/vector-icons\/Ionicons['"]/);
-  assert.match(source, /accessibilityLabel=\{learningPresentation\.accessibilityLabel\}/);
+  assert.match(source, /<Text accessible accessibilityLabel=\{learningPresentation\.accessibilityLabel\} accessibilityRole=['"]header['"]/);
   assert.match(source, /getLearningProgressPresentation\(\{ ready: progressReady, completed: completedTopicCount, total: topicStates\.length, hasMorePlannedLessons \}\)/);
   assert.doesNotMatch(source, /profile\?\.streak/);
   assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.xp \|\| 0\} experience points`\}/);
   assert.match(source, /name=\{activeTab === id \? activeIcon : icon\}/);
   assert.match(source, /<Text numberOfLines=\{1\} style=\{styles\.podiumName\}>\{entry\.name\}<\/Text>/);
   assert.match(source, /podiumGuide:\s*\{[^}]*aspectRatio:\s*1[^}]*maxWidth:\s*96[^}]*width:\s*['"]100%['"]/s);
+});
+
+test('the MVP Learn loop presents persisted recoverable hearts without a paywall', () => {
+  const homeSource = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+  const modalSource = fs.readFileSync(path.join(root, 'src/components/OutOfHeartsModal.js'), 'utf8');
+
+  assert.match(homeSource, /import \{ useGame \} from ['"]\.\.\/context\/GameContext['"]/);
+  assert.match(homeSource, /const game = useGame\(\)/);
+  assert.match(homeSource, /buildHeartsPresentation\(game\)/);
+  assert.match(homeSource, /accessibilityLabel=\{heartsPresentation\.accessibilityLabel\}[\s\S]*?name=['"]heart['"][\s\S]*?\{heartsPresentation\.countLabel\}/s);
+  assert.match(homeSource, /<PatoisLessonModal[\s\S]*heartsPresentation=\{heartsPresentation\}[\s\S]*onCloseOutOfHearts=\{game\.closeOutOfHearts\}[\s\S]*onRefillHearts=\{game\.refillHearts\}[\s\S]*onWrongAnswer=\{game\.loseHeart\}[\s\S]*showOutOfHearts=\{game\.showOutOfHearts\}[\s\S]*timeUntilNextHeartMs=\{game\.timeUntilNextHeartMs\}/s);
+  assert.match(modalSource, /embedded \? content : \([\s\S]*<Modal[\s\S]*onRequestClose=\{onClose\}/s);
+  assert.match(modalSource, /onRequestClose=\{onClose\}/);
+  assert.match(modalSource, /accessibilityViewIsModal/);
+  assert.match(modalSource, /Beta refill · No charge during early access/);
+  assert.doesNotMatch(modalSource, /purchase|subscribe|payment|checkout/i);
+});
+
+test('the local browser journey proves one wrong attempt spends one heart and retry spends none', () => {
+  const verifierSource = fs.readFileSync(path.join(root, 'scripts/verify-local-core-loop.cjs'), 'utf8');
+
+  assert.match(verifierSource, /const initialHeartLabel = ['"]5 of 5 hearts remaining['"]/);
+  assert.match(verifierSource, /const heartLabelPattern = expected => new RegExp/);
+  assert.match(verifierSource, /page\.getByLabel\(heartLabelPattern\(expected\)\)/);
+  assert.match(verifierSource, /await page\.getByLabel\(initialHeartLabel,[\s\S]*?\.waitFor\(\)/s);
+  assert.match(verifierSource, /await page\.getByRole\(['"]button['"], \{ name: ['"]Check answer['"][\s\S]*?await currentHeartCount\(4\)[\s\S]*?name: ['"]Try again['"][\s\S]*?await currentHeartCount\(4\)/s);
+  assert.match(verifierSource, /async function refillHeartsIfEmpty\(\)[\s\S]*?name: ['"]Refill hearts['"][\s\S]*?await currentHeartCount\(5\)/s);
 });
 
 test('loading progress stays visually neutral and small labels use accessible text tokens', () => {

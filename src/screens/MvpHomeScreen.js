@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '../context/AuthContext';
+import { useGame } from '../context/GameContext';
 import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
 import LearnerAccountPanel from '../components/mvp/LearnerAccountPanel';
 import { useSoundPreference } from '../audio/useSoundPreference';
@@ -38,6 +39,7 @@ const {
 } = require('../lessonEngine/mvpProgressState.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
+const { buildHeartsPresentation } = require('../lessonExperience/heartsPresentation.cjs');
 const { buildCourseTopicExercises } = require('../lessonEngine/patoisLessonSteps.cjs');
 const {
   buildAdaptiveReviewTopic,
@@ -351,6 +353,8 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
 
 function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSignedOut, onChooseCourse }) {
   const { awardCorrectAnswerXp, loadLanguageProgress, profile, signOut, syncLanguageProgress, syncProgress, user } = useAuth();
+  const game = useGame();
+  const heartsPresentation = buildHeartsPresentation(game);
   const soundPreference = useSoundPreference({ savedValue: profile?.soundEffectsEnabled, save: syncProgress });
   const [accountOpen, setAccountOpen] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -589,9 +593,9 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
               <Pressable accessibilityRole="button" accessibilityLabel="Account" accessibilityState={{ expanded: accountOpen }} onPress={() => setAccountOpen(open => !open)} style={styles.accountButton}>
                 <Ionicons accessible={false} color={NAVY} name="person-circle-outline" size={27} />
               </Pressable>
-              <View accessible accessibilityLabel={learningPresentation.accessibilityLabel} style={styles.statPill}>
-                <Ionicons accessible={false} color="#1F7A4D" name="checkmark-circle" size={18} />
-                <Text style={styles.statText}>{learningPresentation.countLabel}</Text>
+              <View accessible accessibilityLabel={heartsPresentation.accessibilityLabel} style={styles.statPill}>
+                <Ionicons accessible={false} color="#FF5D66" name="heart" size={18} />
+                <Text style={styles.statText}>{heartsPresentation.countLabel}</Text>
               </View>
               <View accessible accessibilityLabel={`${profile?.xp || 0} experience points`} style={styles.statPill}>
                 <Ionicons accessible={false} color="#FFC928" name="star" size={18} />
@@ -608,7 +612,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
             {accountOpen ? <LearnerAccountPanel user={user} profile={profile} soundPreference={soundPreference} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
             <View style={styles.streakCopy}>
               <View style={styles.streakTextColumn}>
-                <Text accessibilityRole="header" style={styles.streakTitle}>{learningPresentation.title}</Text>
+                <Text accessible accessibilityLabel={learningPresentation.accessibilityLabel} accessibilityRole="header" style={styles.streakTitle}>{learningPresentation.title}</Text>
                 <Text style={styles.streakSubtitle}>{learningPresentation.subtitle}</Text>
               </View>
               <Ionicons accessible={false} color="#1F7A4D" name="chatbubbles" size={38} />
@@ -694,7 +698,25 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
           </Pressable>
         ))}
       </View>
-      <PatoisLessonModal courseId={storageCourseId} key={`${storageKey}:${activeTopic?.id || 'closed'}`} onAdvance={setActiveTopic} onAwardCorrectAnswerXp={awardCorrectAnswerXp} onClose={() => setActiveTopic(null)} onComplete={completeTopic} onMistake={recordLessonMistake} previewCourseId={previewCourseId} soundEffectsEnabled={soundPreference.enabled} topic={activeTopic} visible={Boolean(activeTopic) && progressReady} />
+      <PatoisLessonModal
+        courseId={storageCourseId}
+        heartsPresentation={heartsPresentation}
+        key={`${storageKey}:${activeTopic?.id || 'closed'}`}
+        onAdvance={setActiveTopic}
+        onAwardCorrectAnswerXp={awardCorrectAnswerXp}
+        onClose={() => setActiveTopic(null)}
+        onCloseOutOfHearts={game.closeOutOfHearts}
+        onComplete={completeTopic}
+        onMistake={recordLessonMistake}
+        onRefillHearts={game.refillHearts}
+        onWrongAnswer={game.loseHeart}
+        previewCourseId={previewCourseId}
+        showOutOfHearts={game.showOutOfHearts}
+        soundEffectsEnabled={soundPreference.enabled}
+        timeUntilNextHeartMs={game.timeUntilNextHeartMs}
+        topic={activeTopic}
+        visible={Boolean(activeTopic) && progressReady}
+      />
     </SafeAreaView>
   );
 }

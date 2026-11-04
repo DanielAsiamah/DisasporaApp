@@ -11,17 +11,19 @@ function formatCountdown(milliseconds) {
 }
 
 export default function OutOfHeartsModal({
+  embedded = false,
   visible,
   onClose,
   onRefill,
   timeUntilNextHeartMs,
 }) {
-  return (
-    <Modal animationType="fade" transparent visible={visible}>
-      <View style={styles.overlay}>
-        <View style={styles.card}>
+  if (embedded && !visible) return null;
+
+  const content = (
+      <View style={[styles.overlay, embedded && styles.embeddedOverlay]}>
+        <View accessibilityViewIsModal style={styles.card}>
           <Text style={styles.emoji}>💔</Text>
-          <Text style={styles.title}>Out of hearts</Text>
+          <Text accessibilityRole="header" style={styles.title}>Out of hearts</Text>
           <Text style={styles.body}>
             Your next heart returns in{' '}
             <Text style={styles.countdown}>{formatCountdown(timeUntilNextHeartMs)}</Text>.
@@ -29,13 +31,18 @@ export default function OutOfHeartsModal({
           </Text>
 
           <PrimaryButton label="Refill hearts" onPress={onRefill} />
-          <Pressable onPress={onClose} style={styles.secondaryButton}>
+          <Pressable accessibilityLabel="Close out of hearts message" accessibilityRole="button" onPress={onClose} style={styles.secondaryButton}>
             <Text style={styles.secondaryText}>Maybe later</Text>
           </Pressable>
 
           <Text style={styles.note}>Beta refill · No charge during early access</Text>
         </View>
       </View>
+  );
+
+  return embedded ? content : (
+    <Modal animationType="fade" onRequestClose={onClose} transparent visible={visible}>
+      {content}
     </Modal>
   );
 }
@@ -47,6 +54,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: spacing.lg,
+  },
+  embeddedOverlay: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 20,
   },
   card: {
     backgroundColor: colors.surface,

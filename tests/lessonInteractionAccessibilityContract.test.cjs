@@ -45,3 +45,13 @@ test('lesson navigation, progress, footer, and completion actions expose explici
   assert.match(lessonSource, /const footerActionLabel = xpAwardFailed[\s\S]*?['"]Retry saving XP['"][\s\S]*?feedback === ['"]incorrect['"][\s\S]*?['"]Try again['"][\s\S]*?['"]Continue lesson['"][\s\S]*?['"]Check answer['"]/s);
   assert.match(lessonSource, /accessibilityLabel=\{footerActionLabel\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !footerReady \}\}/s);
 });
+
+test('lesson hearts are visible and only accepted wrong attempts spend one heart', () => {
+  const continueLessonSource = lessonSource.match(/function continueLesson\(\) \{([\s\S]*?)\n  \}\n\n  function/)?.[1] || '';
+
+  assert.match(lessonSource, /export default function PatoisLessonModal\(\{[\s\S]*heartsPresentation[\s\S]*onWrongAnswer/s);
+  assert.match(lessonSource, /accessibilityLabel=\{heartsPresentation\.accessibilityLabel\}[\s\S]*?\{heartsPresentation\.countLabel\}/s);
+  assert.match(lessonSource, /const correct = evaluateExerciseResponse\(exercise, response\);[\s\S]*?if \(!correct\) onWrongAnswer\?\.\(\);/s);
+  assert.match(lessonSource, /if \(audioEventGate\.claim\(['"]mismatch['"][\s\S]*?onWrongAnswer\?\.\(\);/s);
+  assert.doesNotMatch(continueLessonSource, /onWrongAnswer\?\.\(\)/);
+});
