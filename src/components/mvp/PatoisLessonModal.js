@@ -61,9 +61,6 @@ const BORDER = '#D8E8F2';
 const MUTED = '#718397';
 const GREEN = '#22B65D';
 const RED = '#FF5D66';
-const LESSON_CLOUD_FILL = '#F6FCFF';
-const LESSON_CLOUD_PRIMARY_RESTING_X = 6;
-const LESSON_CLOUD_SECONDARY_RESTING_X = -4;
 
 function playLessonHaptic(event) {
   const feedback = getLessonHapticFeedback(event);
@@ -117,38 +114,6 @@ function BreathingVocabularyImage({ conceptId, imageRegistry, reducedMotion }) {
 function BreathingGuidePortrait({ guideName = 'Kai', reducedMotion, style, tone = 'idle', testID }) {
   return (
     <AnimatedGuide name={guideName} reducedMotion={reducedMotion} style={style} tone={tone} testID={testID} />
-  );
-}
-
-function LessonClouds({
-  primaryRestingX = 0,
-  secondaryRestingX = 0,
-  reducedMotion,
-}) {
-  const drift = useRef(new Animated.Value(primaryRestingX)).current;
-  useEffect(() => {
-    if (reducedMotion) {
-      drift.setValue(primaryRestingX);
-      return undefined;
-    }
-    drift.setValue(primaryRestingX);
-    const animation = Animated.loop(Animated.sequence([
-      Animated.timing(drift, { duration: 9000, toValue: 1, useNativeDriver: true }),
-      Animated.timing(drift, { duration: 9000, toValue: -1, useNativeDriver: true }),
-      Animated.timing(drift, { duration: 9000, toValue: 0, useNativeDriver: true }),
-    ]));
-    animation.start();
-    return () => animation.stop();
-  }, [drift, primaryRestingX, reducedMotion]);
-  return (
-    <>
-      <Animated.View style={[styles.cloudOne, {
-        transform: [{ translateX: drift.interpolate({ inputRange: [-1, 1], outputRange: [primaryRestingX - 10, primaryRestingX + 12] }) }],
-      }]} />
-      <Animated.View style={[styles.cloudTwo, {
-        transform: [{ translateX: drift.interpolate({ inputRange: [-1, 1], outputRange: [secondaryRestingX + 11, secondaryRestingX - 9] }) }],
-      }]} />
-    </>
   );
 }
 
@@ -897,15 +862,12 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
                 </View>
               ) : null}
               {!isMatch && !isMistakePractice && imageRegistry[exerciseVisualConceptId] ? <View style={styles.scene}>
-                <LessonClouds
-                  primaryRestingX={LESSON_CLOUD_PRIMARY_RESTING_X}
-                  secondaryRestingX={LESSON_CLOUD_SECONDARY_RESTING_X}
-                  reducedMotion={reducedMotion}
-                />
+                <View style={styles.sceneHalo} />
+                <Text style={styles.sceneMode}>LOOK • LISTEN • SPEAK</Text>
                 <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
               </View> : null}
               <View style={styles.promptConversation}>
-                <BreathingGuidePortrait guideName={promptGuide} reducedMotion={reducedMotion} style={styles.promptGuide} testID="lesson-prompt-guide" />
+                <BreathingGuidePortrait guideName={promptGuide} reducedMotion={reducedMotion} style={styles.promptGuide} tone="prompt" testID="lesson-prompt-guide" />
                 <View style={styles.promptCard}>
                 <Text style={styles.speakerName}>{promptGuide.toUpperCase()}</Text>
                 <Text style={styles.prompt}>{exercise?.prompt}</Text>
@@ -1049,7 +1011,7 @@ const styles = StyleSheet.create({
   lessonSummaryLabel: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.7 },
   lessonSummaryValue: { color: NAVY, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12 },
   promptConversation: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
-  promptGuide: { width: 72, height: 100, flexShrink: 0 },
+  promptGuide: { width: 106, height: 148, flexShrink: 0 },
   speakerName: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 6 },
   promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderBottomLeftRadius: 6, borderWidth: 2, padding: 12 },
   prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 19, lineHeight: 25 },
@@ -1070,11 +1032,11 @@ const styles = StyleSheet.create({
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 8, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8 },
   reviewBannerTitle: { color: NAVY, fontFamily: fonts.bold, fontSize: 11, textAlign: 'center' },
   reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
-  scene: { backgroundColor: PALE, borderRadius: 28, height: 110, flexShrink: 0, marginVertical: 8, overflow: 'hidden' },
+  scene: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 28, borderWidth: 1, height: 132, flexShrink: 0, marginVertical: 8, overflow: 'hidden' },
+  sceneHalo: { backgroundColor: '#D5F2FF', borderRadius: 100, height: 180, position: 'absolute', right: -28, top: -78, width: 180 },
+  sceneMode: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, left: 16, letterSpacing: 0.8, position: 'absolute', top: 13, zIndex: 3 },
   vocabularyImage: { alignSelf: 'center', height: 105, marginTop: 5, width: '86%', zIndex: 2 },
   lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
-  cloudOne: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, height: 34, left: 20, position: 'absolute', top: 34, width: 110 },
-  cloudTwo: { backgroundColor: LESSON_CLOUD_FILL, borderRadius: 80, position: 'absolute', right: 18, top: 78, height: 28, width: 92 },
   choiceList: { gap: 10 },
   audioControls: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center', marginBottom: 16 },
   speakerButton: { alignItems: 'center', backgroundColor: SKY, borderRadius: 28, height: 54, justifyContent: 'center', width: 54 },

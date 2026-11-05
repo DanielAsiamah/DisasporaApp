@@ -29,6 +29,7 @@ export default function AnimatedGuide({ name = 'Kai', tone = 'idle', reducedMoti
       source={guideArt[name] || guideArt.Kai}
       style={[style, {
         transform: [
+          { translateX: interpolate(spec.translateX) },
           { translateY: interpolate(spec.translateY) },
           { scale: interpolate(spec.scale) },
           { rotate: interpolate(spec.rotate) },

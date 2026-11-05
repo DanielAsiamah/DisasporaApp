@@ -284,7 +284,10 @@ test('lesson prompts have a human guide and show vocabulary stages only when the
   assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
   assert.match(source, /!isMatch && !isMistakePractice && imageRegistry\[exerciseVisualConceptId\] \? <View style=\{styles\.scene\}>/);
   assert.match(source, /<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\}/);
-  assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\}/);
+  assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\} tone=['"]prompt['"]/);
+  assert.match(source, /promptGuide:\s*\{[^}]*width:\s*(?:1\d\d|[2-9]\d\d)[^}]*height:\s*(?:1[3-9]\d|[2-9]\d\d)/s);
+  assert.match(source, /LOOK • LISTEN • SPEAK/);
+  assert.doesNotMatch(source, /<LessonClouds/);
 });
 
 test('wrong-answer feedback keeps the active human guide visible with the recovery message', () => {

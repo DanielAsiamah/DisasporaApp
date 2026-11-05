@@ -62,12 +62,20 @@ test('lesson motion and modal transitions respect reduced motion', () => {
   assert.match(source, /useReducedMotion/);
   assert.match(source, /function BreathingVocabularyImage\([^)]*reducedMotion/);
   assert.match(source, /function BreathingGuidePortrait\([^)]*reducedMotion/);
-  assert.match(source, /function LessonClouds\([^)]*primaryRestingX[^)]*secondaryRestingX[^)]*reducedMotion/);
-  assert.match(source, /if \(reducedMotion\) \{\s*drift\.setValue\(primaryRestingX\)/s);
-  assert.match(source, /LESSON_CLOUD_FILL/);
+  assert.match(source, /tone=['"]prompt['"]/);
   assert.match(source, /animationType=\{reducedMotion \? ['"]none['"] : ['"]slide['"]\}/);
   assert.match(source, /if \(correct && !reducedMotion\)/);
   assert.match(source, /<BreathingGuidePortrait[^>]+guideName=\{topic\.guide \|\| ['"]Kai['"]\}/s);
+});
+
+test('guide motion includes horizontal reaction frames and a static reduced-motion fallback', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/AnimatedGuide.js'), 'utf8');
+  const model = fs.readFileSync(path.join(root, 'src/lessonExperience/lessonGuidePresentation.cjs'), 'utf8');
+
+  assert.match(source, /translateX: interpolate\(spec\.translateX\)/);
+  assert.match(model, /recover:/);
+  assert.match(model, /prompt:/);
+  assert.match(model, /translateX:/);
 });
 
 test('correct lesson feedback uses an explicit celebration treatment instead of plain text only', () => {

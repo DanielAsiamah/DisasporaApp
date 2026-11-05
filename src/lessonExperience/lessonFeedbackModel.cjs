@@ -79,7 +79,7 @@ function buildLessonFeedbackModel({
     return {
       animationTone: 'shake',
       canContinue: true,
-      guideTone: 'encourage',
+      guideTone: 'recover',
       message: 'No stress. Study the answer and try again.',
       state: 'incorrect',
       title: 'Almost',
