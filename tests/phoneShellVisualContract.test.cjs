@@ -163,8 +163,11 @@ test('the lesson completion screen names the unlocked next topic instead of usin
   assert.match(source, /const courseTopics = useMemo\(\(\) => \(/);
   assert.match(source, /const curriculum = getRuntimeCurriculum\(runtimeCourseId\)/);
   assert.match(source, /curriculum\.topics/);
-  assert.match(source, /const nextTopic = useMemo\(\(\) => courseTopics\.find\(\(candidate\) => candidate\.order === \(topic\?\.order \?\? 0\) \+ 1\) \|\| null, \[courseTopics, topic\?\.order\]\)/);
-  assert.match(source, /nextTopic \? `You finished \$\{topic\.title\}\. Next up: \$\{nextTopic\.title\}\.` : `You finished \$\{topic\.title\} and completed this chapter\.`/);
+  assert.match(source, /const nextTopic = useMemo\(\(\) => \{/);
+  assert.match(source, /topic\?\.isAdaptiveReview && topic\?\.nextTopicId[\s\S]*?candidate\.id === topic\.nextTopicId/s);
+  assert.match(source, /candidate\.order === \(topic\?\.order \?\? 0\) \+ 1/);
+  assert.match(source, /`You finished \$\{topic\.title\}\. Next up: \$\{nextTopic\.title\}\.`/);
+  assert.match(source, /`You finished \$\{topic\.title\} and completed this chapter\.`/);
   assert.match(source, /nextTopic \? <View style=\{styles\.completeNextPill\}><Text style=\{styles\.completeNextPillText\}>Next up: \{nextTopic\.title\}<\/Text><\/View> : null/);
   assert.match(source, /completeNextPill:\s*\{/);
   assert.match(source, /completeNextPillText:\s*\{/);

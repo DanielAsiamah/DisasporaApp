@@ -477,7 +477,12 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
   const exercise = lessonExercises[index];
   const isMistakePractice = index >= exercises.length && reviewStarted;
   const promptGuide = getPromptGuideName(topic?.guide, index);
-  const nextTopic = useMemo(() => courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null, [courseTopics, topic?.order]);
+  const nextTopic = useMemo(() => {
+    if (topic?.isAdaptiveReview && topic?.nextTopicId) {
+      return courseTopics.find((candidate) => candidate.id === topic.nextTopicId) || null;
+    }
+    return courseTopics.find((candidate) => candidate.order === (topic?.order ?? 0) + 1) || null;
+  }, [courseTopics, topic?.isAdaptiveReview, topic?.nextTopicId, topic?.order]);
 
   useEffect(() => {
     if (visible && !finished) lessonScrollRef.current?.scrollTo({ y: 0, animated: false });
@@ -686,7 +691,13 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
   const topicModeLabel = getTopicModeLabel(topic);
   const summary = presentLessonSummary(lessonSummary);
   const completionTitle = topic.type === 'challenge' ? 'Challenge complete!' : topic.type === 'review' ? 'Review complete!' : 'Topic complete!';
-  const completeBody = nextTopic ? `You finished ${topic.title}. Next up: ${nextTopic.title}.` : `You finished ${topic.title} and completed this chapter.`;
+  const completeBody = topic.isAdaptiveReview
+    ? nextTopic
+      ? `You finished ${topic.title}. Next up: ${nextTopic.title}.`
+      : `You finished ${topic.title}. Your practice queue is up to date.`
+    : nextTopic
+      ? `You finished ${topic.title}. Next up: ${nextTopic.title}.`
+      : `You finished ${topic.title} and completed this chapter.`;
   const completionBackButtonStyle = nextTopic ? styles.secondaryButton : styles.primaryButton;
   const completionBackButtonTextStyle = nextTopic ? styles.secondaryButtonText : styles.primaryButtonText;
   const isChoice = [LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE, LESSON_EXERCISE_TYPES.LISTEN_CHOICE].includes(exercise?.type);

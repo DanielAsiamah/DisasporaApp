@@ -405,11 +405,12 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     courseId: storageCourseId,
     exercisesByTopic,
     mistakeQueue: mistakeQueue || [],
+    resumeTopicId: coreLoopView.activeCard?.id || null,
     topics,
-  }), [exercisesByTopic, mistakeQueue, storageCourseId, topics]);
+  }), [coreLoopView.activeCard?.id, exercisesByTopic, mistakeQueue, storageCourseId, topics]);
   const topicCardsById = useMemo(() => new Map(coreLoopView.lessonCards.map((card) => [card.id, card])), [coreLoopView.lessonCards]);
   const chapterComplete = coreLoopView.chapterComplete;
-  const hasAdaptiveReview = chapterComplete && Boolean(adaptiveReviewTopic);
+  const hasAdaptiveReview = Boolean(adaptiveReviewTopic);
   const featuredGuide = (hasAdaptiveReview ? adaptiveReviewTopic?.guide : null)
     || topicStates.find((topic) => topic.id === coreLoopView.activeCard?.id)?.guide
     || topics[0]?.guide
@@ -441,13 +442,13 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const currentFocusBody = !progressReady
     ? 'Syncing your saved topics before the next lesson opens.'
     : hasAdaptiveReview
-      ? 'Your guide picked these from answers that need another pass. Master them to clear your review queue.'
+      ? 'Your guide picked due phrases from past mistakes. Recall them correctly across three spaced reviews to master them.'
     : chapterComplete ? hasMorePlannedLessons
       ? 'You finished the available drafts. Replay a lesson while the rest of the chapter is being prepared.'
       : 'You finished this chapter — replay any topic below whenever you want a refresher.' : getTopicFocusDescription(activeLearnTopic);
   const currentFocusMetaLabel = !progressReady
     ? 'Progress syncing'
-    : hasAdaptiveReview ? `${adaptiveReviewTopic.reviewExerciseIds.length} selected from your mistakes`
+    : hasAdaptiveReview ? `${adaptiveReviewTopic.reviewExerciseIds.length} due from your practice queue`
     : chapterComplete ? `${coreLoopView.progress.total} topics complete` : `${coreLoopView.activeCard?.modeLabel || 'Lesson'} ${activeTopicIndex} of ${topicStates.length}`;
   const currentFocusHint = !progressReady
     ? 'Wait while saved progress loads'
