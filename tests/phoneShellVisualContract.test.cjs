@@ -357,13 +357,30 @@ test('Learn and Leaderboard use responsive vector icons and compact-phone podium
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /import\s+Ionicons\s+from\s+['"]@expo\/vector-icons\/Ionicons['"]/);
-  assert.match(source, /<Text accessible accessibilityLabel=\{learningPresentation\.accessibilityLabel\} accessibilityRole=['"]header['"]/);
+  assert.match(source, /<Text accessible accessibilityLabel=\{streakPresentation\.accessibilityLabel\} accessibilityRole=['"]header['"]/);
   assert.match(source, /getLearningProgressPresentation\(\{ ready: progressReady, completed: completedTopicCount, total: topicStates\.length, hasMorePlannedLessons \}\)/);
-  assert.doesNotMatch(source, /profile\?\.streak/);
+  assert.match(source, /getStreakPresentation\(\{ streak: profile\?\.streak, dailyGoalMinutes: profile\?\.dailyGoalMinutes \}\)/);
+  assert.match(source, /\{streakPresentation\.countLabel\}/);
   assert.match(source, /accessibilityLabel=\{`\$\{profile\?\.xp \|\| 0\} experience points`\}/);
   assert.match(source, /name=\{activeTab === id \? activeIcon : icon\}/);
   assert.match(source, /<Text numberOfLines=\{1\} style=\{styles\.podiumName\}>\{entry\.name\}<\/Text>/);
   assert.match(source, /podiumGuide:\s*\{[^}]*aspectRatio:\s*1[^}]*maxWidth:\s*96[^}]*width:\s*['"]100%['"]/s);
+});
+
+test('lesson completion saves a retryable daily streak without blocking topic progress', () => {
+  const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
+  const completeBlock = source.slice(
+    source.indexOf('const completeTopic = useCallback'),
+    source.indexOf('const recordLessonMistake = useCallback')
+  );
+
+  assert.match(source, /recordDailyLearning/);
+  assert.match(source, /const saveDailyStreak = useCallback/);
+  assert.match(completeBlock, /saveDailyStreak\(\)/);
+  assert.match(completeBlock, /setProgressSnapshot/);
+  assert.match(source, /Your lesson progress is safe, but the daily streak could not sync\./);
+  assert.match(source, /Retry streak save/);
+  assert.match(source, /onPress=\{saveDailyStreak\}/);
 });
 
 test('the MVP Learn loop presents persisted recoverable hearts without a paywall', () => {

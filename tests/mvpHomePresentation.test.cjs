@@ -17,20 +17,32 @@ test('learning banner reflects loaded topic progress rather than an unimplemente
   assert.equal(getLearningProgressPresentation({ ready: true, completed: 0, total: 0 }).title, 'Your learning path');
 });
 
-test('the streak banner reflects zero, one, and multi-day saved streaks', () => {
-  assert.deepEqual(getStreakPresentation(0), {
-    subtitle: 'Do a lesson to start your day.',
+test('the streak banner reflects zero, one, and multi-day saved streaks with a bounded goal', () => {
+  assert.deepEqual(getStreakPresentation({ streak: 0, dailyGoalMinutes: 10 }), {
+    accessibilityLabel: 'No daily streak yet. Daily learning goal 10 minutes.',
+    countLabel: '0',
+    dailyGoalMinutes: 10,
+    subtitle: 'Complete a lesson toward your 10-minute goal.',
     title: 'Start your streak!',
   });
-  assert.deepEqual(getStreakPresentation(1), {
-    subtitle: 'Do a lesson today to keep it going.',
+  assert.deepEqual(getStreakPresentation({ streak: 1, dailyGoalMinutes: 0 }), {
+    accessibilityLabel: '1 day streak. Daily learning goal 1 minute.',
+    countLabel: '1',
+    dailyGoalMinutes: 1,
+    subtitle: 'Learn for 1 minute today to keep it going.',
     title: 'Keep your 1-day streak!',
   });
-  assert.deepEqual(getStreakPresentation(7), {
-    subtitle: 'Do a lesson today to keep it going.',
+  assert.deepEqual(getStreakPresentation({ streak: 7, dailyGoalMinutes: 500 }), {
+    accessibilityLabel: '7 day streak. Daily learning goal 60 minutes.',
+    countLabel: '7',
+    dailyGoalMinutes: 60,
+    subtitle: 'Learn for 60 minutes today to keep it going.',
     title: 'Keep your 7-day streak!',
   });
-  assert.deepEqual(getStreakPresentation('not-a-number'), getStreakPresentation(0));
+  assert.deepEqual(
+    getStreakPresentation({ streak: 'not-a-number' }),
+    getStreakPresentation({ streak: 0 })
+  );
 });
 
 test('the champion occupies the center podium position without mutating rank order data', () => {

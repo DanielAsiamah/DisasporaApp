@@ -50,7 +50,7 @@ const {
 const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
 const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
 const { readRemoteProgress } = require('../lessonEngine/remoteProgressRead.cjs');
-const { getLearningProgressPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
+const { getLearningProgressPresentation, getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
 const SKY = '#1CB0F6';
 const SKY_TEXT = '#0076B5';
@@ -352,7 +352,7 @@ export default function MvpHomeScreen({ courseId = 'jamaican-patois', previewCou
 }
 
 function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSignedOut, onChooseCourse }) {
-  const { awardCorrectAnswerXp, loadLanguageProgress, profile, signOut, syncLanguageProgress, syncProgress, user } = useAuth();
+  const { awardCorrectAnswerXp, loadLanguageProgress, profile, recordDailyLearning, signOut, syncLanguageProgress, syncProgress, user } = useAuth();
   const game = useGame();
   const heartsPresentation = buildHeartsPresentation(game);
   const soundPreference = useSoundPreference({ savedValue: profile?.soundEffectsEnabled, save: syncProgress });
@@ -364,6 +364,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const [progressReadError, setProgressReadError] = useState(false);
   const [saveRetry, setSaveRetry] = useState(0);
   const [saveStatus, setSaveStatus] = useState({ local: 'not-required', remote: 'not-required' });
+  const [streakSaveStatus, setStreakSaveStatus] = useState('idle');
   const [activeTopic, setActiveTopic] = useState(null);
   const [mistakeQueue, setMistakeQueue] = useState(null);
   const runtimeCourse = getCourseById(storageCourseId);
@@ -460,6 +461,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     : hasAdaptiveReview ? 'Practice now →'
     : `${coreLoopView.activeCard?.ctaLabel || 'Start lesson'} →`;
   const learningPresentation = getLearningProgressPresentation({ ready: progressReady, completed: completedTopicCount, total: topicStates.length, hasMorePlannedLessons });
+  const streakPresentation = getStreakPresentation({ streak: profile?.streak, dailyGoalMinutes: profile?.dailyGoalMinutes });
 
   useEffect(() => {
     setActiveTopic(null);
@@ -535,8 +537,16 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     return () => { current = false; };
   }, [progressSnapshot, storageCourseId, storageKey, syncLanguageProgress, user?.uid, saveRetry]);
 
+  const saveDailyStreak = useCallback(() => {
+    setStreakSaveStatus('saving');
+    return recordDailyLearning()
+      .then(() => setStreakSaveStatus('saved'))
+      .catch(() => setStreakSaveStatus('error'));
+  }, [recordDailyLearning]);
+
   const completeTopic = useCallback((topicId, result = {}) => {
     if (!progressReady) return;
+    saveDailyStreak();
     if (topicId === adaptiveReviewTopic?.id) {
       setMistakeQueue((current) => resolveAdaptiveReview(
         current || [],
@@ -550,7 +560,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
       const merged = mergeCompletedTopicIds(topics, current.completedTopicIds, [topicId]);
       return createMutationProgressSnapshot(current, storageKey, merged);
     });
-  }, [adaptiveReviewTopic, progressReady, storageKey, topics]);
+  }, [adaptiveReviewTopic, progressReady, saveDailyStreak, storageKey, topics]);
 
   const recordLessonMistake = useCallback((mistake) => {
     setMistakeQueue((current) => recordPersistentMistake(current || [], mistake));
@@ -587,6 +597,14 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
                 </Pressable>
               </View>
             ) : null}
+            {streakSaveStatus === 'error' ? (
+              <View style={styles.progressNotice} accessibilityLiveRegion="polite">
+                <Text style={styles.rankCardBody}>Your lesson progress is safe, but the daily streak could not sync.</Text>
+                <Pressable accessibilityRole="button" style={styles.leagueButton} onPress={saveDailyStreak}>
+                  <Text style={styles.leagueButtonText}>Retry streak save</Text>
+                </Pressable>
+              </View>
+            ) : null}
             <View style={styles.brandRow}>
               <View style={styles.flagBadge}><Text style={styles.flag}>{coreLoopView.courseIdentity.flag}</Text></View>
               <Text style={styles.brand}>Diaspora</Text>
@@ -612,11 +630,15 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
             {accountOpen ? <LearnerAccountPanel user={user} profile={profile} soundPreference={soundPreference} saveStatus={{ ...saveStatus, remoteReadStatus: progressSnapshot.remoteReadStatus }} signOut={signOut} onSignedOut={onSignedOut} onClose={() => setAccountOpen(false)} /> : null}
             <View style={styles.streakCopy}>
               <View style={styles.streakTextColumn}>
-                <Text accessible accessibilityLabel={learningPresentation.accessibilityLabel} accessibilityRole="header" style={styles.streakTitle}>{learningPresentation.title}</Text>
-                <Text style={styles.streakSubtitle}>{learningPresentation.subtitle}</Text>
+                <Text accessible accessibilityLabel={streakPresentation.accessibilityLabel} accessibilityRole="header" style={styles.streakTitle}>{streakPresentation.title}</Text>
+                <Text style={styles.streakSubtitle}>{streakPresentation.subtitle}</Text>
               </View>
-              <Ionicons accessible={false} color="#1F7A4D" name="chatbubbles" size={38} />
+              <View style={styles.streakBadge}>
+                <Ionicons accessible={false} color="#FF8A00" name="flame" size={28} />
+                <Text style={styles.streakCount}>{streakPresentation.countLabel}</Text>
+              </View>
             </View>
+            <Text accessible accessibilityLabel={learningPresentation.accessibilityLabel} style={styles.progressSummary}>{learningPresentation.subtitle}</Text>
             <ChapterHero guideName={featuredGuide} heroSource={courseConfig.hero} reducedMotion={reducedMotion} />
             <View style={styles.chapterCard}>
                 <View style={styles.chapterHeader}>
@@ -734,7 +756,7 @@ const styles = StyleSheet.create({
   brand: { color: NAVY, flex: 1, fontFamily: fonts.extraBold, fontSize: 19, textAlign: 'center' },
   flagBadge: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 13, borderWidth: 1, height: 42, justifyContent: 'center', width: 48 }, flag: { fontSize: 28 },
   statPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 20, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 10, paddingVertical: 7 }, statText: { color: NAVY, fontFamily: fonts.bold, fontSize: 13 },
-  streakCopy: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 18 }, streakTextColumn: { flex: 1 }, streakTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23 }, streakSubtitle: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 14, marginTop: 3 },
+  streakCopy: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 8, paddingTop: 18 }, streakTextColumn: { flex: 1 }, streakTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23 }, streakSubtitle: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 14, marginTop: 3 }, streakBadge: { alignItems: 'center', backgroundColor: '#FFF4DD', borderColor: '#FFD68A', borderRadius: 22, borderWidth: 1, flexDirection: 'row', gap: 4, minWidth: 68, paddingHorizontal: 12, paddingVertical: 9 }, streakCount: { color: '#A84D00', fontFamily: fonts.extraBold, fontSize: 19 }, progressSummary: { color: MUTED, fontFamily: fonts.medium, fontSize: 12, paddingBottom: 14, paddingHorizontal: 20 },
   hero: { backgroundColor: '#BFEAFF', height: 208, overflow: 'hidden' }, heroBackground: { bottom: -8, left: -8, position: 'absolute', right: -8, top: -8 }, heroWash: { backgroundColor: 'rgba(222,247,255,0.16)', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }, heroGuide: { bottom: -24, height: 230, left: 22, position: 'absolute', width: 230, zIndex: 3 },
   cloud: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute', zIndex: 2 }, cloudBubble: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute' },
   chapterCard: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 34, borderTopRightRadius: 34, marginTop: -30, paddingTop: 24 },

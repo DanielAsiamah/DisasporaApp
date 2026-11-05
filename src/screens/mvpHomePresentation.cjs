@@ -4,17 +4,31 @@ function normalizeCount(value) {
   return Math.floor(number);
 }
 
-function getStreakPresentation(value) {
+function normalizeDailyGoal(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 5;
+  return Math.min(Math.max(Math.floor(number), 1), 60);
+}
+
+function getStreakPresentation({ streak: value, dailyGoalMinutes } = {}) {
   const streak = normalizeCount(value);
+  const goal = normalizeDailyGoal(dailyGoalMinutes);
+  const goalUnit = goal === 1 ? 'minute' : 'minutes';
   if (streak === 0) {
     return {
-      subtitle: 'Do a lesson to start your day.',
+      accessibilityLabel: `No daily streak yet. Daily learning goal ${goal} ${goalUnit}.`,
+      countLabel: '0',
+      dailyGoalMinutes: goal,
+      subtitle: `Complete a lesson toward your ${goal}-${goalUnit.replace(/s$/, '')} goal.`,
       title: 'Start your streak!',
     };
   }
 
   return {
-    subtitle: 'Do a lesson today to keep it going.',
+    accessibilityLabel: `${streak} day streak. Daily learning goal ${goal} ${goalUnit}.`,
+    countLabel: String(streak),
+    dailyGoalMinutes: goal,
+    subtitle: `Learn for ${goal} ${goalUnit} today to keep it going.`,
     title: `Keep your ${streak}-day streak!`,
   };
 }
