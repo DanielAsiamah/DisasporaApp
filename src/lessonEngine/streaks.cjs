@@ -62,8 +62,36 @@ function calculateStreakAfterCompletion(
   return { streak: 1, status: 'restarted' };
 }
 
+function mergePersistedStreakIntoProfile(profile, result) {
+  if (!profile) return profile;
+  return {
+    ...profile,
+    streak: Math.max(Math.floor(Number(result?.streak) || 0), 0),
+    lastLessonCompletedAt: result?.completedAt ?? profile.lastLessonCompletedAt ?? null,
+  };
+}
+
+async function runAuthBoundStreakUpdate({
+  getCurrentUserId,
+  record,
+  setProfile,
+  userId,
+} = {}) {
+  if (typeof record !== 'function') throw new Error('A daily learning operation is required.');
+  if (typeof getCurrentUserId !== 'function') throw new Error('An auth identity reader is required.');
+  if (typeof setProfile !== 'function') throw new Error('A profile updater is required.');
+
+  const result = await record(userId);
+  const currentAccount = getCurrentUserId() === userId;
+  if (currentAccount) {
+    setProfile((current) => mergePersistedStreakIntoProfile(current, result));
+  }
+  return { ...result, currentAccount };
+}
+
 module.exports = {
   calculateStreakAfterCompletion,
+  mergePersistedStreakIntoProfile,
+  runAuthBoundStreakUpdate,
   toStreakMillis,
 };
-

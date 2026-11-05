@@ -25,6 +25,17 @@ test('Firestore awards a fixed reward once inside a transaction', () => {
   assert.match(serviceSource, /transaction\.update\(userRef,[\s\S]*?xp: rewardPlan\.xp/s);
 });
 
+test('daily streak persistence remains separate from generic progress writes', () => {
+  assert.match(serviceSource, /export async function recordDailyLearningCompletion\(uid\)/);
+  assert.doesNotMatch(
+    serviceSource.slice(
+      serviceSource.indexOf('export async function updateUserProgress'),
+      serviceSource.indexOf('function languageProgressDocRef')
+    ),
+    /lastLessonCompletedAt/
+  );
+});
+
 test('AuthContext keeps reward results account-bound without blocking auth-state delivery', () => {
   const awardBlock = authSource.slice(
     authSource.indexOf('const awardCorrectAnswerXp = useCallback'),

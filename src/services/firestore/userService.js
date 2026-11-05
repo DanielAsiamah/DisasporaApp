@@ -25,6 +25,7 @@ const {
   planCorrectAnswerXpMutation,
 } = require('../../lessonEngine/lessonXpReward.cjs');
 const { filterUserProgressFields } = require('../../lessonEngine/userProgressPolicy.cjs');
+const { calculateStreakAfterCompletion } = require('../../lessonEngine/streaks.cjs');
 const { removeUndefined, buildAnswerRecord } = require('./firestorePayload.cjs');
 
 export const DEFAULT_USER_PROFILE = {
@@ -33,6 +34,7 @@ export const DEFAULT_USER_PROFILE = {
   hearts: MAX_HEARTS,
   currentCourse: null,
   currentLesson: null,
+  lastLessonCompletedAt: null,
 };
 
 function userDocRef(uid) {
@@ -50,6 +52,7 @@ export async function createUserDocument(uid, { username, email, ...profileField
     hearts: DEFAULT_USER_PROFILE.hearts,
     currentCourse: DEFAULT_USER_PROFILE.currentCourse,
     currentLesson: DEFAULT_USER_PROFILE.currentLesson,
+    lastLessonCompletedAt: DEFAULT_USER_PROFILE.lastLessonCompletedAt,
     ...safeProfileFields,
     xp: DEFAULT_USER_PROFILE.xp,
     joinedAt: serverTimestamp(),
@@ -214,6 +217,33 @@ export async function awardCorrectAnswerXpOnce(uid, rewardFields) {
       xp: rewardPlan.xp,
     });
     return { ...rewardPlan, rewardId };
+  });
+}
+
+export async function recordDailyLearningCompletion(uid) {
+  if (!uid) throw new Error('A signed-in learner is required to save a streak.');
+
+  const userRef = userDocRef(uid);
+  return runTransaction(firebaseDb, async (transaction) => {
+    const userSnapshot = await transaction.get(userRef);
+    if (!userSnapshot.exists()) {
+      throw new Error('Your learner profile could not be found.');
+    }
+
+    const completedAt = Timestamp.now();
+    const profile = userSnapshot.data();
+    const streakResult = calculateStreakAfterCompletion(
+      profile?.streak,
+      profile?.lastLessonCompletedAt,
+      completedAt
+    );
+
+    transaction.update(userRef, {
+      lastActiveAt: serverTimestamp(),
+      lastLessonCompletedAt: completedAt,
+      streak: streakResult.streak,
+    });
+    return { ...streakResult, completedAt };
   });
 }
 

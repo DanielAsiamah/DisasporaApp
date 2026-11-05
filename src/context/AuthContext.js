@@ -20,6 +20,7 @@ import {
   ensureUserDocument,
   getLanguageProgress,
   getUserDocument,
+  recordDailyLearningCompletion,
   setLanguageProgress,
   touchUserLastActive,
   updateUserProgress,
@@ -29,6 +30,7 @@ const {
   runAuthBoundXpAward,
 } = require('../lessonEngine/lessonXpReward.cjs');
 const { filterUserProgressFields } = require('../lessonEngine/userProgressPolicy.cjs');
+const { runAuthBoundStreakUpdate } = require('../lessonEngine/streaks.cjs');
 const {
   assertCurrentAuthHandoff,
   beginAuthenticatedProfileHandoff,
@@ -523,6 +525,26 @@ export function AuthProvider({ children }) {
     [profile, profileError, profileLoaded, user]
   );
 
+  const recordDailyLearning = useCallback(async () => {
+    if (!user) {
+      throw Object.assign(new Error('Sign in before saving a daily streak.'), {
+        code: 'unauthenticated',
+      });
+    }
+    if (!profileLoaded || profileError || !profile) {
+      throw Object.assign(new Error('Your saved profile is not ready yet.'), {
+        code: 'profile-not-ready',
+      });
+    }
+
+    return runAuthBoundStreakUpdate({
+      getCurrentUserId: () => authenticatedUserRef.current?.uid || null,
+      record: recordDailyLearningCompletion,
+      setProfile,
+      userId: user.uid,
+    });
+  }, [profile, profileError, profileLoaded, user]);
+
   const value = useMemo(
     () => ({
       user,
@@ -547,6 +569,7 @@ export function AuthProvider({ children }) {
       recordLessonAnswer,
       finishLessonSession,
       awardCorrectAnswerXp,
+      recordDailyLearning,
     }),
     [
       user,
@@ -570,6 +593,7 @@ export function AuthProvider({ children }) {
       recordLessonAnswer,
       finishLessonSession,
       awardCorrectAnswerXp,
+      recordDailyLearning,
     ]
   );
 
