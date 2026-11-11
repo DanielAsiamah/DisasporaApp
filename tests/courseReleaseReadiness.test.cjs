@@ -189,7 +189,7 @@ function approvedFixture() {
       candidateDigest: 'candidate-v1',
       sourceWorkbookSha256,
       platform: 'ios',
-      expoSdk: '54',
+      expoSdk: '58',
       deviceKind: 'physical',
       client: 'expo-go',
       completedTopicIds: curriculum.topics

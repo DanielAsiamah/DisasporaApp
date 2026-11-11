@@ -7,14 +7,14 @@ const root = path.join(__dirname, '..');
 const packageJson = require('../package.json');
 const appJson = require('../app.json');
 
-test('physical iPhone Expo Go stays on the supported SDK 54 runtime', () => {
-  assert.match(packageJson.dependencies.expo, /^~54\./);
-  assert.equal(packageJson.dependencies.react, '19.1.0');
-  assert.equal(packageJson.dependencies['react-native'], '0.81.5');
+test('physical iPhone Expo Go stays on the supported SDK 58 runtime', () => {
+  assert.match(packageJson.dependencies.expo, /^[~^]58\./);
+  assert.equal(packageJson.dependencies.react, '19.3.0');
+  assert.match(packageJson.dependencies['react-native'], /^0\.88\./);
   assert.match(packageJson.scripts['phone:preview'], /expo start --go --tunnel/);
 });
 
-test('SDK 54 app config contains only valid config plugins', () => {
+test('SDK 58 app config contains only valid config plugins', () => {
   const pluginNames = appJson.expo.plugins.map((entry) => (
     Array.isArray(entry) ? entry[0] : entry
   ));
@@ -24,13 +24,13 @@ test('SDK 54 app config contains only valid config plugins', () => {
   assert.ok(!pluginNames.includes('expo-status-bar'));
 });
 
-test('the current phone handoff names SDK 54 and does not claim a device test', () => {
+test('the current phone handoff names SDK 58 and does not claim a device test', () => {
   const handoff = fs.readFileSync(
-    path.join(root, 'docs/handoff/expo-go-sdk-54-current.md'),
+    path.join(root, 'docs/handoff/expo-go-sdk-58-current.md'),
     'utf8'
   );
 
-  assert.match(handoff, /Expo SDK 54/);
+  assert.match(handoff, /Expo SDK 58/);
   assert.match(handoff, /physical iPhone interaction remains unverified/i);
-  assert.doesNotMatch(handoff, /SDK 58 from the iOS App Store/);
+  assert.doesNotMatch(handoff, /SDK 54 from the iOS App Store/);
 });

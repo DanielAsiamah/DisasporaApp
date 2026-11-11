@@ -43,7 +43,9 @@ test('Expo phone handoff normalizes tunnel and LAN URLs into a tappable HTML pag
   assert.match(html, /href="exp:\/\/192\.168\.1\.32:8082"/);
   assert.match(html, /href="http:\/\/localhost:8082"/);
   assert.match(html, /api\.qrserver\.com\/v1\/create-qr-code/);
-  assert.match(html, /data=exp%3A%2F%2Fexample\.exp\.direct/);
+  assert.match(html, /data=exp%3A%2F%2F192\.168\.1\.32%3A8082/);
+  assert.match(html, /class="button" href="exp:\/\/192\.168\.1\.32:8082">Open Expo Go on Wi-Fi/);
+  assert.match(html, /Tunnel fallback: exp:\/\/example\.exp\.direct/);
 });
 
 test('Expo phone handoff command options let explicit caller values override defaults', () => {

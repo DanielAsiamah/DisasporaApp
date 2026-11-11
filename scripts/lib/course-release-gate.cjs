@@ -438,7 +438,7 @@ function buildCourseReleaseReport(options = {}) {
   if (!phone || phone.status !== 'approved') errors.push('Physical iPhone test must be explicitly approved.');
   else {
     if (phone.sourceWorkbookSha256 !== sourceWorkbookSha256) errors.push('Phone test approval is stale for the current workbook.');
-    if (String(phone.platform).toLowerCase() !== 'ios' || String(phone.expoSdk) !== '54') errors.push('Phone test must use iOS with Expo SDK 54.');
+    if (String(phone.platform).toLowerCase() !== 'ios' || String(phone.expoSdk) !== '58') errors.push('Phone test must use iOS with Expo SDK 58.');
     if (
       String(phone.deviceKind).toLowerCase() !== 'physical'
       || String(phone.client).toLowerCase() !== 'expo-go'

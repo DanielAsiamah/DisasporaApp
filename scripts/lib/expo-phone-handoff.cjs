@@ -34,7 +34,8 @@ function buildQrUrl(value) {
 
 function buildExpoPhoneHandoffHtml({ tunnelUrl, lanUrl, webUrl, generatedAt = new Date().toISOString() } = {}) {
   const urls = normalizeExpoUrls({ tunnelUrl, lanUrl, webUrl });
-  const primaryUrl = urls.tunnelUrl || urls.lanUrl;
+  const primaryUrl = urls.lanUrl || urls.tunnelUrl;
+  const usesLan = Boolean(urls.lanUrl);
   if (!primaryUrl) {
     throw new Error('Supply the current Expo URL: npm run phone:handoff -- --lan-url=exp://YOUR_MAC_IP:PORT (or --tunnel-url=exp://CURRENT_TUNNEL).');
   }
@@ -135,11 +136,11 @@ function buildExpoPhoneHandoffHtml({ tunnelUrl, lanUrl, webUrl, generatedAt = ne
   <main>
     <h1>Open Diaspora in Expo Go</h1>
     <p>Scan this with your iPhone camera, or open this page on your phone and tap the green button.</p>
-    ${!urls.tunnelUrl ? '<p>Keep your iPhone and Mac on the same Wi-Fi network.</p>' : ''}
+    ${usesLan ? '<p>Keep your iPhone and Mac on the same Wi-Fi network.</p>' : ''}
     <img alt="QR code for ${escapeHtml(primaryUrl)}" src="${escapeHtml(buildQrUrl(primaryUrl))}">
-    <a class="button" href="${escapeHtml(primaryUrl)}">${urls.tunnelUrl ? 'Open Expo Go tunnel' : 'Open Expo Go on Wi-Fi'}</a>
+    <a class="button" href="${escapeHtml(primaryUrl)}">${usesLan ? 'Open Expo Go on Wi-Fi' : 'Open Expo Go tunnel'}</a>
     <div class="backup">
-      ${urls.lanUrl ? `<a href="${escapeHtml(urls.lanUrl)}">LAN backup: ${escapeHtml(urls.lanUrl)}</a>` : ''}
+      ${usesLan && urls.tunnelUrl ? `<a href="${escapeHtml(urls.tunnelUrl)}">Tunnel fallback: ${escapeHtml(urls.tunnelUrl)}</a>` : ''}
       ${urls.webUrl ? `<a href="${escapeHtml(urls.webUrl)}">Mac web preview: ${escapeHtml(urls.webUrl)}</a>` : ''}
     </div>
     <small>Generated ${escapeHtml(generatedAt)}</small>
