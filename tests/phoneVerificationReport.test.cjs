@@ -10,20 +10,28 @@ const {
   createPhoneVerificationReportPath,
 } = require('../scripts/lib/phone-verification-report.cjs');
 
-test('phone report CLI defaults to the installed Expo SDK and Expo Go', () => {
+test('phone report CLI records exact spaced run options and export evidence', () => {
   const root = path.resolve(__dirname, '..');
   const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'diaspora-phone-report-'));
   try {
     fs.mkdirSync(path.join(temporary, 'docs/handoff'), { recursive: true });
+    fs.mkdirSync(path.join(temporary, 'outputs/verify-sdk58-ios'), { recursive: true });
     fs.copyFileSync(path.join(root, 'docs/handoff/phone-verification-template.md'),
       path.join(temporary, 'docs/handoff/phone-verification-template.md'));
-    execFileSync(process.execPath, [path.join(root, 'scripts/scaffold-phone-verification-report.js')],
-      { cwd: temporary, stdio: 'pipe' });
+    fs.writeFileSync(path.join(temporary, 'outputs/verify-sdk58-ios/metadata.json'), '{}');
+    execFileSync(process.execPath, [
+      path.join(root, 'scripts/scaffold-phone-verification-report.js'),
+      '--runtime', 'Expo Go SDK 58 on physical iPhone (launch connected)',
+      '--expo-command', 'npm run phone:preview -- --max-workers 2',
+      '--local-url', 'exp://verified-tunnel.example',
+      '--export-metadata', 'outputs/verify-sdk58-ios/metadata.json',
+    ], { cwd: temporary, stdio: 'pipe' });
     const directory = path.join(temporary, 'outputs/phone-verification');
     const report = fs.readFileSync(path.join(directory, fs.readdirSync(directory)[0]), 'utf8');
-    const major = require('expo/package.json').version.split('.')[0];
-    assert.ok(report.includes(`- App runtime: Expo Go compatible with SDK ${major} (device not yet verified)`));
-    assert.ok(report.includes('- Expo command: npx expo start --go --tunnel --clear'));
+    assert.ok(report.includes('- App runtime: Expo Go SDK 58 on physical iPhone (launch connected)'));
+    assert.ok(report.includes('- Expo command: npm run phone:preview -- --max-workers 2'));
+    assert.ok(report.includes('- Local URL: exp://verified-tunnel.example'));
+    assert.match(report, /- Export metadata: outputs\/verify-sdk58-ios\/metadata\.json \(2 bytes,/);
     assert.ok(report.includes('- [ ]'));
   } finally {
     fs.rmSync(temporary, { recursive: true, force: true });

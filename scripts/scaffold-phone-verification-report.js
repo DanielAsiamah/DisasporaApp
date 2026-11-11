@@ -32,9 +32,17 @@ function getExportMetadataSummary(metadataPath) {
 }
 
 function readOption(name) {
+  const args = process.argv.slice(2);
   const prefix = `--${name}=`;
-  const match = process.argv.slice(2).find((arg) => arg.startsWith(prefix));
-  return match ? match.slice(prefix.length) : '';
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg.startsWith(prefix)) return arg.slice(prefix.length);
+    if (arg === `--${name}`) {
+      const value = args[index + 1];
+      return value && !value.startsWith('--') ? value : '';
+    }
+  }
+  return '';
 }
 
 const templatePath = path.join(process.cwd(), 'docs/handoff/phone-verification-template.md');
@@ -46,10 +54,10 @@ const metadata = {
   commit,
   date: formatLocalTimestamp(),
   device: readOption('device'),
-  expoCommand: readOption('expo-command') || 'npx expo start --go --tunnel --clear',
-  exportMetadata: getExportMetadataSummary('outputs/verify-transfer/metadata.json'),
+  expoCommand: readOption('expo-command') || 'npm run phone:preview',
+  exportMetadata: getExportMetadataSummary(readOption('export-metadata')),
   iosVersion: readOption('ios-version'),
-  localUrl: readOption('local-url') || 'http://localhost:8081',
+  localUrl: readOption('local-url'),
   tester: readOption('tester'),
 };
 const outputPath = createPhoneVerificationReportPath({ commit, date: metadata.date });
