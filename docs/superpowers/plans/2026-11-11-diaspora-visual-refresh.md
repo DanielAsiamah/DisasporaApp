@@ -86,4 +86,4 @@
 - [x] Run `npm run content:validate`, `npm run images:audit`, and `npm run env:check`.
 - [x] Run `npx tsc --noEmit` and `npx expo-doctor`.
 - [x] Export iOS with Expo SDK 58.
-- [ ] Commit, push `codex/implementation-plan`, fast-forward `main`, and verify both remote SHAs.
+- [x] Commit, push `codex/implementation-plan`, fast-forward `main`, and verify both remote SHAs.
