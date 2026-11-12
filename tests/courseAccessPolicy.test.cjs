@@ -41,14 +41,31 @@ test('developer preview requires development mode, explicit opt-in and an allowl
   assert.equal(resolveDeveloperPreviewCourseId(request), 'swahili');
   assert.equal(resolveDeveloperPreviewCourseId({ ...request, isDevelopment: false }), null);
   assert.equal(resolveDeveloperPreviewCourseId({ ...request, previewOptIn: false }), null);
-  for (const requestedCourseId of ['swahili', 'wolof', 'haitian-creole', 'sudanese-arabic']) {
+  for (const requestedCourseId of ['swahili', 'wolof', 'haitian-creole', 'sudanese-arabic', 'igbo']) {
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId }), requestedCourseId);
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId, isDevelopment: false }), null);
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId, previewOptIn: false }), null);
   }
-  for (const requestedCourseId of ['nobiin', 'igbo', 'belizean-kriol', 'aave', 'unknown']) {
+  for (const requestedCourseId of ['nobiin', 'belizean-kriol', 'aave', 'unknown']) {
     assert.equal(resolveDeveloperPreviewCourseId({ ...request, requestedCourseId }), null);
     assert.equal(canAccessRuntimeCourse({ id: requestedCourseId }, requestedCourseId), false);
+  }
+});
+
+test('Igbo preview opens its master-workbook lessons while ordinary access stays unavailable', () => {
+  const { getRuntimeCurriculum } = require('../src/data/runtimeCurriculum.cjs');
+  const { buildCourseTopicExercises } = require('../src/lessonEngine/patoisLessonSteps.cjs');
+  const curriculum = getRuntimeCurriculum('igbo');
+  const course = curriculum.courses.find(course => course.id === 'igbo');
+  assert.equal(canAccessRuntimeCourse(course), false);
+  assert.equal(canAccessRuntimeCourse(course, 'swahili'), false);
+  assert.equal(canAccessRuntimeCourse(course, 'igbo'), true);
+  const topics = curriculum.topics.filter(topic => topic.courseId === 'igbo');
+  assert.equal(topics.length, 4);
+  for (const topic of topics) {
+    const exercises = buildCourseTopicExercises('igbo', topic.id, { hasAudio: () => false });
+    assert.ok(exercises.length >= 4, topic.id);
+    assert.ok(exercises.every(exercise => exercise.prompt && exercise.answer), topic.id);
   }
 });
 

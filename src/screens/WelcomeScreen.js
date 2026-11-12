@@ -3,48 +3,34 @@ import {
   Animated,
   Image,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AnimatedAtmosphere from '../components/AnimatedAtmosphere';
+import { AUTH_PALETTE as palette } from '../components/AuthScreenFrame';
+import PrimaryButton from '../components/PrimaryButton';
 import { COURSE_CATALOG } from '../data/courseCatalog.cjs';
 import { buildWelcomeCourseSummary } from '../data/welcomeCourseSummary.cjs';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { fonts, radius, spacing } from '../theme';
-
-const palette = {
-  backgroundTop: '#DDF4FF',
-  backgroundBottom: '#FFFFFF',
-  brandBlue: '#0B245B',
-  sky: '#1CB0F6',
-  skySoft: '#EAF8FF',
-  textMuted: '#6E8194',
-  textSoft: '#7F94A7',
-  border: '#D7E8F4',
-  white: '#FFFFFF',
-};
+import { colors, fonts, radius, spacing } from '../theme';
 
 const GUIDE_STRIP = [
   {
     id: 'amara',
     label: 'Amara',
-    note: 'Heritage-first lessons',
     source: require('../../assets/guides/amara.png'),
   },
   {
     id: 'kai',
     label: 'Kai',
-    note: 'Everyday conversation',
     source: require('../../assets/guides/kai.png'),
   },
   {
     id: 'sol',
     label: 'Sol',
-    note: 'Practice and progress',
     source: require('../../assets/guides/sol.png'),
   },
 ];
@@ -72,7 +58,7 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
     const entrance = Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 650,
+        duration: 280,
         useNativeDriver: true,
       }),
       Animated.spring(slideAnim, {
@@ -88,11 +74,6 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
 
   return (
     <View style={styles.root}>
-      <AnimatedAtmosphere
-        colors={[palette.backgroundTop, palette.backgroundBottom]}
-        accent={palette.sky}
-      />
-
       <SafeAreaView style={styles.safeArea}>
         <ScrollView
           contentContainerStyle={styles.content}
@@ -115,7 +96,7 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
               <View style={styles.heroPill}>
                 <Text style={styles.heroPillText}>{courseSummary.headline}</Text>
               </View>
-              <Text style={styles.title}>Languages carry us home</Text>
+              <Text accessibilityRole="header" style={styles.title}>Languages carry us home</Text>
               <Text style={styles.subtitle}>
                 {courseSummary.description}
               </Text>
@@ -126,7 +107,6 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
                 <View key={guide.id} style={styles.guideCard}>
                   <Image resizeMode="contain" source={guide.source} style={styles.guideImage} />
                   <Text style={styles.guideName}>{guide.label}</Text>
-                  <Text style={styles.guideNote}>{guide.note}</Text>
                 </View>
               ))}
             </View>
@@ -141,11 +121,10 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
                     onPress={onGetStarted}
                     style={({ pressed }) => [
                       styles.laneCard,
-                      { borderColor: `${lane.color}55` },
                       pressed && styles.laneCardPressed,
                     ]}
                   >
-                    <Text style={[styles.laneTitle, { color: lane.color }]}>{lane.title}</Text>
+                    <Text style={styles.laneTitle}>{lane.title}</Text>
                     <Text style={styles.laneCaption}>{lane.caption}</Text>
                     <Text style={styles.laneDetail}>{lane.detail}</Text>
                   </Pressable>
@@ -156,10 +135,8 @@ export default function WelcomeScreen({ onGetStarted, onSignIn }) {
         </ScrollView>
 
         <View style={styles.footer}>
-          <Pressable onPress={onGetStarted} style={styles.ctaButton}>
-            <Text style={styles.ctaText}>START YOUR PATH</Text>
-          </Pressable>
-          <Pressable onPress={onSignIn} style={styles.signInButton}>
+          <PrimaryButton label="START YOUR PATH" onPress={onGetStarted} />
+          <Pressable accessibilityRole="button" onPress={onSignIn} style={styles.signInButton}>
             <Text style={styles.signInText}>I already have an account</Text>
           </Pressable>
           <Text style={styles.footerNote}>Lessons, review, and leaderboard — free to start.</Text>
@@ -178,6 +155,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
+    alignSelf: 'center',
+    maxWidth: 520,
+    width: '100%',
     paddingBottom: spacing.xxl,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
@@ -190,7 +170,7 @@ const styles = StyleSheet.create({
   },
   logoBadge: {
     alignItems: 'center',
-    backgroundColor: palette.sky,
+    backgroundColor: colors.ink,
     borderRadius: radius.pill,
     height: 42,
     justifyContent: 'center',
@@ -198,23 +178,21 @@ const styles = StyleSheet.create({
   },
   logoText: {
     color: palette.white,
-    fontFamily: fonts.black,
-    fontSize: 18,
+    fontFamily: fonts.display,
+    fontSize: 26,
   },
   brandName: {
     color: palette.brandBlue,
-    fontFamily: fonts.black,
-    fontSize: 22,
+    fontFamily: fonts.display,
+    fontSize: 28,
   },
   heroCopy: {
-    alignItems: 'center',
-    marginTop: spacing.md,
+    alignItems: 'flex-start',
+    marginTop: spacing.lg,
   },
   heroPill: {
-    backgroundColor: palette.white,
-    borderColor: palette.border,
+    backgroundColor: colors.paperDeep,
     borderRadius: radius.pill,
-    borderWidth: 1.5,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
   },
@@ -226,53 +204,41 @@ const styles = StyleSheet.create({
   },
   title: {
     color: palette.brandBlue,
-    fontFamily: fonts.black,
-    fontSize: 32,
-    lineHeight: 38,
+    fontFamily: fonts.display,
+    fontSize: 46,
+    lineHeight: 53,
     marginTop: spacing.md,
-    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   subtitle: {
     color: palette.textMuted,
-    fontFamily: fonts.semiBold,
-    fontSize: 15,
-    lineHeight: 22,
+    fontFamily: fonts.editorial,
+    fontSize: 18,
+    lineHeight: 26,
     marginTop: spacing.sm,
-    textAlign: 'center',
   },
   guideRow: {
+    backgroundColor: colors.paperDeep,
+    borderRadius: radius.xl,
     flexDirection: 'row',
     gap: spacing.sm,
     marginTop: spacing.lg,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.md,
   },
   guideCard: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.78)',
-    borderColor: palette.border,
-    borderRadius: radius.lg,
-    borderWidth: 1.5,
     flex: 1,
-    minHeight: 148,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.sm,
   },
   guideImage: {
-    height: 78,
-    width: 78,
+    height: 160,
+    width: '100%',
   },
   guideName: {
     color: palette.brandBlue,
     fontFamily: fonts.extraBold,
     fontSize: 14,
     marginTop: 2,
-  },
-  guideNote: {
-    color: palette.textMuted,
-    fontFamily: fonts.semiBold,
-    fontSize: 10,
-    lineHeight: 14,
-    marginTop: 2,
-    textAlign: 'center',
   },
   lanesSection: {
     marginTop: spacing.lg,
@@ -289,17 +255,17 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   laneCard: {
-    backgroundColor: palette.white,
-    borderRadius: radius.md,
-    borderWidth: 1.5,
-    padding: spacing.sm,
+    borderTopColor: colors.border,
+    borderTopWidth: 1,
+    paddingVertical: spacing.md,
   },
   laneCardPressed: {
     transform: [{ translateY: 2 }],
   },
   laneTitle: {
-    fontFamily: fonts.black,
-    fontSize: 15,
+    color: colors.ink,
+    fontFamily: fonts.display,
+    fontSize: 24,
   },
   laneCaption: {
     color: palette.textMuted,
@@ -316,25 +282,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   footer: {
+    alignSelf: 'center',
+    maxWidth: 520,
+    width: '100%',
     backgroundColor: palette.backgroundBottom,
     borderTopColor: palette.border,
-    borderTopWidth: 1.5,
+    borderTopWidth: 1,
     gap: spacing.sm,
     paddingBottom: spacing.md,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
-  },
-  ctaButton: {
-    alignItems: 'center',
-    backgroundColor: palette.sky,
-    borderRadius: radius.md,
-    justifyContent: 'center',
-    minHeight: 54,
-  },
-  ctaText: {
-    color: palette.white,
-    fontFamily: fonts.extraBold,
-    fontSize: 16,
   },
   signInButton: {
     alignItems: 'center',

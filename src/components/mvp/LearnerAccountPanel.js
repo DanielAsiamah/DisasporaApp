@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
-import { fonts } from '../../theme';
+import { colors, fonts } from '../../theme';
 
 const { getAccountProgressNotice, signOutAndReturn } = require('./accountPanelModel.cjs');
 
@@ -38,7 +38,7 @@ export default function LearnerAccountPanel({ user, profile, soundPreference, sa
           accessibilityLabel="Sound effects"
           disabled={pending || soundPreference.status === 'saving'}
           onValueChange={soundPreference.setEnabled}
-          trackColor={{ false: '#A7BAC7', true: '#1F7A4D' }}
+          trackColor={{ false: colors.border, true: colors.sea }}
           value={soundPreference.enabled}
         />
       </View>
@@ -68,18 +68,18 @@ export default function LearnerAccountPanel({ user, profile, soundPreference, sa
 }
 
 const styles = StyleSheet.create({
-  card: { margin: 18, padding: 18, borderRadius: 22, backgroundColor: '#FFFFFF', borderColor: '#D7E8F4', borderWidth: 2, gap: 8 },
-  title: { fontFamily: fonts.extraBold, fontSize: 20, color: '#0B245B' },
-  name: { fontFamily: fonts.bold, fontSize: 16, color: '#0B245B' },
-  detail: { fontFamily: fonts.medium, fontSize: 14, color: '#526C85' },
-  settingRow: { alignItems: 'center', borderTopWidth: 1, borderTopColor: '#D7E8F4', flexDirection: 'row', gap: 14, marginTop: 12, paddingTop: 16 },
+  card: { margin: 18, padding: 20, borderRadius: 22, backgroundColor: colors.paper, borderColor: colors.border, borderWidth: 1, gap: 8 },
+  title: { fontFamily: fonts.display, fontSize: 30, color: colors.ink, textTransform: 'uppercase' },
+  name: { fontFamily: fonts.bold, fontSize: 16, color: colors.ink },
+  detail: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 21, color: colors.inkMuted },
+  settingRow: { alignItems: 'center', borderTopWidth: 1, borderTopColor: colors.border, flexDirection: 'row', gap: 14, marginTop: 12, paddingTop: 16 },
   settingCopy: { flex: 1, gap: 4 },
-  notice: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 20, color: '#526C85', marginVertical: 8 },
+  notice: { fontFamily: fonts.regular, fontSize: 14, lineHeight: 20, color: colors.inkMuted, marginVertical: 8 },
   error: { fontFamily: fonts.bold, fontSize: 14, color: '#B83248' },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  primary: { flexGrow: 1, minHeight: 48, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: '#0B245B' },
-  primaryText: { fontFamily: fonts.extraBold, color: '#FFFFFF', fontSize: 15 },
-  secondary: { flexGrow: 1, minHeight: 48, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', borderRadius: 16, backgroundColor: '#EAF8FF' },
-  secondaryText: { fontFamily: fonts.extraBold, color: '#0B245B', fontSize: 15 },
+  primary: { flexGrow: 1, minHeight: 58, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: colors.ink },
+  primaryText: { fontFamily: fonts.bold, color: colors.paper, fontSize: 15 },
+  secondary: { flexGrow: 1, minHeight: 58, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: colors.paperDeep },
+  secondaryText: { fontFamily: fonts.bold, color: colors.ink, fontSize: 15 },
   pending: { opacity: 0.6 },
 });

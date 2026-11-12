@@ -2,30 +2,29 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AnimatedAtmosphere from './AnimatedAtmosphere';
-import { fonts, radius, spacing } from '../theme';
+import { colors, fonts, radius, spacing } from '../theme';
 
 export const AUTH_PALETTE = {
-  backgroundTop: '#DDF4FF',
-  backgroundBottom: '#FFFFFF',
-  brandBlue: '#0B245B',
-  sky: '#1CB0F6',
-  skyBorder: '#0C8CE9',
-  skySoft: '#EAF8FF',
-  border: '#D7E8F4',
-  white: '#FFFFFF',
-  textMuted: '#6E8194',
-  textSoft: '#7F94A7',
-  success: '#22B65D',
-  gold: '#F4B942',
+  backgroundTop: colors.paper,
+  backgroundBottom: colors.paper,
+  brandBlue: colors.ink,
+  sky: colors.sea,
+  skyBorder: colors.primaryDark,
+  skySoft: colors.paperDeep,
+  border: colors.border,
+  white: colors.paper,
+  textMuted: colors.inkMuted,
+  textSoft: colors.inkMuted,
+  success: colors.sea,
+  gold: colors.mango,
 };
 
 const GUIDE_STRIP = [
@@ -98,14 +97,10 @@ export default function AuthScreenFrame({
 
   return (
     <View style={styles.root}>
-      <AnimatedAtmosphere
-        colors={[AUTH_PALETTE.backgroundTop, AUTH_PALETTE.backgroundBottom]}
-        accent={AUTH_PALETTE.sky}
-      />
-
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable
+            accessibilityRole="button"
             accessibilityLabel={onBack ? 'Go back' : undefined}
             disabled={!onBack}
             onPress={onBack}
@@ -159,12 +154,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    alignSelf: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     gap: spacing.sm,
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
+    maxWidth: 520,
+    width: '100%',
   },
   backButton: {
     alignItems: 'center',
@@ -187,7 +185,7 @@ const styles = StyleSheet.create({
   },
   logoBadge: {
     alignItems: 'center',
-    backgroundColor: AUTH_PALETTE.sky,
+    backgroundColor: colors.ink,
     borderRadius: radius.pill,
     height: 36,
     justifyContent: 'center',
@@ -195,13 +193,13 @@ const styles = StyleSheet.create({
   },
   logoText: {
     color: AUTH_PALETTE.white,
-    fontFamily: fonts.black,
-    fontSize: 16,
+    fontFamily: fonts.display,
+    fontSize: 22,
   },
   brandName: {
     color: AUTH_PALETTE.brandBlue,
-    fontFamily: fonts.black,
-    fontSize: 20,
+    fontFamily: fonts.display,
+    fontSize: 24,
   },
   headerBadge: {
     alignItems: 'center',
@@ -217,7 +215,10 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   content: {
+    alignSelf: 'center',
     flexGrow: 1,
+    maxWidth: 520,
+    width: '100%',
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
@@ -232,10 +233,8 @@ const styles = StyleSheet.create({
   },
   guideCard: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.82)',
-    borderColor: AUTH_PALETTE.border,
+    backgroundColor: colors.paperDeep,
     borderRadius: radius.lg,
-    borderWidth: 1.5,
     flex: 1,
     minHeight: 128,
     paddingHorizontal: spacing.xs,
@@ -273,17 +272,18 @@ const styles = StyleSheet.create({
   },
   title: {
     color: AUTH_PALETTE.brandBlue,
-    fontFamily: fonts.black,
-    fontSize: 31,
-    lineHeight: 37,
+    fontFamily: fonts.display,
+    fontSize: 36,
+    lineHeight: 43,
     marginTop: spacing.sm,
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   subtitle: {
     color: AUTH_PALETTE.textMuted,
-    fontFamily: fonts.semiBold,
-    fontSize: 15,
-    lineHeight: 22,
+    fontFamily: fonts.editorial,
+    fontSize: 17,
+    lineHeight: 25,
     marginTop: spacing.sm,
     textAlign: 'center',
   },

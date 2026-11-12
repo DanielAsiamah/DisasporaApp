@@ -15,6 +15,8 @@ npm run web:emulators
 Open `http://localhost:8086` for the app and `http://127.0.0.1:4000` for the
 emulator UI. Create a disposable email/password account through onboarding.
 Verification emails are simulated; their links appear in emulator output.
+The web command uses Expo's localhost mode so its emulator-only preview is not
+advertised as a phone connection. Use `npm run phone:preview` for Expo Go instead.
 
 The normal `.env` public configuration is still required by the configuration
 loader. Do not add the emulator flag to shared EAS environments or committed env
@@ -94,9 +96,11 @@ page errors or production requests.
 
 `npm run phone:preview` starts the Expo Go tunnel with the draft language picker
 enabled. After signing in, tap **Change** below the Learn header. Jamaican Patois,
-Swahili, Wolof, Haitian Creole, and Sudanese Arabic have workbook-backed draft
-chapters. Nobiin, Igbo, Belizean Kriol, and AAVE remain disabled because their
-lesson steps are not implemented. The picker displays each course's status.
+Swahili, Wolof, Haitian Creole, Sudanese Arabic, and Igbo have workbook-backed
+draft lessons. Igbo uses the master workbook's four Greetings lessons (27
+exercises); its translations remain pending native review. Nobiin, Belizean
+Kriol, and AAVE remain disabled because their lesson steps are not implemented.
+The picker displays each course's status.
 
 The picker requires both development mode and
 `EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW=true`. It does not publish courses or
@@ -114,7 +118,7 @@ DIASPORA_TEST_COURSE_PICKER=true DIASPORA_TEST_COURSE=sudanese-arabic \
 DIASPORA_APP_URL=http://localhost:8091 npm run test:app:browser
 ```
 
-This opens each of the five draft courses, checks the four unavailable choices,
+This opens each of the six draft courses, checks the three unavailable choices,
 completes the requested course's first topic, and verifies separate course
 progress before and after reload. Use the Playwright and Chrome overrides above
 if they are not installed in the repository.
@@ -201,6 +205,27 @@ preview chapter, not the unfilled master curriculum or physical-device testing.
 The same full-chapter run also passed for the explicitly opted-in Swahili preview:
 nine topics, 66 exercises, and 660 XP retained after reload, with leaderboard
 join/leave and no page errors or production requests. Swahili remains unpublished.
+
+## Premium Shell And Igbo Preview Verified On 2026-11-12
+
+The cream-and-ink visual system now covers Welcome, guided onboarding, email
+authentication, language selection, learner account, Learn, lessons,
+leaderboard, and the refill-hearts flow. The app loads only the six font faces it
+uses: Anton 400, DM Serif Display 400, and Inter 400/500/600/700.
+
+The browser regression opened all six implemented draft courses and kept Nobiin,
+Belizean Kriol, and AAVE disabled. A full Jamaican Patois run completed nine
+topics with 580 saved XP. A separate full Igbo run completed all four workbook
+Greetings lessons and 27 exercises with 270 saved XP. The Igbo run also checked
+contextual word help, incorrect-answer styling and sound, all five replenished
+hearts on a 320 by 568 viewport, course-isolated progress, reload, leaderboard
+join/leave, and sign-out/sign-in persistence. It recorded no page errors or
+production Firebase requests.
+
+The final SDK 58.0.25 check passed the full Node suite, TypeScript, content and
+image validation, public environment validation, Expo Doctor (20/20), and an
+iOS export. This evidence covers the local browser and generated iPhone bundle;
+the physical Expo Go interaction still needs to be performed on the iPhone.
 
 ## Learner Account
 

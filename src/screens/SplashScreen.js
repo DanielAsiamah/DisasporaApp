@@ -6,7 +6,7 @@ import { AUTH_PALETTE } from '../components/AuthScreenFrame';
 import { COURSE_CATALOG } from '../data/courseCatalog.cjs';
 import { buildWelcomeCourseSummary } from '../data/welcomeCourseSummary.cjs';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { fonts } from '../theme';
+import { colors, fonts } from '../theme';
 
 const courseSummary = buildWelcomeCourseSummary(COURSE_CATALOG);
 
@@ -16,24 +16,24 @@ const PHASES = [
     line: 'Diaspora',
     subline: 'Languages carry us home',
     accent: AUTH_PALETTE.brandBlue,
-    gradient: [AUTH_PALETTE.backgroundTop, '#F7FDFF', AUTH_PALETTE.backgroundBottom],
-    duration: 1600,
+    gradient: [colors.paper, colors.paper, colors.paperDeep],
+    duration: 450,
   },
   {
     key: 'courses',
     line: courseSummary.headline,
     subline: courseSummary.description,
     accent: AUTH_PALETTE.sky,
-    gradient: ['#EEF9FF', '#FFFFFF', '#F3FBFF'],
-    duration: 1600,
+    gradient: [colors.paper, colors.paper, colors.paperDeep],
+    duration: 450,
   },
   {
     key: 'promise',
     line: 'Learn • Review • Leaderboard',
     subline: 'Built for diaspora language journeys with real lessons and clear progress.',
     accent: AUTH_PALETTE.success,
-    gradient: ['#F6FCFF', '#FFFFFF', '#EAF8FF'],
-    duration: 1500,
+    gradient: [colors.paper, colors.paper, colors.paperDeep],
+    duration: 450,
   },
 ];
 
@@ -84,7 +84,7 @@ export default function SplashScreen({ onFinish }) {
 
         Animated.timing(bgProgress, {
           toValue: index / (PHASES.length - 1),
-          duration: 600,
+          duration: 250,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: false,
         }).start();
@@ -94,8 +94,7 @@ export default function SplashScreen({ onFinish }) {
 
         Animated.timing(sublineOpacity, {
           toValue: 1,
-          duration: 350,
-          delay: 100,
+          duration: 200,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }).start();
@@ -110,7 +109,7 @@ export default function SplashScreen({ onFinish }) {
 
       Animated.timing(exitOpacity, {
         toValue: 0,
-        duration: 700,
+        duration: 200,
         easing: Easing.inOut(Easing.cubic),
         useNativeDriver: true,
       }).start(({ finished }) => {
@@ -134,7 +133,7 @@ export default function SplashScreen({ onFinish }) {
       Animated.parallel([
         Animated.timing(textOpacity, {
           toValue: 1,
-          duration: 600,
+          duration: 250,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }),
@@ -153,13 +152,13 @@ export default function SplashScreen({ onFinish }) {
       Animated.parallel([
         Animated.timing(textOpacity, {
           toValue: 0,
-          duration: 450,
+          duration: 180,
           easing: Easing.in(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.timing(sublineOpacity, {
           toValue: 0,
-          duration: 350,
+          duration: 180,
           easing: Easing.in(Easing.cubic),
           useNativeDriver: true,
         }),
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   glow: {
-    backgroundColor: 'rgba(28,176,246,0.08)',
+    backgroundColor: colors.paperDeep,
     borderRadius: 999,
     height: 240,
     position: 'absolute',
@@ -243,22 +242,22 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   welcomeText: {
-    fontFamily: fonts.black,
-    fontSize: 38,
+    fontFamily: fonts.display,
+    fontSize: 54,
     letterSpacing: 0.4,
     textAlign: 'center',
   },
   phaseText: {
-    fontFamily: fonts.black,
+    fontFamily: fonts.display,
     fontSize: 34,
     letterSpacing: 0.2,
     textAlign: 'center',
   },
   subline: {
     color: AUTH_PALETTE.textMuted,
-    fontFamily: fonts.semiBold,
-    fontSize: 16,
-    lineHeight: 24,
+    fontFamily: fonts.editorial,
+    fontSize: 18,
+    lineHeight: 26,
     marginTop: 14,
     opacity: 0.92,
     textAlign: 'center',

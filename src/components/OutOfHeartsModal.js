@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { colors, fonts, radius, spacing } from '../theme';
@@ -67,7 +67,12 @@ export default function OutOfHeartsModal({
   }
 
   const content = (
-    <View style={[styles.overlay, embedded && styles.embeddedOverlay]}>
+    <ScrollView
+      bounces={false}
+      contentContainerStyle={styles.overlayContent}
+      showsVerticalScrollIndicator={false}
+      style={[styles.overlay, embedded && styles.embeddedOverlay]}
+    >
       <Animated.View
         accessibilityViewIsModal
         style={[
@@ -106,7 +111,7 @@ export default function OutOfHeartsModal({
         <View accessible accessibilityLabel="0 of 5 hearts remaining" style={styles.balanceCard}>
           <View style={styles.balanceCopy}>
             <Text style={styles.balanceLabel}>YOUR BALANCE</Text>
-            <Text style={styles.balanceValue}>Ready for five fresh tries</Text>
+            <Text style={styles.balanceValue}>5 fresh tries</Text>
           </View>
           <HeartsBar hearts={0} maxHearts={5} />
         </View>
@@ -124,7 +129,7 @@ export default function OutOfHeartsModal({
 
         <Text style={styles.note}>Beta refill · No charge during early access</Text>
       </Animated.View>
-    </View>
+    </ScrollView>
   );
 
   return embedded ? content : (
@@ -136,9 +141,12 @@ export default function OutOfHeartsModal({
 
 const styles = StyleSheet.create({
   overlay: {
-    alignItems: 'center',
     backgroundColor: 'rgba(29, 41, 37, 0.56)',
     flex: 1,
+  },
+  overlayContent: {
+    alignItems: 'center',
+    flexGrow: 1,
     justifyContent: 'center',
     padding: spacing.lg,
   },
@@ -151,6 +159,7 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   card: {
+    flexShrink: 0,
     backgroundColor: colors.paper,
     borderColor: colors.ink,
     borderRadius: radius.xl,

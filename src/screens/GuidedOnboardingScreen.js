@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -32,7 +31,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { fonts } from '../theme';
+import { colors, fonts } from '../theme';
 
 const {
   ONBOARDING_STEPS,
@@ -69,23 +68,20 @@ const STEP_TITLES = {
 };
 
 const palette = {
-  backgroundTop: '#DDF3FF',
-  backgroundBottom: '#FFFFFF',
-  cloud: 'rgba(255, 255, 255, 0.72)',
-  navy: '#102A43',
-  textMuted: '#58708A',
-  textSoft: '#5F768C',
-  primary: '#0874D1',
-  primaryPressed: '#0564B8',
-  primaryShadow: '#034D8F',
-  primarySoft: '#EAF5FF',
-  card: '#FFFFFF',
-  cardBorder: '#CDE5F5',
-  controlMuted: '#6F879D',
-  divider: '#DFEDF6',
-  disabled: '#B6C7D6',
+  backgroundTop: colors.paper,
+  navy: colors.ink,
+  textMuted: colors.inkMuted,
+  textSoft: colors.inkMuted,
+  primary: colors.ink,
+  primaryPressed: colors.primaryDark,
+  primarySoft: colors.paperDeep,
+  card: colors.paper,
+  cardBorder: colors.border,
+  controlMuted: colors.inkMuted,
+  divider: colors.border,
+  disabled: colors.locked,
   error: '#B42318',
-  inputPlaceholder: '#5F768C',
+  inputPlaceholder: colors.inkMuted,
 };
 
 export default function GuidedOnboardingScreen({
@@ -255,13 +251,6 @@ export default function GuidedOnboardingScreen({
   return (
     <View style={styles.root}>
       <StatusBar style="dark" />
-      <LinearGradient
-        colors={[palette.backgroundTop, palette.backgroundBottom]}
-        locations={[0, 0.82]}
-        style={StyleSheet.absoluteFill}
-      />
-      <CloudBackdrop />
-
       <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
         <KeyboardAvoidingView
           behavior={process.env.EXPO_OS === 'ios' ? 'padding' : undefined}
@@ -730,53 +719,6 @@ function GuideArt({ character, compact, trio = false, width }) {
   );
 }
 
-function CloudBackdrop() {
-  const reduceMotion = useReducedMotion();
-  const drift = useSharedValue(-12);
-
-  useEffect(() => {
-    cancelAnimation(drift);
-
-    if (reduceMotion) {
-      drift.value = 0;
-      return undefined;
-    }
-
-    drift.value = withRepeat(
-      withTiming(26, { duration: 9000, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-
-    return () => cancelAnimation(drift);
-  }, [drift, reduceMotion]);
-
-  const cloudOneStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: drift.value }],
-  }));
-  const cloudTwoStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: drift.value * -0.65 }, { scale: 0.78 }],
-  }));
-
-  return (
-    <View
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
-      pointerEvents="none"
-      style={[StyleSheet.absoluteFill, styles.cloudBounds]}
-    >
-      <Animated.View style={[styles.cloud, styles.cloudOne, cloudOneStyle]}>
-        <View style={[styles.cloudPuff, styles.cloudPuffLarge]} />
-        <View style={[styles.cloudPuff, styles.cloudPuffSmall]} />
-      </Animated.View>
-      <Animated.View style={[styles.cloud, styles.cloudTwo, cloudTwoStyle]}>
-        <View style={[styles.cloudPuff, styles.cloudPuffLarge]} />
-        <View style={[styles.cloudPuff, styles.cloudPuffSmall]} />
-      </Animated.View>
-    </View>
-  );
-}
-
 function PrimaryAction({ busy, disabled, label, onPress }) {
   const reduceMotion = useReducedMotion();
   const scale = useSharedValue(1);
@@ -827,7 +769,6 @@ function PrimaryAction({ busy, disabled, label, onPress }) {
 }
 
 const styles = StyleSheet.create({
-  cloudBounds: { overflow: 'hidden' },
   root: {
     backgroundColor: palette.backgroundTop,
     flex: 1,
@@ -868,8 +809,8 @@ const styles = StyleSheet.create({
     marginTop: -3,
   },
   progressTrack: {
-    backgroundColor: 'rgba(255, 255, 255, 0.78)',
-    borderColor: 'rgba(122, 181, 217, 0.26)',
+    backgroundColor: colors.paperDeep,
+    borderColor: colors.border,
     borderRadius: 999,
     borderWidth: 1,
     flex: 1,
@@ -877,7 +818,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   progressFill: {
-    backgroundColor: palette.primary,
+    backgroundColor: colors.sea,
     borderRadius: 999,
     height: '100%',
   },
@@ -918,21 +859,21 @@ const styles = StyleSheet.create({
   },
   title: {
     color: palette.navy,
-    fontFamily: fonts.extraBold,
-    fontSize: 30,
-    letterSpacing: -0.8,
-    lineHeight: 38,
+    fontFamily: fonts.display,
+    fontSize: 36,
+    lineHeight: 43,
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   titleCompact: {
-    fontSize: 26,
-    lineHeight: 33,
+    fontSize: 30,
+    lineHeight: 37,
   },
   subtitle: {
     color: palette.textMuted,
-    fontFamily: fonts.medium,
-    fontSize: 14,
-    lineHeight: 21,
+    fontFamily: fonts.editorial,
+    fontSize: 17,
+    lineHeight: 24,
     maxWidth: 340,
     textAlign: 'center',
   },
@@ -961,7 +902,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     minHeight: 60,
     paddingHorizontal: 18,
-    boxShadow: '0 6px 14px rgba(37, 92, 130, 0.14)',
   },
   nameHelper: {
     color: palette.textSoft,
@@ -1008,7 +948,6 @@ const styles = StyleSheet.create({
     minHeight: 68,
     paddingHorizontal: 15,
     paddingVertical: 13,
-    boxShadow: '0 5px 10px rgba(37, 92, 130, 0.10)',
   },
   optionGridItem: {
     flexBasis: '48%',
@@ -1077,7 +1016,6 @@ const styles = StyleSheet.create({
     gap: 7,
     paddingHorizontal: 18,
     paddingVertical: 16,
-    boxShadow: '0 6px 12px rgba(37, 92, 130, 0.11)',
   },
   summaryEyebrow: {
     color: palette.textSoft,
@@ -1163,7 +1101,7 @@ const styles = StyleSheet.create({
   },
   footerShell: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: colors.paper,
     borderTopColor: palette.divider,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
@@ -1182,10 +1120,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   primaryButtonWrap: {
-    backgroundColor: palette.primaryShadow,
     borderRadius: 18,
     borderCurve: 'continuous',
-    paddingBottom: 4,
   },
   primaryButtonDisabled: {
     backgroundColor: palette.disabled,
@@ -1197,7 +1133,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderCurve: 'continuous',
     justifyContent: 'center',
-    minHeight: 56,
+    minHeight: 58,
     paddingHorizontal: 20,
   },
   primaryButtonPressed: {
@@ -1208,37 +1144,5 @@ const styles = StyleSheet.create({
     fontFamily: fonts.extraBold,
     fontSize: 15,
     letterSpacing: 0.8,
-  },
-  cloud: {
-    backgroundColor: palette.cloud,
-    borderRadius: 999,
-    height: 34,
-    position: 'absolute',
-    width: 106,
-  },
-  cloudOne: {
-    left: -18,
-    top: 104,
-  },
-  cloudTwo: {
-    right: -24,
-    top: 236,
-  },
-  cloudPuff: {
-    backgroundColor: palette.cloud,
-    borderRadius: 999,
-    position: 'absolute',
-  },
-  cloudPuffLarge: {
-    height: 55,
-    left: 28,
-    top: -25,
-    width: 55,
-  },
-  cloudPuffSmall: {
-    height: 38,
-    left: 5,
-    top: -13,
-    width: 38,
   },
 });

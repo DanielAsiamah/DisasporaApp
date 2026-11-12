@@ -37,10 +37,22 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByLabel(heartLabelPattern(expected)).last().waitFor();
     }
     async function refillHeartsIfEmpty() {
-      const emptyDialog = page.getByRole('heading', { name: 'Out of hearts', exact: true });
+      const emptyDialog = page.getByRole('heading', { name: 'Your hearts need a refill', exact: true });
       if (!await emptyDialog.isVisible().catch(() => false)) return;
+      await page.setViewportSize({ width: 320, height: 568 });
+      await page.screenshot({ path: `outputs/browser-smoke/refill-${courseId}.png` });
+      const kicker = page.getByText('TAKE A BREATH', { exact: true });
+      await kicker.scrollIntoViewIfNeeded();
+      const topBounds = await kicker.boundingBox();
+      if (!topBounds || topBounds.y < 0) throw new Error('The top of the refill card must remain reachable on a short phone.');
+      const refillNote = page.getByText('Beta refill · No charge during early access', { exact: true });
+      await refillNote.scrollIntoViewIfNeeded();
+      const bottomBounds = await refillNote.boundingBox();
+      if (!bottomBounds || bottomBounds.y + bottomBounds.height > 568) throw new Error('The bottom of the refill card must remain reachable on a short phone.');
       await page.getByRole('button', { name: 'Refill hearts', exact: true }).click();
       await currentHeartCount(5);
+      await page.setViewportSize({ width: 390, height: 844 });
+      console.log('Refill restored five hearts on a 320px phone without leaving the lesson.');
     }
     async function checkGuideImage(testId) {
       const guide = page.getByTestId(testId);
@@ -92,15 +104,20 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       return route.abort();
     });
     await page.goto(appUrl.href, { timeout: 120000 });
+    await page.getByRole('button', { name: 'START YOUR PATH', exact: true }).waitFor({ timeout: 120000 });
+    await page.waitForFunction(() => [...document.querySelectorAll('img')].every(image => image.complete && image.naturalWidth > 0));
+    await page.screenshot({ path: 'outputs/browser-smoke/welcome.png' });
     await page.getByText('START YOUR PATH', { exact: true }).click({ timeout: 120000 });
     await page.getByLabel('Preferred name', { exact: true }).fill('Local Learner');
     await page.getByRole('button', { name: 'CONTINUE', exact: true }).click();
     for (const choice of ['English', 'Jamaican Patois', 'Heritage', '10 minutes', 'New learner']) {
       await page.getByText(choice, { exact: true }).click();
+      await page.screenshot({ path: `outputs/browser-smoke/onboarding-${choice.replace(/\s+/g, '-').toLowerCase()}.png` });
       await page.getByRole('button', { name: 'CONTINUE', exact: true }).click();
     }
     await page.getByRole('button', { name: 'START LEARNING.', exact: true }).click();
     await page.getByText('CONTINUE WITH EMAIL', { exact: true }).click();
+    await page.screenshot({ path: 'outputs/browser-smoke/signup.png' });
     const email = `local-${Date.now()}@example.test`;
     await page.getByLabel('Email', { exact: true }).fill(email);
     await page.getByLabel('Password', { exact: true }).fill('LocalOnly123!');
@@ -376,7 +393,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     await page.getByRole('button', { name: 'Back to chapter', exact: true }).click();
     if (courseId === 'igbo' && testedTopics.length === topics.length) {
-      await page.getByText('Chapter complete', { exact: true }).first().waitFor();
+      await page.getByText(/^Chapter complete\./).first().waitFor();
       if (await page.getByText('Available drafts complete', { exact: true }).count()) throw new Error('A fully available planned chapter must use the complete state.');
     }
     if (useCoursePicker) {
