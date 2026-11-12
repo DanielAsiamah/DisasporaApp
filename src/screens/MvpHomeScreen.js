@@ -52,46 +52,14 @@ const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
 const { readRemoteProgress } = require('../lessonEngine/remoteProgressRead.cjs');
 const { getLearningProgressPresentation, getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
 
-const SKY = '#1CB0F6';
-const SKY_TEXT = '#0076B5';
-const NAVY = '#0B245B';
-const PALE = '#EAF8FF';
-const BORDER = '#D8E8F2';
-const MUTED = '#586B7B';
-const INACTIVE_TEXT = '#586B7B';
-const GREEN = '#22B65D';
-const CLOUD_FILL = '#F4FBFF';
-const CLOUD_OFFSCREEN_START = -220;
-const CLOUD_DRIFT_DELTA = 14;
-const CLOUD_HERO_RESTING_X = 34;
-const CLOUD_HERO_SECONDARY_RESTING_X = 228;
-const CLOUD_PODIUM_RESTING_X = 28;
-const CLOUD_PODIUM_SECONDARY_RESTING_X = 214;
-function Cloud({ top, size, delay = 0, duration = 17000, restingX = 0, reducedMotion }) {
-  const drift = useRef(new Animated.Value(CLOUD_OFFSCREEN_START)).current;
-  useEffect(() => {
-    if (reducedMotion) {
-      drift.setValue(restingX);
-      return undefined;
-    }
-    drift.setValue(CLOUD_OFFSCREEN_START);
-    const loop = Animated.loop(Animated.sequence([
-      Animated.delay(delay),
-      Animated.timing(drift, { toValue: restingX, duration: 2200, useNativeDriver: true }),
-      Animated.timing(drift, { toValue: restingX + CLOUD_DRIFT_DELTA, duration, useNativeDriver: true }),
-      Animated.timing(drift, { toValue: restingX - CLOUD_DRIFT_DELTA, duration, useNativeDriver: true }),
-      Animated.timing(drift, { toValue: restingX, duration, useNativeDriver: true }),
-    ]));
-    loop.start();
-    return () => loop.stop();
-  }, [delay, drift, duration, reducedMotion, restingX]);
-  return (
-    <Animated.View style={[styles.cloud, { top, width: size, height: size * 0.38, transform: [{ translateX: drift }] }]}>
-      <View style={[styles.cloudBubble, { width: size * 0.46, height: size * 0.46, left: size * 0.12, top: -size * 0.2 }]} />
-      <View style={[styles.cloudBubble, { width: size * 0.34, height: size * 0.34, right: size * 0.1, top: -size * 0.1 }]} />
-    </Animated.View>
-  );
-}
+const SKY = '#2D7668';
+const SKY_TEXT = '#245F55';
+const NAVY = '#1D2925';
+const PALE = '#F4E9D4';
+const BORDER = '#D8CDBA';
+const MUTED = '#65716C';
+const INACTIVE_TEXT = '#65716C';
+const GREEN = '#2D7668';
 
 function BreathingGuide({ accessible = false, name = 'Kai', style, reducedMotion }) {
   return (
@@ -130,8 +98,9 @@ function ChapterHero({ guideName = 'Kai', heroSource, reducedMotion }) {
         ]}
       /> : null}
       <View style={styles.heroWash} />
-      <Cloud top={42} size={100} duration={15000} restingX={CLOUD_HERO_RESTING_X} reducedMotion={reducedMotion} />
-      <Cloud top={90} size={76} delay={2800} duration={19000} restingX={CLOUD_HERO_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
+      <View style={styles.heroSun} />
+      <View style={styles.heroRule} />
+      <View style={styles.heroStamp}><Text style={styles.heroStampText}>SPEAK • CONNECT • BELONG</Text></View>
       <BreathingGuide name={guideName} reducedMotion={reducedMotion} style={styles.heroGuide} />
     </View>
   );
@@ -277,9 +246,8 @@ function Leaderboard({ profile, reducedMotion }) {
           <Text style={styles.leaderboardSummaryValue}>{learner ? `#${learner.rank}` : 'Unranked'}</Text>
         </View>
       </View>
-      {rows.length > 0 ? <LinearGradient colors={['#DDF5FF', '#F6FCFF']} style={styles.podiumCard}>
-        <Cloud top={26} size={82} duration={16000} restingX={CLOUD_PODIUM_RESTING_X} reducedMotion={reducedMotion} />
-        <Cloud top={76} size={60} delay={2400} duration={19000} restingX={CLOUD_PODIUM_SECONDARY_RESTING_X} reducedMotion={reducedMotion} />
+      {rows.length > 0 ? <LinearGradient colors={['#F7D681', '#FFF3D1']} style={styles.podiumCard}>
+        <View style={styles.podiumSun} />
         <View style={styles.podiumGlow} />
         <View style={styles.podiumStage}>
           {podiumRows.map((entry) => (
@@ -745,28 +713,27 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
 }
 
 const styles = StyleSheet.create({
-  progressNotice: { backgroundColor: '#FFF7DB', borderColor: '#E7C96A', borderWidth: 1, borderRadius: 16, padding: 14, marginBottom: 12 },
-  leagueButton: { backgroundColor: NAVY, borderRadius: 16, minHeight: 48, justifyContent: 'center', alignItems: 'center', padding: 12, marginVertical: 12 },
+  progressNotice: { backgroundColor: '#FFF1C9', borderColor: '#D7A93E', borderWidth: 1, borderRadius: 18, padding: 14, marginBottom: 12 },
+  leagueButton: { backgroundColor: NAVY, borderRadius: 20, minHeight: 54, justifyContent: 'center', alignItems: 'center', padding: 12, marginVertical: 12 },
   leagueButtonText: { color: '#FFFFFF', fontFamily: fonts.bold, fontSize: 15 },
-  root: { backgroundColor: '#FFFFFF', flex: 1 }, content: { flex: 1 }, learnContent: { paddingBottom: 132 },
-  brandRow: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18, paddingTop: 10 },
-  courseSwitch: { alignItems: 'center', flexDirection: 'row', gap: 8, minHeight: 48, backgroundColor: PALE, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10, marginHorizontal: 18, marginTop: 14 },
+  root: { backgroundColor: '#FFF9ED', flex: 1 }, content: { flex: 1 }, learnContent: { paddingBottom: 132 },
+  brandRow: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18, paddingTop: 12 },
+  courseSwitch: { alignItems: 'center', flexDirection: 'row', gap: 8, minHeight: 52, backgroundColor: '#F4E9D4', borderColor: BORDER, borderRadius: 18, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 10, marginHorizontal: 18, marginTop: 14 },
   courseSwitchName: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 15, flex: 1 },
   courseSwitchAction: { color: SKY_TEXT, fontFamily: fonts.bold, fontSize: 13 },
-  accountButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 22, backgroundColor: '#FFFFFF', borderColor: BORDER, borderWidth: 1 },
-  brand: { color: NAVY, flex: 1, fontFamily: fonts.extraBold, fontSize: 19, textAlign: 'center' },
-  flagBadge: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 13, borderWidth: 1, height: 42, justifyContent: 'center', width: 48 }, flag: { fontSize: 28 },
-  statPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 20, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 10, paddingVertical: 7 }, statText: { color: NAVY, fontFamily: fonts.bold, fontSize: 13 },
-  streakCopy: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 8, paddingTop: 18 }, streakTextColumn: { flex: 1 }, streakTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23 }, streakSubtitle: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 14, marginTop: 3 }, streakBadge: { alignItems: 'center', backgroundColor: '#FFF4DD', borderColor: '#FFD68A', borderRadius: 22, borderWidth: 1, flexDirection: 'row', gap: 4, minWidth: 68, paddingHorizontal: 12, paddingVertical: 9 }, streakCount: { color: '#A84D00', fontFamily: fonts.extraBold, fontSize: 19 }, progressSummary: { color: MUTED, fontFamily: fonts.medium, fontSize: 12, paddingBottom: 14, paddingHorizontal: 20 },
-  hero: { backgroundColor: '#BFEAFF', height: 208, overflow: 'hidden' }, heroBackground: { bottom: -8, left: -8, position: 'absolute', right: -8, top: -8 }, heroWash: { backgroundColor: 'rgba(222,247,255,0.16)', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }, heroGuide: { bottom: -24, height: 230, left: 22, position: 'absolute', width: 230, zIndex: 3 },
-  cloud: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute', zIndex: 2 }, cloudBubble: { backgroundColor: CLOUD_FILL, borderRadius: 99, position: 'absolute' },
-  chapterCard: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 34, borderTopRightRadius: 34, marginTop: -30, paddingTop: 24 },
-  chapterHeader: { alignItems: 'center', paddingHorizontal: 20 }, courseKicker: { color: SKY_TEXT, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 7, textTransform: 'uppercase' }, chapterTitle: { color: '#0E1B2E', fontFamily: fonts.extraBold, fontSize: 23, textAlign: 'center' }, chapterMeta: { color: MUTED, fontFamily: fonts.bold, fontSize: 15, marginTop: 6 },
+  accountButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 15, backgroundColor: '#FFF9ED', borderColor: NAVY, borderWidth: 1.5 },
+  brand: { color: NAVY, flex: 1, fontFamily: fonts.display, fontSize: 24, letterSpacing: 0.4, textAlign: 'center', textTransform: 'uppercase' },
+  flagBadge: { alignItems: 'center', backgroundColor: '#FFF9ED', borderColor: BORDER, borderRadius: 14, borderWidth: 1, height: 42, justifyContent: 'center', width: 48 }, flag: { fontSize: 28 },
+  statPill: { alignItems: 'center', backgroundColor: '#FFF9ED', borderColor: BORDER, borderRadius: 18, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 10, paddingVertical: 7 }, statText: { color: NAVY, fontFamily: fonts.bold, fontSize: 13 },
+  streakCopy: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between', paddingHorizontal: 20, paddingBottom: 8, paddingTop: 20 }, streakTextColumn: { flex: 1 }, streakTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 29, letterSpacing: 0.2, textTransform: 'uppercase' }, streakSubtitle: { color: MUTED, fontFamily: fonts.editorial, fontSize: 16, marginTop: 3 }, streakBadge: { alignItems: 'center', backgroundColor: '#FFF1C9', borderColor: '#D7A93E', borderRadius: 18, borderWidth: 1, flexDirection: 'row', gap: 4, minWidth: 68, paddingHorizontal: 12, paddingVertical: 9 }, streakCount: { color: '#9A4F13', fontFamily: fonts.display, fontSize: 24 }, progressSummary: { color: MUTED, fontFamily: fonts.regular, fontSize: 12, paddingBottom: 14, paddingHorizontal: 20 },
+  hero: { backgroundColor: '#2D7668', height: 236, overflow: 'hidden' }, heroBackground: { bottom: -8, left: -8, opacity: 0.3, position: 'absolute', right: -8, top: -8 }, heroWash: { backgroundColor: 'rgba(45,118,104,0.42)', bottom: 0, left: 0, position: 'absolute', right: 0, top: 0 }, heroSun: { backgroundColor: '#F2B84B', borderRadius: 74, height: 148, position: 'absolute', right: -20, top: -28, width: 148 }, heroRule: { backgroundColor: '#FFF9ED', height: 4, opacity: 0.85, position: 'absolute', right: 28, top: 150, transform: [{ rotate: '-8deg' }], width: 118 }, heroStamp: { borderColor: '#FFF9ED', borderRadius: 999, borderWidth: 1.5, bottom: 24, paddingHorizontal: 13, paddingVertical: 7, position: 'absolute', right: 18, transform: [{ rotate: '-3deg' }] }, heroStampText: { color: '#FFF9ED', fontFamily: fonts.bold, fontSize: 8, letterSpacing: 1.1 }, heroGuide: { bottom: -30, height: 276, left: 2, position: 'absolute', width: 276, zIndex: 3 },
+  chapterCard: { backgroundColor: '#FFF9ED', borderTopLeftRadius: 30, borderTopRightRadius: 30, marginTop: -24, paddingTop: 28 },
+  chapterHeader: { alignItems: 'center', paddingHorizontal: 20 }, courseKicker: { color: SKY_TEXT, fontFamily: fonts.bold, fontSize: 10, letterSpacing: 1.4, marginBottom: 7, textTransform: 'uppercase' }, chapterTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 29, lineHeight: 35, textAlign: 'center', textTransform: 'uppercase' }, chapterMeta: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 14, marginTop: 6 },
   pathProgressTrack: { backgroundColor: '#E4EEF4', borderRadius: 999, height: 13, marginTop: 14, overflow: 'hidden', width: '100%' }, pathProgressFill: { backgroundColor: GREEN, borderRadius: 999, height: 13 },
   chapterSummaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 12 }, chapterSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 8 }, chapterSummaryText: { color: NAVY, fontFamily: fonts.bold, fontSize: 12 },
-  currentFocusCard: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 22, borderWidth: 1, marginTop: 16, paddingHorizontal: 18, paddingVertical: 16, width: '100%' }, currentFocusEyebrow: { color: SKY_TEXT, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8 }, currentFocusTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 22, marginTop: 6 }, currentFocusBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 6 }, currentFocusFooter: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', marginTop: 12 }, currentFocusMeta: { color: NAVY, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12 }, currentFocusCta: { color: SKY_TEXT, flexShrink: 1, fontFamily: fonts.extraBold, fontSize: 12, textAlign: 'right' }, progressLoading: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 12, marginTop: 10, textAlign: 'center' },
+  currentFocusCard: { backgroundColor: '#FFFFFF', borderColor: NAVY, borderRadius: 22, borderWidth: 1.5, marginTop: 16, paddingHorizontal: 18, paddingVertical: 18, width: '100%' }, currentFocusEyebrow: { color: SKY_TEXT, fontFamily: fonts.bold, fontSize: 10, letterSpacing: 1.2 }, currentFocusTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 27, marginTop: 7, textTransform: 'uppercase' }, currentFocusBody: { color: MUTED, fontFamily: fonts.regular, fontSize: 13, lineHeight: 20, marginTop: 6 }, currentFocusFooter: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between', marginTop: 14 }, currentFocusMeta: { color: NAVY, flexShrink: 1, fontFamily: fonts.semiBold, fontSize: 12 }, currentFocusCta: { color: SKY_TEXT, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12, textAlign: 'right' }, progressLoading: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 12, marginTop: 10, textAlign: 'center' },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12, width: '100%' }, reviewBannerTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 13, textAlign: 'center' }, reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
-  topicGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', paddingBottom: 24, paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 28, width: '30%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 50, borderWidth: 3, height: 82, justifyContent: 'center', width: 82 }, topicCircleLoading: { backgroundColor: PALE, borderColor: BORDER }, topicCircleActive: { backgroundColor: SKY, borderColor: '#8DDEFF', borderWidth: 6 }, topicCircleComplete: { backgroundColor: GREEN, borderColor: '#9AE6B7' }, topicCircleLocked: { backgroundColor: '#EDF3F6', borderColor: '#EDF3F6' }, topicIcon: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 25 }, topicLabel: { color: '#4F6170', fontFamily: fonts.bold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelLoading: { color: MUTED }, topicLabelActive: { color: SKY_TEXT }, topicLabelLocked: { color: '#95A4AE' }, topicBadge: { color: SKY_TEXT, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, marginTop: 4, textAlign: 'center' },
-  tabBar: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, flexDirection: 'row', minHeight: 70, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center', minHeight: 52 }, tabLabel: { color: INACTIVE_TEXT, fontFamily: fonts.bold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY_TEXT },
-  leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 27, marginTop: 8 }, pageSubtitle: { color: MUTED, fontFamily: fonts.medium, fontSize: 14, marginBottom: 20, marginTop: 4 }, leaderboardSummaryRow: { flexDirection: 'row', gap: 10, marginBottom: 16 }, leaderboardSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 18, borderWidth: 1, flex: 1, paddingHorizontal: 14, paddingVertical: 12 }, leaderboardSummaryLabel: { color: SKY_TEXT, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8 }, leaderboardSummaryValue: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 17, marginTop: 4 }, podiumCard: { borderRadius: 24, minHeight: 260, overflow: 'hidden', paddingHorizontal: 14, paddingTop: 18 }, podiumGlow: { backgroundColor: 'rgba(255,255,255,0.55)', borderRadius: 130, height: 130, position: 'absolute', right: -14, top: -28, width: 130 }, podiumStage: { alignItems: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'space-between' }, podiumColumn: { alignItems: 'center', width: '31%' }, podiumGuide: { aspectRatio: 1, marginBottom: -4, maxWidth: 96, width: '100%', zIndex: 3 }, podiumRank: { backgroundColor: '#FFD34D', borderRadius: 15, color: NAVY, fontFamily: fonts.extraBold, marginBottom: 8, paddingHorizontal: 9, paddingVertical: 4, zIndex: 4 }, podiumCopy: { alignItems: 'center', marginBottom: 10, width: '100%' }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 3, maxWidth: '100%' }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, podiumTier: { backgroundColor: '#FFFFFF', borderColor: '#D4EAF5', borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, width: '100%' }, podiumTierFirst: { height: 108 }, podiumTierSecond: { height: 76 }, podiumTierThird: { height: 60 }, rankCard: { backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 24, borderWidth: 1, marginTop: 18, padding: 18 }, rankCardTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 20 }, rankCardBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 18, marginTop: 4 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },
+  topicGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly', paddingBottom: 24, paddingHorizontal: 16, paddingTop: 22 }, topicWrap: { alignItems: 'center', marginBottom: 28, width: '30%' }, topicCircle: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 24, borderWidth: 2, height: 82, justifyContent: 'center', width: 82 }, topicCircleLoading: { backgroundColor: PALE, borderColor: BORDER }, topicCircleActive: { backgroundColor: '#F2B84B', borderColor: NAVY, borderWidth: 3, transform: [{ rotate: '-3deg' }] }, topicCircleComplete: { backgroundColor: GREEN, borderColor: NAVY }, topicCircleLocked: { backgroundColor: '#E9E3D8', borderColor: '#D3CCC0' }, topicIcon: { color: NAVY, fontFamily: fonts.display, fontSize: 28 }, topicLabel: { color: '#4F5B57', fontFamily: fonts.semiBold, fontSize: 12, lineHeight: 17, marginTop: 9, paddingHorizontal: 3, textAlign: 'center' }, topicLabelLoading: { color: MUTED }, topicLabelActive: { color: SKY_TEXT }, topicLabelLocked: { color: '#8D958F' }, topicBadge: { color: SKY_TEXT, fontFamily: fonts.bold, fontSize: 9, letterSpacing: 1, marginTop: 4, textAlign: 'center' },
+  tabBar: { backgroundColor: '#FFF9ED', borderTopColor: NAVY, borderTopWidth: 1, flexDirection: 'row', minHeight: 72, paddingBottom: 5 }, tabButton: { alignItems: 'center', flex: 1, justifyContent: 'center', minHeight: 52 }, tabLabel: { color: INACTIVE_TEXT, fontFamily: fonts.semiBold, fontSize: 11, marginTop: 2 }, tabActive: { color: SKY_TEXT },
+  leaderboardContent: { padding: 20, paddingBottom: 36 }, pageTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 36, marginTop: 8, textTransform: 'uppercase' }, pageSubtitle: { color: MUTED, fontFamily: fonts.editorial, fontSize: 16, marginBottom: 20, marginTop: 4 }, leaderboardSummaryRow: { flexDirection: 'row', gap: 10, marginBottom: 16 }, leaderboardSummaryPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 18, borderWidth: 1, flex: 1, paddingHorizontal: 14, paddingVertical: 12 }, leaderboardSummaryLabel: { color: SKY_TEXT, fontFamily: fonts.bold, fontSize: 9, letterSpacing: 1 }, leaderboardSummaryValue: { color: NAVY, fontFamily: fonts.display, fontSize: 23, marginTop: 4 }, podiumCard: { borderColor: NAVY, borderRadius: 24, borderWidth: 1.5, minHeight: 260, overflow: 'hidden', paddingHorizontal: 14, paddingTop: 18 }, podiumGlow: { backgroundColor: 'rgba(255,255,255,0.42)', borderRadius: 130, height: 130, position: 'absolute', right: -14, top: -28, width: 130 }, podiumSun: { backgroundColor: '#E76F51', borderRadius: 70, height: 140, left: -42, opacity: 0.7, position: 'absolute', top: -52, width: 140 }, podiumStage: { alignItems: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'space-between' }, podiumColumn: { alignItems: 'center', width: '31%' }, podiumGuide: { aspectRatio: 1, marginBottom: -4, maxWidth: 96, width: '100%', zIndex: 3 }, podiumRank: { backgroundColor: '#FFF9ED', borderColor: NAVY, borderRadius: 12, borderWidth: 1, color: NAVY, fontFamily: fonts.display, fontSize: 18, marginBottom: 8, paddingHorizontal: 9, paddingVertical: 4, zIndex: 4 }, podiumCopy: { alignItems: 'center', marginBottom: 10, width: '100%' }, podiumName: { color: NAVY, fontFamily: fonts.bold, marginTop: 3, maxWidth: '100%' }, podiumXp: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 11 }, podiumTier: { backgroundColor: '#FFF9ED', borderColor: NAVY, borderTopLeftRadius: 20, borderTopRightRadius: 20, borderWidth: 1, width: '100%' }, podiumTierFirst: { height: 108 }, podiumTierSecond: { height: 76 }, podiumTierThird: { height: 60 }, rankCard: { backgroundColor: '#FFF9ED', borderColor: BORDER, borderRadius: 22, borderWidth: 1, marginTop: 18, padding: 18 }, rankCardTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 25, textTransform: 'uppercase' }, rankCardBody: { color: MUTED, fontFamily: fonts.regular, fontSize: 13, lineHeight: 19, marginTop: 4 }, rankList: { gap: 9, marginTop: 18 }, rankRow: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 16, borderWidth: 1, flexDirection: 'row', padding: 11 }, rankRowYou: { backgroundColor: PALE, borderColor: SKY, borderWidth: 2 }, rankNumber: { color: MUTED, fontFamily: fonts.bold, textAlign: 'center', width: 28 }, rankAvatar: { height: 42, marginHorizontal: 8, width: 42 }, rankName: { color: NAVY, flex: 1, fontFamily: fonts.bold }, rankXp: { color: MUTED, fontFamily: fonts.bold },
 });

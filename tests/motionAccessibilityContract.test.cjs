@@ -45,16 +45,24 @@ test('welcome entrance and atmosphere settle into static resting values for redu
   assert.match(atmosphereSource, /return \(\) => \{\s*driftLoop\.stop\(\);\s*floatLoop\.stop\(\);/s);
 });
 
-test('home clouds, guide breathing, and active-topic pulse respect reduced motion', () => {
+test('home guide breathing and active-topic pulse respect reduced motion without decorative clouds', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
   assert.match(source, /useReducedMotion/);
-  assert.match(source, /function Cloud\([^)]*restingX[^)]*reducedMotion/);
   assert.match(source, /function BreathingGuide\([^)]*reducedMotion/);
   assert.match(source, /function TopicButton\([^)]*reducedMotion/);
-  assert.match(source, /if \(reducedMotion\) \{\s*drift\.setValue\(restingX\)/s);
-  assert.match(source, /<Cloud[^>]+restingX=\{/s);
   assert.match(source, /<BreathingGuide[^>]+reducedMotion=/s);
   assert.match(source, /<TopicButton[^>]+reducedMotion=/s);
+  assert.doesNotMatch(source, /function Cloud\(/);
+  assert.doesNotMatch(source, /<Cloud\b/);
+});
+
+test('refill sheet uses reduced-motion-aware native animation and haptic confirmation', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/OutOfHeartsModal.js'), 'utf8');
+  assert.match(source, /useReducedMotion/);
+  assert.match(source, /Animated\.(?:parallel|sequence)/);
+  assert.match(source, /if \(reducedMotion\)/);
+  assert.match(source, /Haptics\.notificationAsync\(Haptics\.NotificationFeedbackType\.Success\)/);
+  assert.match(source, /\.catch\(\(\) => \{\}\)/);
 });
 
 test('lesson motion and modal transitions respect reduced motion', () => {

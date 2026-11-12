@@ -1,5 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import * as Crypto from 'expo-crypto';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -54,13 +55,13 @@ const { getAnswerTextDirection } = require('../../lessonExperience/answerTextDir
 const { getPromptGuideName } = require('../../lessonExperience/lessonGuidePresentation.cjs');
 const { buildPhraseWordHintModel } = require('../../lessonExperience/phraseWordHint.cjs');
 
-const SKY = '#1CB0F6';
-const NAVY = '#0B245B';
-const PALE = '#EAF8FF';
-const BORDER = '#D8E8F2';
-const MUTED = '#718397';
-const GREEN = '#22B65D';
-const RED = '#FF5D66';
+const SKY = '#2D7668';
+const NAVY = '#1D2925';
+const PALE = '#F4E9D4';
+const BORDER = '#D8CDBA';
+const MUTED = '#65716C';
+const GREEN = '#2D7668';
+const RED = '#D64F4F';
 
 function playLessonHaptic(event) {
   const feedback = getLessonHapticFeedback(event);
@@ -789,7 +790,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
           </View>
           <Text style={styles.count}>{finished ? lessonExercises.length : index + 1}/{lessonExercises.length}</Text>
           <View accessible accessibilityLabel={heartsPresentation.accessibilityLabel} style={styles.lessonHeartPill}>
-            <Text accessible={false} style={styles.lessonHeartIcon}>♥</Text>
+            <Ionicons accessible={false} color={RED} name="heart" size={16} />
             <Text style={styles.lessonHeartCount}>{heartsPresentation.countLabel}</Text>
           </View>
         </View>
@@ -991,29 +992,28 @@ const styles = StyleSheet.create({
   exitContent: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   exitCard: { alignSelf: 'center', width: '100%', maxWidth: 440, gap: 16 },
   exitEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1, textAlign: 'center' },
-  exitTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 28, lineHeight: 36, textAlign: 'center' },
-  exitBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 16, lineHeight: 24, textAlign: 'center' },
+  exitTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 34, lineHeight: 40, textAlign: 'center', textTransform: 'uppercase' },
+  exitBody: { color: MUTED, fontFamily: fonts.editorial, fontSize: 17, lineHeight: 25, textAlign: 'center' },
   exitNotice: { color: NAVY, backgroundColor: PALE, borderRadius: 16, padding: 16, fontFamily: fonts.bold, fontSize: 14, lineHeight: 21, textAlign: 'center' },
   unconfirmedContinue: { minHeight: 44, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
   unconfirmedContinueText: { color: MUTED, fontFamily: fonts.bold, fontSize: 13, textAlign: 'center' },
   resultGrid: { flexDirection: 'row', gap: 12, width: '100%', maxWidth: 360 },
   resultCard: { flex: 1, alignItems: 'center', padding: 16, borderRadius: 20, backgroundColor: PALE, borderWidth: 1, borderColor: BORDER },
-  resultValue: { fontFamily: fonts.extraBold, fontSize: 28, color: NAVY },
+  resultValue: { fontFamily: fonts.display, fontSize: 34, color: NAVY },
   resultLabel: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, color: MUTED, marginTop: 4 },
-  root: { backgroundColor: '#FFFFFF', flex: 1 },
+  root: { backgroundColor: '#FFF9ED', flex: 1 },
   topBar: { alignItems: 'center', alignSelf: 'center', width: '100%', maxWidth: 900, flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingVertical: 14 },
   closeText: { color: NAVY, fontFamily: fonts.medium, fontSize: 35, lineHeight: 36 },
-  progressTrack: { backgroundColor: '#E4EEF4', borderRadius: 8, flex: 1, height: 10, overflow: 'hidden' },
+  progressTrack: { backgroundColor: '#DED6C8', borderRadius: 8, flex: 1, height: 9, overflow: 'hidden' },
   progressFill: { backgroundColor: SKY, borderRadius: 8, height: 10 },
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
-  lessonHeartPill: { alignItems: 'center', backgroundColor: '#FFF0F0', borderColor: '#FFD2D5', borderRadius: 999, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 9, paddingVertical: 6 },
-  lessonHeartIcon: { color: RED, fontSize: 16 },
+  lessonHeartPill: { alignItems: 'center', backgroundColor: '#FFE2DF', borderColor: '#E9B7B2', borderRadius: 999, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 9, paddingVertical: 6 },
   lessonHeartCount: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },
   content: { alignSelf: 'center', width: '100%', maxWidth: 800, padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },
-  topicModePill: { alignSelf: 'center', backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 5 },
-  topicModePillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.6 },
-  topicTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 20, lineHeight: 26, marginTop: 6, textAlign: 'center' },
+  topicModePill: { alignSelf: 'center', backgroundColor: '#F2B84B', borderColor: NAVY, borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 5, transform: [{ rotate: '-2deg' }] },
+  topicModePillText: { color: NAVY, fontFamily: fonts.bold, fontSize: 10, letterSpacing: 1 },
+  topicTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 31, lineHeight: 37, marginTop: 8, textAlign: 'center', textTransform: 'uppercase' },
   recallBanner: { backgroundColor: PALE, borderColor: SKY, borderWidth: 1, borderRadius: 18, padding: 10, marginTop: 10 },
   recallTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 16, textAlign: 'center' },
   recallBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, textAlign: 'center', marginTop: 4 },
@@ -1022,10 +1022,10 @@ const styles = StyleSheet.create({
   lessonSummaryLabel: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.7 },
   lessonSummaryValue: { color: NAVY, flexShrink: 1, fontFamily: fonts.bold, fontSize: 12 },
   promptConversation: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12 },
-  promptGuide: { width: 118, height: 164, flexShrink: 0 },
+  promptGuide: { width: 132, height: 184, flexShrink: 0, marginLeft: -10 },
   speakerName: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 1, marginBottom: 6 },
-  promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 24, borderBottomLeftRadius: 6, borderWidth: 2, padding: 12 },
-  prompt: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 19, lineHeight: 25 },
+  promptCard: { flex: 1, backgroundColor: '#FFFFFF', borderColor: NAVY, borderRadius: 22, borderBottomLeftRadius: 5, borderWidth: 1.5, padding: 14 },
+  prompt: { color: NAVY, fontFamily: fonts.semiBold, fontSize: 19, lineHeight: 27 },
   phraseHintWrap: { marginTop: 12 },
   phraseHintLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 9, letterSpacing: 0.8, marginBottom: 7 },
   phraseHintTokens: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
@@ -1043,19 +1043,19 @@ const styles = StyleSheet.create({
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 8, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8 },
   reviewBannerTitle: { color: NAVY, fontFamily: fonts.bold, fontSize: 11, textAlign: 'center' },
   reviewBannerBody: { color: '#6E5A22', fontFamily: fonts.medium, fontSize: 12, lineHeight: 17, marginTop: 4, textAlign: 'center' },
-  scene: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 28, borderWidth: 1, height: 132, flexShrink: 0, marginVertical: 8, overflow: 'hidden' },
-  sceneHalo: { backgroundColor: '#D5F2FF', borderRadius: 100, height: 180, position: 'absolute', right: -28, top: -78, width: 180 },
+  scene: { backgroundColor: '#F4E9D4', borderColor: BORDER, borderRadius: 24, borderWidth: 1, height: 142, flexShrink: 0, marginVertical: 10, overflow: 'hidden' },
+  sceneHalo: { backgroundColor: '#F2B84B', borderRadius: 100, height: 180, opacity: 0.55, position: 'absolute', right: -28, top: -78, width: 180 },
   sceneMode: { color: SKY, fontFamily: fonts.extraBold, fontSize: 10, left: 16, letterSpacing: 0.8, position: 'absolute', top: 13, zIndex: 3 },
   vocabularyImage: { alignSelf: 'center', height: 105, marginTop: 5, width: '86%', zIndex: 2 },
   lessonGuide: { bottom: -4, height: 120, position: 'absolute', right: -8, width: 120, zIndex: 3 },
   choiceList: { gap: 10 },
   audioControls: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center', marginBottom: 16 },
-  speakerButton: { alignItems: 'center', backgroundColor: SKY, borderRadius: 28, height: 54, justifyContent: 'center', width: 54 },
+  speakerButton: { alignItems: 'center', backgroundColor: NAVY, borderRadius: 18, height: 54, justifyContent: 'center', width: 54 },
   speakerIcon: { fontSize: 23 },
   slowButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: SKY, borderRadius: 16, borderWidth: 2, justifyContent: 'center', minHeight: 44, paddingHorizontal: 17 },
   slowButtonText: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.5 },
-  choiceCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 17, borderWidth: 2, justifyContent: 'center', minHeight: 58, padding: 13 },
-  selectedCard: { backgroundColor: PALE, borderColor: SKY },
+  choiceCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 18, borderWidth: 1.5, justifyContent: 'center', minHeight: 62, padding: 14 },
+  selectedCard: { backgroundColor: '#F2B84B', borderColor: NAVY },
   correctCard: { backgroundColor: '#E7F9EE', borderColor: GREEN },
   wrongCard: { backgroundColor: '#FFF0F0', borderColor: RED },
   pressedCard: { opacity: 0.82, transform: [{ scale: 0.99 }] },
@@ -1065,7 +1065,7 @@ const styles = StyleSheet.create({
   matchColumnGroup: { flex: 1, gap: 7 },
   matchColumnLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, textAlign: 'center' },
   matchColumn: { flex: 1, gap: 10 },
-  matchCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 15, borderWidth: 2, justifyContent: 'center', minHeight: 67, padding: 10 },
+  matchCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 17, borderWidth: 1.5, justifyContent: 'center', minHeight: 67, padding: 10 },
   matchText: { color: NAVY, fontFamily: fonts.bold, fontSize: 14, textAlign: 'center' },
   matchCheck: { color: GREEN, fontFamily: fonts.extraBold, paddingTop: 3 },
   matchError: { color: RED, fontFamily: fonts.extraBold, fontSize: 12, paddingTop: 3 },
@@ -1075,9 +1075,9 @@ const styles = StyleSheet.create({
   sectionHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 7, paddingTop: 14 },
   sectionLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8 },
   sectionMeta: { color: '#9AAAB4', fontFamily: fonts.semiBold, fontSize: 11 },
-  answerTray: { alignContent: 'flex-start', backgroundColor: '#F7FBFD', borderColor: BORDER, borderRadius: 18, borderStyle: 'dashed', borderWidth: 2, flexDirection: 'row', flexWrap: 'wrap', gap: 8, minHeight: 92, padding: 12 },
+  answerTray: { alignContent: 'flex-start', backgroundColor: '#F8F1E5', borderColor: BORDER, borderRadius: 18, borderStyle: 'dashed', borderWidth: 2, flexDirection: 'row', flexWrap: 'wrap', gap: 8, minHeight: 92, padding: 12 },
   answerPlaceholder: { color: '#9AAAB4', fontFamily: fonts.medium, padding: 8 },
-  selectedWord: { backgroundColor: SKY, borderRadius: 12, paddingHorizontal: 13, paddingVertical: 10 },
+  selectedWord: { backgroundColor: NAVY, borderRadius: 12, paddingHorizontal: 13, paddingVertical: 10 },
   selectedWordText: { color: '#FFFFFF', fontFamily: fonts.bold, fontSize: 15 },
   wordBank: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 },
   wordChip: { backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 12, borderWidth: 2, paddingHorizontal: 13, paddingVertical: 10 },
@@ -1091,19 +1091,19 @@ const styles = StyleSheet.create({
   feedbackGuide: { alignSelf: 'center', height: 112, marginBottom: 4, width: 112 },
   feedbackHeader: { alignItems: 'center', gap: 4 },
   feedbackEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.8, textAlign: 'center' },
-  feedbackTitle: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 21, lineHeight: 27, textAlign: 'center' },
+  feedbackTitle: { color: NAVY, fontFamily: fonts.display, fontSize: 29, lineHeight: 34, textAlign: 'center', textTransform: 'uppercase' },
   feedbackXpPill: { alignSelf: 'center', backgroundColor: '#FFFFFF', borderColor: '#BFEED0', borderRadius: 999, borderWidth: 1, marginTop: 10, paddingHorizontal: 14, paddingVertical: 8 },
   feedbackXpPillText: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.4 },
   feedbackStatus: { color: MUTED, fontFamily: fonts.semiBold, fontSize: 12, lineHeight: 18, marginTop: 8, textAlign: 'center' },
   feedbackAnswerCard: { backgroundColor: '#FFFFFF', borderColor: '#DCEBF5', borderRadius: 18, borderWidth: 1, marginTop: 14, paddingHorizontal: 14, paddingVertical: 12 },
   feedbackAnswerLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 0.8, textAlign: 'center' },
   feedbackAnswer: { color: NAVY, fontFamily: fonts.bold, fontSize: 18, lineHeight: 24, paddingTop: 6, textAlign: 'center' },
-  footer: { backgroundColor: '#FFFFFF', borderTopColor: BORDER, borderTopWidth: 1, bottom: 0, left: 0, padding: 18, position: 'absolute', right: 0 },
-  primaryButton: { alignItems: 'center', backgroundColor: SKY, borderRadius: 17, justifyContent: 'center', minHeight: 56, paddingHorizontal: 24 },
+  footer: { backgroundColor: '#FFF9ED', borderTopColor: BORDER, borderTopWidth: 1, bottom: 0, left: 0, padding: 18, position: 'absolute', right: 0 },
+  primaryButton: { alignItems: 'center', backgroundColor: NAVY, borderRadius: 20, justifyContent: 'center', minHeight: 58, paddingHorizontal: 24 },
   primaryButtonDisabled: { backgroundColor: '#D9E5EB' },
   primaryButtonText: { color: '#FFFFFF', fontFamily: fonts.extraBold, fontSize: 16 },
-  secondaryButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: SKY, borderRadius: 17, borderWidth: 2, justifyContent: 'center', minHeight: 56, paddingHorizontal: 24 },
-  secondaryButtonText: { color: SKY, fontFamily: fonts.extraBold, fontSize: 16 },
+  secondaryButton: { alignItems: 'center', backgroundColor: '#FFF9ED', borderColor: NAVY, borderRadius: 20, borderWidth: 2, justifyContent: 'center', minHeight: 58, paddingHorizontal: 24 },
+  secondaryButtonText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 16 },
   completeScroll: { flex: 1 },
   completeScrollContent: { flexGrow: 1, justifyContent: 'center' },
   completeScreen: { alignItems: 'center', paddingBottom: 32, paddingHorizontal: 28, paddingTop: 20 },
@@ -1111,10 +1111,10 @@ const styles = StyleSheet.create({
   completeGuide: { height: 170, marginBottom: -10, width: 170 },
   completeImage: { height: 250, width: 250 },
   completeActions: { gap: 12, width: '100%' },
-  completeTitle: { color: GREEN, fontFamily: fonts.extraBold, fontSize: 31, paddingTop: 8 },
+  completeTitle: { color: GREEN, fontFamily: fonts.display, fontSize: 40, paddingTop: 8, textTransform: 'uppercase' },
   completeXpPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginTop: 12, paddingHorizontal: 14, paddingVertical: 9 },
   completeXpPillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.4 },
   completeNextPill: { backgroundColor: PALE, borderColor: BORDER, borderRadius: 999, borderWidth: 1, marginBottom: 18, paddingHorizontal: 14, paddingVertical: 9 },
   completeNextPillText: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },
-  completeBody: { color: MUTED, fontFamily: fonts.medium, fontSize: 16, lineHeight: 23, paddingBottom: 28, paddingTop: 8, textAlign: 'center' },
+  completeBody: { color: MUTED, fontFamily: fonts.editorial, fontSize: 17, lineHeight: 25, paddingBottom: 28, paddingTop: 8, textAlign: 'center' },
 });

@@ -50,7 +50,9 @@ test('the chapter uses original Jamaica artwork behind the active topic guide in
   assert.match(source, /<ChapterHero[^>]+guideName=\{featuredGuide\}/s);
   assert.match(source, /<BreathingGuide[^>]+name=\{guideName\}/s);
   assert.doesNotMatch(source, /<BreathingGuide\s+name="Kai"/);
-  assert.match(source, /<Cloud\b/);
+  assert.match(source, /styles\.heroSun/);
+  assert.match(source, /styles\.heroStamp/);
+  assert.doesNotMatch(source, /<Cloud\b/);
   assert.match(source, /courseId\s*=\s*['"]jamaican-patois['"]/);
 });
 

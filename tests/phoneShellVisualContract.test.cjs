@@ -14,13 +14,14 @@ test('the white MVP shell requests a light system appearance with a dark status 
   assert.match(appSource, /<StatusBar\s+style=['"]dark['"]\s*\/>/);
 });
 
-test('the drifting hero cloud uses one opaque fill so overlapping lobes have no bubble seams', () => {
+test('the Learn hero uses crafted field-note motifs instead of decorative clouds', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const CLOUD_FILL = ['"]#[0-9A-F]{6}['"]/i);
-  assert.match(source, /cloud:\s*\{[^}]*backgroundColor:\s*CLOUD_FILL/s);
-  assert.match(source, /cloudBubble:\s*\{[^}]*backgroundColor:\s*CLOUD_FILL/s);
-  assert.doesNotMatch(source, /cloud(?:Bubble)?:\s*\{[^}]*rgba\(/s);
+  assert.match(source, /styles\.heroSun/);
+  assert.match(source, /styles\.heroStamp/);
+  assert.match(source, /styles\.heroRule/);
+  assert.doesNotMatch(source, /function Cloud\(/);
+  assert.doesNotMatch(source, /<Cloud\b/);
 });
 
 test('leaderboard podium uses animated guide characters on tiered podium blocks while rank rows keep contained PNG avatars', () => {
@@ -38,7 +39,7 @@ test('leaderboard rankings below the podium live in their own card with a sectio
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /<View style=\{styles\.rankCard\}>[\s\S]*?<Text accessibilityRole=['"]header['"] style=\{styles\.rankCardTitle\}>Your position<\/Text>[\s\S]*?<Text style=\{styles\.rankCardBody\}>\{progressCopy\}<\/Text>[\s\S]*?<View style=\{styles\.rankList\}>/s);
-  assert.match(source, /rankCard:\s*\{[^}]*backgroundColor:\s*['"]#FFFFFF['"]/s);
+  assert.match(source, /rankCard:\s*\{[^}]*backgroundColor:\s*['"]#FFF9ED['"]/s);
   assert.match(source, /rankCard:\s*\{[^}]*borderRadius:\s*2\d/s);
   assert.match(source, /rankCard:\s*\{[^}]*padding:\s*1\d/s);
   assert.match(source, /rankCardTitle:\s*\{/);
@@ -79,15 +80,12 @@ test('the Learn screen keeps the final topic row clear of the fixed bottom tab b
   assert.match(source, /learnContent:\s*\{\s*paddingBottom:\s*(?:12\d|1[3-9]\d|[2-9]\d{2,})\s*\}/s);
 });
 
-test('hero clouds start off-canvas, settle into place, and then drift gently around their resting positions', () => {
+test('hero guide uses slow intentional motion without ambient cloud loops', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const CLOUD_OFFSCREEN_START = -(?:2\d{2}|[3-9]\d{2,})/);
-  assert.match(source, /const CLOUD_DRIFT_DELTA = \d+/);
-  assert.match(source, /new Animated\.Value\(CLOUD_OFFSCREEN_START\)/);
-  assert.match(source, /Animated\.timing\(drift,\s*\{\s*toValue:\s*restingX/s);
-  assert.match(source, /Animated\.timing\(drift,\s*\{\s*toValue:\s*restingX \+ CLOUD_DRIFT_DELTA/s);
-  assert.match(source, /Animated\.timing\(drift,\s*\{\s*toValue:\s*restingX - CLOUD_DRIFT_DELTA/s);
+  assert.match(source, /function ChapterHero\([^)]*reducedMotion/);
+  assert.match(source, /Animated\.loop\(Animated\.sequence/);
+  assert.doesNotMatch(source, /CLOUD_/);
 });
 
 test('lesson prompts render inside a dedicated learning card with helper copy and inline audio controls', () => {
@@ -100,10 +98,11 @@ test('lesson prompts render inside a dedicated learning card with helper copy an
   assert.match(source, /promptHelper:\s*\{/);
 });
 
-test('leaderboard podium card reuses the drifting cloud treatment with reduced-motion support', () => {
+test('leaderboard podium uses warm graphic shapes rather than the removed cloud treatment', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /<LinearGradient[\s\S]*?<Cloud top=\{26\} size=\{82\} duration=\{16000\} restingX=\{CLOUD_PODIUM_RESTING_X\} reducedMotion=\{reducedMotion\} \/>[\s\S]*?<Cloud top=\{76\} size=\{60\} delay=\{2400\} duration=\{19000\} restingX=\{CLOUD_PODIUM_SECONDARY_RESTING_X\} reducedMotion=\{reducedMotion\} \/>/s);
+  assert.match(source, /styles\.podiumSun/);
+  assert.doesNotMatch(source, /<Cloud\b/);
 });
 
 test('review and challenge topics get their own Learn-grid treatment instead of looking like generic numbered lessons', () => {
@@ -145,11 +144,11 @@ test('the Learn chapter header summarizes real progress and the next topic above
   assert.match(source, /chapterSummaryText:\s*\{/);
 });
 
-test('the Learn chapter section sits in a floating white card that overlaps the hero instead of merging flatly into the page', () => {
+test('the Learn chapter section sits in a floating cream card that overlaps the hero instead of merging flatly into the page', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /<View style=\{styles\.chapterCard\}>[\s\S]*?<View style=\{styles\.chapterHeader\}>/s);
-  assert.match(source, /chapterCard:\s*\{[^}]*backgroundColor:\s*['"]#FFFFFF['"]/s);
+  assert.match(source, /chapterCard:\s*\{[^}]*backgroundColor:\s*['"]#FFF9ED['"]/s);
   assert.match(source, /chapterCard:\s*\{[^}]*borderTopLeftRadius:\s*3\d/s);
   assert.match(source, /chapterCard:\s*\{[^}]*borderTopRightRadius:\s*3\d/s);
   assert.match(source, /chapterCard:\s*\{[^}]*marginTop:\s*-?[2-9]\d/s);
@@ -392,6 +391,7 @@ test('lesson completion saves a retryable daily streak without blocking topic pr
 test('the MVP Learn loop presents persisted recoverable hearts without a paywall', () => {
   const homeSource = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
   const modalSource = fs.readFileSync(path.join(root, 'src/components/OutOfHeartsModal.js'), 'utf8');
+  const heartsSource = fs.readFileSync(path.join(root, 'src/components/HeartsBar.js'), 'utf8');
 
   assert.match(homeSource, /import \{ useGame \} from ['"]\.\.\/context\/GameContext['"]/);
   assert.match(homeSource, /const game = useGame\(\)/);
@@ -403,6 +403,10 @@ test('the MVP Learn loop presents persisted recoverable hearts without a paywall
   assert.match(modalSource, /accessibilityViewIsModal/);
   assert.match(modalSource, /Beta refill · No charge during early access/);
   assert.doesNotMatch(modalSource, /purchase|subscribe|payment|checkout/i);
+  assert.match(heartsSource, /Ionicons/);
+  assert.doesNotMatch(heartsSource, /\u2764|\ud83e|❤️|🩶/);
+  assert.match(modalSource, /name=['"]heart['"]/);
+  assert.doesNotMatch(modalSource, /💔/);
 });
 
 test('the local browser journey proves one wrong attempt spends one heart and retry spends none', () => {
@@ -419,9 +423,9 @@ test('the local browser journey proves one wrong attempt spends one heart and re
 test('loading progress stays visually neutral and small labels use accessible text tokens', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
-  assert.match(source, /const SKY_TEXT = ['"]#0076B5['"]/);
-  assert.match(source, /const MUTED = ['"]#586B7B['"]/);
-  assert.match(source, /const INACTIVE_TEXT = ['"]#586B7B['"]/);
+  assert.match(source, /const SKY_TEXT = ['"]#245F55['"]/);
+  assert.match(source, /const MUTED = ['"]#65716C['"]/);
+  assert.match(source, /const INACTIVE_TEXT = ['"]#65716C['"]/);
   assert.match(source, /const isActive = progressReady && topic\.state === ['"]active['"]/);
   assert.match(source, /const isLoading = !progressReady/);
   assert.match(source, /if \(!isActive \|\| reducedMotion\)/);

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { fonts } from '../../theme';
+import { colors, fonts } from '../../theme';
 const { courses } = require('../../data/generatedCourseRoadmap.cjs');
 const { getRoadmapLessonState } = require('../../lessonExperience/roadmapLessonState.cjs');
 
@@ -19,7 +19,7 @@ export default function CourseRoadmap({ courseId, topics = [], progressReady = f
           <Text style={styles.title}>Your full course path</Text>
           <Text style={styles.subtitle}>{course.units.length} units / {lessonCount} planned lessons</Text>
         </View>
-        <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={24} color="#0B245B" />
+        <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={22} color={colors.ink} />
       </Pressable>
       {expanded ? (
         <View style={styles.units}>
@@ -35,7 +35,7 @@ export default function CourseRoadmap({ courseId, topics = [], progressReady = f
                     <Text style={styles.unitTitle}>{unit.title}</Text>
                     <Text style={styles.subtitle}>{unit.lessons.length} planned lessons</Text>
                   </View>
-                  <Ionicons name={open ? 'remove' : 'add'} size={22} color="#0B245B" />
+                  <Ionicons name={open ? 'remove' : 'add'} size={22} color={colors.ink} />
                 </Pressable>
                 {open ? <View style={styles.details}>
                   <Text style={styles.objective}>{unit.objective}</Text>
@@ -45,7 +45,7 @@ export default function CourseRoadmap({ courseId, topics = [], progressReady = f
                       accessibilityLabel={`${lesson.title}, ${state.label}`}
                       accessibilityState={{ disabled: !state.canOpen }} disabled={!state.canOpen}
                       onPress={() => state.canOpen && onOpenTopic?.(state.topic)}>
-                      <Ionicons accessible={false} name={state.icon} size={18} color={state.canOpen ? '#0076B5' : '#586B7B'} />
+                      <Ionicons accessible={false} name={state.icon} size={18} color={state.canOpen ? colors.sea : colors.inkMuted} />
                       <View style={styles.headingCopy}>
                         <Text style={styles.lessonTitle}>{lesson.title}</Text>
                         <Text style={styles.subtitle}>{lesson.type} / {lesson.wordCount} items</Text>
@@ -64,23 +64,23 @@ export default function CourseRoadmap({ courseId, topics = [], progressReady = f
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: '#F3FAFE', borderColor: '#D8E8F2', borderWidth: 1, borderRadius: 24, marginTop: 24, overflow: 'hidden' },
+  container: { backgroundColor: colors.paperDeep, borderColor: colors.ink, borderWidth: 1, borderRadius: 24, marginHorizontal: 16, marginTop: 24, overflow: 'hidden' },
   heading: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 20, minHeight: 80 },
   headingCopy: { flex: 1, minWidth: 0 },
-  eyebrow: { fontFamily: fonts.extraBold, fontSize: 10, letterSpacing: 1, color: '#0076B5', marginBottom: 6 },
-  title: { fontFamily: fonts.extraBold, fontSize: 21, color: '#0B245B' },
-  subtitle: { fontFamily: fonts.medium, fontSize: 12, color: '#586B7B', marginTop: 4 },
+  eyebrow: { fontFamily: fonts.bold, fontSize: 9, letterSpacing: 1.3, color: colors.sea, marginBottom: 6 },
+  title: { fontFamily: fonts.display, fontSize: 27, color: colors.ink, textTransform: 'uppercase' },
+  subtitle: { fontFamily: fonts.regular, fontSize: 12, color: colors.inkMuted, marginTop: 4 },
   units: { padding: 14, paddingTop: 0, gap: 10 },
-  note: { fontFamily: fonts.medium, fontSize: 14, lineHeight: 21, color: '#586B7B', padding: 6, marginBottom: 8 },
-  unit: { borderRadius: 18, backgroundColor: '#FFFFFF', borderColor: '#D8E8F2', borderWidth: 1 },
+  note: { fontFamily: fonts.editorial, fontSize: 15, lineHeight: 22, color: colors.inkMuted, padding: 6, marginBottom: 8 },
+  unit: { borderRadius: 18, backgroundColor: colors.paper, borderColor: colors.border, borderWidth: 1 },
   unitHeading: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 80, padding: 14 },
-  number: { width: 38, height: 38, borderRadius: 13, backgroundColor: '#EAF8FF', alignItems: 'center', justifyContent: 'center' },
-  numberText: { color: '#0076B5', fontFamily: fonts.extraBold, fontSize: 17 },
-  section: { fontFamily: fonts.bold, fontSize: 11, color: '#586B7B' },
-  unitTitle: { fontFamily: fonts.extraBold, fontSize: 16, color: '#0B245B', marginTop: 3 },
+  number: { width: 40, height: 40, borderRadius: 14, backgroundColor: colors.mango, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-3deg' }] },
+  numberText: { color: colors.ink, fontFamily: fonts.display, fontSize: 21 },
+  section: { fontFamily: fonts.bold, fontSize: 10, letterSpacing: 0.7, color: colors.inkMuted },
+  unitTitle: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.ink, marginTop: 3 },
   details: { padding: 14, paddingTop: 0, gap: 12 },
-  objective: { color: '#0B245B', fontFamily: fonts.medium, fontSize: 14, lineHeight: 21 },
-  lesson: { flexDirection: 'row', gap: 10, paddingTop: 12, borderTopColor: '#D8E8F2', borderTopWidth: 1 },
-  lessonTitle: { fontFamily: fonts.bold, fontSize: 14, color: '#0B245B' },
-  preparing: { fontFamily: fonts.medium, fontSize: 12, color: '#586B7B', marginTop: 5 },
+  objective: { color: colors.ink, fontFamily: fonts.editorial, fontSize: 15, lineHeight: 22 },
+  lesson: { flexDirection: 'row', gap: 10, paddingTop: 12, borderTopColor: colors.border, borderTopWidth: 1 },
+  lessonTitle: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.ink },
+  preparing: { fontFamily: fonts.regular, fontSize: 12, color: colors.inkMuted, marginTop: 5 },
 });

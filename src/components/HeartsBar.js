@@ -1,4 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { StyleSheet, View } from 'react-native';
+
+import { colors } from '../theme';
 
 export default function HeartsBar({ hearts, maxHearts }) {
   const safeMaxHearts = Number.isFinite(maxHearts) ? maxHearts : 5;
@@ -10,15 +13,14 @@ export default function HeartsBar({ hearts, maxHearts }) {
         const filled = index < safeHearts;
 
         return (
-          <Text
+          <Ionicons
             key={index}
-            style={[
-              styles.heart,
-              filled ? styles.heartFilled : styles.heartEmpty,
-            ]}
-          >
-            {filled ? '\u2764\ufe0f' : '\ud83e\ude76'}
-          </Text>
+            accessible={false}
+            color={filled ? colors.heart : colors.heartEmpty}
+            name={filled ? 'heart' : 'heart-outline'}
+            size={19}
+            style={styles.heart}
+          />
         );
       })}
     </View>
@@ -32,12 +34,6 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   heart: {
-    fontSize: 18,
-  },
-  heartFilled: {
-    opacity: 1,
-  },
-  heartEmpty: {
-    opacity: 0.55,
+    marginHorizontal: 1,
   },
 });

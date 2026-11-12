@@ -25,11 +25,16 @@ test('new questions reset the lesson scroll and checked feedback is brought into
   assert.match(modal, /scrollToEnd\(\{ animated: !reducedMotion \}\)/);
 });
 
-test('theme and root load all friendly Nunito font weights', () => {
-  for (const weight of ['400Regular', '500Medium', '600SemiBold', '700Bold', '800ExtraBold', '900Black']) {
-    assert.ok(read('src/theme.js').includes(`Nunito_${weight}`));
-    assert.ok(read('App.js').includes(`Nunito_${weight}`));
+test('theme and root load the editorial display, serif, and readable UI type system', () => {
+  for (const face of ['Anton_400Regular', 'DMSerifDisplay_400Regular', 'Inter_400Regular', 'Inter_500Medium', 'Inter_600SemiBold', 'Inter_700Bold']) {
+    assert.ok(read('src/theme.js').includes(face));
+    assert.ok(read('App.js').includes(face));
   }
+  assert.match(read('src/theme.js'), /display:\s*['"]Anton_400Regular['"]/);
+  assert.match(read('src/theme.js'), /editorial:\s*['"]DMSerifDisplay_400Regular['"]/);
+  assert.match(read('src/theme.js'), /regular:\s*['"]Inter_400Regular['"]/);
+  assert.doesNotMatch(read('src/theme.js'), /Nunito_/);
+  assert.doesNotMatch(read('src/theme.js'), /Fredoka_/);
 });
 
 test('rejected matches get red cards, non-color feedback and the incorrect sound event', () => {

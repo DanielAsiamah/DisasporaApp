@@ -13,17 +13,17 @@ export default function PrimaryButton({
 }) {
   const translateY = useRef(new Animated.Value(0)).current;
   const isPrimary = variant === 'primary';
-  const backgroundColor = isPrimary ? colors.blue : '#FFFFFF';
-  const borderColor = isPrimary ? '#0C8CE9' : '#B7DFF7';
-  const textColor = isPrimary ? '#FFFFFF' : colors.blue;
+  const backgroundColor = isPrimary ? colors.ink : colors.paper;
+  const borderColor = isPrimary ? colors.ink : colors.border;
+  const textColor = isPrimary ? colors.paper : colors.ink;
   const unavailable = disabled || loading;
 
   function handlePressIn() {
     Animated.spring(translateY, {
-      toValue: 3,
+      toValue: 2,
       useNativeDriver: true,
       speed: 50,
-      bounciness: 0,
+      bounciness: 1,
     }).start();
   }
 
@@ -32,7 +32,7 @@ export default function PrimaryButton({
       toValue: 0,
       useNativeDriver: true,
       speed: 50,
-      bounciness: 4,
+      bounciness: 6,
     }).start();
   }
 
@@ -66,17 +66,16 @@ export default function PrimaryButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    borderBottomWidth: 4,
-    borderRadius: radius.md,
+    borderWidth: 2,
+    borderRadius: radius.lg,
     justifyContent: 'center',
-    minHeight: 54,
+    minHeight: 58,
     paddingHorizontal: 24,
     paddingVertical: 14,
   },
   label: {
-    fontFamily: fonts.extraBold,
-    fontSize: 17,
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
+    fontFamily: fonts.bold,
+    fontSize: 18,
+    letterSpacing: 0.1,
   },
 });

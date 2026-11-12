@@ -21,7 +21,8 @@ test('SDK 58 app config contains only valid config plugins', () => {
 
   assert.ok(pluginNames.includes('expo-font'));
   assert.ok(pluginNames.includes('expo-audio'));
-  assert.ok(!pluginNames.includes('expo-status-bar'));
+  assert.ok(pluginNames.includes('expo-status-bar'));
+  assert.ok(fs.existsSync(path.join(root, 'node_modules', 'expo-status-bar', 'app.plugin.js')));
 });
 
 test('the current phone handoff names SDK 58 and does not claim a device test', () => {

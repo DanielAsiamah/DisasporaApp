@@ -1,9 +1,9 @@
 export const MAX_HEARTS = 5;
 
 export const colors = {
-  splash: '#140F0C', // Cozy dark espresso
-  splashWarm: '#1E1612', // Cocoa brown
-  splashGreen: '#0B1E14', // Forest deep green
+  splash: '#18332D',
+  splashWarm: '#23483E',
+  splashGreen: '#102A24',
   
   // Theme highlights
   africaGold: '#F4B942', // Radiant gold
@@ -17,33 +17,39 @@ export const colors = {
   grass: '#1FBE56',
   grassDark: '#0B8A3C',
   
-  primary: '#1FBE56', // Emerald green
-  primaryDark: '#0B8A3C',
-  primaryLight: 'rgba(31, 190, 86, 0.15)', // transparent green tint
-  accent: '#F4B942', // Gold
-  accentDark: '#CFA034',
-  coral: '#E76F51', // Terracotta
+  primary: '#2D7668',
+  primaryDark: '#20594F',
+  primaryLight: '#E1F0EA',
+  accent: '#F2B84B',
+  accentDark: '#C98719',
+  coral: '#E76F51',
   purple: '#CE82FF',
   blue: '#1CB0F6',
   
   // Dark Cozy Typography & Elements
-  surface: '#1E1612', // Rich chocolate cocoa surface
-  surfaceMuted: '#291F19', // Slightly lighter cocoa surface
-  text: '#FDF8F5', // Soft cozy cream text
-  textDark: '#FDF8F5', // Soft cozy cream text for dark backgrounds
-  textOnDark: '#FDF8F5', 
-  textMuted: '#C5B4A9', // Warm beige muted text
-  textLight: '#9A887D', // Dimmer brown-grey text
-  border: '#2E221B', // Dark warm brown border
-  locked: '#2B231F', // Disabled button brown
+  paper: '#FFF9ED',
+  paperDeep: '#F4E9D4',
+  ink: '#1D2925',
+  inkMuted: '#65716C',
+  sea: '#2D7668',
+  mango: '#F2B84B',
+  surface: '#FFF9ED',
+  surfaceMuted: '#F4E9D4',
+  text: '#1D2925',
+  textDark: '#1D2925',
+  textOnDark: '#FFF9ED',
+  textMuted: '#65716C',
+  textLight: '#8B948F',
+  border: '#D8CDBA',
+  locked: '#DED8CD',
   
   success: '#1FBE56',
   successBg: 'rgba(31, 190, 86, 0.12)',
   error: '#FF4B4B',
   errorBg: 'rgba(255, 75, 75, 0.15)',
   heart: '#FF4B81',
-  heartEmpty: '#3E312B',
-  shadow: 'rgba(0, 0, 0, 0.4)',
+  heartEmpty: '#D9D0C3',
+  shadow: 'rgba(29, 41, 37, 0.18)',
 };
 
 export const spacing = {
@@ -98,12 +104,14 @@ export const ui = {
 };
 
 export const fonts = {
-  regular: 'Nunito_400Regular',
-  medium: 'Nunito_500Medium',
-  semiBold: 'Nunito_600SemiBold',
-  bold: 'Nunito_700Bold',
-  extraBold: 'Nunito_800ExtraBold',
-  black: 'Nunito_900Black',
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semiBold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
+  extraBold: 'Inter_700Bold',
+  black: 'Inter_700Bold',
+  display: 'Anton_400Regular',
+  editorial: 'DMSerifDisplay_400Regular',
 };
 
 export const game = {

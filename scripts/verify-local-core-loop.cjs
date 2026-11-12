@@ -304,7 +304,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const rejectedColor = await rejected.first().evaluate(node => getComputedStyle(node).backgroundColor);
         if (rejectedColor !== 'rgb(255, 240, 240)') throw new Error(`Expected red mismatch background, got ${rejectedColor}`);
         const font = await page.getByText('Not a match', { exact: true }).first().evaluate(node => getComputedStyle(node).fontFamily);
-        if (!font.includes('Nunito')) throw new Error(`Expected friendly Nunito font, got ${font}`);
+        if (!font.includes('Inter')) throw new Error(`Expected readable Inter UI font, got ${font}`);
         const playsAfter = await page.evaluate(() => window.__lessonAudioPlays);
         if (muteEffects) {
           if (playsAfter.length !== playsBefore) throw new Error('Muted mismatch must not trigger a sound.');
@@ -315,11 +315,11 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         await page.setViewportSize({ width: 1440, height: 900 });
         const desktopBounds = await rejected.first().boundingBox();
         if (!desktopBounds || desktopBounds.width > 400) throw new Error('Desktop lesson cards must remain in a readable centered column.');
-        const fontLoaded = await page.evaluate(() => document.fonts.check('16px "Nunito_800ExtraBold"'));
-        if (!fontLoaded) throw new Error('Nunito must actually load, not fall back to a browser font.');
+        const fontLoaded = await page.evaluate(() => document.fonts.check('16px "Inter_700Bold"'));
+        if (!fontLoaded) throw new Error('Inter must actually load, not fall back to a browser font.');
         await page.screenshot({ path: `outputs/browser-smoke/mismatch-desktop-${courseId}.png` });
         await page.setViewportSize({ width: 390, height: 844 });
-        console.log(`Rejected pair: two red cards, Nunito font, incorrect sound ${muteEffects ? 'muted' : 'triggered once'}.`);
+        console.log(`Rejected pair: two red cards, Inter font, incorrect sound ${muteEffects ? 'muted' : 'triggered once'}.`);
         }
         for (const pair of exercise.pairs) {
           await page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(pair.localized)},`) }).click();

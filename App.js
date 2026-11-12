@@ -1,12 +1,16 @@
 import {
-  Nunito_400Regular,
-  Nunito_500Medium,
-  Nunito_600SemiBold,
-  Nunito_700Bold,
-  Nunito_800ExtraBold,
-  Nunito_900Black,
+  Anton_400Regular,
+} from '@expo-google-fonts/anton';
+import {
+  DMSerifDisplay_400Regular,
+} from '@expo-google-fonts/dm-serif-display';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
   useFonts,
-} from '@expo-google-fonts/nunito';
+} from '@expo-google-fonts/inter';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -505,12 +509,12 @@ export default function App() {
 
 function FontReadyApp({ onRetryFonts }) {
   const [fontsLoaded, fontError] = useFonts({
-    Nunito_400Regular,
-    Nunito_500Medium,
-    Nunito_600SemiBold,
-    Nunito_700Bold,
-    Nunito_800ExtraBold,
-    Nunito_900Black,
+    Anton_400Regular,
+    DMSerifDisplay_400Regular,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
 
   if (fontError && !fontsLoaded) {
@@ -568,14 +572,14 @@ const styles = StyleSheet.create({
   },
   profileErrorTitle: {
     color: AUTH_PALETTE.brandBlue,
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: 'Anton_400Regular',
     fontSize: 26,
     lineHeight: 34,
     textAlign: 'center',
   },
   profileErrorBody: {
     color: AUTH_PALETTE.textMuted,
-    fontFamily: 'Nunito_500Medium',
+    fontFamily: 'Inter_400Regular',
     fontSize: 15,
     lineHeight: 23,
     maxWidth: 360,
@@ -596,7 +600,7 @@ const styles = StyleSheet.create({
   },
   profileErrorButtonText: {
     color: '#FFFFFF',
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: 'Inter_700Bold',
     fontSize: 14,
     letterSpacing: 0.6,
   },
