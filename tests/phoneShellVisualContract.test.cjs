@@ -284,7 +284,7 @@ test('lesson prompts have a human guide and show vocabulary stages only when the
   assert.match(source, /function getExerciseVisualConceptId\(exercise\)/);
   assert.match(source, /exercise\?\.imageConceptId \|\| exercise\?\.conceptId \|\| exercise\?\.pairs\?\.\[0\]\?\.conceptId \|\| null/);
   assert.match(source, /const exerciseVisualConceptId = getExerciseVisualConceptId\(exercise\);/);
-  assert.match(source, /!isMatch && !isMistakePractice && imageRegistry\[exerciseVisualConceptId\] \? <View style=\{styles\.scene\}>/);
+  assert.match(source, /!isMatch && !isImageChoice && !isMistakePractice && imageRegistry\[exerciseVisualConceptId\] \? <View style=\{styles\.scene\}>/);
   assert.match(source, /<BreathingVocabularyImage conceptId=\{exerciseVisualConceptId\}/);
   assert.match(source, /<BreathingGuidePortrait guideName=\{promptGuide\} reducedMotion=\{reducedMotion\} style=\{styles\.promptGuide\} tone=['"]prompt['"]/);
   assert.match(source, /promptGuide:\s*\{[^}]*width:\s*(?:1\d\d|[2-9]\d\d)[^}]*height:\s*(?:1[3-9]\d|[2-9]\d\d)/s);
@@ -352,13 +352,13 @@ test('Learn topics, current focus, and bottom tabs expose clear accessible roles
   assert.match(source, /accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: interactionDisabled, selected: isActive \}\}/s);
   assert.match(source, /accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}/);
   assert.match(source, /accessibilityHint=\{currentFocusHint\}[\s\S]*?accessibilityLabel=\{`\$\{currentFocusTitle\}\. \$\{currentFocusMetaLabel\}`\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !progressReady \|\| !activeLearnTopic \}\}/s);
-  assert.match(source, /\.map\(\(\[id, icon, activeIcon, label\], index\) => \(/);
-  assert.match(source, /accessibilityLabel=\{`\$\{label\}, \$\{index \+ 1\} of 2, main navigation`\}/);
+  assert.match(source, /MVP_TABS\.map\(\(\{ activeIcon, icon, id, label \}, index\) => \(/);
+  assert.match(source, /accessibilityLabel=\{`\$\{label\}, \$\{index \+ 1\} of \$\{MVP_TABS\.length\}, main navigation`\}/);
   assert.match(source, /accessibilityRole=['"]tab['"][\s\S]*?accessibilityState=\{\{ selected: activeTab === id \}\}/s);
   assert.match(source, /tabButton:\s*\{[^}]*minHeight:\s*(?:4[8-9]|[5-9]\d)/s);
 });
 
-test('Learn and Leaderboard use responsive vector icons and compact-phone podium sizing', () => {
+test('Learn, Progress, and Leaderboard use responsive vector icons and compact-phone podium sizing', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
 
   assert.match(source, /import\s+Ionicons\s+from\s+['"]@expo\/vector-icons\/Ionicons['"]/);

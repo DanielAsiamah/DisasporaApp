@@ -19,7 +19,9 @@ import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
 import LearnerAccountPanel from '../components/mvp/LearnerAccountPanel';
 import { useSoundPreference } from '../audio/useSoundPreference';
 import CourseRoadmap from '../components/mvp/CourseRoadmap';
+import ProgressDashboard from '../components/mvp/ProgressDashboard';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
+import { getCourseImageRegistry } from '../data/courseImageRegistry';
 import { fonts } from '../theme';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import AnimatedGuide from '../components/mvp/AnimatedGuide';
@@ -39,6 +41,7 @@ const {
 } = require('../lessonEngine/mvpProgressState.cjs');
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
+const { buildProgressDashboardViewModel } = require('../lessonExperience/progressDashboardPresentation.cjs');
 const { buildHeartsPresentation } = require('../lessonExperience/heartsPresentation.cjs');
 const { buildCourseTopicExercises } = require('../lessonEngine/patoisLessonSteps.cjs');
 const {
@@ -51,6 +54,7 @@ const { saveProgressSnapshot } = require('../lessonEngine/progressSave.cjs');
 const { readLocalProgress } = require('../lessonEngine/localProgressRead.cjs');
 const { readRemoteProgress } = require('../lessonEngine/remoteProgressRead.cjs');
 const { getLearningProgressPresentation, getStreakPresentation, orderPodiumEntries } = require('./mvpHomePresentation.cjs');
+const { MVP_TABS } = require('../navigation/mvpNavigation.cjs');
 
 const SKY = '#2D7668';
 const SKY_TEXT = '#245F55';
@@ -339,6 +343,7 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
   const courseReviewPending = runtimeCourse?.published !== true;
   const courseConfig = getCoursePresentation(storageCourseId) || {};
   const curriculum = getRuntimeCurriculum(storageCourseId);
+  const courseImageRegistry = useMemo(() => getCourseImageRegistry(storageCourseId), [storageCourseId]);
   const courseChapter = useMemo(() => (
     curriculum.chapters.find((chapter) => chapter.courseId === storageCourseId) || null
   ), [curriculum, storageCourseId]);
@@ -367,8 +372,9 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
       concepts: curriculum.concepts,
       lessonSteps: curriculum.lessonSteps,
       vocabulary: curriculum.courseVocabulary.filter((row) => row.courseId === storageCourseId),
+      hasImage: conceptId => Boolean(courseImageRegistry[conceptId]),
     }),
-  ])), [curriculum, storageCourseId, topics]);
+  ])), [courseImageRegistry, curriculum, storageCourseId, topics]);
   const adaptiveReviewTopic = useMemo(() => buildAdaptiveReviewTopic({
     courseId: storageCourseId,
     exercisesByTopic,
@@ -431,6 +437,31 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     : `${coreLoopView.activeCard?.ctaLabel || 'Start lesson'} →`;
   const learningPresentation = getLearningProgressPresentation({ ready: progressReady, completed: completedTopicCount, total: topicStates.length, hasMorePlannedLessons });
   const streakPresentation = getStreakPresentation({ streak: profile?.streak, dailyGoalMinutes: profile?.dailyGoalMinutes });
+  const progressDashboard = useMemo(() => buildProgressDashboardViewModel({
+    completedTopicIds,
+    courseName: runtimeCourse?.displayName,
+    dailyGoalMinutes: profile?.dailyGoalMinutes,
+    duePracticeCount: adaptiveReviewTopic?.dueCount,
+    ready: progressReady,
+    streak: profile?.streak,
+    topics,
+    totalWords: courseChapter?.wordCount,
+    xp: profile?.xp,
+  }), [
+    adaptiveReviewTopic?.dueCount,
+    completedTopicIds,
+    courseChapter?.wordCount,
+    profile?.dailyGoalMinutes,
+    profile?.streak,
+    profile?.xp,
+    progressReady,
+    runtimeCourse?.displayName,
+    topics,
+  ]);
+  const practiceTopic = adaptiveReviewTopic
+    || [...topicStates].reverse().find((topic) => topic.state === 'complete')
+    || topicStates[0]
+    || null;
 
   useEffect(() => {
     setActiveTopic(null);
@@ -669,15 +700,20 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
             </View>
             <CourseRoadmap courseId={storageCourseId} topics={topicStates} progressReady={progressReady} onOpenTopic={setActiveTopic} />
           </ScrollView>
+        ) : activeTab === 'progress' ? (
+          <ProgressDashboard
+            guideName={featuredGuide}
+            onContinue={() => setActiveTab('learn')}
+            onPractice={() => progressReady && practiceTopic && setActiveTopic(practiceTopic)}
+            presentation={progressDashboard}
+            reducedMotion={reducedMotion}
+          />
         ) : <Leaderboard profile={profile} reducedMotion={reducedMotion} />}
       </View>
       <View style={styles.tabBar}>
-        {[
-          ['learn', 'book-outline', 'book', 'Learn'],
-          ['leaderboard', 'trophy-outline', 'trophy', 'Leaderboard'],
-        ].map(([id, icon, activeIcon, label], index) => (
+        {MVP_TABS.map(({ activeIcon, icon, id, label }, index) => (
           <Pressable
-            accessibilityLabel={`${label}, ${index + 1} of 2, main navigation`}
+            accessibilityLabel={`${label}, ${index + 1} of ${MVP_TABS.length}, main navigation`}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeTab === id }}
             key={id}

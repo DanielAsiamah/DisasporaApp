@@ -1,4 +1,6 @@
 const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwright');
+const fs = require('node:fs');
+const path = require('node:path');
 const heartLabelPattern = expected => new RegExp('^' + expected + ' of 5 hearts remaining(?:\\.|$)');
 const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 (async () => {
@@ -17,6 +19,15 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const courseTopics = id => getRuntimeCurriculum(id).topics.filter(topic => topic.courseId === id).sort((a, b) => a.order - b.order);
   const curriculum = getRuntimeCurriculum(courseId);
   const topics = courseTopics(courseId);
+  const hasCourseImage = conceptId => fs.existsSync(path.join(
+    __dirname,
+    '..',
+    'assets',
+    'images',
+    'vocab',
+    courseId,
+    `${conceptId}.png`
+  ));
   const firstLessonName = new RegExp(`${escapePattern(topics[0].title)}\\. Lesson`);
   require('node:fs').mkdirSync('outputs/browser-smoke', { recursive: true });
   const hub = await fetch('http://127.0.0.1:4400/emulators', { signal: AbortSignal.timeout(5000) }).then(response => response.json());
@@ -125,7 +136,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
     await page.getByText('Verify your email', { exact: true }).waitFor({ timeout: 60000 });
     await page.getByText('Continue for now', { exact: true }).click();
-    await page.getByRole('tab', { name: /Learn, 1 of 2/ }).waitFor({ timeout: 60000 });
+    await page.getByRole('tab', { name: /Learn, 1 of 3/ }).waitFor({ timeout: 60000 });
     await page.getByLabel(initialHeartLabel, { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Account', exact: true }).click();
     const soundSwitch = page.getByRole('switch', { name: 'Sound effects', exact: true });
@@ -154,7 +165,10 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const available = courseTopics(id);
         await page.getByText(`0 of ${available.length} topics complete`, { exact: true }).waitFor();
         await page.getByRole('button', { name: new RegExp(`${escapePattern(available[0].title)}\\. Lesson`) }).click();
-        const first = buildCourseTopicExercises(id, available[0].id, { hasAudio: () => false })[0];
+        const first = buildCourseTopicExercises(id, available[0].id, {
+          hasAudio: () => false,
+          hasImage: conceptId => fs.existsSync(path.join(__dirname, '..', 'assets', 'images', 'vocab', id, `${conceptId}.png`)),
+        })[0];
         await page.getByText(first.prompt, { exact: true }).waitFor();
         await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
         await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
@@ -169,29 +183,51 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByRole('button', { name: /1 Foundations Greetings 4 planned lessons/ }).click();
       await page.getByRole('button', { name: 'Greetings 1, Play draft lesson', exact: true }).click();
     } else await page.getByRole('button', { name: firstLessonName }).click();
-    await page.getByRole('radio').first().click();
-    const selectedAnswerLabel = await page.getByRole('radio').first().getAttribute('aria-label');
-    await page.waitForFunction(() => document.querySelector('[role="radio"][aria-checked="true"]'));
+    const firstHintExercise = buildCourseTopicExercises(courseId, topics[0].id, {
+      concepts: curriculum.concepts,
+      vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
+      hasAudio: () => false,
+      hasImage: hasCourseImage,
+    })[0];
+    let selectedResponse;
+    if (firstHintExercise.choices || firstHintExercise.imageChoices) {
+      const radio = page.getByRole('radio').first();
+      await radio.click();
+      selectedResponse = { kind: 'radio', label: await radio.getAttribute('aria-label') };
+      await page.waitForFunction(() => document.querySelector('[role="radio"][aria-checked="true"]'));
+    } else if (firstHintExercise.pairs) {
+      const phrase = firstHintExercise.leftItems[0].value;
+      await page.getByRole('button', { name: `Phrase: ${phrase}, not selected`, exact: true }).click();
+      selectedResponse = { kind: 'match', phrase };
+      await page.getByRole('button', { name: `Phrase: ${phrase}, selected`, exact: true }).waitFor();
+    } else {
+      const word = firstHintExercise.answerTokens[0];
+      await page.getByRole('button', { name: `Add word: ${word}`, exact: true }).click();
+      selectedResponse = { kind: 'word', word };
+      await page.getByText('1 words placed', { exact: true }).waitFor();
+    }
     await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
     await page.getByText('Leave this lesson?', { exact: true }).waitFor();
     await page.screenshot({ path: `outputs/browser-smoke/exit-${courseId}.png` });
     await page.getByRole('button', { name: 'Keep learning', exact: true }).click();
-    if (await page.getByRole('radio', { name: selectedAnswerLabel, exact: true }).getAttribute('aria-checked') !== 'true') {
+    if (selectedResponse.kind === 'radio'
+      && await page.getByRole('radio', { name: selectedResponse.label, exact: true }).getAttribute('aria-checked') !== 'true') {
       throw new Error('Cancelling exit must preserve the selected answer.');
     }
+    if (selectedResponse.kind === 'match') {
+      await page.getByRole('button', { name: `Phrase: ${selectedResponse.phrase}, selected`, exact: true }).waitFor();
+    }
+    if (selectedResponse.kind === 'word') await page.getByText('1 words placed', { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
     await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
     await page.getByText(`0 of ${topics.length} topics complete`, { exact: true }).waitFor();
     await page.getByLabel('0 experience points', { exact: true }).waitFor();
     await page.getByRole('button', { name: firstLessonName }).click();
-    if (await page.getByRole('radio', { checked: true }).count()) {
+    if (await page.getByRole('radio', { checked: true }).count()
+      || await page.getByRole('button', { name: /, selected$/ }).count()
+      || await page.getByText('1 words placed', { exact: true }).count()) {
       throw new Error('An intentionally exited lesson must restart with a fresh response.');
     }
-    const firstHintExercise = buildCourseTopicExercises(courseId, topics[0].id, {
-      concepts: curriculum.concepts,
-      vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
-      hasAudio: () => false,
-    })[0];
     if (!firstHintExercise?.studyPhrase || !firstHintExercise?.studyTranslation) {
       throw new Error('The first lesson exercise must expose a verified phrase hint.');
     }
@@ -234,16 +270,25 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       concepts: curriculum.concepts,
       vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
       hasAudio: () => false,
+      hasImage: hasCourseImage,
     });
     const expectedXp = exercises.length * CORRECT_ANSWER_XP;
     const missedExercises = makeMistakes ? exercises.filter((exercise, index) => exercise.pairs || (topicIndex === 0 && index === 0)) : [];
     const testSequence = [...exercises, ...missedExercises];
-    const checkedAnswers = testSequence.length + (makeMistakes ? (topicIndex === 0 ? 1 : 0) + exercises.filter(exercise => exercise.pairs).length : 0);
+    const firstExerciseAcceptsWrongChoice = Boolean(exercises[0]?.choices || exercises[0]?.imageChoices);
+    const checkedAnswers = testSequence.length + (makeMistakes
+      ? (topicIndex === 0 && firstExerciseAcceptsWrongChoice ? 1 : 0) + exercises.filter(exercise => exercise.pairs).length
+      : 0);
     const expectedAccuracy = Math.round(testSequence.length / checkedAnswers * 100);
-    if (topicIndex === 0 && makeMistakes) {
+    if (topicIndex === 0 && makeMistakes && (exercises[0].choices || exercises[0].imageChoices)) {
     const first = exercises[0];
-    const wrongIndex = first.choices.findIndex(choice => choice !== first.answer);
-    await page.getByRole('radio', { name: `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`, exact: true }).click();
+    const wrongIndex = first.choices
+      ? first.choices.findIndex(choice => choice !== first.answer)
+      : first.imageChoices.findIndex(choice => choice.conceptId !== first.answer);
+    const wrongLabel = first.choices
+      ? `${first.choices[wrongIndex]}, answer ${wrongIndex + 1} of ${first.choices.length}`
+      : `${first.imageChoices[wrongIndex].label}, image answer ${wrongIndex + 1} of ${first.imageChoices.length}`;
+    await page.getByRole('radio', { name: wrongLabel, exact: true }).click();
     await page.getByRole('button', { name: 'Check answer', exact: true }).click();
     await currentHeartCount(4);
     const wrongGuide = await checkGuideImage('lesson-feedback-guide');
@@ -275,6 +320,13 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       }
       if (exercise.choices) {
         await page.getByRole('radio', { name: `${exercise.answer}, answer ${exercise.choices.indexOf(exercise.answer) + 1} of ${exercise.choices.length}`, exact: true }).click();
+      } else if (exercise.imageChoices) {
+        const answerIndex = exercise.imageChoices.findIndex(choice => choice.conceptId === exercise.answer);
+        const answerChoice = exercise.imageChoices[answerIndex];
+        await page.getByRole('radio', {
+          name: `${answerChoice.label}, image answer ${answerIndex + 1} of ${exercise.imageChoices.length}`,
+          exact: true,
+        }).click();
       } else if (exercise.answerTokens) {
         const used = new Set();
         const selected = [];
@@ -339,8 +391,12 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         console.log(`Rejected pair: two red cards, Inter font, incorrect sound ${muteEffects ? 'muted' : 'triggered once'}.`);
         }
         for (const pair of exercise.pairs) {
-          await page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(pair.localized)},`) }).click();
-          await page.getByRole('button', { name: new RegExp(`^Meaning: ${escapePattern(pair.meaning)},`) }).click();
+          const phraseButton = page.getByRole('button', { name: new RegExp(`^Phrase: ${escapePattern(pair.localized)},`) });
+          const meaningButton = page.getByRole('button', { name: new RegExp(`^Meaning: ${escapePattern(pair.meaning)},`) });
+          await phraseButton.scrollIntoViewIfNeeded();
+          await phraseButton.click();
+          await meaningButton.scrollIntoViewIfNeeded();
+          await meaningButton.click();
         }
       }
       await page.getByRole('button', { name: 'Check answer', exact: true }).click();
@@ -385,6 +441,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         concepts: curriculum.concepts,
         vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
         hasAudio: () => false,
+        hasImage: hasCourseImage,
       }).length;
       return Array.from({ length: exerciseCount }, (_, index) => `${getPromptGuideName(topic.guide, index)} guide`);
     }));
@@ -409,7 +466,15 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
     await page.getByLabel(`${totalXp} experience points`, { exact: true }).waitFor();
     console.log(`Reload preserved ${totalXp} XP and ${testedTopics.length} completed topics for ${courseId}.`);
-    await page.getByRole('tab', { name: /Leaderboard, 2 of 2/ }).click();
+    await page.getByRole('tab', { name: /Progress, 2 of 3/ }).click();
+    const progressPercent = Math.round((testedTopics.length / topics.length) * 100);
+    await page.getByRole('heading', { name: 'Progress', exact: true }).waitFor();
+    await page.getByLabel(`${testedTopics.length} of ${topics.length} topics complete, ${progressPercent} percent`, { exact: true }).waitFor();
+    await page.getByLabel(`Total XP: ${totalXp}`, { exact: true }).waitFor();
+    await page.getByText('Words covered', { exact: true }).waitFor();
+    await page.screenshot({ path: `outputs/browser-smoke/progress-${courseId}.png`, fullPage: true });
+    console.log(`Progress dashboard verified at ${progressPercent}% with ${totalXp} saved XP.`);
+    await page.getByRole('tab', { name: /Leaderboard, 3 of 3/ }).click();
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).click();
     await page.getByRole('button', { name: 'Leave leaderboard', exact: true }).waitFor();
     await page.getByText('Local Learner', { exact: true }).first().waitFor();
@@ -417,7 +482,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByRole('button', { name: 'Leave leaderboard', exact: true }).click();
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).waitFor();
     console.log('Leaderboard opt-in and opt-out completed.');
-    await page.getByRole('tab', { name: /Learn, 1 of 2/ }).click();
+    await page.getByRole('tab', { name: /Learn, 1 of 3/ }).click();
     await page.getByRole('button', { name: 'Account', exact: true }).click();
     await page.getByText(email, { exact: true }).waitFor();
     if (await soundSwitch.isChecked() === muteEffects) throw new Error('Sound preference changed after completing a lesson.');

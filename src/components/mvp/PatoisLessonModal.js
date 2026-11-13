@@ -128,6 +128,7 @@ function getExerciseHelperText(exercise) {
   if (exercise.type === LESSON_EXERCISE_TYPES.SENTENCE_BUILD) return 'Build the target-language phrase from the word bank below.';
   if (exercise.type === LESSON_EXERCISE_TYPES.WORD_TRAY) return 'Tap the words below to build the English answer in the tray.';
   if (exercise.type === LESSON_EXERCISE_TYPES.LISTEN_CHOICE) return 'Listen carefully, then choose the meaning that matches what you heard.';
+  if (exercise.type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE) return 'Use the picture and label together, then choose the best match.';
   return 'Choose the answer that best matches the prompt before you continue.';
 }
 
@@ -139,16 +140,16 @@ function getTopicModeLabel(topic) {
 
 function getExerciseAnswerLabel(exercise) {
   if (exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS) return 'All pairs matched';
-  return exercise?.answer || 'Unknown';
+  return exercise?.answerLabel || exercise?.answer || 'Unknown';
 }
 
 function getFeedbackAnnouncement(correct, exercise) {
   const answerCopy = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS
     ? 'All pairs matched.'
-    : `Answer: ${exercise?.answer || 'unknown'}.`;
+    : `Answer: ${getExerciseAnswerLabel(exercise)}.`;
   const incorrectCopy = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS
     ? 'Match every phrase with its meaning.'
-    : `Correct answer: ${exercise?.answer || 'unknown'}.`;
+    : `Correct answer: ${getExerciseAnswerLabel(exercise)}.`;
   return correct
     ? `Correct. ${answerCopy}`
     : `Incorrect. ${incorrectCopy}`;
@@ -252,6 +253,48 @@ function ChoiceExercise({ exercise, feedback, response, setResponse }) {
             ]}
           >
             <Text style={styles.choiceText}>{choice}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function ImageChoiceExercise({ exercise, feedback, imageRegistry, response, setResponse }) {
+  return (
+    <View accessibilityLabel="Picture answers" accessibilityRole="radiogroup" style={styles.imageChoiceGrid}>
+      {exercise.imageChoices.map((choice, index) => {
+        const selected = response.selectedChoice === choice.conceptId;
+        const correct = Boolean(feedback) && choice.conceptId === exercise.answer;
+        const wrong = feedback === 'incorrect' && selected;
+        const stateLabel = correct ? ', correct answer' : wrong ? ', incorrect selection' : '';
+        return (
+          <Pressable
+            accessibilityLabel={`${choice.label}, image answer ${index + 1} of ${exercise.imageChoices.length}${stateLabel}`}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selected, disabled: Boolean(feedback) }}
+            aria-checked={selected}
+            disabled={Boolean(feedback)}
+            key={choice.conceptId}
+            onPress={() => {
+              Haptics.selectionAsync().catch(() => {});
+              setResponse({ selectedChoice: choice.conceptId });
+            }}
+            style={({ pressed }) => [
+              styles.imageChoiceCard,
+              selected && styles.selectedCard,
+              correct && styles.correctCard,
+              wrong && styles.wrongCard,
+              pressed && !feedback && styles.pressedCard,
+            ]}
+          >
+            <Image
+              accessible={false}
+              resizeMode="contain"
+              source={imageRegistry[choice.imageConceptId]}
+              style={styles.imageChoiceArt}
+            />
+            <Text style={styles.imageChoiceLabel}>{choice.label}</Text>
           </Pressable>
         );
       })}
@@ -452,8 +495,9 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
       lessonSteps: curriculum.lessonSteps,
       vocabulary,
       hasAudio: hasCourseAudio,
+      hasImage: conceptId => Boolean(imageRegistry[conceptId]),
     });
-  }, [curriculum, hasCourseAudio, runtimeCourseId, topic, vocabulary]);
+  }, [curriculum, hasCourseAudio, imageRegistry, runtimeCourseId, topic, vocabulary]);
   const [mistakeIds, setMistakeIds] = useState([]);
   const [reviewStarted, setReviewStarted] = useState(false);
   const reviewExercises = useMemo(() => buildMistakeReview(exercises, mistakeIds), [exercises, mistakeIds]);
@@ -702,6 +746,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
   const completionBackButtonStyle = nextTopic ? styles.secondaryButton : styles.primaryButton;
   const completionBackButtonTextStyle = nextTopic ? styles.secondaryButtonText : styles.primaryButtonText;
   const isChoice = [LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE, LESSON_EXERCISE_TYPES.LISTEN_CHOICE].includes(exercise?.type);
+  const isImageChoice = exercise?.type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE;
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
   const ready = isResponseReady(exercise, response);
@@ -774,24 +819,26 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
           >
             <Text style={styles.closeText}>×</Text>
           </Pressable>
-          <View
-            accessible
-            accessibilityLabel="Lesson progress"
-            accessibilityRole="progressbar"
-            accessibilityValue={{
-              max: Math.max(lessonExercises.length, 1),
-              min: 0,
-              now: finished ? lessonExercises.length : index + 1,
-              text: `${finished ? lessonExercises.length : index + 1} of ${lessonExercises.length}`,
-            }}
-            style={styles.progressTrack}
-          >
-            <View style={[styles.progressFill, { width: `${finished ? 100 : ((index + 1) / Math.max(lessonExercises.length, 1)) * 100}%` }]} />
-          </View>
-          <Text style={styles.count}>{finished ? lessonExercises.length : index + 1}/{lessonExercises.length}</Text>
-          <View accessible accessibilityLabel={heartsPresentation.accessibilityLabel} style={styles.lessonHeartPill}>
-            <Ionicons accessible={false} color={RED} name="heart" size={16} />
-            <Text style={styles.lessonHeartCount}>{heartsPresentation.countLabel}</Text>
+          <View style={styles.statusRail}>
+            <View
+              accessible
+              accessibilityLabel="Lesson progress"
+              accessibilityRole="progressbar"
+              accessibilityValue={{
+                max: Math.max(lessonExercises.length, 1),
+                min: 0,
+                now: finished ? lessonExercises.length : index + 1,
+                text: `${finished ? lessonExercises.length : index + 1} of ${lessonExercises.length}`,
+              }}
+              style={styles.progressTrack}
+            >
+              <View style={[styles.progressFill, { width: `${finished ? 100 : ((index + 1) / Math.max(lessonExercises.length, 1)) * 100}%` }]} />
+            </View>
+            <Text style={styles.count}>{finished ? lessonExercises.length : index + 1}/{lessonExercises.length}</Text>
+            <View accessible accessibilityLabel={heartsPresentation.accessibilityLabel} style={styles.lessonHeartPill}>
+              <Ionicons accessible={false} color={RED} name="heart" size={16} />
+              <Text style={styles.lessonHeartCount}>{heartsPresentation.countLabel}</Text>
+            </View>
           </View>
         </View>
 
@@ -873,7 +920,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
                     <Text accessibilityLabel="Preview content is still awaiting native-speaker approval." style={styles.reviewBannerTitle}>Preview: Native review pending</Text>
                 </View>
               ) : null}
-              {!isMatch && !isMistakePractice && imageRegistry[exerciseVisualConceptId] ? <View style={styles.scene}>
+              {!isMatch && !isImageChoice && !isMistakePractice && imageRegistry[exerciseVisualConceptId] ? <View style={styles.scene}>
                 <View style={styles.sceneHalo} />
                 <Text style={styles.sceneMode}>LOOK • LISTEN • SPEAK</Text>
                 <BreathingVocabularyImage conceptId={exerciseVisualConceptId} imageRegistry={imageRegistry} reducedMotion={reducedMotion} />
@@ -889,6 +936,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
               </View>
               <Text style={styles.promptHelper}>{getExerciseHelperText(exercise)}</Text>
               {isChoice ? <ChoiceExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
+              {isImageChoice ? <ImageChoiceExercise exercise={exercise} feedback={feedback} imageRegistry={imageRegistry} response={response} setResponse={setResponse} /> : null}
               {isMatch ? (
                 <MatchExercise
                   exercise={exercise}
@@ -1002,7 +1050,8 @@ const styles = StyleSheet.create({
   resultValue: { fontFamily: fonts.display, fontSize: 34, color: NAVY },
   resultLabel: { fontFamily: fonts.bold, fontSize: 11, letterSpacing: 1, color: MUTED, marginTop: 4 },
   root: { backgroundColor: '#FFF9ED', flex: 1 },
-  topBar: { alignItems: 'center', alignSelf: 'center', width: '100%', maxWidth: 900, flexDirection: 'row', gap: 12, paddingHorizontal: 18, paddingVertical: 14 },
+  topBar: { alignItems: 'center', alignSelf: 'center', width: '100%', maxWidth: 900, flexDirection: 'row', gap: 10, paddingHorizontal: 18, paddingVertical: 12 },
+  statusRail: { alignItems: 'center', backgroundColor: '#F4E9D4', borderColor: BORDER, borderRadius: 999, borderWidth: 1, flex: 1, flexDirection: 'row', gap: 9, paddingLeft: 10, paddingRight: 6, paddingVertical: 5 },
   closeText: { color: NAVY, fontFamily: fonts.medium, fontSize: 35, lineHeight: 36 },
   progressTrack: { backgroundColor: '#DED6C8', borderRadius: 8, flex: 1, height: 9, overflow: 'hidden' },
   progressFill: { backgroundColor: SKY, borderRadius: 8, height: 10 },
@@ -1060,6 +1109,10 @@ const styles = StyleSheet.create({
   wrongCard: { backgroundColor: '#FFF0F0', borderColor: RED },
   pressedCard: { opacity: 0.82, transform: [{ scale: 0.99 }] },
   choiceText: { color: NAVY, fontFamily: fonts.bold, fontSize: 16, textAlign: 'center' },
+  imageChoiceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  imageChoiceCard: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: BORDER, borderRadius: 20, borderWidth: 1.5, justifyContent: 'space-between', minHeight: 168, padding: 10, width: '48%' },
+  imageChoiceArt: { height: 112, width: '100%' },
+  imageChoiceLabel: { color: NAVY, fontFamily: fonts.bold, fontSize: 14, lineHeight: 18, paddingTop: 5, textAlign: 'center' },
   matchHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 8, paddingTop: 4 },
   matchGrid: { flexDirection: 'row', gap: 10 },
   matchColumnGroup: { flex: 1, gap: 7 },

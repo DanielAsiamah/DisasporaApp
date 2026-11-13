@@ -30,7 +30,10 @@ test('lesson exercises expose the verified translation in the direction being st
     [wordTray.studyPhrase, wordTray.studyTranslation],
     ['Hatujaonana kwa muda mrefu', 'long time no see']
   );
-  assert.equal(matching.studyPhrase, undefined);
+  assert.deepEqual(
+    [matching.studyPhrase, matching.studyTranslation],
+    [matching.pairs[0].localized, matching.pairs[0].meaning]
+  );
 });
 
 test('phrase hint model creates one tappable token per displayed word', () => {

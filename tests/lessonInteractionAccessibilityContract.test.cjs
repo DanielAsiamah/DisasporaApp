@@ -11,8 +11,8 @@ const lessonSource = fs.readFileSync(
 
 test('lesson feedback uses the cross-platform announcement API with the revealed answer', () => {
   assert.match(lessonSource, /function getFeedbackAnnouncement\(correct, exercise\)/);
-  assert.match(lessonSource, /const answerCopy = exercise\?\.type === LESSON_EXERCISE_TYPES\.MATCH_PAIRS[\s\S]*?['"]All pairs matched\.['"][\s\S]*?`Answer: \$\{exercise\?\.answer \|\| ['"]unknown['"]\}\.`/s);
-  assert.match(lessonSource, /const incorrectCopy = exercise\?\.type === LESSON_EXERCISE_TYPES\.MATCH_PAIRS[\s\S]*?['"]Match every phrase with its meaning\.['"][\s\S]*?`Correct answer: \$\{exercise\?\.answer \|\| ['"]unknown['"]\}\.`/s);
+  assert.match(lessonSource, /const answerCopy = exercise\?\.type === LESSON_EXERCISE_TYPES\.MATCH_PAIRS[\s\S]*?['"]All pairs matched\.['"][\s\S]*?`Answer: \$\{getExerciseAnswerLabel\(exercise\)\}\.`/s);
+  assert.match(lessonSource, /const incorrectCopy = exercise\?\.type === LESSON_EXERCISE_TYPES\.MATCH_PAIRS[\s\S]*?['"]Match every phrase with its meaning\.['"][\s\S]*?`Correct answer: \$\{getExerciseAnswerLabel\(exercise\)\}\.`/s);
   assert.match(lessonSource, /return correct[\s\S]*?`Correct\. \$\{answerCopy\}`[\s\S]*?`Incorrect\. \$\{incorrectCopy\}`/s);
   assert.match(lessonSource, /AccessibilityInfo\.announceForAccessibility\(getFeedbackAnnouncement\(correct, exercise\)\)/);
   assert.match(lessonSource, /function getExerciseAnswerLabel\(exercise\)[\s\S]*?MATCH_PAIRS\) return ['"]All pairs matched['"]/s);

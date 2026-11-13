@@ -8,7 +8,10 @@ const LESSON_EXERCISE_TYPES = Object.freeze({
   SENTENCE_BUILD: 'sentence-build',
   WORD_TRAY: 'word-tray',
   LISTEN_CHOICE: 'listen-choice',
+  IMAGE_CHOICE: 'image-choice',
 });
+
+const LOW_VALUE_STANDALONE_CONCEPT_IDS = new Set(['yes', 'no', 'maybe', 'okay', 'again']);
 
 const DEFAULT_CONCEPTS = GENERATED_CURRICULUM.concepts;
 const DEFAULT_VOCABULARY = GENERATED_CURRICULUM.courseVocabulary.filter(({ courseId }) => courseId === 'jamaican-patois');
@@ -74,6 +77,8 @@ function createMatchExercise(step, conceptById, vocabularyById) {
     answer: '__matched__',
     primary: step.primary,
     pairs,
+    studyPhrase: pairs[0]?.localized,
+    studyTranslation: pairs[0]?.meaning,
     leftItems: stableShuffle(pairs.map((pair) => ({
       id: `left-${pair.conceptId}`,
       pairId: pair.conceptId,
@@ -103,6 +108,41 @@ function createChoiceExercise(step, row, type, prompt = step.prompt) {
     voiceId: row?.voiceId || step.voiceId,
     audioPath: row?.audio,
   };
+}
+
+function createImageChoiceExercise(step, row, concept, imageConceptIds, conceptById) {
+  const distractorIds = stableShuffle(
+    imageConceptIds.filter(conceptId => conceptId !== step.conceptId),
+    `${step.id}-image-distractors`
+  ).slice(0, 3);
+  if (distractorIds.length < 3) return null;
+  const selectedIds = stableShuffle([step.conceptId, ...distractorIds], `${step.id}-image-choices`);
+
+  return {
+    id: `${step.id}-image`,
+    sourceStepId: step.sourceStepId || step.id,
+    type: LESSON_EXERCISE_TYPES.IMAGE_CHOICE,
+    title: 'Choose the matching picture',
+    prompt: `Which picture matches “${row.localized}”?`,
+    answer: step.conceptId,
+    answerLabel: concept.meaning,
+    conceptId: step.conceptId,
+    primary: step.primary,
+    pronunciation: row.pronunciation,
+    voiceId: row.voiceId || step.voiceId,
+    audioPath: row.audio,
+    imageChoices: selectedIds.map(conceptId => ({
+      conceptId,
+      imageConceptId: conceptId,
+      label: conceptById.get(conceptId)?.meaning || conceptId,
+    })),
+  };
+}
+
+function isLowValueStandaloneTranslation(courseId, step, row, concept, isListening) {
+  if (isListening || !row || !concept) return false;
+  if (normalizeAnswer(row.localized) === normalizeAnswer(concept.meaning)) return true;
+  return courseId === 'jamaican-patois' && LOW_VALUE_STANDALONE_CONCEPT_IDS.has(step.conceptId);
 }
 
 function createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName = 'Jamaican Patois') {
@@ -257,6 +297,7 @@ function buildCourseTopicExercises(courseId, topicId, {
   vocabulary = getRuntimeCurriculum(courseId).courseVocabulary.filter((row) => row.courseId === courseId),
   lessonSteps = getRuntimeCurriculum(courseId).lessonSteps,
   hasAudio = () => false,
+  hasImage = () => false,
 } = {}) {
   const conceptById = new Map(concepts.map((concept) => [concept.id, concept]));
   const vocabularyById = new Map(vocabulary.map((row) => [row.conceptId, row]));
@@ -281,11 +322,35 @@ function buildCourseTopicExercises(courseId, topicId, {
     })));
   }
 
+  const topicImageConceptIds = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
+    .filter(conceptId => conceptId && hasImage(conceptId));
+  let imageChoiceAdded = false;
+
   return steps.flatMap(step => {
     const row = vocabularyById.get(step.conceptId);
     const concept = conceptById.get(step.conceptId);
     const isListening = step.exerciseType === 'listen-choice' && hasAudio(step.conceptId, row);
-    if (row && concept && !isListening && normalizeAnswer(row.localized) === normalizeAnswer(concept.meaning)) return [];
+    const becomesStandaloneChoice = [
+      'translate-to-meaning',
+      'translate-to-target',
+      'listen-choice',
+    ].includes(step.exerciseType) || tokenizeAnswer(step.answer).length === 1;
+    if (becomesStandaloneChoice && isLowValueStandaloneTranslation(courseId, step, row, concept, isListening)) return [];
+    if (!imageChoiceAdded
+      && step.exerciseType === 'translate-to-meaning'
+      && row
+      && concept
+      && hasImage(step.conceptId)
+      && topicImageConceptIds.length >= 4) {
+      const imageExercise = createImageChoiceExercise(step, row, concept, topicImageConceptIds, conceptById);
+      if (imageExercise) {
+        imageChoiceAdded = true;
+        return [{
+          ...imageExercise,
+          ...buildStudyHint(step, row, concept),
+        }];
+      }
+    }
     let exercise = createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName);
     if (exercise.answerTokens?.length === 1) {
       const target = step.exerciseType === 'sentence-build-target';
@@ -306,6 +371,7 @@ function buildPatoisTopicExercises(topicId, options = {}) {
     vocabulary: options.vocabulary || DEFAULT_VOCABULARY,
     lessonSteps: options.lessonSteps || DEFAULT_STEPS,
     hasAudio: options.hasAudio || (() => false),
+    hasImage: options.hasImage || (() => false),
   });
 }
 

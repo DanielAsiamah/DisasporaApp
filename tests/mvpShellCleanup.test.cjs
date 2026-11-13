@@ -28,7 +28,7 @@ test('MVP shell retains the approved chapter contract', () => {
   assert.match(source, /courseChapter\?\.title \|\| `\$\{coreLoopView\.courseIdentity\.title\} foundations`/);
   assert.match(source, /courseChapter\?\.topicCount \?\? coreLoopView\.progress\.total/);
   assert.match(source, /courseChapter\?\.wordCount \?\? 39/);
-  assert.match(source, /\[['"]learn['"],\s*['"]book-outline['"],\s*['"]book['"],\s*['"]Learn['"]\],\s*\[['"]leaderboard['"],\s*['"]trophy-outline['"],\s*['"]trophy['"],\s*['"]Leaderboard['"]\]/);
+  assert.match(source, /const \{ MVP_TABS \} = require\(['"]\.\.\/navigation\/mvpNavigation\.cjs['"]\)/);
 });
 
 test('the Learn shell derives chapter title and meta from the rebuilt curriculum chapter row', () => {
@@ -59,7 +59,6 @@ test('the chapter uses original Jamaica artwork behind the active topic guide in
 test('legacy product destinations and exercises are absent from visible MVP copy', () => {
   const bannedVisibleCopy = [
     'Shop',
-    'Progress',
     'Profile',
     'Settings',
     'Video call',
