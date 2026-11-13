@@ -326,7 +326,7 @@ function buildCourseTopicExercises(courseId, topicId, {
     .filter(conceptId => conceptId && hasImage(conceptId));
   let imageChoiceAdded = false;
 
-  return steps.flatMap(step => {
+  const exercises = steps.flatMap(step => {
     const row = vocabularyById.get(step.conceptId);
     const concept = conceptById.get(step.conceptId);
     const isListening = step.exerciseType === 'listen-choice' && hasAudio(step.conceptId, row);
@@ -363,6 +363,43 @@ function buildCourseTopicExercises(courseId, topicId, {
       sourceStepId: step.sourceStepId || step.id,
     }];
   });
+
+  if (imageChoiceAdded || topicImageConceptIds.length < 4) return exercises;
+
+  const visualConceptId = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
+    .find((conceptId) => {
+      const row = vocabularyById.get(conceptId);
+      const concept = conceptById.get(conceptId);
+      if (!conceptId || !row || !concept || !hasImage(conceptId)) return false;
+      if (normalizeAnswer(row.localized) === normalizeAnswer(concept.meaning)) return false;
+      return courseId !== 'jamaican-patois' || !LOW_VALUE_STANDALONE_CONCEPT_IDS.has(conceptId);
+    });
+  if (!visualConceptId) return exercises;
+
+  const sourceStep = steps.find(step => (
+    step.conceptId === visualConceptId || step.conceptRefs?.includes(visualConceptId)
+  ));
+  const visualStep = {
+    ...sourceStep,
+    id: `${sourceStep.id}-${visualConceptId}-visual`,
+    sourceStepId: sourceStep.sourceStepId || sourceStep.id,
+    conceptId: visualConceptId,
+    exerciseType: 'translate-to-meaning',
+    primary: false,
+  };
+  const row = vocabularyById.get(visualConceptId);
+  const concept = conceptById.get(visualConceptId);
+  const imageExercise = createImageChoiceExercise(
+    visualStep,
+    row,
+    concept,
+    topicImageConceptIds,
+    conceptById
+  );
+
+  return imageExercise
+    ? [...exercises, { ...imageExercise, ...buildStudyHint(visualStep, row, concept) }]
+    : exercises;
 }
 
 function buildPatoisTopicExercises(topicId, options = {}) {

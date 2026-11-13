@@ -125,6 +125,35 @@ test('image choice is generated only from a complete set of mapped workbook conc
   assert.equal(withoutEnoughImages.some(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE), false);
 });
 
+test('every Patois topic receives one visual question without losing its richer build exercises', () => {
+  const topicIds = TOPICS.map(({ id }) => id);
+  for (const topicId of topicIds) {
+    const withoutImages = buildPatoisTopicExercises(topicId, {
+      concepts: CONCEPTS,
+      vocabulary: JAMAICAN_PATOIS_VOCABULARY,
+      hasAudio: () => false,
+      hasImage: () => false,
+    });
+    const withImages = buildPatoisTopicExercises(topicId, {
+      concepts: CONCEPTS,
+      vocabulary: JAMAICAN_PATOIS_VOCABULARY,
+      hasAudio: () => false,
+      hasImage: () => true,
+    });
+    const imageChoices = withImages.filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+
+    assert.equal(imageChoices.length, 1, `${topicId} should contain one visual question`);
+    assert.equal(imageChoices[0].imageChoices.length, 4, `${topicId} should contain four mapped pictures`);
+    for (const buildType of [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY]) {
+      assert.ok(
+        withImages.filter(({ type }) => type === buildType).length
+          >= withoutImages.filter(({ type }) => type === buildType).length,
+        `${topicId} should retain ${buildType}`
+      );
+    }
+  }
+});
+
 test('exercise generation is deterministic and match pairs never duplicate concepts', () => {
   const options = {
     concepts: CONCEPTS,
