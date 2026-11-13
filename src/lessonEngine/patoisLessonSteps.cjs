@@ -62,12 +62,18 @@ function buildWordBank(answer, distractors, seed) {
   return stableShuffle([...answerTokens, ...extras], `${seed}-bank`);
 }
 
-function createMatchExercise(step, conceptById, vocabularyById) {
+function createMatchExercise(step, conceptById, vocabularyById, courseId) {
   const pairs = step.conceptRefs.map((conceptId) => ({
     conceptId,
     localized: vocabularyById.get(conceptId)?.localized,
     meaning: conceptById.get(conceptId)?.meaning,
-  })).filter(({ localized, meaning }) => localized && meaning);
+  })).filter(({ conceptId, localized, meaning }) => {
+    if (!localized || !meaning) return false;
+    if (courseId !== 'jamaican-patois') return true;
+    return !LOW_VALUE_STANDALONE_CONCEPT_IDS.has(conceptId)
+      && normalizeAnswer(localized) !== normalizeAnswer(meaning);
+  });
+  if (pairs.length < 2) return null;
   return {
     id: step.id,
     sourceStepId: step.id,
@@ -145,8 +151,10 @@ function isLowValueStandaloneTranslation(courseId, step, row, concept, isListeni
   return courseId === 'jamaican-patois' && LOW_VALUE_STANDALONE_CONCEPT_IDS.has(step.conceptId);
 }
 
-function createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName = 'Jamaican Patois') {
-  if (step.exerciseType === 'match-pairs') return createMatchExercise(step, conceptById, vocabularyById);
+function createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName = 'Jamaican Patois', courseId = 'jamaican-patois') {
+  if (step.exerciseType === 'match-pairs') {
+    return createMatchExercise(step, conceptById, vocabularyById, courseId);
+  }
 
   const row = vocabularyById.get(step.conceptId);
   const common = {
@@ -351,7 +359,15 @@ function buildCourseTopicExercises(courseId, topicId, {
         }];
       }
     }
-    let exercise = createExercise(step, conceptById, vocabularyById, hasAudio, courseDisplayName);
+    let exercise = createExercise(
+      step,
+      conceptById,
+      vocabularyById,
+      hasAudio,
+      courseDisplayName,
+      courseId
+    );
+    if (!exercise) return [];
     if (exercise.answerTokens?.length === 1) {
       const target = step.exerciseType === 'sentence-build-target';
       exercise = createChoiceExercise(step, row, LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE,

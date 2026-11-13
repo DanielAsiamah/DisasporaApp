@@ -109,7 +109,9 @@ test('runtime curriculum adapters expose only workbook-generated content', () =>
     assert.equal(exercise.answer, source.answer);
     assert.equal(exercise.conceptId ?? null, source.conceptId);
     if (exercise.pairs) {
-      assert.deepEqual(exercise.pairs.map(pair => pair.conceptId), source.conceptRefs);
+      const pairIds = exercise.pairs.map(pair => pair.conceptId);
+      assert.ok(pairIds.length >= 2);
+      assert.deepEqual(pairIds, source.conceptRefs.filter(conceptId => pairIds.includes(conceptId)));
     }
   }
 });

@@ -98,6 +98,28 @@ test('near-English starter words stay in contextual practice instead of standalo
   assert.ok(sourceSteps.some(({ conceptId }) => conceptId === 'yes'));
 });
 
+test('Patois matching omits near-English pairs instead of padding weak cards', () => {
+  const lowValueConceptIds = new Set(['yes', 'no', 'maybe', 'okay', 'again']);
+  const matches = TOPICS.flatMap(({ id }) => buildPatoisTopicExercises(id, {
+    concepts: CONCEPTS,
+    vocabulary: JAMAICAN_PATOIS_VOCABULARY,
+    hasAudio: () => false,
+  }).filter(({ type }) => type === LESSON_EXERCISE_TYPES.MATCH_PAIRS));
+
+  assert.ok(matches.length > 0);
+  for (const exercise of matches) {
+    assert.ok(exercise.pairs.length >= 2, `${exercise.id} should not render an undersized match card`);
+    for (const pair of exercise.pairs) {
+      assert.notEqual(pair.localized.toLowerCase(), pair.meaning.toLowerCase());
+      assert.equal(lowValueConceptIds.has(pair.conceptId), false);
+    }
+  }
+  assert.equal(
+    buildPatoisTopicExercises('family-members').some(({ type }) => type === LESSON_EXERCISE_TYPES.MATCH_PAIRS),
+    false
+  );
+});
+
 test('image choice is generated only from a complete set of mapped workbook concepts', () => {
   const mappedConceptIds = new Set(['good-afternoon', 'nice-to-meet-you', 'long-time-no-see', 'how-is-your-day']);
   const withImages = buildPatoisTopicExercises('easy-greetings', {
@@ -160,8 +182,8 @@ test('exercise generation is deterministic and match pairs never duplicate conce
     vocabulary: JAMAICAN_PATOIS_VOCABULARY,
     hasAudio: () => false,
   };
-  const first = buildPatoisTopicExercises('family-members', options);
-  const second = buildPatoisTopicExercises('family-members', options);
+  const first = buildPatoisTopicExercises('easy-greetings', options);
+  const second = buildPatoisTopicExercises('easy-greetings', options);
   const matching = first.find(({ type }) => type === LESSON_EXERCISE_TYPES.MATCH_PAIRS);
 
   assert.deepEqual(first, second);
