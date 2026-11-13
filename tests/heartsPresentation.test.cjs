@@ -10,6 +10,7 @@ test('heart presentation reports a full five-heart balance without recovery copy
     countLabel: '5',
     maxHearts: 5,
     recoveryLabel: '',
+    segments: [true, true, true, true, true],
   });
 });
 
@@ -24,6 +25,7 @@ test('heart presentation clamps partial and empty balances and formats recovery 
     countLabel: '3',
     maxHearts: 5,
     recoveryLabel: 'Next heart in 1:30',
+    segments: [true, true, true, false, false],
   });
   assert.deepEqual(buildHeartsPresentation({
     hearts: -2,
@@ -35,6 +37,7 @@ test('heart presentation clamps partial and empty balances and formats recovery 
     countLabel: '0',
     maxHearts: 5,
     recoveryLabel: 'Next heart in 0:01',
+    segments: [false, false, false, false, false],
   });
 });
 
@@ -49,6 +52,7 @@ test('heart presentation uses safe defaults for invalid values', () => {
     countLabel: '0',
     maxHearts: 5,
     recoveryLabel: '',
+    segments: [false, false, false, false, false],
   });
   assert.equal(buildHeartsPresentation({ hearts: 99, maxHearts: 5 }).count, 5);
 });

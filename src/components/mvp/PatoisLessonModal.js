@@ -463,7 +463,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   );
 }
 
-export default function PatoisLessonModal({ courseId = 'jamaican-patois', heartsPresentation = { accessibilityLabel: '5 of 5 hearts remaining', countLabel: '5' }, onAdvance, onAwardCorrectAnswerXp, onClose, onCloseOutOfHearts, onComplete, onMistake, onRefillHearts, onWrongAnswer, previewCourseId = null, showOutOfHearts = false, soundEffectsEnabled = true, timeUntilNextHeartMs = 0, topic, visible }) {
+export default function PatoisLessonModal({ courseId = 'jamaican-patois', heartsPresentation = { accessibilityLabel: '5 of 5 hearts remaining', countLabel: '5', segments: [true, true, true, true, true] }, onAdvance, onAwardCorrectAnswerXp, onClose, onCloseOutOfHearts, onComplete, onMistake, onRefillHearts, onWrongAnswer, previewCourseId = null, showOutOfHearts = false, soundEffectsEnabled = true, timeUntilNextHeartMs = 0, topic, visible }) {
   const requestedCourse = getCourseById(courseId);
   const runtimeCourseId = canAccessRuntimeCourse(requestedCourse, previewCourseId)
     ? requestedCourse.id
@@ -837,6 +837,14 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
             <Text style={styles.count}>{finished ? lessonExercises.length : index + 1}/{lessonExercises.length}</Text>
             <View accessible accessibilityLabel={heartsPresentation.accessibilityLabel} style={styles.lessonHeartPill}>
               <Ionicons accessible={false} color={RED} name="heart" size={16} />
+              <View accessible={false} style={styles.lessonHealthSegments}>
+                {heartsPresentation.segments.map((filled, segmentIndex) => (
+                  <View
+                    key={`lesson-health-${segmentIndex}`}
+                    style={[styles.lessonHealthSegment, filled && styles.lessonHealthSegmentFilled]}
+                  />
+                ))}
+              </View>
               <Text style={styles.lessonHeartCount}>{heartsPresentation.countLabel}</Text>
             </View>
           </View>
@@ -1056,7 +1064,10 @@ const styles = StyleSheet.create({
   progressTrack: { backgroundColor: '#DED6C8', borderRadius: 8, flex: 1, height: 9, overflow: 'hidden' },
   progressFill: { backgroundColor: SKY, borderRadius: 8, height: 10 },
   count: { color: MUTED, fontFamily: fonts.bold, fontSize: 12 },
-  lessonHeartPill: { alignItems: 'center', backgroundColor: '#FFE2DF', borderColor: '#E9B7B2', borderRadius: 999, borderWidth: 1, flexDirection: 'row', gap: 4, paddingHorizontal: 9, paddingVertical: 6 },
+  lessonHeartPill: { alignItems: 'center', backgroundColor: '#FFE2DF', borderColor: '#E9B7B2', borderRadius: 999, borderWidth: 1, flexDirection: 'row', gap: 5, paddingHorizontal: 8, paddingVertical: 6 },
+  lessonHealthSegments: { flexDirection: 'row', gap: 2 },
+  lessonHealthSegment: { backgroundColor: '#E8BDB9', borderRadius: 3, height: 6, width: 5 },
+  lessonHealthSegmentFilled: { backgroundColor: RED },
   lessonHeartCount: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 12 },
   content: { alignSelf: 'center', width: '100%', maxWidth: 800, padding: 22, paddingBottom: 132 },
   eyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 0.7, textAlign: 'center' },

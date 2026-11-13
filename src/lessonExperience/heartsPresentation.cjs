@@ -34,6 +34,7 @@ function buildHeartsPresentation({ hearts, maxHearts, timeUntilNextHeartMs } = {
     countLabel: String(count),
     maxHearts: safeMaxHearts,
     recoveryLabel,
+    segments: Array.from({ length: safeMaxHearts }, (_, index) => index < count),
   };
 }
 

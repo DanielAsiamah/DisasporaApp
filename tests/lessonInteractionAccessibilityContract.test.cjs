@@ -55,3 +55,10 @@ test('lesson hearts are visible and only accepted wrong attempts spend one heart
   assert.match(lessonSource, /if \(audioEventGate\.claim\(['"]mismatch['"][\s\S]*?onWrongAnswer\?\.\(\);/s);
   assert.doesNotMatch(continueLessonSource, /onWrongAnswer\?\.\(\)/);
 });
+
+test('lesson header renders the persisted heart balance as a compact vitality meter', () => {
+  assert.match(lessonSource, /heartsPresentation\.segments\.map\(\(filled, segmentIndex\) =>/);
+  assert.match(lessonSource, /styles\.lessonHealthSegments/);
+  assert.match(lessonSource, /filled && styles\.lessonHealthSegmentFilled/);
+  assert.match(lessonSource, /\{heartsPresentation\.countLabel\}/);
+});
