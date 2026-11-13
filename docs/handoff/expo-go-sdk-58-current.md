@@ -10,8 +10,15 @@ Program membership.
 1. Install or update Expo Go from the iPhone App Store.
 2. Sign into the `danielasiamah` Expo account in Expo Go.
 3. From this repository, run `npm run phone:preview -- --clear --max-workers 2`.
-4. Keep the Mac terminal and Metro process running.
-5. Scan the fresh QR code. Do not reuse an earlier SDK 54 tunnel URL.
+4. Keep the Mac terminal and Metro process running while the cold iOS bundle builds.
+5. Wait for `READY TO SCAN: exposdk:58.0.0 iOS bundle warmed` in the terminal.
+6. Scan the fresh QR code shown by that same process. Do not reuse an earlier tunnel URL.
+
+The preview command warms the exact Hermes iOS launch bundle locally before it
+reports readiness. This prevents Expo Go's first request from reaching the
+tunnel's 30-second proxy timeout while Metro is still building a cold cache.
+The QR code can appear before the bundle is ready, so the terminal readiness
+message, not the QR appearance, is the signal to open it on the phone.
 
 Expo Go uses the app's email/password authentication path. Native Google and
 Apple sign-in remain development-build features and are intentionally not

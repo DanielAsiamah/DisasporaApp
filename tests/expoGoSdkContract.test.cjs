@@ -11,7 +11,10 @@ test('physical iPhone Expo Go stays on the supported SDK 58 runtime', () => {
   assert.match(packageJson.dependencies.expo, /^[~^]58\./);
   assert.equal(packageJson.dependencies.react, '19.3.0');
   assert.match(packageJson.dependencies['react-native'], /^0\.88\./);
-  assert.match(packageJson.scripts['phone:preview'], /expo start --go --tunnel/);
+  assert.equal(packageJson.scripts['phone:preview'], 'node scripts/start-phone-preview.js');
+  const previewSource = fs.readFileSync(path.join(root, 'scripts', 'start-phone-preview.js'), 'utf8');
+  assert.match(previewSource, /buildExpoStartArgs/);
+  assert.match(previewSource, /prewarmExpoIosBundle/);
 });
 
 test('SDK 58 app config contains only valid config plugins', () => {
