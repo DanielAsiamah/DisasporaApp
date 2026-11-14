@@ -105,3 +105,12 @@ test('Swahili phone preview remains opt-in until an exact verified release exist
   assert.equal(swahili.available, expectedPublished);
   assert.equal(swahili.published, expectedPublished);
 });
+
+test('the local emulator preview exposes implemented draft courses for cross-language testing', () => {
+  const pkg = JSON.parse(read('package.json'));
+
+  assert.match(
+    pkg.scripts['web:emulators'],
+    /^EXPO_PUBLIC_ENABLE_UNRELEASED_COURSE_PREVIEW=true /,
+  );
+});
