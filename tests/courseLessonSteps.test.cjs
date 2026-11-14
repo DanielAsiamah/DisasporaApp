@@ -51,6 +51,37 @@ test('all nine Swahili topics are deterministic and contain exercises', () => {
   }
 });
 
+test('silent course lessons do not repeat the same translation card when listening audio is unavailable', () => {
+  const courseIds = [
+    'jamaican-patois',
+    'swahili',
+    'wolof',
+    'haitian-creole',
+    'sudanese-arabic',
+    'igbo',
+  ];
+
+  for (const courseId of courseIds) {
+    const curriculum = require('../src/data/runtimeCurriculum.cjs').getRuntimeCurriculum(courseId);
+    const topics = curriculum.topics.filter(topic => topic.courseId === courseId);
+
+    for (const topic of topics) {
+      const exercises = buildCourseTopicExercises(courseId, topic.id, {
+        hasAudio: () => false,
+      });
+      const translationConceptIds = exercises
+        .filter(({ type }) => type === LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE)
+        .map(({ conceptId }) => conceptId);
+
+      assert.equal(
+        new Set(translationConceptIds).size,
+        translationConceptIds.length,
+        `${courseId}/${topic.id} repeats a silent translation card`,
+      );
+    }
+  }
+});
+
 test('Swahili lesson-step materialization is deterministic and workbook-ready', () => {
   const first = materializeCourseLessonSteps('swahili', { vocabulary: swahiliVocabulary });
   const second = materializeCourseLessonSteps('swahili', { vocabulary: swahiliVocabulary });

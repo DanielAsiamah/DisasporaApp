@@ -380,7 +380,15 @@ function buildCourseTopicExercises(courseId, topicId, {
     }];
   });
 
-  if (imageChoiceAdded || topicImageConceptIds.length < 4) return exercises;
+  const seenTranslationConceptIds = new Set();
+  const distinctExercises = exercises.filter((exercise) => {
+    if (exercise.type !== LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE) return true;
+    if (!exercise.conceptId || seenTranslationConceptIds.has(exercise.conceptId)) return false;
+    seenTranslationConceptIds.add(exercise.conceptId);
+    return true;
+  });
+
+  if (imageChoiceAdded || topicImageConceptIds.length < 4) return distinctExercises;
 
   const visualConceptId = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
     .find((conceptId) => {
@@ -390,7 +398,7 @@ function buildCourseTopicExercises(courseId, topicId, {
       if (normalizeAnswer(row.localized) === normalizeAnswer(concept.meaning)) return false;
       return courseId !== 'jamaican-patois' || !LOW_VALUE_STANDALONE_CONCEPT_IDS.has(conceptId);
     });
-  if (!visualConceptId) return exercises;
+  if (!visualConceptId) return distinctExercises;
 
   const sourceStep = steps.find(step => (
     step.conceptId === visualConceptId || step.conceptRefs?.includes(visualConceptId)
@@ -414,8 +422,8 @@ function buildCourseTopicExercises(courseId, topicId, {
   );
 
   return imageExercise
-    ? [...exercises, { ...imageExercise, ...buildStudyHint(visualStep, row, concept) }]
-    : exercises;
+    ? [...distinctExercises, { ...imageExercise, ...buildStudyHint(visualStep, row, concept) }]
+    : distinctExercises;
 }
 
 function buildPatoisTopicExercises(topicId, options = {}) {
