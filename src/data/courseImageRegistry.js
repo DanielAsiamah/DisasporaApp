@@ -4,6 +4,7 @@ import { WOLOF_IMAGE_REGISTRY } from './wolofImageRegistry';
 import { HAITIAN_CREOLE_IMAGE_REGISTRY } from './haitianCreoleImageRegistry';
 import { SUDANESE_ARABIC_IMAGE_REGISTRY } from './sudaneseArabicImageRegistry';
 import { NOBIIN_IMAGE_REGISTRY } from './nobiinImageRegistry';
+import { IGBO_IMAGE_REGISTRY } from './igboImageRegistry';
 
 const COURSE_IMAGE_REGISTRIES = Object.freeze({
   'jamaican-patois': JAMAICAN_PATOIS_IMAGE_REGISTRY,
@@ -12,6 +13,7 @@ const COURSE_IMAGE_REGISTRIES = Object.freeze({
   'haitian-creole': HAITIAN_CREOLE_IMAGE_REGISTRY,
   'sudanese-arabic': SUDANESE_ARABIC_IMAGE_REGISTRY,
   nobiin: NOBIIN_IMAGE_REGISTRY,
+  igbo: IGBO_IMAGE_REGISTRY,
 });
 
 export function getCourseImageRegistry(courseId) {

@@ -82,6 +82,25 @@ test('silent course lessons do not repeat the same translation card when listeni
   }
 });
 
+test('a short Igbo lesson uses only same-course mapped artwork for its visual question', () => {
+  const mappedConceptIds = new Set([
+    'igbo_u01_01_hello',
+    'igbo_u01_02_good_morning',
+    'igbo_u01_03_good_afternoon',
+    'igbo_u01_04_good_evening',
+  ]);
+  const exercises = buildCourseTopicExercises('igbo', 'igbo_u01_l01', {
+    hasAudio: () => false,
+    hasImage: conceptId => mappedConceptIds.has(conceptId),
+  });
+  const visual = exercises.find(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+
+  assert.ok(visual, 'the first Igbo lesson should contain a visual question');
+  assert.equal(visual.imageChoices.length, 4);
+  assert.ok(visual.imageChoices.every(({ conceptId }) => mappedConceptIds.has(conceptId)));
+  assert.equal(new Set(visual.imageChoices.map(({ conceptId }) => conceptId)).size, 4);
+});
+
 test('Swahili lesson-step materialization is deterministic and workbook-ready', () => {
   const first = materializeCourseLessonSteps('swahili', { vocabulary: swahiliVocabulary });
   const second = materializeCourseLessonSteps('swahili', { vocabulary: swahiliVocabulary });

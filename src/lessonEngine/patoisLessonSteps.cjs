@@ -332,6 +332,9 @@ function buildCourseTopicExercises(courseId, topicId, {
 
   const topicImageConceptIds = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
     .filter(conceptId => conceptId && hasImage(conceptId));
+  const courseImageConceptIds = unique(vocabulary.map(({ conceptId }) => conceptId))
+    .filter(conceptId => conceptId && hasImage(conceptId));
+  const availableImageConceptIds = unique([...topicImageConceptIds, ...courseImageConceptIds]);
   let imageChoiceAdded = false;
 
   const exercises = steps.flatMap(step => {
@@ -349,8 +352,8 @@ function buildCourseTopicExercises(courseId, topicId, {
       && row
       && concept
       && hasImage(step.conceptId)
-      && topicImageConceptIds.length >= 4) {
-      const imageExercise = createImageChoiceExercise(step, row, concept, topicImageConceptIds, conceptById);
+      && availableImageConceptIds.length >= 4) {
+      const imageExercise = createImageChoiceExercise(step, row, concept, availableImageConceptIds, conceptById);
       if (imageExercise) {
         imageChoiceAdded = true;
         return [{
@@ -388,7 +391,7 @@ function buildCourseTopicExercises(courseId, topicId, {
     return true;
   });
 
-  if (imageChoiceAdded || topicImageConceptIds.length < 4) return distinctExercises;
+  if (imageChoiceAdded || availableImageConceptIds.length < 4) return distinctExercises;
 
   const visualConceptId = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
     .find((conceptId) => {
@@ -417,7 +420,7 @@ function buildCourseTopicExercises(courseId, topicId, {
     visualStep,
     row,
     concept,
-    topicImageConceptIds,
+    availableImageConceptIds,
     conceptById
   );
 

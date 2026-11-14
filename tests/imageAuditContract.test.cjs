@@ -149,6 +149,30 @@ test('allows canonical future-course references while rejecting legacy category 
   assert.equal(isCanonicalVocabularyPath('assets/images/vocab/swahili/unknown.png', courseIds, conceptIds), false);
 });
 
+test('canonical image paths may use course-specific master-preview concept IDs', () => {
+  const conceptIdsByCourse = new Map([
+    ['jamaican-patois', new Set(['yes'])],
+    ['igbo', new Set(['igbo_u01_01_hello'])],
+  ]);
+
+  assert.equal(
+    isCanonicalVocabularyPath(
+      'assets/images/vocab/igbo/igbo_u01_01_hello.png',
+      ['jamaican-patois', 'igbo'],
+      conceptIdsByCourse,
+    ),
+    true,
+  );
+  assert.equal(
+    isCanonicalVocabularyPath(
+      'assets/images/vocab/igbo/yes.png',
+      ['jamaican-patois', 'igbo'],
+      conceptIdsByCourse,
+    ),
+    false,
+  );
+});
+
 test('enumerates missing, extra, and wrongly named concept PNGs', () => {
   const failures = compareConceptImageFiles(['yes', 'no'], ['yes.png', 'legacy.png'], 'assets/images/vocab/jamaican-patois');
   const codes = failures.map((failure) => failure.code);

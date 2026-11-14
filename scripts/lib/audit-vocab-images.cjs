@@ -407,8 +407,14 @@ function auditVocabularyRows(projectRoot, expectedIds, expectedPaths) {
 }
 
 function isCanonicalVocabularyPath(imagePath, courseIds, conceptIds) {
-  const match = String(imagePath || '').match(/^assets\/images\/vocab\/([a-z0-9-]+)\/([a-z0-9-]+)\.png$/);
-  return Boolean(match && courseIds.includes(match[1]) && conceptIds.includes(match[2]));
+  const match = String(imagePath || '').match(/^assets\/images\/vocab\/([a-z0-9-]+)\/([a-z0-9_-]+)\.png$/);
+  if (!match || !courseIds.includes(match[1])) return false;
+  const allowedConceptIds = conceptIds instanceof Map ? conceptIds.get(match[1]) : conceptIds;
+  return Boolean(allowedConceptIds && (
+    allowedConceptIds instanceof Set
+      ? allowedConceptIds.has(match[2])
+      : allowedConceptIds.includes(match[2])
+  ));
 }
 
 function auditLegacyFilesAndReferences(projectRoot, courseIds, conceptIds) {
@@ -495,6 +501,15 @@ function auditProjectImages(projectRoot) {
   const { CONCEPTS, COURSE_CATALOG } = require(contractPath);
   const expectedIds = CONCEPTS.map((concept) => concept.id);
   const courseIds = COURSE_CATALOG.map((course) => course.id);
+  const { GENERATED_CURRICULUM } = require(path.join(absoluteRoot, 'src', 'data', 'generatedCurriculum.cjs'));
+  const { GENERATED_MASTER_PREVIEW } = require(path.join(absoluteRoot, 'src', 'data', 'generatedMasterPreview.cjs'));
+  const conceptIdsByCourse = new Map(courseIds.map(courseId => [courseId, new Set()]));
+  for (const row of [
+    ...GENERATED_CURRICULUM.courseVocabulary,
+    ...GENERATED_MASTER_PREVIEW.courseVocabulary,
+  ]) {
+    if (conceptIdsByCourse.has(row.courseId)) conceptIdsByCourse.get(row.courseId).add(row.conceptId);
+  }
   const expectedPaths = new Map(expectedIds.map((id) => [id, `assets/images/vocab/${COURSE_ID}/${id}.png`]));
   const courseDirectory = path.join(absoluteRoot, 'assets', 'images', 'vocab', COURSE_ID);
   const actualFiles = fs.existsSync(courseDirectory)
@@ -520,7 +535,7 @@ function auditProjectImages(projectRoot) {
   failures.push(...auditVocabularyRows(absoluteRoot, expectedIds, expectedPaths));
   failures.push(...auditRegistry(absoluteRoot, expectedIds, expectedPaths));
   failures.push(...auditChapterHero(absoluteRoot));
-  failures.push(...auditLegacyFilesAndReferences(absoluteRoot, courseIds, expectedIds));
+  failures.push(...auditLegacyFilesAndReferences(absoluteRoot, courseIds, conceptIdsByCourse));
 
   return {
     ok: failures.length === 0,
