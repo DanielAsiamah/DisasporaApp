@@ -17,6 +17,14 @@ test('Igbo starter artwork has a static course-owned Metro registry without cros
     'igbo_u01_02_good_morning.png',
     'igbo_u01_03_good_afternoon.png',
     'igbo_u01_04_good_evening.png',
+    'igbo_u01_05_good_night.png',
+    'igbo_u01_06_goodbye.png',
+    'igbo_u01_07_see_you_later.png',
+    'igbo_u01_08_welcome.png',
+    'igbo_u01_09_how_are_you.png',
+    'igbo_u01_10_i_am_fine.png',
+    'igbo_u01_11_whats_up.png',
+    'igbo_u01_12_nice_to_meet_you.png',
   ];
 
   assert.deepEqual(requires.map(match => match[1]).sort(), expected);
@@ -31,7 +39,7 @@ test('Igbo starter artwork has a static course-owned Metro registry without cros
     assert.equal(image[25], 6, `${expected[index]} must retain an alpha channel`);
     assert.ok(image.length <= 800 * 1024, `${expected[index]} exceeds the mobile asset budget`);
   }
-  assert.equal(new Set(images.map(image => createHash('sha256').update(image).digest('hex'))).size, 4);
+  assert.equal(new Set(images.map(image => createHash('sha256').update(image).digest('hex'))).size, 12);
 });
 
 test('the shared course registry resolves the dedicated Igbo visual set', () => {

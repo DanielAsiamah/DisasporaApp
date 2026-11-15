@@ -88,10 +88,15 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       }));
     }
     async function selectCourse(id) {
-      await page.getByRole('button', { name: /^Change language, current course / }).click({ timeout: 60000 });
       const label = getCourseById(id).label;
+      const activeCourse = page.getByRole('button', {
+        name: `Change language, current course ${label}`,
+        exact: true,
+      });
+      if (await activeCourse.isVisible().catch(() => false)) return;
+      await page.getByRole('button', { name: /^Change language, current course / }).click({ timeout: 60000 });
       await page.getByRole('button', { name: `${label}, Draft lessons`, exact: true }).click();
-      await page.getByRole('button', { name: `Change language, current course ${label}`, exact: true }).waitFor();
+      await activeCourse.waitFor();
     }
     await page.addInitScript(() => {
       window.__lessonAudioPlays = [];

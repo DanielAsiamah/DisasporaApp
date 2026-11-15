@@ -82,23 +82,33 @@ test('silent course lessons do not repeat the same translation card when listeni
   }
 });
 
-test('a short Igbo lesson uses only same-course mapped artwork for its visual question', () => {
+test('every available Igbo lesson uses only same-course mapped artwork for one visual question', () => {
   const mappedConceptIds = new Set([
     'igbo_u01_01_hello',
     'igbo_u01_02_good_morning',
     'igbo_u01_03_good_afternoon',
     'igbo_u01_04_good_evening',
+    'igbo_u01_05_good_night',
+    'igbo_u01_06_goodbye',
+    'igbo_u01_07_see_you_later',
+    'igbo_u01_08_welcome',
+    'igbo_u01_09_how_are_you',
+    'igbo_u01_10_i_am_fine',
+    'igbo_u01_11_whats_up',
+    'igbo_u01_12_nice_to_meet_you',
   ]);
-  const exercises = buildCourseTopicExercises('igbo', 'igbo_u01_l01', {
-    hasAudio: () => false,
-    hasImage: conceptId => mappedConceptIds.has(conceptId),
-  });
-  const visual = exercises.find(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+  for (const topicId of ['igbo_u01_l01', 'igbo_u01_l02', 'igbo_u01_l03', 'igbo_u01_l04']) {
+    const exercises = buildCourseTopicExercises('igbo', topicId, {
+      hasAudio: () => false,
+      hasImage: conceptId => mappedConceptIds.has(conceptId),
+    });
+    const visuals = exercises.filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
 
-  assert.ok(visual, 'the first Igbo lesson should contain a visual question');
-  assert.equal(visual.imageChoices.length, 4);
-  assert.ok(visual.imageChoices.every(({ conceptId }) => mappedConceptIds.has(conceptId)));
-  assert.equal(new Set(visual.imageChoices.map(({ conceptId }) => conceptId)).size, 4);
+    assert.equal(visuals.length, 1, `${topicId} should contain one visual question`);
+    assert.equal(visuals[0].imageChoices.length, 4);
+    assert.ok(visuals[0].imageChoices.every(({ conceptId }) => mappedConceptIds.has(conceptId)));
+    assert.equal(new Set(visuals[0].imageChoices.map(({ conceptId }) => conceptId)).size, 4);
+  }
 });
 
 test('Swahili lesson-step materialization is deterministic and workbook-ready', () => {
