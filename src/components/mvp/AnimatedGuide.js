@@ -67,6 +67,7 @@ export default function AnimatedGuide({ name = 'Kai', tone = 'idle', reducedMoti
         pointerEvents="none"
         resizeMode="contain"
         source={guideArt[name] || guideArt.Kai}
+        testID={testID ? `${testID}-image` : undefined}
         style={[
           StyleSheet.absoluteFillObject,
           styles.image,

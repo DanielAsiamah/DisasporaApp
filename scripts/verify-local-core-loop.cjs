@@ -76,7 +76,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       return guide.getAttribute('aria-label');
     }
     async function sampleGuideMotion() {
-      return page.getByTestId('lesson-prompt-guide').evaluate(node => new Promise(resolve => {
+      return page.getByTestId('lesson-prompt-guide-image').evaluate(node => new Promise(resolve => {
         const transforms = new Set();
         const start = performance.now();
         function frame() {
@@ -257,10 +257,20 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await checkGuideImage('lesson-prompt-guide');
       if ((await sampleGuideMotion()).length !== 1) throw new Error('Reduced motion must keep the guide still.');
       await page.emulateMedia({ reducedMotion: 'no-preference' });
-      if ((await sampleGuideMotion()).length < 2) throw new Error('The guide must animate when motion is enabled.');
+      const activeMotionSamples = await sampleGuideMotion();
+      if (activeMotionSamples.length < 2) {
+        const motionState = await page.getByTestId('lesson-prompt-guide-image').evaluate(node => {
+          return {
+            mediaMatches: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+            computedTransform: getComputedStyle(node).transform,
+            inlineStyle: node.getAttribute('style'),
+          };
+        });
+        throw new Error(`The guide must animate when motion is enabled: ${JSON.stringify({ activeMotionSamples, motionState })}`);
+      }
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.waitForFunction(() => {
-        const node = document.querySelector('[data-testid="lesson-prompt-guide"]');
+        const node = document.querySelector('[data-testid="lesson-prompt-guide-image"]');
         const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform);
         return matrix.isIdentity;
       });
@@ -448,7 +458,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         hasAudio: () => false,
         hasImage: hasCourseImage,
       }).length;
-      return Array.from({ length: exerciseCount }, (_, index) => `${getPromptGuideName(topic.guide, index)} guide`);
+      return Array.from({ length: exerciseCount }, (_, index) => `${getPromptGuideName(topic.guide, index, courseId)} guide`);
     }));
     for (const expectedGuide of expectedGuides) {
       if (!seenGuides.has(expectedGuide)) throw new Error(`Expected lesson guide was not shown: ${expectedGuide}`);

@@ -1,10 +1,19 @@
 'use strict';
 
 const GUIDE_NAMES = Object.freeze(['Kai', 'Nia', 'Kofi', 'Amara', 'Sol', 'Ayo', 'Safiya', 'Nneka', 'Chidi']);
+const COURSE_GUIDE_CASTS = Object.freeze({
+  'jamaican-patois': Object.freeze(['Kai', 'Amara', 'Sol']),
+  swahili: Object.freeze(['Amara', 'Ayo', 'Nia']),
+  wolof: Object.freeze(['Kofi', 'Nia', 'Amara']),
+  'haitian-creole': Object.freeze(['Kai', 'Sol', 'Nia']),
+  'sudanese-arabic': Object.freeze(['Safiya', 'Ayo', 'Kofi']),
+  igbo: Object.freeze(['Nneka', 'Chidi', 'Ayo']),
+});
 
-function getPromptGuideName(topicGuide, index = 0) {
-  const lead = GUIDE_NAMES.includes(topicGuide) ? topicGuide : 'Kai';
-  const cast = [lead, ...GUIDE_NAMES.filter(name => name !== lead)];
+function getPromptGuideName(topicGuide, index = 0, courseId = '') {
+  const courseCast = COURSE_GUIDE_CASTS[courseId] || GUIDE_NAMES;
+  const lead = courseCast.includes(topicGuide) ? topicGuide : courseCast[0];
+  const cast = [lead, ...courseCast.filter(name => name !== lead)];
   const position = Number.isSafeInteger(index) && index >= 0 ? index : 0;
   return cast[position % cast.length];
 }
@@ -68,4 +77,4 @@ function getGuideDecorSpec(tone = 'idle') {
   return DECOR[tone] || DECOR.idle;
 }
 
-module.exports = { GUIDE_NAMES, getGuideDecorSpec, getPromptGuideName, getGuideMotionSpec };
+module.exports = { COURSE_GUIDE_CASTS, GUIDE_NAMES, getGuideDecorSpec, getPromptGuideName, getGuideMotionSpec };

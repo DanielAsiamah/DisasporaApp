@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AccessibilityInfo } from 'react-native';
+import { AccessibilityInfo, Platform } from 'react-native';
 
 export function useReducedMotion(initialValue = false) {
   const [reducedMotion, setReducedMotion] = useState(initialValue);
@@ -11,6 +11,18 @@ export function useReducedMotion(initialValue = false) {
       preferenceChanged = true;
       if (mounted) setReducedMotion(enabled);
     };
+
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const handleMediaChange = (event) => handlePreferenceChange(event.matches);
+      handlePreferenceChange(mediaQuery.matches);
+      mediaQuery.addEventListener('change', handleMediaChange);
+      return () => {
+        mounted = false;
+        mediaQuery.removeEventListener('change', handleMediaChange);
+      };
+    }
+
     const subscription = AccessibilityInfo.addEventListener(
       'reduceMotionChanged',
       handlePreferenceChange

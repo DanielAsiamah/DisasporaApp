@@ -45,10 +45,10 @@ test('rejected matches get red cards, non-color feedback and the incorrect sound
   assert.match(modal, /audio.dispatch\(\{ event: 'answer-accepted', correct: false \}\)/);
 });
 
-test('the expanded original human cast is used beside lesson prompts', () => {
+test('the course-specific original human cast is used beside lesson prompts', () => {
   const modal = read('src/components/mvp/PatoisLessonModal.js');
   const registry = read('src/data/guideArtRegistry.js');
-  assert.match(modal, /getPromptGuideName\(topic\?\.guide, index\)/);
+  assert.match(modal, /getPromptGuideName\(topic\?\.guide, index, runtimeCourseId\)/);
   assert.match(read('src/components/mvp/AnimatedGuide.js'), /guideArt\[name\]/);
   assert.match(modal, /styles.promptGuide/);
   for (const name of ['kai', 'amara', 'sol', 'nia', 'kofi', 'ayo', 'safiya', 'nneka', 'chidi']) {

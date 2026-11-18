@@ -9,6 +9,10 @@ test('motion preference follows the operating-system accessibility setting', () 
   const source = fs.readFileSync(path.join(root, 'src/hooks/useReducedMotion.js'), 'utf8');
   assert.match(source, /useReducedMotion\(initialValue = false\)/);
   assert.match(source, /useState\(initialValue\)/);
+  assert.match(source, /Platform\.OS === ['"]web['"]/);
+  assert.match(source, /window\.matchMedia\(['"]\(prefers-reduced-motion: reduce\)['"]\)/);
+  assert.match(source, /mediaQuery\.addEventListener\(['"]change['"]/);
+  assert.match(source, /mediaQuery\.removeEventListener\(['"]change['"]/);
   assert.match(source, /AccessibilityInfo\.isReduceMotionEnabled\(\)/);
   assert.match(source, /reduceMotionChanged/);
   assert.match(source, /preferenceChanged = true/);
@@ -84,6 +88,15 @@ test('guide motion includes horizontal reaction frames and a static reduced-moti
   assert.match(model, /recover:/);
   assert.match(model, /prompt:/);
   assert.match(model, /translateX:/);
+});
+
+test('browser motion verification samples the explicitly identified animated guide layer', () => {
+  const guide = fs.readFileSync(path.join(root, 'src/components/mvp/AnimatedGuide.js'), 'utf8');
+  const verifier = fs.readFileSync(path.join(root, 'scripts/verify-local-core-loop.cjs'), 'utf8');
+
+  assert.match(guide, /testID=\{testID \? `\$\{testID\}-image` : undefined\}/);
+  assert.match(verifier, /getByTestId\(['"]lesson-prompt-guide-image['"]\)/);
+  assert.match(verifier, /new DOMMatrixReadOnly\(getComputedStyle\(node\)\.transform\)/);
 });
 
 test('correct lesson feedback uses an explicit celebration treatment instead of plain text only', () => {

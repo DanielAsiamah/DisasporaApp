@@ -22,6 +22,33 @@ test('lesson cast starts with its workbook guide then visits each original guide
   assert.equal(getPromptGuideName('Kai', -1), 'Kai');
 });
 
+test('each runnable course rotates only through its own original guide cast', () => {
+  const cases = [
+    ['jamaican-patois', 'Kai', ['Kai', 'Amara', 'Sol']],
+    ['swahili', 'Kai', ['Amara', 'Ayo', 'Nia']],
+    ['wolof', 'Kai', ['Kofi', 'Nia', 'Amara']],
+    ['haitian-creole', 'Kai', ['Kai', 'Sol', 'Nia']],
+    ['sudanese-arabic', 'Kai', ['Safiya', 'Ayo', 'Kofi']],
+    ['igbo', 'Nneka', ['Nneka', 'Chidi', 'Ayo']],
+  ];
+
+  for (const [courseId, workbookGuide, expectedCast] of cases) {
+    const actual = Array.from(
+      { length: expectedCast.length * 2 },
+      (_, index) => getPromptGuideName(workbookGuide, index, courseId)
+    );
+    assert.deepEqual(actual, [...expectedCast, ...expectedCast], courseId);
+  }
+});
+
+test('a workbook guide leads its course cast only when it belongs to that course', () => {
+  assert.deepEqual(
+    Array.from({ length: 3 }, (_, index) => getPromptGuideName('Nia', index, 'wolof')),
+    ['Nia', 'Kofi', 'Amara']
+  );
+  assert.equal(getPromptGuideName('Sol', 0, 'wolof'), 'Kofi');
+});
+
 test('guide reactions are finite, settle at rest, and are distinct from idle breathing', () => {
   const idle = getGuideMotionSpec('idle', false);
   assert.equal(idle.loop, true);

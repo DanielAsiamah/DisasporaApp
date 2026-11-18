@@ -521,7 +521,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
   const xpRequestGeneration = useRef(0);
   const exercise = lessonExercises[index];
   const isMistakePractice = index >= exercises.length && reviewStarted;
-  const promptGuide = getPromptGuideName(topic?.guide, index);
+  const promptGuide = getPromptGuideName(topic?.guide, index, runtimeCourseId);
   const nextTopic = useMemo(() => {
     if (topic?.isAdaptiveReview && topic?.nextTopicId) {
       return courseTopics.find((candidate) => candidate.id === topic.nextTopicId) || null;
