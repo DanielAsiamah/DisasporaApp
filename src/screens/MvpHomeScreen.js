@@ -19,6 +19,7 @@ import PatoisLessonModal from '../components/mvp/PatoisLessonModal';
 import LearnerAccountPanel from '../components/mvp/LearnerAccountPanel';
 import { useSoundPreference } from '../audio/useSoundPreference';
 import CourseRoadmap from '../components/mvp/CourseRoadmap';
+import PracticeHub from '../components/mvp/PracticeHub';
 import ProgressDashboard from '../components/mvp/ProgressDashboard';
 import { getCoursePresentation } from '../data/coursePresentationRegistry';
 import { getCourseImageRegistry } from '../data/courseImageRegistry';
@@ -42,6 +43,7 @@ const {
 const { buildTopicStates, mergeCompletedTopicIds } = require('../lessonEngine/topicProgress.cjs');
 const { buildCoreLoopViewModel } = require('../lessonExperience/coreLoopPresentation.cjs');
 const { buildProgressDashboardViewModel } = require('../lessonExperience/progressDashboardPresentation.cjs');
+const { buildPracticeHubViewModel, getPracticeStartDestination } = require('../lessonExperience/practiceHubPresentation.cjs');
 const { buildHeartsPresentation } = require('../lessonExperience/heartsPresentation.cjs');
 const { buildCourseTopicExercises } = require('../lessonEngine/patoisLessonSteps.cjs');
 const {
@@ -458,10 +460,28 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
     runtimeCourse?.displayName,
     topics,
   ]);
-  const practiceTopic = adaptiveReviewTopic
-    || [...topicStates].reverse().find((topic) => topic.state === 'complete')
-    || topicStates[0]
-    || null;
+  const replayTopic = [...topicStates].reverse().find((topic) => topic.state === 'complete') || null;
+  const practiceTopic = adaptiveReviewTopic || replayTopic;
+  const practicePresentation = useMemo(() => buildPracticeHubViewModel({
+    dueCount: adaptiveReviewTopic?.dueCount,
+    hasCompletedTopic: Boolean(replayTopic),
+    practiceTopicTitle: adaptiveReviewTopic?.title || replayTopic?.title,
+    ready: progressReady,
+  }), [adaptiveReviewTopic?.dueCount, adaptiveReviewTopic?.title, progressReady, replayTopic]);
+
+  const startPractice = useCallback(() => {
+    const destination = getPracticeStartDestination({
+      canStart: practicePresentation.canStart,
+      hasPracticeTopic: Boolean(practiceTopic),
+      mode: practicePresentation.mode,
+    });
+    if (destination === 'none') return;
+    if (destination === 'learn') {
+      setActiveTab('learn');
+      return;
+    }
+    setActiveTopic(practiceTopic);
+  }, [practicePresentation.canStart, practicePresentation.mode, practiceTopic]);
 
   useEffect(() => {
     setActiveTopic(null);
@@ -700,15 +720,25 @@ function MvpHomeCourseShell({ previewCourseId, storageCourseId, storageKey, onSi
             </View>
             <CourseRoadmap courseId={storageCourseId} topics={topicStates} progressReady={progressReady} onOpenTopic={setActiveTopic} />
           </ScrollView>
+        ) : activeTab === 'practice' ? (
+          <PracticeHub
+            courseName={runtimeCourse?.displayName}
+            guideName={featuredGuide}
+            onStart={startPractice}
+            presentation={practicePresentation}
+            reducedMotion={reducedMotion}
+          />
         ) : activeTab === 'progress' ? (
           <ProgressDashboard
             guideName={featuredGuide}
             onContinue={() => setActiveTab('learn')}
-            onPractice={() => progressReady && practiceTopic && setActiveTopic(practiceTopic)}
+            onPractice={() => setActiveTab('practice')}
             presentation={progressDashboard}
             reducedMotion={reducedMotion}
           />
-        ) : <Leaderboard profile={profile} reducedMotion={reducedMotion} />}
+        ) : activeTab === 'leaderboard' ? (
+          <Leaderboard profile={profile} reducedMotion={reducedMotion} />
+        ) : null}
       </View>
       <View style={styles.tabBar}>
         {MVP_TABS.map(({ activeIcon, icon, id, label }, index) => (
