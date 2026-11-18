@@ -12,6 +12,7 @@ const LESSON_EXERCISE_TYPES = Object.freeze({
 });
 
 const LOW_VALUE_STANDALONE_CONCEPT_IDS = new Set(['yes', 'no', 'maybe', 'okay', 'again']);
+const MAX_IMAGE_CHOICES_PER_TOPIC = 2;
 
 const DEFAULT_CONCEPTS = GENERATED_CURRICULUM.concepts;
 const DEFAULT_VOCABULARY = GENERATED_CURRICULUM.courseVocabulary.filter(({ courseId }) => courseId === 'jamaican-patois');
@@ -330,12 +331,14 @@ function buildCourseTopicExercises(courseId, topicId, {
     })));
   }
 
+  if (steps.length === 0) return [];
+
   const topicImageConceptIds = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
     .filter(conceptId => conceptId && hasImage(conceptId));
   const courseImageConceptIds = unique(vocabulary.map(({ conceptId }) => conceptId))
     .filter(conceptId => conceptId && hasImage(conceptId));
   const availableImageConceptIds = unique([...topicImageConceptIds, ...courseImageConceptIds]);
-  let imageChoiceAdded = false;
+  const imageChoiceConceptIds = new Set();
 
   const exercises = steps.flatMap(step => {
     const row = vocabularyById.get(step.conceptId);
@@ -347,15 +350,17 @@ function buildCourseTopicExercises(courseId, topicId, {
       'listen-choice',
     ].includes(step.exerciseType) || tokenizeAnswer(step.answer).length === 1;
     if (becomesStandaloneChoice && isLowValueStandaloneTranslation(courseId, step, row, concept, isListening)) return [];
-    if (!imageChoiceAdded
-      && step.exerciseType === 'translate-to-meaning'
+    if (imageChoiceConceptIds.size < MAX_IMAGE_CHOICES_PER_TOPIC
+      && ['translate-to-meaning', 'translate-to-target'].includes(step.exerciseType)
       && row
       && concept
+      && !imageChoiceConceptIds.has(step.conceptId)
+      && !isLowValueStandaloneTranslation(courseId, step, row, concept, false)
       && hasImage(step.conceptId)
       && availableImageConceptIds.length >= 4) {
       const imageExercise = createImageChoiceExercise(step, row, concept, availableImageConceptIds, conceptById);
       if (imageExercise) {
-        imageChoiceAdded = true;
+        imageChoiceConceptIds.add(step.conceptId);
         return [{
           ...imageExercise,
           ...buildStudyHint(step, row, concept),
@@ -391,42 +396,54 @@ function buildCourseTopicExercises(courseId, topicId, {
     return true;
   });
 
-  if (imageChoiceAdded || availableImageConceptIds.length < 4) return distinctExercises;
+  if (imageChoiceConceptIds.size >= MAX_IMAGE_CHOICES_PER_TOPIC || availableImageConceptIds.length < 4) {
+    return distinctExercises;
+  }
 
-  const visualConceptId = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
-    .find((conceptId) => {
+  const visualConceptIds = unique([
+    ...steps.flatMap(step => step.conceptRefs || [step.conceptId]),
+    ...courseImageConceptIds,
+  ])
+    .filter((conceptId) => {
       const row = vocabularyById.get(conceptId);
       const concept = conceptById.get(conceptId);
       if (!conceptId || !row || !concept || !hasImage(conceptId)) return false;
-      if (normalizeAnswer(row.localized) === normalizeAnswer(concept.meaning)) return false;
-      return courseId !== 'jamaican-patois' || !LOW_VALUE_STANDALONE_CONCEPT_IDS.has(conceptId);
+      if (imageChoiceConceptIds.has(conceptId)) return false;
+      return !isLowValueStandaloneTranslation(courseId, { conceptId }, row, concept, false);
     });
-  if (!visualConceptId) return distinctExercises;
+  const fallbackImageExercises = [];
+  for (const visualConceptId of visualConceptIds) {
+    if (imageChoiceConceptIds.size >= MAX_IMAGE_CHOICES_PER_TOPIC) break;
+    const sourceStep = steps.find(step => (
+      step.conceptId === visualConceptId || step.conceptRefs?.includes(visualConceptId)
+    ));
+    const sourceStepId = sourceStep?.sourceStepId || sourceStep?.id || `${courseId}-${topicId}-course-visual`;
+    const visualStep = {
+      ...sourceStep,
+      id: `${sourceStepId}-${visualConceptId}-visual`,
+      sourceStepId,
+      conceptId: visualConceptId,
+      exerciseType: 'translate-to-meaning',
+      primary: false,
+    };
+    const row = vocabularyById.get(visualConceptId);
+    const concept = conceptById.get(visualConceptId);
+    const imageExercise = createImageChoiceExercise(
+      visualStep,
+      row,
+      concept,
+      availableImageConceptIds,
+      conceptById
+    );
+    if (!imageExercise) continue;
+    imageChoiceConceptIds.add(visualConceptId);
+    fallbackImageExercises.push({
+      ...imageExercise,
+      ...buildStudyHint(visualStep, row, concept),
+    });
+  }
 
-  const sourceStep = steps.find(step => (
-    step.conceptId === visualConceptId || step.conceptRefs?.includes(visualConceptId)
-  ));
-  const visualStep = {
-    ...sourceStep,
-    id: `${sourceStep.id}-${visualConceptId}-visual`,
-    sourceStepId: sourceStep.sourceStepId || sourceStep.id,
-    conceptId: visualConceptId,
-    exerciseType: 'translate-to-meaning',
-    primary: false,
-  };
-  const row = vocabularyById.get(visualConceptId);
-  const concept = conceptById.get(visualConceptId);
-  const imageExercise = createImageChoiceExercise(
-    visualStep,
-    row,
-    concept,
-    availableImageConceptIds,
-    conceptById
-  );
-
-  return imageExercise
-    ? [...distinctExercises, { ...imageExercise, ...buildStudyHint(visualStep, row, concept) }]
-    : distinctExercises;
+  return [...distinctExercises, ...fallbackImageExercises];
 }
 
 function buildPatoisTopicExercises(topicId, options = {}) {

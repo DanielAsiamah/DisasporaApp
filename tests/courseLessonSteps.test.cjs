@@ -82,7 +82,7 @@ test('silent course lessons do not repeat the same translation card when listeni
   }
 });
 
-test('every available Igbo lesson uses only same-course mapped artwork for one visual question', () => {
+test('every available Igbo lesson uses only same-course mapped artwork for two visual questions', () => {
   const mappedConceptIds = new Set([
     'igbo_u01_01_hello',
     'igbo_u01_02_good_morning',
@@ -104,11 +104,92 @@ test('every available Igbo lesson uses only same-course mapped artwork for one v
     });
     const visuals = exercises.filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
 
-    assert.equal(visuals.length, 1, `${topicId} should contain one visual question`);
-    assert.equal(visuals[0].imageChoices.length, 4);
-    assert.ok(visuals[0].imageChoices.every(({ conceptId }) => mappedConceptIds.has(conceptId)));
-    assert.equal(new Set(visuals[0].imageChoices.map(({ conceptId }) => conceptId)).size, 4);
+    assert.equal(visuals.length, 2, `${topicId} should contain two visual questions`);
+    assert.equal(new Set(visuals.map(({ answer }) => answer)).size, 2);
+    for (const visual of visuals) {
+      assert.equal(visual.imageChoices.length, 4);
+      assert.ok(visual.imageChoices.every(({ conceptId }) => mappedConceptIds.has(conceptId)));
+      assert.equal(new Set(visual.imageChoices.map(({ conceptId }) => conceptId)).size, 4);
+    }
   }
+});
+
+test('visual generation deduplicates repeated source steps for the same concept', () => {
+  const concepts = [
+    { id: 'one', meaning: 'one' },
+    { id: 'two', meaning: 'two' },
+    { id: 'three', meaning: 'three' },
+    { id: 'four', meaning: 'four' },
+  ];
+  const vocabulary = concepts.map(({ id, meaning }) => ({
+    courseId: 'fixture-course',
+    conceptId: id,
+    localized: `target ${meaning}`,
+  }));
+  const lessonSteps = [
+    { courseId: 'fixture-course', topicId: 'fixture-topic', id: 'step-one-a', order: 1, exerciseType: 'translate-to-meaning', conceptId: 'one', conceptRefs: ['one'], answer: 'one', distractors: ['two', 'three', 'four'] },
+    { courseId: 'fixture-course', topicId: 'fixture-topic', id: 'step-one-b', order: 2, exerciseType: 'translate-to-target', conceptId: 'one', conceptRefs: ['one'], answer: 'target one', distractors: ['target two', 'target three', 'target four'] },
+    { courseId: 'fixture-course', topicId: 'fixture-topic', id: 'step-two', order: 3, exerciseType: 'translate-to-meaning', conceptId: 'two', conceptRefs: ['two'], answer: 'two', distractors: ['one', 'three', 'four'] },
+  ];
+
+  const visuals = buildCourseTopicExercises('fixture-course', 'fixture-topic', {
+    concepts,
+    vocabulary,
+    lessonSteps,
+    hasImage: () => true,
+  }).filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+
+  assert.equal(visuals.length, 2);
+  assert.equal(new Set(visuals.map(({ answer }) => answer)).size, 2);
+});
+
+test('a small topic can reinforce a second verified course image without inventing content', () => {
+  const concepts = [
+    { id: 'one', meaning: 'one' },
+    { id: 'two', meaning: 'two' },
+    { id: 'three', meaning: 'three' },
+    { id: 'four', meaning: 'four' },
+  ];
+  const vocabulary = concepts.map(({ id, meaning }) => ({
+    courseId: 'fixture-course',
+    conceptId: id,
+    localized: `target ${meaning}`,
+  }));
+  const lessonSteps = [
+    { courseId: 'fixture-course', topicId: 'fixture-topic', id: 'step-one', order: 1, exerciseType: 'translate-to-meaning', conceptId: 'one', conceptRefs: ['one'], answer: 'one', distractors: ['two', 'three', 'four'] },
+  ];
+
+  const visuals = buildCourseTopicExercises('fixture-course', 'fixture-topic', {
+    concepts,
+    vocabulary,
+    lessonSteps,
+    hasImage: () => true,
+  }).filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+
+  assert.equal(visuals.length, 2);
+  assert.equal(new Set(visuals.map(({ answer }) => answer)).size, 2);
+  assert.ok(visuals.every(({ answer }) => vocabulary.some(({ conceptId }) => conceptId === answer)));
+});
+
+test('an unknown topic cannot synthesize visual lessons from course-wide artwork', () => {
+  const concepts = [
+    { id: 'one', meaning: 'one' },
+    { id: 'two', meaning: 'two' },
+    { id: 'three', meaning: 'three' },
+    { id: 'four', meaning: 'four' },
+  ];
+  const vocabulary = concepts.map(({ id, meaning }) => ({
+    courseId: 'fixture-course',
+    conceptId: id,
+    localized: `target ${meaning}`,
+  }));
+
+  assert.deepEqual(buildCourseTopicExercises('fixture-course', 'missing-topic', {
+    concepts,
+    vocabulary,
+    lessonSteps: [],
+    hasImage: () => true,
+  }), []);
 });
 
 test('Swahili lesson-step materialization is deterministic and workbook-ready', () => {

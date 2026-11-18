@@ -147,7 +147,7 @@ test('image choice is generated only from a complete set of mapped workbook conc
   assert.equal(withoutEnoughImages.some(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE), false);
 });
 
-test('every Patois topic receives one visual question without losing its richer build exercises', () => {
+test('every Patois topic receives two distinct visual questions without losing its richer build exercises', () => {
   const topicIds = TOPICS.map(({ id }) => id);
   for (const topicId of topicIds) {
     const withoutImages = buildPatoisTopicExercises(topicId, {
@@ -164,8 +164,16 @@ test('every Patois topic receives one visual question without losing its richer 
     });
     const imageChoices = withImages.filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
 
-    assert.equal(imageChoices.length, 1, `${topicId} should contain one visual question`);
-    assert.equal(imageChoices[0].imageChoices.length, 4, `${topicId} should contain four mapped pictures`);
+    assert.equal(imageChoices.length, 2, `${topicId} should contain two visual questions`);
+    assert.equal(
+      new Set(imageChoices.map(({ answer }) => answer)).size,
+      2,
+      `${topicId} should teach two distinct visual concepts`
+    );
+    assert.ok(
+      imageChoices.every(({ imageChoices: choices }) => choices.length === 4),
+      `${topicId} should contain four mapped pictures per visual question`
+    );
     for (const buildType of [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY]) {
       assert.ok(
         withImages.filter(({ type }) => type === buildType).length
