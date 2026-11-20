@@ -125,3 +125,20 @@ test('achievement thresholds unlock only from exact persisted and curriculum-bac
   });
   assert.ok(exact.achievements.every(({ state }) => state === 'unlocked'));
 });
+
+test('coercible arrays, booleans, and objects cannot unlock numeric achievements', () => {
+  for (const malformed of [[100], true, { valueOf: () => 100 }]) {
+    const result = buildProgressDashboardViewModel({
+      completedTopicIds: [],
+      ready: true,
+      streak: malformed,
+      topics,
+      totalWords: malformed,
+      xp: malformed,
+    });
+
+    assert.ok(result.achievements.every(({ state }) => state === 'locked'));
+    assert.equal(result.stats.find(({ id }) => id === 'xp').value, '0');
+    assert.equal(result.stats.find(({ id }) => id === 'streak').value, '0');
+  }
+});

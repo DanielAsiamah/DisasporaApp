@@ -1,7 +1,6 @@
 function normalizeCount(value) {
-  const number = Number(value);
-  if (!Number.isFinite(number) || number <= 0) return 0;
-  return Math.floor(number);
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return 0;
+  return Math.floor(value);
 }
 
 function normalizeGoal(value) {
