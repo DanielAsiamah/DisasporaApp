@@ -19,6 +19,13 @@ const STAT_COLORS = {
   words: '#4D76B8',
 };
 
+const ACHIEVEMENT_COLORS = {
+  blue: '#4D76B8',
+  coral: colors.coral,
+  mango: colors.mango,
+  sea: colors.sea,
+};
+
 export default function ProgressDashboard({
   guideName = 'Kai',
   onContinue,
@@ -133,6 +140,55 @@ export default function ProgressDashboard({
         </Pressable>
       </View>
 
+      <Animated.View
+        style={[
+          styles.achievementSection,
+          {
+            opacity: entrance,
+            transform: [{
+              translateY: entrance.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }),
+            }],
+          },
+        ]}
+      >
+        <Text style={styles.sectionEyebrow}>ACHIEVEMENTS</Text>
+        <Text style={styles.sectionTitle}>Proof of practice</Text>
+        <Text style={styles.sectionIntro}>Earned from your real learning record.</Text>
+        <View style={styles.achievementGrid}>
+          {presentation.achievements.map((achievement) => {
+            const unlocked = achievement.state === 'unlocked';
+            const accent = ACHIEVEMENT_COLORS[achievement.accent] || colors.sea;
+            return (
+              <View
+                accessible
+                accessibilityLabel={`${achievement.label}, ${achievement.state}. ${achievement.progressLabel}`}
+                accessibilityState={{ disabled: achievement.state !== 'unlocked' }}
+                key={achievement.id}
+                style={[styles.achievementCard, unlocked && styles.achievementCardUnlocked]}
+              >
+                <View style={[styles.achievementBadge, { backgroundColor: unlocked ? accent : colors.locked }]}>
+                  <View style={[styles.achievementFacet, { borderBottomColor: unlocked ? accent : colors.locked }]} />
+                  <Ionicons
+                    accessible={false}
+                    color={unlocked ? colors.paper : colors.inkMuted}
+                    name={achievement.icon}
+                    size={24}
+                  />
+                </View>
+                <Text style={styles.achievementState}>
+                  {achievement.state === 'loading' ? 'SYNCING' : unlocked ? 'UNLOCKED' : 'LOCKED'}
+                </Text>
+                <Text style={styles.achievementTitle}>{achievement.label}</Text>
+                <Text style={styles.achievementDetail}>{achievement.detail}</Text>
+                <Text style={[styles.achievementProgress, unlocked && { color: accent }]}>
+                  {achievement.progressLabel}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </Animated.View>
+
       <View style={styles.milestoneSection}>
         <Text style={styles.sectionEyebrow}>CHAPTER MILESTONES</Text>
         <Text style={styles.sectionTitle}>Marks along the way</Text>
@@ -217,6 +273,16 @@ const styles = StyleSheet.create({
   practiceTitle: { color: colors.ink, fontFamily: fonts.display, fontSize: 28, marginTop: 3, textTransform: 'uppercase' },
   secondaryButton: { alignItems: 'center', borderColor: colors.ink, borderRadius: 17, borderWidth: 1.5, justifyContent: 'center', marginTop: 16, minHeight: 50 },
   secondaryButtonText: { color: colors.ink, fontFamily: fonts.bold, fontSize: 13, letterSpacing: 0.5 },
+  achievementSection: { marginTop: 30 },
+  achievementGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 18 },
+  achievementCard: { backgroundColor: '#FFFFFF', borderColor: colors.border, borderRadius: 22, borderWidth: 1, minHeight: 224, padding: 15, width: '48.4%' },
+  achievementCardUnlocked: { borderColor: colors.ink },
+  achievementBadge: { alignItems: 'center', borderColor: colors.ink, borderRadius: 18, borderWidth: 1.5, height: 54, justifyContent: 'center', marginBottom: 15, width: 54 },
+  achievementFacet: { borderBottomWidth: 10, borderLeftColor: 'transparent', borderLeftWidth: 9, borderRightColor: 'transparent', borderRightWidth: 9, bottom: -8, height: 0, position: 'absolute', transform: [{ rotate: '180deg' }], width: 0 },
+  achievementState: { color: colors.inkMuted, fontFamily: fonts.bold, fontSize: 9, letterSpacing: 1.1 },
+  achievementTitle: { color: colors.ink, fontFamily: fonts.display, fontSize: 22, lineHeight: 27, marginTop: 4, textTransform: 'uppercase' },
+  achievementDetail: { color: colors.inkMuted, flexGrow: 1, fontFamily: fonts.regular, fontSize: 12, lineHeight: 17, marginTop: 5 },
+  achievementProgress: { color: colors.inkMuted, fontFamily: fonts.bold, fontSize: 11, marginTop: 12 },
   milestoneSection: { marginTop: 30 },
   sectionEyebrow: { color: colors.sea, fontFamily: fonts.bold, fontSize: 10, letterSpacing: 1.4 },
   sectionTitle: { color: colors.ink, fontFamily: fonts.display, fontSize: 31, marginTop: 4, textTransform: 'uppercase' },

@@ -372,6 +372,18 @@ test('Learn, Progress, and Leaderboard use responsive vector icons and compact-p
   assert.match(source, /podiumGuide:\s*\{[^}]*aspectRatio:\s*1[^}]*maxWidth:\s*96[^}]*width:\s*['"]100%['"]/s);
 });
 
+test('Progress presents honest achievements as accessible original badge cards', () => {
+  const source = fs.readFileSync(path.join(root, 'src/components/mvp/ProgressDashboard.js'), 'utf8');
+
+  assert.match(source, /ACHIEVEMENTS/);
+  assert.match(source, /presentation\.achievements\.map\(\(achievement\)/);
+  assert.match(source, /accessibilityLabel=\{`\$\{achievement\.label\}, \$\{achievement\.state\}\. \$\{achievement\.progressLabel\}`\}/);
+  assert.match(source, /accessibilityState=\{\{ disabled: achievement\.state !== ['"]unlocked['"] \}\}/);
+  assert.match(source, /styles\.achievementBadge/);
+  assert.match(source, /styles\.achievementFacet/);
+  assert.doesNotMatch(source, /name=['"]trophy(?:-outline)?['"]/);
+});
+
 test('lesson completion saves a retryable daily streak without blocking topic progress', () => {
   const source = fs.readFileSync(path.join(root, 'src/screens/MvpHomeScreen.js'), 'utf8');
   const completeBlock = source.slice(
