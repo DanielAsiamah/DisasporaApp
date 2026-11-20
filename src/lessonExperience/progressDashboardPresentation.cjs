@@ -30,6 +30,59 @@ function buildMilestones(percent, completed) {
   }));
 }
 
+function buildAchievements({ completed, coveredWords, ready, streak, xp }) {
+  const definitions = [
+    {
+      accent: 'sea',
+      detail: 'Complete your first course topic.',
+      icon: 'footsteps',
+      id: 'first-step',
+      label: 'First step',
+      progressUnit: 'topic',
+      threshold: 1,
+      value: completed,
+    },
+    {
+      accent: 'blue',
+      detail: 'Cover ten curriculum words.',
+      icon: 'chatbubbles',
+      id: 'word-collector',
+      label: 'Word collector',
+      progressUnit: 'words',
+      threshold: 10,
+      value: coveredWords,
+    },
+    {
+      accent: 'mango',
+      detail: 'Save 100 experience points.',
+      icon: 'sparkles',
+      id: 'momentum',
+      label: 'Momentum',
+      progressUnit: 'XP',
+      threshold: 100,
+      value: xp,
+    },
+    {
+      accent: 'coral',
+      detail: 'Keep learning for three days.',
+      icon: 'flame',
+      id: 'three-day-rhythm',
+      label: 'Three-day rhythm',
+      progressUnit: 'days',
+      threshold: 3,
+      value: streak,
+    },
+  ];
+
+  return definitions.map(({ progressUnit, threshold, value, ...achievement }) => ({
+    ...achievement,
+    progressLabel: ready
+      ? `${Math.min(value, threshold)} of ${threshold} ${progressUnit}`
+      : 'Loading progress',
+    state: ready ? (value >= threshold ? 'unlocked' : 'locked') : 'loading',
+  }));
+}
+
 function buildProgressDashboardViewModel({
   completedTopicIds,
   courseName,
@@ -66,6 +119,13 @@ function buildProgressDashboardViewModel({
         : 'Your story starts here';
 
   return {
+    achievements: buildAchievements({
+      completed,
+      coveredWords,
+      ready,
+      streak: safeStreak,
+      xp: safeXp,
+    }),
     courseName: typeof courseName === 'string' && courseName.trim() ? courseName.trim() : 'Your course',
     dailyGoal: {
       label: `${goal} min daily target`,

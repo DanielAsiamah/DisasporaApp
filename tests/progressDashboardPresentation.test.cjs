@@ -45,6 +45,12 @@ test('progress dashboard reports only saved and curriculum-backed learner statis
     message: 'A short personalised review is ready from your saved mistakes.',
   });
   assert.equal(result.dailyGoal.label, '10 min daily target');
+  assert.deepEqual(result.achievements.map(({ id, progressLabel, state }) => ({ id, progressLabel, state })), [
+    { id: 'first-step', progressLabel: '1 of 1 topic', state: 'unlocked' },
+    { id: 'word-collector', progressLabel: '8 of 10 words', state: 'locked' },
+    { id: 'momentum', progressLabel: '100 of 100 XP', state: 'unlocked' },
+    { id: 'three-day-rhythm', progressLabel: '3 of 3 days', state: 'unlocked' },
+  ]);
   assert.deepEqual(result.milestones.map(({ id, state }) => ({ id, state })), [
     { id: 'first-step', state: 'complete' },
     { id: 'explorer', state: 'complete' },
@@ -59,6 +65,9 @@ test('progress dashboard handles loading, empty, malformed, and complete states 
   assert.equal(loading.title, 'Gathering your journey');
   assert.equal(loading.progress.accessibilityLabel, 'Course progress loading');
   assert.equal(loading.stats.find((stat) => stat.id === 'words').value, '...');
+  assert.ok(loading.achievements.every(({ progressLabel, state }) => (
+    progressLabel === 'Loading progress' && state === 'loading'
+  )));
 
   const empty = buildProgressDashboardViewModel({
     completedTopicIds: ['unknown'],
@@ -76,6 +85,7 @@ test('progress dashboard handles loading, empty, malformed, and complete states 
   assert.equal(empty.practice.label, 'Nothing due yet');
   assert.equal(empty.stats.find((stat) => stat.id === 'xp').value, '0');
   assert.equal(empty.stats.find((stat) => stat.id === 'streak').value, '0');
+  assert.ok(empty.achievements.every(({ state }) => state === 'locked'));
 
   const complete = buildProgressDashboardViewModel({
     completedTopicIds: topics.map((topic) => topic.id),
@@ -87,4 +97,31 @@ test('progress dashboard handles loading, empty, malformed, and complete states 
   assert.equal(complete.progress.percent, 100);
   assert.equal(complete.stats.find((stat) => stat.id === 'words').value, '12/12');
   assert.equal(complete.milestones.at(-1).state, 'complete');
+});
+
+test('achievement thresholds unlock only from exact persisted and curriculum-backed evidence', () => {
+  const below = buildProgressDashboardViewModel({
+    completedTopicIds: [],
+    ready: true,
+    streak: 2,
+    topics: [{ id: 'one', conceptCount: 9 }],
+    totalWords: 9,
+    xp: 99,
+  });
+  assert.deepEqual(below.achievements.map(({ id, state }) => ({ id, state })), [
+    { id: 'first-step', state: 'locked' },
+    { id: 'word-collector', state: 'locked' },
+    { id: 'momentum', state: 'locked' },
+    { id: 'three-day-rhythm', state: 'locked' },
+  ]);
+
+  const exact = buildProgressDashboardViewModel({
+    completedTopicIds: ['one'],
+    ready: true,
+    streak: 3,
+    topics: [{ id: 'one', conceptCount: 10 }],
+    totalWords: 10,
+    xp: 100,
+  });
+  assert.ok(exact.achievements.every(({ state }) => state === 'unlocked'));
 });
