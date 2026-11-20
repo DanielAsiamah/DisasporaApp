@@ -402,6 +402,10 @@ test('the MVP Learn loop presents persisted recoverable hearts without a paywall
   assert.match(modalSource, /onRequestClose=\{onClose\}/);
   assert.match(modalSource, /accessibilityViewIsModal/);
   assert.match(modalSource, /Beta refill · No charge during early access/);
+  assert.match(modalSource, /CURRENT BALANCE/);
+  assert.match(modalSource, /0 hearts ready/);
+  assert.match(modalSource, /Refill to 5 hearts/);
+  assert.doesNotMatch(modalSource, /5 fresh tries/);
   assert.doesNotMatch(modalSource, /purchase|subscribe|payment|checkout/i);
   assert.match(heartsSource, /Ionicons/);
   assert.doesNotMatch(heartsSource, /\u2764|\ud83e|❤️|🩶/);

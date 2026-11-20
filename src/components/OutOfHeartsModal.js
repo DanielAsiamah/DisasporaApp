@@ -110,13 +110,13 @@ export default function OutOfHeartsModal({
 
         <View accessible accessibilityLabel="0 of 5 hearts remaining" style={styles.balanceCard}>
           <View style={styles.balanceCopy}>
-            <Text style={styles.balanceLabel}>YOUR BALANCE</Text>
-            <Text style={styles.balanceValue}>5 fresh tries</Text>
+            <Text style={styles.balanceLabel}>CURRENT BALANCE</Text>
+            <Text style={styles.balanceValue}>0 hearts ready</Text>
           </View>
           <HeartsBar hearts={0} maxHearts={5} />
         </View>
 
-        <PrimaryButton label="Refill hearts" onPress={handleRefill} />
+        <PrimaryButton label="Refill to 5 hearts" onPress={handleRefill} />
         <Pressable
           accessibilityLabel="Close out of hearts message"
           accessibilityRole="button"
