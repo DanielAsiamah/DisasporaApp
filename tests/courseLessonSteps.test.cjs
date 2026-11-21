@@ -103,10 +103,16 @@ test('every available Igbo lesson uses only same-course mapped artwork for two v
       hasImage: conceptId => mappedConceptIds.has(conceptId),
     });
     const visuals = exercises.filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+    const studyCards = exercises.filter(({ type }) => type === LESSON_EXERCISE_TYPES.VOCABULARY_CARD);
 
     assert.equal(visuals.length, 2, `${topicId} should contain two visual questions`);
+    assert.equal(studyCards.length, visuals.length, `${topicId} should teach both visual concepts`);
     assert.equal(new Set(visuals.map(({ answer }) => answer)).size, 2);
     for (const visual of visuals) {
+      const visualIndex = exercises.indexOf(visual);
+      assert.equal(exercises[visualIndex - 1]?.type, LESSON_EXERCISE_TYPES.VOCABULARY_CARD);
+      assert.equal(exercises[visualIndex - 1]?.conceptId, visual.conceptId);
+      assert.equal(exercises[visualIndex - 1]?.sourceStepId, visual.sourceStepId);
       assert.equal(visual.imageChoices.length, 4);
       assert.ok(visual.imageChoices.every(({ conceptId }) => mappedConceptIds.has(conceptId)));
       assert.equal(new Set(visual.imageChoices.map(({ conceptId }) => conceptId)).size, 4);

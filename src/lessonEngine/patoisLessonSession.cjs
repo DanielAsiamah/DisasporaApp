@@ -8,6 +8,10 @@ function normalizeAnswer(value) {
     .toLowerCase();
 }
 
+function isUnscoredExercise(exercise) {
+  return exercise?.type === 'vocabulary-card';
+}
+
 function createExerciseResponse(exercise = {}) {
   if (exercise.type === 'match-pairs') {
     return { selectedMatch: null, matchedPairIds: [], rejectedMatchIds: [] };
@@ -83,6 +87,7 @@ function evaluateExerciseResponse(exercise, response = {}) {
 module.exports = {
   createExerciseResponse,
   evaluateExerciseResponse,
+  isUnscoredExercise,
   isResponseReady,
   normalizeAnswer,
   selectMatchItem,

@@ -4,9 +4,18 @@ const assert = require('node:assert/strict');
 const {
   createExerciseResponse,
   evaluateExerciseResponse,
+  isUnscoredExercise,
   selectMatchItem,
   toggleWordBankItem,
 } = require('../src/lessonEngine/patoisLessonSession.cjs');
+
+test('only vocabulary study cards bypass scoring', () => {
+  assert.equal(isUnscoredExercise({ type: 'vocabulary-card' }), true);
+  for (const type of ['translate-choice', 'listen-choice', 'image-choice', 'match-pairs', 'sentence-build', 'word-tray']) {
+    assert.equal(isUnscoredExercise({ type }), false, `${type} must remain scored`);
+  }
+  assert.equal(isUnscoredExercise(null), false);
+});
 
 test('choice responses are correct only when the selected answer matches', () => {
   const exercise = { type: 'translate-choice', answer: 'Tank yuh' };

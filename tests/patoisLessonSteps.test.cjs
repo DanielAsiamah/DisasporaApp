@@ -144,7 +144,22 @@ test('image choice is generated only from a complete set of mapped workbook conc
   assert.ok(imageChoice.imageChoices.every(({ conceptId, imageConceptId, label }) => (
     conceptId === imageConceptId && mappedConceptIds.has(conceptId) && label
   )));
+  const imageChoiceIndex = withImages.indexOf(imageChoice);
+  const studyCard = withImages[imageChoiceIndex - 1];
+  assert.equal(studyCard.type, LESSON_EXERCISE_TYPES.VOCABULARY_CARD);
+  assert.equal(studyCard.conceptId, imageChoice.conceptId);
+  assert.equal(studyCard.sourceStepId, imageChoice.sourceStepId);
+  assert.deepEqual({
+    imageConceptId: studyCard.imageConceptId,
+    localized: studyCard.localized,
+    meaning: studyCard.meaning,
+  }, {
+    imageConceptId: 'good-afternoon',
+    localized: 'Gud aftanuun',
+    meaning: 'good afternoon',
+  });
   assert.equal(withoutEnoughImages.some(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE), false);
+  assert.equal(withoutEnoughImages.some(({ type }) => type === LESSON_EXERCISE_TYPES.VOCABULARY_CARD), false);
 });
 
 test('every Patois topic receives two distinct visual questions without losing its richer build exercises', () => {
@@ -163,8 +178,10 @@ test('every Patois topic receives two distinct visual questions without losing i
       hasImage: () => true,
     });
     const imageChoices = withImages.filter(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE);
+    const studyCards = withImages.filter(({ type }) => type === LESSON_EXERCISE_TYPES.VOCABULARY_CARD);
 
     assert.equal(imageChoices.length, 2, `${topicId} should contain two visual questions`);
+    assert.equal(studyCards.length, imageChoices.length, `${topicId} should teach each visual concept first`);
     assert.equal(
       new Set(imageChoices.map(({ answer }) => answer)).size,
       2,
@@ -174,6 +191,11 @@ test('every Patois topic receives two distinct visual questions without losing i
       imageChoices.every(({ imageChoices: choices }) => choices.length === 4),
       `${topicId} should contain four mapped pictures per visual question`
     );
+    for (const imageChoice of imageChoices) {
+      const choiceIndex = withImages.indexOf(imageChoice);
+      assert.equal(withImages[choiceIndex - 1]?.type, LESSON_EXERCISE_TYPES.VOCABULARY_CARD);
+      assert.equal(withImages[choiceIndex - 1]?.conceptId, imageChoice.conceptId);
+    }
     for (const buildType of [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY]) {
       assert.ok(
         withImages.filter(({ type }) => type === buildType).length

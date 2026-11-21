@@ -3,6 +3,7 @@ const { getRuntimeCurriculum } = require('../data/runtimeCurriculum.cjs');
 const { normalizeAnswer } = require('./patoisLessonSession.cjs');
 
 const LESSON_EXERCISE_TYPES = Object.freeze({
+  VOCABULARY_CARD: 'vocabulary-card',
   TRANSLATE_CHOICE: 'translate-choice',
   MATCH_PAIRS: 'match-pairs',
   SENTENCE_BUILD: 'sentence-build',
@@ -143,6 +144,24 @@ function createImageChoiceExercise(step, row, concept, imageConceptIds, conceptB
       imageConceptId: conceptId,
       label: conceptById.get(conceptId)?.meaning || conceptId,
     })),
+  };
+}
+
+function createVocabularyCardExercise(step, row, concept) {
+  return {
+    id: `${step.id}-study`,
+    sourceStepId: step.sourceStepId || step.id,
+    type: LESSON_EXERCISE_TYPES.VOCABULARY_CARD,
+    title: 'New word',
+    prompt: `Learn “${row.localized}”`,
+    conceptId: step.conceptId,
+    imageConceptId: step.conceptId,
+    localized: row.localized,
+    meaning: concept.meaning,
+    pronunciation: row.pronunciation,
+    voiceId: row.voiceId || step.voiceId,
+    audioPath: row.audio,
+    primary: false,
   };
 }
 
@@ -361,10 +380,13 @@ function buildCourseTopicExercises(courseId, topicId, {
       const imageExercise = createImageChoiceExercise(step, row, concept, availableImageConceptIds, conceptById);
       if (imageExercise) {
         imageChoiceConceptIds.add(step.conceptId);
-        return [{
-          ...imageExercise,
-          ...buildStudyHint(step, row, concept),
-        }];
+        return [
+          createVocabularyCardExercise(step, row, concept),
+          {
+            ...imageExercise,
+            ...buildStudyHint(step, row, concept),
+          },
+        ];
       }
     }
     let exercise = createExercise(
@@ -437,10 +459,13 @@ function buildCourseTopicExercises(courseId, topicId, {
     );
     if (!imageExercise) continue;
     imageChoiceConceptIds.add(visualConceptId);
-    fallbackImageExercises.push({
-      ...imageExercise,
-      ...buildStudyHint(visualStep, row, concept),
-    });
+    fallbackImageExercises.push(
+      createVocabularyCardExercise(visualStep, row, concept),
+      {
+        ...imageExercise,
+        ...buildStudyHint(visualStep, row, concept),
+      }
+    );
   }
 
   return [...distinctExercises, ...fallbackImageExercises];
