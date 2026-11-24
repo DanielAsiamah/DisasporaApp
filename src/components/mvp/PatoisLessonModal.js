@@ -37,6 +37,7 @@ const {
   createExerciseResponse,
   evaluateExerciseResponse,
   isResponseReady,
+  isUnscoredExercise,
   selectMatchItem,
   toggleWordBankItem,
 } = require('../../lessonEngine/patoisLessonSession.cjs');
@@ -54,6 +55,7 @@ const { recordMistake, buildMistakeReview } = require('../../lessonExperience/mi
 const { getAnswerTextDirection } = require('../../lessonExperience/answerTextDirection.cjs');
 const { getPromptGuideName } = require('../../lessonExperience/lessonGuidePresentation.cjs');
 const { buildPhraseWordHintModel } = require('../../lessonExperience/phraseWordHint.cjs');
+const { buildVocabularyCardPresentation } = require('../../lessonExperience/vocabularyCardPresentation.cjs');
 
 const SKY = '#2D7668';
 const NAVY = '#1D2925';
@@ -403,6 +405,24 @@ function AudioControls({ conceptId, controller, hasAudio }) {
   );
 }
 
+function VocabularyCardExercise({ exercise, imageRegistry, controller, hasAudio }) {
+  const presentation = buildVocabularyCardPresentation(exercise);
+  return (
+    <View style={styles.studyCard} testID="vocabulary-study-card">
+      <View accessible accessibilityLabel={presentation.accessibilityLabel} style={styles.studyContent}>
+        <Text style={[styles.speakerName, styles.studyCaptionColor]}>{presentation.eyebrow}</Text>
+        <Image accessible={false} resizeMode="contain" source={imageRegistry[exercise.imageConceptId]} style={styles.studyImage} />
+        <Text style={[styles.studyWord, { writingDirection: getAnswerTextDirection(presentation.localized) }]}>
+          {presentation.localized}
+        </Text>
+        <Text style={styles.studyMeaning}>{presentation.meaningLabel}</Text>
+        {presentation.pronunciationLabel ? <Text style={[styles.studyPronunciation, styles.studyCaptionColor]}>{presentation.pronunciationLabel}</Text> : null}
+      </View>
+      <AudioControls conceptId={exercise.conceptId} controller={controller} hasAudio={hasAudio} />
+    </View>
+  );
+}
+
 function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   const usedIndexes = new Set(response.builtWords.map(({ index }) => index));
   const answerProgressLabel = `${response.builtWords.length} words placed`;
@@ -747,9 +767,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
   const completionBackButtonTextStyle = nextTopic ? styles.secondaryButtonText : styles.primaryButtonText;
   const isChoice = [LESSON_EXERCISE_TYPES.TRANSLATE_CHOICE, LESSON_EXERCISE_TYPES.LISTEN_CHOICE].includes(exercise?.type);
   const isImageChoice = exercise?.type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE;
+  const isStudyCard = isUnscoredExercise(exercise);
   const isMatch = exercise?.type === LESSON_EXERCISE_TYPES.MATCH_PAIRS;
   const isBuild = [LESSON_EXERCISE_TYPES.SENTENCE_BUILD, LESSON_EXERCISE_TYPES.WORD_TRAY].includes(exercise?.type);
-  const ready = isResponseReady(exercise, response);
+  const ready = isStudyCard || isResponseReady(exercise, response);
   const xpAwardPending = feedback === 'correct' && xpAwardStatus === 'pending';
   const xpAwardFailed = feedback === 'correct' && xpAwardStatus === 'error';
   const footerReady = ready && !xpAwardPending;
@@ -770,7 +791,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
     ? `RECALL ${index - exercises.length + 1} OF ${reviewExercises.length}`
     : `STEP ${Math.min(index + 1, exercises.length)} OF ${exercises.length}`;
   const currentExerciseLabel = exercise?.title || 'Lesson step';
-  const footerActionLabel = xpAwardFailed
+  const footerActionLabel = isStudyCard ? 'Continue learning' : xpAwardFailed
     ? 'Retry saving XP'
     : feedback === 'incorrect'
     ? 'Try again'
@@ -907,7 +928,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
               if (feedback) lessonScrollRef.current?.scrollToEnd({ animated: !reducedMotion });
             }}
           >
-                <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>
+                {!isStudyCard && <View style={styles.topicModePill}><Text style={styles.topicModePillText}>{topicModeLabel}</Text></View>}
                 <Text style={styles.topicTitle}>{topic.title}</Text>
                 {isMistakePractice ? (
                   <View testID="mistake-practice-banner" accessibilityLiveRegion="polite" style={styles.recallBanner}>
@@ -915,19 +936,22 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
                     <Text style={styles.recallBody}>Try it once more from memory. XP already saved will not be awarded twice.</Text>
                   </View>
                 ) : null}
-                <View style={styles.lessonSummaryRow}>
+                {!isStudyCard && <View style={styles.lessonSummaryRow}>
                   <View style={styles.lessonSummaryPill}>
                     <Text style={styles.lessonSummaryLabel}>{currentStepLabel}</Text>
                   </View>
                   <View style={styles.lessonSummaryPill}>
                     <Text style={styles.lessonSummaryValue}>{currentExerciseLabel}</Text>
                   </View>
-                </View>
+                </View>}
                 {courseReviewPending ? (
                   <View style={styles.reviewBanner}>
                     <Text accessibilityLabel="Preview content is still awaiting native-speaker approval." style={styles.reviewBannerTitle}>Preview: Native review pending</Text>
                 </View>
               ) : null}
+              {isStudyCard ? (
+                <VocabularyCardExercise exercise={exercise} imageRegistry={imageRegistry} controller={audio} hasAudio={hasCourseAudio} />
+              ) : <>
               {!isMatch && !isImageChoice && !isMistakePractice && imageRegistry[exerciseVisualConceptId] ? <View style={styles.scene}>
                 <View style={styles.sceneHalo} />
                 <Text style={styles.sceneMode}>LOOK • LISTEN • SPEAK</Text>
@@ -943,6 +967,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
                 </View>
               </View>
               <Text style={styles.promptHelper}>{getExerciseHelperText(exercise)}</Text>
+              </>}
               {isChoice ? <ChoiceExercise exercise={exercise} feedback={feedback} response={response} setResponse={setResponse} /> : null}
               {isImageChoice ? <ImageChoiceExercise exercise={exercise} feedback={feedback} imageRegistry={imageRegistry} response={response} setResponse={setResponse} /> : null}
               {isMatch ? (
@@ -1013,10 +1038,10 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
                 accessibilityRole="button"
                 accessibilityState={{ disabled: !footerReady }}
                 disabled={!footerReady}
-                onPress={xpAwardFailed ? retryXpAward : feedback ? continueLesson : checkAnswer}
+                onPress={xpAwardFailed ? retryXpAward : (isStudyCard || feedback) ? continueLesson : checkAnswer}
                 style={[styles.primaryButton, !footerReady && styles.primaryButtonDisabled]}
               >
-                <Text style={styles.primaryButtonText}>{xpAwardFailed ? 'RETRY XP' : feedback === 'incorrect' ? 'TRY AGAIN' : feedback ? 'CONTINUE' : 'CHECK'}</Text>
+                <Text style={styles.primaryButtonText}>{xpAwardFailed ? 'RETRY XP' : feedback === 'incorrect' ? 'TRY AGAIN' : (isStudyCard || feedback) ? 'CONTINUE' : 'CHECK'}</Text>
               </Pressable>
               {xpAwardFailed ? (
                 <Pressable
@@ -1045,6 +1070,13 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
 }
 
 const styles = StyleSheet.create({
+  studyCard: { alignSelf: 'center', width: '100%', maxWidth: 440, backgroundColor: PALE, borderRadius: 24, padding: 20, marginVertical: 10 },
+  studyContent: { alignItems: 'center', gap: 6 },
+  studyImage: { width: '100%', height: 148 },
+  studyWord: { color: NAVY, fontFamily: fonts.bold, fontSize: 30, textAlign: 'center' },
+  studyMeaning: { color: NAVY, fontFamily: fonts.editorial, fontSize: 22, textAlign: 'center' },
+  studyCaptionColor: { color: '#32584C' },
+  studyPronunciation: { fontFamily: fonts.medium, fontSize: 14, textAlign: 'center' },
   exitContent: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   exitCard: { alignSelf: 'center', width: '100%', maxWidth: 440, gap: 16 },
   exitEyebrow: { color: SKY, fontFamily: fonts.extraBold, fontSize: 12, letterSpacing: 1, textAlign: 'center' },

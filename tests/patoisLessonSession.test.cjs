@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const {
   createExerciseResponse,
   evaluateExerciseResponse,
+  isResponseReady,
   isUnscoredExercise,
   selectMatchItem,
   toggleWordBankItem,
@@ -21,6 +22,14 @@ test('choice responses are correct only when the selected answer matches', () =>
   const exercise = { type: 'translate-choice', answer: 'Tank yuh' };
   assert.equal(evaluateExerciseResponse(exercise, { selectedChoice: 'Tank yuh' }), true);
   assert.equal(evaluateExerciseResponse(exercise, { selectedChoice: 'Please' }), false);
+});
+
+test('study cards cannot submit or score an answer', () => {
+  const card = { type: 'vocabulary-card', localized: 'Tank yuh', meaning: 'thank you' };
+  for (const response of [createExerciseResponse(card), { selectedChoice: card.localized }]) {
+    assert.equal(evaluateExerciseResponse(card, response), false);
+    assert.equal(isResponseReady(card, response), false);
+  }
 });
 
 test('matching accepts only opposite sides of the same pair', () => {

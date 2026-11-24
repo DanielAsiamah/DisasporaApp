@@ -42,7 +42,7 @@ test('lesson navigation, progress, footer, and completion actions expose explici
   assert.match(lessonSource, /accessible[\s\S]*?accessibilityLabel=['"]Lesson progress['"][\s\S]*?accessibilityRole=['"]progressbar['"][\s\S]*?accessibilityValue=\{\{[\s\S]*?max: Math\.max\(lessonExercises\.length, 1\)[\s\S]*?now: finished \? lessonExercises\.length : index \+ 1/s);
   assert.match(lessonSource, /accessibilityLabel=\{`Start next topic: \$\{nextTopic\.title\}`\}[\s\S]*?accessibilityRole=['"]button['"]/s);
   assert.match(lessonSource, /accessibilityLabel=['"]Back to chapter['"][\s\S]*?accessibilityRole=['"]button['"]/s);
-  assert.match(lessonSource, /const footerActionLabel = xpAwardFailed[\s\S]*?['"]Retry saving XP['"][\s\S]*?feedback === ['"]incorrect['"][\s\S]*?['"]Try again['"][\s\S]*?['"]Continue lesson['"][\s\S]*?['"]Check answer['"]/s);
+  assert.match(lessonSource, /const footerActionLabel = isStudyCard \? 'Continue learning' : xpAwardFailed[\s\S]*?['"]Retry saving XP['"][\s\S]*?feedback === ['"]incorrect['"][\s\S]*?['"]Try again['"][\s\S]*?['"]Continue lesson['"][\s\S]*?['"]Check answer['"]/s);
   assert.match(lessonSource, /accessibilityLabel=\{footerActionLabel\}[\s\S]*?accessibilityRole=['"]button['"][\s\S]*?accessibilityState=\{\{ disabled: !footerReady \}\}/s);
 });
 

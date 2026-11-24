@@ -1,6 +1,7 @@
 const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const { isUnscoredExercise } = require('../src/lessonEngine/patoisLessonSession.cjs');
 const heartLabelPattern = expected => new RegExp('^' + expected + ' of 5 hearts remaining(?:\\.|$)');
 const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 (async () => {
@@ -46,6 +47,36 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
     async function currentHeartCount(expected) {
       await page.getByLabel(heartLabelPattern(expected)).last().waitFor();
+    }
+    let capturedStudyCard = false;
+    async function studyCard(exercise) {
+      const card = page.getByTestId('vocabulary-study-card');
+      await card.getByText(exercise.localized, { exact: true }).first().waitFor();
+      await card.getByText(exercise.meaning, { exact: true }).first().waitFor();
+      await page.waitForFunction(() => {
+        const image = document.querySelector('[data-testid="vocabulary-study-card"] img');
+        return image?.complete && image.naturalWidth > 0;
+      });
+      const next = page.getByRole('button', { name: 'Continue learning', exact: true });
+      const hearts = await page.getByLabel(/^\d+ of 5 hearts remaining/).last().getAttribute('aria-label');
+      if (!capturedStudyCard) {
+        await page.setViewportSize({ width: 320, height: 568 });
+        await next.scrollIntoViewIfNeeded();
+        await page.screenshot({ path: `outputs/browser-smoke/vocabulary-${courseId}.png` });
+        const footer = await next.boundingBox();
+        const art = await card.locator('img').boundingBox();
+        const meaning = await card.getByText(exercise.meaning, { exact: true }).first().boundingBox();
+        if (!art || art.width <= 0 || art.x < 0 || art.x + art.width > 320
+          || !meaning || !footer || meaning.y + meaning.height > footer.y) {
+          throw new Error('The first study illustration and its meaning must fit above Continue at 320px.');
+        }
+        await page.setViewportSize({ width: 390, height: 844 });
+        capturedStudyCard = true;
+      }
+      await next.click();
+      await card.waitFor({ state: 'detached' });
+      await page.getByRole('radio', { name: new RegExp(`^${escapePattern(exercise.meaning)}, image answer `) }).waitFor();
+      await currentHeartCount(parseInt(hearts, 10));
     }
     async function refillHeartsIfEmpty() {
       const emptyDialog = page.getByRole('heading', { name: 'Your hearts need a refill', exact: true });
@@ -141,7 +172,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
     await page.getByText('Verify your email', { exact: true }).waitFor({ timeout: 60000 });
     await page.getByText('Continue for now', { exact: true }).click();
-    await page.getByRole('tab', { name: /Learn, 1 of 3/ }).waitFor({ timeout: 60000 });
+    await page.getByRole('tab', { name: /^Learn,/ }).waitFor({ timeout: 60000 });
     await page.getByLabel(initialHeartLabel, { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Account', exact: true }).click();
     const soundSwitch = page.getByRole('switch', { name: 'Sound effects', exact: true });
@@ -174,7 +205,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           hasAudio: () => false,
           hasImage: conceptId => fs.existsSync(path.join(__dirname, '..', 'assets', 'images', 'vocab', id, `${conceptId}.png`)),
         })[0];
-        await page.getByText(first.prompt, { exact: true }).waitFor();
+        await page.getByText(isUnscoredExercise(first) ? first.localized : first.prompt, { exact: true }).first().waitFor();
         await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
         await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
       }
@@ -188,12 +219,16 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       await page.getByRole('button', { name: /1 Foundations Greetings 4 planned lessons/ }).click();
       await page.getByRole('button', { name: 'Greetings 1, Play draft lesson', exact: true }).click();
     } else await page.getByRole('button', { name: firstLessonName }).click();
-    const firstHintExercise = buildCourseTopicExercises(courseId, topics[0].id, {
+    const introductorySteps = buildCourseTopicExercises(courseId, topics[0].id, {
       concepts: curriculum.concepts,
       vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
       hasAudio: () => false,
       hasImage: hasCourseImage,
-    })[0];
+    });
+    const firstScoredIndex = introductorySteps.findIndex(exercise => !isUnscoredExercise(exercise));
+    const firstHintExercise = introductorySteps[firstScoredIndex];
+    const leadingCards = introductorySteps.slice(0, firstScoredIndex);
+    for (const card of leadingCards) await studyCard(card);
     let selectedResponse;
     if (firstHintExercise.choices || firstHintExercise.imageChoices) {
       const radio = page.getByRole('radio').first();
@@ -228,6 +263,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByText(`0 of ${topics.length} topics complete`, { exact: true }).waitFor();
     await page.getByLabel('0 experience points', { exact: true }).waitFor();
     await page.getByRole('button', { name: firstLessonName }).click();
+    for (const card of leadingCards) await studyCard(card);
     if (await page.getByRole('radio', { checked: true }).count()
       || await page.getByRole('button', { name: /, selected$/ }).count()
       || await page.getByText('1 words placed', { exact: true }).count()) {
@@ -287,16 +323,18 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       hasAudio: () => false,
       hasImage: hasCourseImage,
     });
-    const expectedXp = exercises.length * CORRECT_ANSWER_XP;
-    const missedExercises = makeMistakes ? exercises.filter((exercise, index) => exercise.pairs || (topicIndex === 0 && index === 0)) : [];
+    const scoredExercises = exercises.filter(exercise => !isUnscoredExercise(exercise));
+    const expectedXp = scoredExercises.length * CORRECT_ANSWER_XP;
+    const first = scoredExercises[0];
+    const injectWrongChoice = makeMistakes && topicIndex === 0 && Boolean(first.choices || first.imageChoices);
+    const missedExercises = makeMistakes ? scoredExercises.filter(exercise => exercise.pairs || (injectWrongChoice && exercise === first)) : [];
     const testSequence = [...exercises, ...missedExercises];
-    const firstExerciseAcceptsWrongChoice = Boolean(exercises[0]?.choices || exercises[0]?.imageChoices);
-    const checkedAnswers = testSequence.length + (makeMistakes
-      ? (topicIndex === 0 && firstExerciseAcceptsWrongChoice ? 1 : 0) + exercises.filter(exercise => exercise.pairs).length
+    const correctAnswers = scoredExercises.length + missedExercises.length;
+    const checkedAnswers = correctAnswers + (makeMistakes
+      ? Number(injectWrongChoice) + exercises.filter(exercise => exercise.pairs).length
       : 0);
-    const expectedAccuracy = Math.round(testSequence.length / checkedAnswers * 100);
-    if (topicIndex === 0 && makeMistakes && (exercises[0].choices || exercises[0].imageChoices)) {
-    const first = exercises[0];
+    const expectedAccuracy = Math.round(correctAnswers / checkedAnswers * 100);
+    if (injectWrongChoice) {
     const wrongIndex = first.choices
       ? first.choices.findIndex(choice => choice !== first.answer)
       : first.imageChoices.findIndex(choice => choice.conceptId !== first.answer);
@@ -314,6 +352,10 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await currentHeartCount(4);
     }
     for (const [stepIndex, exercise] of testSequence.entries()) {
+      if (isUnscoredExercise(exercise)) {
+        if (topicIndex !== 0 || stepIndex >= firstScoredIndex) await studyCard(exercise);
+        continue;
+      }
       const speakingGuide = await checkGuideImage('lesson-prompt-guide');
       seenGuides.add(speakingGuide);
       if (speakingGuide === 'Ayo guide' || speakingGuide === 'Safiya guide') {
@@ -418,7 +460,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       if (await checkGuideImage('lesson-feedback-guide') !== speakingGuide) {
         throw new Error('Correct-answer celebration must keep the same speaking guide.');
       }
-      if (topicIndex === 0 && stepIndex === 0) {
+      if (topicIndex === 0 && stepIndex === firstScoredIndex) {
         if (process.env.DIASPORA_TEST_EXIT_AFTER_XP === 'true') {
           await page.getByText('+10 XP', { exact: true }).waitFor();
           await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
@@ -452,13 +494,13 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     }
     const expectedGuides = new Set(testedTopics.flatMap(topic => {
-      const exerciseCount = buildCourseTopicExercises(courseId, topic.id, {
+      const steps = buildCourseTopicExercises(courseId, topic.id, {
         concepts: curriculum.concepts,
         vocabulary: curriculum.courseVocabulary.filter(row => row.courseId === courseId),
         hasAudio: () => false,
         hasImage: hasCourseImage,
-      }).length;
-      return Array.from({ length: exerciseCount }, (_, index) => `${getPromptGuideName(topic.guide, index, courseId)} guide`);
+      });
+      return steps.flatMap((exercise, index) => isUnscoredExercise(exercise) ? [] : [`${getPromptGuideName(topic.guide, index, courseId)} guide`]);
     }));
     for (const expectedGuide of expectedGuides) {
       if (!seenGuides.has(expectedGuide)) throw new Error(`Expected lesson guide was not shown: ${expectedGuide}`);
@@ -481,7 +523,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByText(`${testedTopics.length} of ${topics.length} topics complete`, { exact: true }).waitFor({ timeout: 60000 });
     await page.getByLabel(`${totalXp} experience points`, { exact: true }).waitFor();
     console.log(`Reload preserved ${totalXp} XP and ${testedTopics.length} completed topics for ${courseId}.`);
-    await page.getByRole('tab', { name: /Progress, 2 of 3/ }).click();
+    await page.getByRole('tab', { name: /^Progress,/ }).click();
     const progressPercent = Math.round((testedTopics.length / topics.length) * 100);
     await page.getByRole('heading', { name: 'Progress', exact: true }).waitFor();
     await page.getByLabel(`${testedTopics.length} of ${topics.length} topics complete, ${progressPercent} percent`, { exact: true }).waitFor();
@@ -489,7 +531,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByText('Words covered', { exact: true }).waitFor();
     await page.screenshot({ path: `outputs/browser-smoke/progress-${courseId}.png`, fullPage: true });
     console.log(`Progress dashboard verified at ${progressPercent}% with ${totalXp} saved XP.`);
-    await page.getByRole('tab', { name: /Leaderboard, 3 of 3/ }).click();
+    await page.getByRole('tab', { name: /^Leaderboard,/ }).click();
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).click();
     await page.getByRole('button', { name: 'Leave leaderboard', exact: true }).waitFor();
     await page.getByText('Local Learner', { exact: true }).first().waitFor();
@@ -497,7 +539,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await page.getByRole('button', { name: 'Leave leaderboard', exact: true }).click();
     await page.getByRole('button', { name: 'Join leaderboard', exact: true }).waitFor();
     console.log('Leaderboard opt-in and opt-out completed.');
-    await page.getByRole('tab', { name: /Learn, 1 of 3/ }).click();
+    await page.getByRole('tab', { name: /^Learn,/ }).click();
     await page.getByRole('button', { name: 'Account', exact: true }).click();
     await page.getByText(email, { exact: true }).waitFor();
     if (await soundSwitch.isChecked() === muteEffects) throw new Error('Sound preference changed after completing a lesson.');

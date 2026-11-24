@@ -142,7 +142,7 @@ function createImageChoiceExercise(step, row, concept, imageConceptIds, conceptB
     imageChoices: selectedIds.map(conceptId => ({
       conceptId,
       imageConceptId: conceptId,
-      label: conceptById.get(conceptId)?.meaning || conceptId,
+      label: conceptById.get(conceptId).meaning,
     })),
   };
 }
@@ -352,11 +352,10 @@ function buildCourseTopicExercises(courseId, topicId, {
 
   if (steps.length === 0) return [];
 
-  const topicImageConceptIds = unique(steps.flatMap(step => step.conceptRefs || [step.conceptId]))
-    .filter(conceptId => conceptId && hasImage(conceptId));
-  const courseImageConceptIds = unique(vocabulary.map(({ conceptId }) => conceptId))
-    .filter(conceptId => conceptId && hasImage(conceptId));
-  const availableImageConceptIds = unique([...topicImageConceptIds, ...courseImageConceptIds]);
+  const availableImageConceptIds = unique([
+    ...steps.flatMap(step => step.conceptRefs || [step.conceptId]),
+    ...vocabulary.map(row => row.conceptId),
+  ]).filter(id => vocabularyById.get(id)?.localized?.trim() && conceptById.get(id)?.meaning?.trim() && hasImage(id));
   const imageChoiceConceptIds = new Set();
 
   const exercises = steps.flatMap(step => {
@@ -375,7 +374,7 @@ function buildCourseTopicExercises(courseId, topicId, {
       && concept
       && !imageChoiceConceptIds.has(step.conceptId)
       && !isLowValueStandaloneTranslation(courseId, step, row, concept, false)
-      && hasImage(step.conceptId)
+      && availableImageConceptIds.includes(step.conceptId)
       && availableImageConceptIds.length >= 4) {
       const imageExercise = createImageChoiceExercise(step, row, concept, availableImageConceptIds, conceptById);
       if (imageExercise) {
@@ -422,17 +421,12 @@ function buildCourseTopicExercises(courseId, topicId, {
     return distinctExercises;
   }
 
-  const visualConceptIds = unique([
-    ...steps.flatMap(step => step.conceptRefs || [step.conceptId]),
-    ...courseImageConceptIds,
-  ])
-    .filter((conceptId) => {
-      const row = vocabularyById.get(conceptId);
-      const concept = conceptById.get(conceptId);
-      if (!conceptId || !row || !concept || !hasImage(conceptId)) return false;
-      if (imageChoiceConceptIds.has(conceptId)) return false;
-      return !isLowValueStandaloneTranslation(courseId, { conceptId }, row, concept, false);
-    });
+  const visualConceptIds = availableImageConceptIds.filter((conceptId) => {
+    const row = vocabularyById.get(conceptId);
+    const concept = conceptById.get(conceptId);
+    return !imageChoiceConceptIds.has(conceptId)
+      && !isLowValueStandaloneTranslation(courseId, { conceptId }, row, concept, false);
+  });
   const fallbackImageExercises = [];
   for (const visualConceptId of visualConceptIds) {
     if (imageChoiceConceptIds.size >= MAX_IMAGE_CHOICES_PER_TOPIC) break;

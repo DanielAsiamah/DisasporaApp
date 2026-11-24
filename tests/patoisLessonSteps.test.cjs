@@ -160,6 +160,18 @@ test('image choice is generated only from a complete set of mapped workbook conc
   });
   assert.equal(withoutEnoughImages.some(({ type }) => type === LESSON_EXERCISE_TYPES.IMAGE_CHOICE), false);
   assert.equal(withoutEnoughImages.some(({ type }) => type === LESSON_EXERCISE_TYPES.VOCABULARY_CARD), false);
+
+  for (const missing of ['meaning', 'localized']) {
+    const steps = buildPatoisTopicExercises('easy-greetings', {
+      concepts: CONCEPTS.map(concept => missing === 'meaning' && concept.id === 'good-afternoon'
+        ? { ...concept, meaning: '  ' } : concept),
+      vocabulary: JAMAICAN_PATOIS_VOCABULARY.map(row => missing === 'localized' && row.conceptId === 'good-afternoon'
+        ? { ...row, localized: '  ' } : row),
+      hasImage: conceptId => mappedConceptIds.has(conceptId),
+    });
+    assert.ok(steps.every(({ type }) => ![LESSON_EXERCISE_TYPES.IMAGE_CHOICE, LESSON_EXERCISE_TYPES.VOCABULARY_CARD].includes(type)),
+      `Incomplete ${missing} must not count toward a four-picture set`);
+  }
 });
 
 test('every Patois topic receives two distinct visual questions without losing its richer build exercises', () => {

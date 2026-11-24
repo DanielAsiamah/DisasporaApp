@@ -60,7 +60,7 @@ function toggleWordBankItem(response, item) {
 }
 
 function isResponseReady(exercise, response) {
-  if (!exercise || !response) return false;
+  if (!exercise || !response || isUnscoredExercise(exercise)) return false;
   if (exercise.type === 'match-pairs') {
     return response.matchedPairIds.length === exercise.pairs.length;
   }
@@ -71,7 +71,7 @@ function isResponseReady(exercise, response) {
 }
 
 function evaluateExerciseResponse(exercise, response = {}) {
-  if (!exercise) return false;
+  if (!exercise || isUnscoredExercise(exercise)) return false;
   if (exercise.type === 'match-pairs') {
     const expected = new Set((exercise.pairs || []).map(({ conceptId }) => conceptId));
     const matched = new Set(response.matchedPairIds || []);
