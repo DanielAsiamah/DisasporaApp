@@ -1,5 +1,8 @@
 'use strict';
 
+const { toQR } = require('toqr');
+const { isIP } = require('node:net');
+
 function normalizeExpoUrls({ tunnelUrl = '', lanUrl = '', webUrl = '' } = {}) {
   return {
     tunnelUrl: String(tunnelUrl).trim(),
@@ -28,8 +31,46 @@ function escapeHtml(value) {
     .replaceAll('"', '&quot;');
 }
 
+async function resolvePhoneHandoffUrls(options, fetchImpl = fetch) {
+  const urls = normalizeExpoUrls(options);
+  if (urls.tunnelUrl || urls.lanUrl) return urls;
+
+  try {
+    const response = await fetchImpl('http://127.0.0.1:8085/_expo/link?choice=expo-go&platform=ios', {
+      headers: { 'expo-platform': 'ios' },
+      redirect: 'manual',
+      signal: AbortSignal.timeout(5000),
+    });
+    if (response.status !== 307) throw new Error('Expo Go redirect unavailable.');
+    const url = new URL(response.headers.get('location'));
+    const hostname = url.hostname;
+    if (!['exp:', 'exps:'].includes(url.protocol) || !hostname
+      || ['localhost', '0.0.0.0', '[::1]', '[::]'].includes(hostname)
+      || hostname.endsWith('.localhost') || hostname.startsWith('127.')) {
+      throw new Error('Expo did not return an address reachable by phone.');
+    }
+    if (isIP(hostname.replace(/^\[|\]$/g, '')) || hostname.endsWith('.local')) urls.lanUrl = url.href;
+    else urls.tunnelUrl = url.href;
+    return urls;
+  } catch (cause) {
+    throw new Error('Start npm run phone:preview, wait for READY TO SCAN, then run npm run phone:handoff again.', { cause });
+  }
+}
+
 function buildQrUrl(value) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&data=${encodeURIComponent(value)}`;
+  const modules = toQR(value);
+  const side = Math.sqrt(modules.length);
+  const margin = 4;
+  const size = side + 2 * margin;
+  const squares = [];
+  for (let index = 0; index < modules.length; index += 1) {
+    if (!modules[index]) continue;
+    const x = margin + index % side;
+    const y = margin + Math.floor(index / side);
+    squares.push(`M${x} ${y}h1v1h-1z`);
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges"><rect width="${size}" height="${size}" fill="white"/><path d="${squares.join('')}"/></svg>`;
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
 }
 
 function buildExpoPhoneHandoffHtml({ tunnelUrl, lanUrl, webUrl, generatedAt = new Date().toISOString() } = {}) {
@@ -153,5 +194,6 @@ function buildExpoPhoneHandoffHtml({ tunnelUrl, lanUrl, webUrl, generatedAt = ne
 module.exports = {
   buildExpoPhoneHandoffHtml,
   normalizeExpoUrls,
+  resolvePhoneHandoffUrls,
   readLastOption,
 };

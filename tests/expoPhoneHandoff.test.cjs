@@ -20,6 +20,7 @@ test('LAN-only handoff explains Wi-Fi and does not claim a tunnel', () => {
 const {
   buildExpoPhoneHandoffHtml,
   normalizeExpoUrls,
+  resolvePhoneHandoffUrls,
   readLastOption,
 } = require('../scripts/lib/expo-phone-handoff.cjs');
 
@@ -42,8 +43,10 @@ test('Expo phone handoff normalizes tunnel and LAN URLs into a tappable HTML pag
   assert.match(html, /href="exp:\/\/example\.exp\.direct"/);
   assert.match(html, /href="exp:\/\/192\.168\.1\.32:8082"/);
   assert.match(html, /href="http:\/\/localhost:8082"/);
-  assert.match(html, /api\.qrserver\.com\/v1\/create-qr-code/);
-  assert.match(html, /data=exp%3A%2F%2F192\.168\.1\.32%3A8082/);
+  const qr = html.match(/src="data:image\/svg\+xml;base64,([^"]+)"/);
+  assert.ok(qr, 'QR image is embedded for offline viewing');
+  assert.match(Buffer.from(qr[1], 'base64').toString(), /<path/);
+  assert.doesNotMatch(html, /api\.qrserver\.com/);
   assert.match(html, /class="button" href="exp:\/\/192\.168\.1\.32:8082">Open Expo Go on Wi-Fi/);
   assert.match(html, /Tunnel fallback: exp:\/\/example\.exp\.direct/);
 });
@@ -57,4 +60,29 @@ test('Expo phone handoff command options let explicit caller values override def
     ], 'tunnel-url'),
     'exp://fresh.exp.direct'
   );
+});
+
+test('discovers the current iPhone Expo Go URL with its launch flags', async () => {
+  const tunnelUrl = 'exps://fresh.on.expo.app?__expo_disable_fab=1';
+  const urls = await resolvePhoneHandoffUrls({}, async (url, options) => {
+    assert.equal(url, 'http://127.0.0.1:8085/_expo/link?choice=expo-go&platform=ios');
+    assert.equal(options.redirect, 'manual');
+    assert.equal(options.headers['expo-platform'], 'ios');
+    return new Response(null, { status: 307, headers: { location: tunnelUrl } });
+  });
+  assert.equal(urls.tunnelUrl, tunnelUrl);
+});
+
+test('explicit LAN and tunnel addresses work without a running local server', async () => {
+  const lanUrl = 'exp://192.168.1.32:8085';
+  const urls = await resolvePhoneHandoffUrls({ lanUrl }, () => assert.fail('unexpected discovery request'));
+  assert.equal(urls.lanUrl, lanUrl);
+});
+
+test('a stopped preview or an unreachable phone address gives a restart instruction', async () => {
+  for (const location of ['', 'http://localhost:8085', 'exp://127.0.0.1:8085', 'diaspora://dev-client']) {
+    const response = new Response(null, { status: location ? 307 : 200, headers: { location } });
+    await assert.rejects(resolvePhoneHandoffUrls({}, async () => response), /npm run phone:preview/);
+  }
+  await assert.rejects(resolvePhoneHandoffUrls({}, async () => { throw Error('connection refused'); }), /npm run phone:preview/);
 });

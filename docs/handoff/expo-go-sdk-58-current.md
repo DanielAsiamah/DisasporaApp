@@ -12,7 +12,7 @@ Program membership.
 3. From this repository, run `npm run phone:preview -- --clear --max-workers 2`.
 4. Keep the Mac terminal and Metro process running while the cold iOS bundle builds.
 5. Wait for `READY TO SCAN: exposdk:58.0.0 iOS bundle warmed` in the terminal.
-6. Scan the fresh QR code shown by that same process. Do not reuse an earlier tunnel URL.
+6. Scan the QR code with the iPhone Camera and tap **Open in Expo Go**. To reopen a larger code on the Mac, run `npm run phone:handoff` in another terminal from this repository. It reads the current preview address and draws the code locally. Run it again after restarting the preview.
 
 The preview command warms the exact Hermes iOS launch bundle locally before it
 reports readiness. This prevents Expo Go's first request from reaching the
