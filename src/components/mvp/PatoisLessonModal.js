@@ -157,29 +157,27 @@ function getFeedbackAnnouncement(correct, exercise) {
     : `Incorrect. ${incorrectCopy}`;
 }
 
-function PhraseWordHint({ exercise }) {
-  const phraseHint = useMemo(() => buildPhraseWordHintModel(exercise), [exercise]);
-  const [selectedTokenIndex, setSelectedTokenIndex] = useState(null);
+function PhraseWordHint({ exercise, courseId }) {
+  const phraseHint = useMemo(() => buildPhraseWordHintModel(exercise, courseId), [exercise, courseId]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
   if (!phraseHint) return null;
-  const selectedToken = selectedTokenIndex === null
-    ? null
-    : phraseHint.tokens[selectedTokenIndex];
+  const hasWordHints = phraseHint.segments.length > 1;
+  const phraseIndex = phraseHint.segments.length;
+  const fullPhrase = { text: phraseHint.phrase, meaning: phraseHint.translation };
+  const selected = selectedIndex === phraseIndex ? fullPhrase : phraseHint.segments[selectedIndex];
+  const wholePhraseLabel = `Show translation of ${phraseHint.phrase}`;
 
-  function toggleToken(token, index) {
-    const opening = selectedTokenIndex !== index;
-    setSelectedTokenIndex(opening ? index : null);
+  function toggleHint(index, segment) {
+    const opening = selectedIndex !== index;
+    setSelectedIndex(opening ? index : null);
     Haptics.selectionAsync().catch(() => {});
-    if (opening) {
-      AccessibilityInfo.announceForAccessibility(
-        `${token}. In this phrase: ${phraseHint.translation}`
-      );
-    }
+    if (opening) AccessibilityInfo.announceForAccessibility(`${segment.text}. ${segment.meaning}.`);
   }
 
   return (
     <View style={styles.phraseHintWrap}>
-      <Text style={styles.phraseHintLabel}>TAP A WORD FOR HELP</Text>
+      <Text style={styles.phraseHintLabel}>{hasWordHints ? 'TAP AN UNDERLINED WORD' : 'TAP FOR THE MEANING'}</Text>
       <View
         accessibilityLabel={`Study phrase: ${phraseHint.phrase}`}
         style={[
@@ -187,32 +185,39 @@ function PhraseWordHint({ exercise }) {
           phraseHint.direction === 'rtl' && styles.phraseHintTokensRtl,
         ]}
       >
-        {phraseHint.tokens.map((token, index) => (
+        {phraseHint.segments.map((segment, index) => segment.meaning ? (
           <Pressable
-            accessibilityLabel={`Word ${token}, show phrase translation`}
+            accessibilityLabel={hasWordHints ? `Meaning of ${segment.text}` : wholePhraseLabel}
             accessibilityRole="button"
-            accessibilityState={{ expanded: selectedTokenIndex === index }}
-            key={`${token}-${index}`}
-            onPress={() => toggleToken(token, index)}
+            accessibilityState={{ expanded: selectedIndex === index }}
+            key={index}
+            onPress={() => toggleHint(index, segment)}
             style={({ pressed }) => [
               styles.phraseHintToken,
-              selectedTokenIndex === index && styles.phraseHintTokenSelected,
+              selectedIndex === index && styles.phraseHintTokenSelected,
               pressed && styles.phraseHintTokenPressed,
             ]}
           >
             <Text style={[
               styles.phraseHintTokenText,
               { writingDirection: phraseHint.direction },
-            ]}>{token}</Text>
+            ]}>{segment.text}</Text>
           </Pressable>
+        ) : (
+          <Text key={index} style={[styles.phraseHintTokenText, { writingDirection: phraseHint.direction }]}>{segment.text}</Text>
         ))}
       </View>
-      {selectedToken ? (
+      {hasWordHints && (
+        <Pressable accessibilityRole="button" accessibilityLabel={wholePhraseLabel}
+          accessibilityState={{ expanded: selectedIndex === phraseIndex }}
+          onPress={() => toggleHint(phraseIndex, fullPhrase)} style={styles.phraseMeaningButton}>
+          <Text style={styles.phraseMeaningButtonText}>Phrase meaning</Text>
+        </Pressable>
+      )}
+      {selected ? (
         <View accessibilityLiveRegion="polite" style={styles.phraseHintBubble} testID="phrase-translation-bubble">
-          <Text style={styles.phraseHintSelectedWord}>{selectedToken}</Text>
-          <Text style={styles.phraseHintContextLabel}>In this phrase</Text>
-          <Text style={styles.phraseHintTranslation}>{phraseHint.translation}</Text>
-          <Text style={styles.phraseHintContextNote}>This is the verified meaning of the complete phrase.</Text>
+          <Text style={styles.phraseHintSelectedWord}>{hasWordHints && selectedIndex !== phraseIndex ? selected.text : 'Full meaning'}</Text>
+          <Text style={[styles.phraseHintTranslation, { writingDirection: getAnswerTextDirection(selected.meaning) }]}>{selected.meaning}</Text>
         </View>
       ) : null}
     </View>
@@ -425,7 +430,7 @@ function VocabularyCardExercise({ exercise, imageRegistry, controller, hasAudio 
 
 function WordTrayExercise({ exercise, feedback, response, setResponse }) {
   const usedIndexes = new Set(response.builtWords.map(({ index }) => index));
-  const answerProgressLabel = `${response.builtWords.length} words placed`;
+  const answerProgressLabel = response.builtWords.length === 1 ? '1 word placed' : `${response.builtWords.length} words placed`;
   const writingDirection = getAnswerTextDirection(exercise.answer);
   const wordLayout = { direction: 'ltr', flexDirection: writingDirection === 'rtl' ? 'row-reverse' : 'row' };
   return (
@@ -452,7 +457,7 @@ function WordTrayExercise({ exercise, feedback, response, setResponse }) {
       </View>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>WORD BANK</Text>
-        <Text style={styles.sectionMeta}>Tap a word to add it below</Text>
+        <Text style={styles.sectionMeta}>Tap a word to add it</Text>
       </View>
       <View style={[styles.wordBank, wordLayout]}>
         {exercise.wordBank.map((value, index) => {
@@ -962,7 +967,7 @@ export default function PatoisLessonModal({ courseId = 'jamaican-patois', hearts
                 <View style={styles.promptCard}>
                 <Text style={styles.speakerName}>{promptGuide.toUpperCase()}</Text>
                 <Text style={styles.prompt}>{exercise?.prompt}</Text>
-                <PhraseWordHint exercise={exercise} key={exercise?.id} />
+                <PhraseWordHint exercise={exercise} courseId={runtimeCourseId} key={exercise?.id} />
                 <AudioControls conceptId={exercise?.conceptId} controller={audio} hasAudio={hasCourseAudio} />
                 </View>
               </View>
@@ -1122,15 +1127,15 @@ const styles = StyleSheet.create({
   phraseHintLabel: { color: MUTED, fontFamily: fonts.extraBold, fontSize: 9, letterSpacing: 0.8, marginBottom: 7 },
   phraseHintTokens: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   phraseHintTokensRtl: { flexDirection: 'row-reverse' },
-  phraseHintToken: { borderBottomColor: '#8CA4B4', borderBottomWidth: 2, borderStyle: 'dotted', minHeight: 34, justifyContent: 'center', paddingHorizontal: 3 },
-  phraseHintTokenSelected: { backgroundColor: PALE, borderBottomColor: SKY, borderRadius: 8, borderStyle: 'solid', paddingHorizontal: 7 },
+  phraseHintToken: { borderBottomColor: '#8CA4B4', borderBottomWidth: 2, borderStyle: 'dotted', minHeight: 44, justifyContent: 'center', paddingHorizontal: 4, maxWidth: '100%' },
+  phraseHintTokenSelected: { backgroundColor: PALE, borderBottomColor: SKY, borderRadius: 8, borderStyle: 'solid' },
   phraseHintTokenPressed: { opacity: 0.7 },
   phraseHintTokenText: { color: NAVY, fontFamily: fonts.bold, fontSize: 16 },
   phraseHintBubble: { backgroundColor: PALE, borderColor: SKY, borderRadius: 14, borderWidth: 1, marginTop: 9, paddingHorizontal: 12, paddingVertical: 10 },
-  phraseHintSelectedWord: { color: SKY, fontFamily: fonts.extraBold, fontSize: 11, letterSpacing: 0.5 },
-  phraseHintContextLabel: { color: MUTED, fontFamily: fonts.bold, fontSize: 10, marginTop: 4, textTransform: 'uppercase' },
+  phraseHintSelectedWord: { color: '#32584C', fontFamily: fonts.extraBold, fontSize: 12 },
+  phraseMeaningButton: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center' },
+  phraseMeaningButtonText: { color: SKY, fontFamily: fonts.semiBold, fontSize: 13 },
   phraseHintTranslation: { color: NAVY, fontFamily: fonts.extraBold, fontSize: 17, lineHeight: 23, marginTop: 2 },
-  phraseHintContextNote: { color: MUTED, fontFamily: fonts.medium, fontSize: 10, lineHeight: 14, marginTop: 4 },
   promptHelper: { color: MUTED, fontFamily: fonts.medium, fontSize: 13, lineHeight: 19, marginTop: 8, marginBottom: 14, textAlign: 'center' },
   reviewBanner: { backgroundColor: '#FFF7E8', borderColor: '#FFD38A', borderRadius: 16, borderWidth: 1, marginBottom: 8, marginTop: 8, paddingHorizontal: 12, paddingVertical: 8 },
   reviewBannerTitle: { color: NAVY, fontFamily: fonts.bold, fontSize: 11, textAlign: 'center' },

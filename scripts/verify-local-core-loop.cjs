@@ -2,6 +2,7 @@ const { chromium } = require(process.env.DIASPORA_PLAYWRIGHT_MODULE || 'playwrig
 const fs = require('node:fs');
 const path = require('node:path');
 const { isUnscoredExercise } = require('../src/lessonEngine/patoisLessonSession.cjs');
+const placedWordsLabel = count => count === 1 ? '1 word placed' : `${count} words placed`;
 const heartLabelPattern = expected => new RegExp('^' + expected + ' of 5 hearts remaining(?:\\.|$)');
 const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 (async () => {
@@ -244,7 +245,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const word = firstHintExercise.answerTokens[0];
       await page.getByRole('button', { name: `Add word: ${word}`, exact: true }).click();
       selectedResponse = { kind: 'word', word };
-      await page.getByText('1 words placed', { exact: true }).waitFor();
+      await page.getByText('1 word placed', { exact: true }).waitFor();
     }
     await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
     await page.getByText('Leave this lesson?', { exact: true }).waitFor();
@@ -257,7 +258,7 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (selectedResponse.kind === 'match') {
       await page.getByRole('button', { name: `Phrase: ${selectedResponse.phrase}, selected`, exact: true }).waitFor();
     }
-    if (selectedResponse.kind === 'word') await page.getByText('1 words placed', { exact: true }).waitFor();
+    if (selectedResponse.kind === 'word') await page.getByText('1 word placed', { exact: true }).waitFor();
     await page.getByRole('button', { name: 'Close lesson', exact: true }).click();
     await page.getByRole('button', { name: 'Leave lesson', exact: true }).click();
     await page.getByText(`0 of ${topics.length} topics complete`, { exact: true }).waitFor();
@@ -266,28 +267,27 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     for (const card of leadingCards) await studyCard(card);
     if (await page.getByRole('radio', { checked: true }).count()
       || await page.getByRole('button', { name: /, selected$/ }).count()
-      || await page.getByText('1 words placed', { exact: true }).count()) {
+      || await page.getByText('1 word placed', { exact: true }).count()) {
       throw new Error('An intentionally exited lesson must restart with a fresh response.');
     }
     if (!firstHintExercise?.studyPhrase || !firstHintExercise?.studyTranslation) {
       throw new Error('The first lesson exercise must expose a verified phrase hint.');
     }
-    const firstHintToken = firstHintExercise.studyPhrase.split(/\s+/u)[0];
     const firstHintButton = page.getByRole('button', {
-      name: `Word ${firstHintToken}, show phrase translation`,
+      name: `Show translation of ${firstHintExercise.studyPhrase}`,
       exact: true,
     });
     await firstHintButton.click();
     const phraseHintBubble = page.getByTestId('phrase-translation-bubble');
     await phraseHintBubble.getByText(firstHintExercise.studyTranslation, { exact: true }).waitFor();
-    await phraseHintBubble.getByText('This is the verified meaning of the complete phrase.', { exact: true }).waitFor();
+    await phraseHintBubble.getByText('Full meaning', { exact: true }).waitFor();
     await page.screenshot({ path: `outputs/browser-smoke/phrase-hint-${courseId}.png` });
     await firstHintButton.click();
     await phraseHintBubble.waitFor({ state: 'detached' });
     if (await page.getByRole('radio', { checked: true }).count()) {
       throw new Error('Opening a phrase hint must not select an answer.');
     }
-    console.log(`Tapped ${firstHintToken}; verified contextual phrase translation without changing the answer.`);
+    console.log('Opened the complete phrase meaning without selecting an answer.');
     console.log('Lesson exit cancelled without losing selection; confirmed exit left the topic incomplete.');
     if (process.env.DIASPORA_TEST_GUIDE_MOTION === 'true') {
       await checkGuideImage('lesson-prompt-guide');
@@ -395,13 +395,25 @@ const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           const name = `Add word: ${token}${duplicate ? `, option ${index + 1}` : ''}`;
           await page.getByRole('button', { name, exact: true }).click();
           selected.push({ token, name });
-          await page.getByText(`${selected.length} words placed`, { exact: true }).waitFor();
+          await page.getByText(placedWordsLabel(selected.length), { exact: true }).waitFor();
+          if (courseId === 'jamaican-patois' && selected.length === 1 && exercise.studyPhrase === 'nice to meet you') {
+            const toHint = page.getByRole('button', { name: 'Meaning of to', exact: true });
+            await toHint.click();
+            await phraseHintBubble.getByText('fi', { exact: true }).waitFor();
+            await page.getByRole('button', { name: 'Meaning of you', exact: true }).click();
+            await phraseHintBubble.getByText('yuh', { exact: true }).waitFor();
+            await page.getByRole('button', { name: `Remove word: ${token}, position 1 of 1`, exact: true }).waitFor();
+            await page.screenshot({ path: 'outputs/browser-smoke/patois-word-hint.png' });
+            await page.getByRole('button', { name: 'Meaning of you', exact: true }).click();
+            await phraseHintBubble.waitFor({ state: 'detached' });
+            console.log('Patois word hints showed fi and yuh with the first answer word still in the tray.');
+          }
         }
         const last = selected.at(-1);
         await page.getByRole('button', { name: `Remove word: ${last.token}, position ${selected.length} of ${selected.length}`, exact: true }).click();
-        await page.getByText(`${selected.length - 1} words placed`, { exact: true }).waitFor();
+        await page.getByText(placedWordsLabel(selected.length - 1), { exact: true }).waitFor();
         await page.getByRole('button', { name: last.name, exact: true }).click();
-        await page.getByText(`${selected.length} words placed`, { exact: true }).waitFor();
+        await page.getByText(placedWordsLabel(selected.length), { exact: true }).waitFor();
         const rtl = /[\u0600-\u06ff]/u.test(exercise.answer);
         const wordBounds = [];
         for (const [index, word] of selected.entries()) {

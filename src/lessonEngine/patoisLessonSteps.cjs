@@ -132,6 +132,8 @@ function createImageChoiceExercise(step, row, concept, imageConceptIds, conceptB
     type: LESSON_EXERCISE_TYPES.IMAGE_CHOICE,
     title: 'Choose the matching picture',
     prompt: `Which picture matches “${row.localized}”?`,
+    studyPhrase: row.localized,
+    studyTranslation: concept.meaning,
     answer: step.conceptId,
     answerLabel: concept.meaning,
     conceptId: step.conceptId,
@@ -381,10 +383,7 @@ function buildCourseTopicExercises(courseId, topicId, {
         imageChoiceConceptIds.add(step.conceptId);
         return [
           createVocabularyCardExercise(step, row, concept),
-          {
-            ...imageExercise,
-            ...buildStudyHint(step, row, concept),
-          },
+          imageExercise,
         ];
       }
     }
@@ -455,10 +454,7 @@ function buildCourseTopicExercises(courseId, topicId, {
     imageChoiceConceptIds.add(visualConceptId);
     fallbackImageExercises.push(
       createVocabularyCardExercise(visualStep, row, concept),
-      {
-        ...imageExercise,
-        ...buildStudyHint(visualStep, row, concept),
-      }
+      imageExercise
     );
   }
 
